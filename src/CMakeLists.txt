@@ -10,3 +10,5 @@ file(GLOB_RECURSE EDITOR_SRC
 )
 
 add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC})
+target_link_libraries("libarkane" PUBLIC "imgui")
+target_include_directories("libarkane" PRIVATE "src/engine")

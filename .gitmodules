@@ -1,0 +1,6 @@
+[submodule "libs/SDL"]
+	path = libs/SDL
+	url = https://github.com/libsdl-org/SDL
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/Vertver/imgui/
