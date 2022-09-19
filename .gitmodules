@@ -10,3 +10,6 @@
 [submodule "libs/marl"]
 	path = libs/marl
 	url = https://github.com/google/marl
+[submodule "libs/box2d"]
+	path = libs/box2d
+	url = https://github.com/erincatto/box2d
