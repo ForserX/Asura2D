@@ -7,6 +7,10 @@ int main(int argc, char** argv)
 	
 	ark::engine::init(argc, argv);
 	game::init();
-	
+
+	ark::debug::msg("test");
+	ark::debug::msg("test {}", 321);
+
+	ark::engine::destroy();
 	return 0;
 }
