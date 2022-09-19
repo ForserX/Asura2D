@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-namespace ark { namespace engine {
+namespace ark::engine {
 	
 void init(int argc, char** argv);
 	
-}}
+}

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-namespace ark { namespace graphics {
+namespace ark::graphics {
 
 void init();
 	
-}}
+}
