@@ -24,6 +24,7 @@ void merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 void ark::merry_boar::destroy_world()
 {
 	world.reset();
+	ground = nullptr;
 }
 
 b2Body* ark::merry_boar::create_boody(b2Vec2 pos, b2Vec2 shape)

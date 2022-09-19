@@ -15,5 +15,6 @@ engine::init(int argc, char** argv)
 void
 engine::destroy()
 {
+	graphics::destroy();
 	debug::destroy();
 }
