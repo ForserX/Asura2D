@@ -18,6 +18,10 @@
 #include <box2d/box2d.h>
 #include <box2d/b2_math.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 #ifdef ARK_VULKAN
 #include <vulkan.hpp>
 #endif

@@ -1,4 +1,6 @@
-﻿#include "pch.h"
+﻿#include <SDL_syswm.h>
+
+#include "pch.h"
 
 SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
@@ -54,8 +56,19 @@ window::tick(float dt)
 			wants_to_exit = true;
 			break;
 		case SDL_WINDOWEVENT:
-			if (event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(window_handle)) {
-				wants_to_exit = true;
+			if (event.window.windowID == SDL_GetWindowID(window_handle)) {
+				switch (event.window.event) {
+				case SDL_WINDOWEVENT_CLOSE:
+					wants_to_exit = true;
+					break;
+				case SDL_WINDOWEVENT_RESIZED:
+					break;
+				default:
+					break;
+				}
+				if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+					wants_to_exit = true;
+				}
 			}
 			break;
 		case SDL_KEYDOWN:
