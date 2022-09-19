@@ -8,6 +8,12 @@ using namespace ark;
 void
 window::init()
 {
+	SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_VULKAN);
+
+	if (core::get_cmd_int("window_fullscreen")) {
+		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);
+	}
+
 	int width  = (int)core::get_cmd_int("window_width");
 	int height = (int)core::get_cmd_int("window_height");
 
@@ -18,8 +24,11 @@ window::init()
 	}
 
 	// Setup window
-	constexpr SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 	window_handle = SDL_CreateWindow("Arkane", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
+
+#ifdef ARK_VULKAN
+	graphics::init_vulkan();
+#endif
 }
 
 void

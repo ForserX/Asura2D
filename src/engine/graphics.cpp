@@ -1,5 +1,8 @@
 ﻿#include "arkane.h"
 #include "graphics.h"
+#ifdef ARK_VULKAN
+#include <vulkan.hpp>
+#endif
 
 extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
@@ -25,6 +28,19 @@ graphics::init()
 
 	ImGui_ImplSDL2_InitForSDLRenderer(window_handle, renderer);
 	ImGui_ImplSDLRenderer_Init(renderer);
+}
+
+void
+graphics::init_vulkan()
+{
+#ifdef ARK_VULKAN
+	SDL_Vulkan_LoadLibrary(nullptr);
+	uint32_t extensionCount;
+	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, nullptr);
+
+	const char** extensionNames = new const char* [extensionCount];
+	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, extensionNames);
+#endif
 }
 
 void
