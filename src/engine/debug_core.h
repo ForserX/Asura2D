@@ -3,7 +3,7 @@
 #include <format>
 
 #ifdef _DEBUG
-#define assert(error_code, message, exist_code) \
+#define ark_assert(error_code, message, exist_code) \
 	if(!error_code) {\
 		ark::debug::show_error(message);\
 	}\

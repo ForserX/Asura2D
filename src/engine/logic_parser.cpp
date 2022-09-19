@@ -15,7 +15,7 @@ logic_parser::load(std::filesystem::path file_path)
     std::string line = "";
     std::string last_section_name = "";
 
-    assert(file.is_open(), "File not found", return);
+    ark_assert(file.is_open(), "File not found", return);
 
     while (std::getline(file, line)) {
         line.erase(std::remove_if(line.begin(), line.end(), [](unsigned char x) {return std::isspace(x);}), line.end());
@@ -66,5 +66,5 @@ logic_parser::get(std::string_view section, std::string_view key)
         }
     }
 
-    assert(false, "Not found", return "");
+    ark_assert(false, "Not found", return "");
 }
