@@ -1,4 +1,5 @@
 ﻿#include "arkane.h"
+
 using namespace ark;
 
 bool is_started = false;

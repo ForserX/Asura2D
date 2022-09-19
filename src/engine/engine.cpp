@@ -12,7 +12,8 @@ engine::init(int argc, char** argv)
 	systems::init();
 }
 
-void ark::engine::destroy()
+void
+engine::destroy()
 {
 	debug::destroy();
 }

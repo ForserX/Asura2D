@@ -9,12 +9,14 @@ static std::filesystem::path userdata_dir;
 static std::set<std::filesystem::path> file_list;
 
 const std::filesystem::path& 
-ark::filesystem::get_working_dir() {
+ark::filesystem::get_working_dir()
+{
 	return working_dir;
 }
 
 void 
-ark::filesystem::init() {
+ark::filesystem::init()
+{
 	working_dir = std::filesystem::current_path();
 	content_dir = std::filesystem::current_path().append("content");
 	userdata_dir = std::filesystem::current_path().append("userdata");
@@ -30,19 +32,21 @@ ark::filesystem::init() {
 }
 
 const std::filesystem::path& 
-ark::filesystem::get_content_dir() {
+ark::filesystem::get_content_dir()
+{
 	return working_dir;
 }
 
 const std::filesystem::path& 
-ark::filesystem::get_userdata_dir() {
+ark::filesystem::get_userdata_dir()
+{
 	return userdata_dir;
 }
 
 void
-ark::filesystem::create_file(const std::filesystem::path& file_name) {
-	auto file_iter = file_list.find(file_name);
-
+ark::filesystem::create_file(const std::filesystem::path& file_name)
+{
+	const auto file_iter = file_list.find(file_name);
 	if (file_iter != file_list.end()) {
 		std::filesystem::remove(file_name);
 	} else {
@@ -54,15 +58,15 @@ ark::filesystem::create_file(const std::filesystem::path& file_name) {
 }
 
 void
-ark::filesystem::create_dir(const std::filesystem::path& dir_name) {
-	auto file_iter = file_list.find(dir_name);
-
+ark::filesystem::create_dir(const std::filesystem::path& dir_name)
+{
+	const auto file_iter = file_list.find(dir_name);
 	if (file_iter != file_list.end()) {
 		return;
 	}
 
 	file_list.emplace(dir_name);
-	bool can_create = std::filesystem::create_directories(dir_name);
-
+	
+	const bool can_create = std::filesystem::create_directories(dir_name);
 	ark_assert(can_create, "file creating error", std::terminate());
 }
