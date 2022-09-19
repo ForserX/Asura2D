@@ -8,8 +8,14 @@ using namespace ark;
 void
 window::init()
 {
-	const int64_t width = core::get_cmd_int("window_width");
-	const int64_t height = core::get_cmd_int("window_height");
+	int width  = (int)core::get_cmd_int("window_width");
+	int height = (int)core::get_cmd_int("window_height");
+
+	if (width < 1024)
+	{
+		width = 1024;
+		height = 614;
+	}
 
 	// Setup window
 	constexpr SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);

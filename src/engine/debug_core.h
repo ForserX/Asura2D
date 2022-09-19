@@ -4,7 +4,7 @@
 
 #ifdef _DEBUG
 #define ark_assert(error_code, message, exist_code) \
-	if(!error_code) {\
+	if(!(error_code)) {\
 		ark::debug::show_error(message);\
 		exist_code;\
 	}

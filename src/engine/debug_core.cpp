@@ -5,6 +5,12 @@
 #include <SDL.h>
 #include <format>
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#define DebugBreak
+#endif
+
 static std::ofstream log_file;
 
 using namespace ark;
@@ -29,11 +35,24 @@ debug::destroy()
 void
 debug::show_error(std::string_view message)
 {
+	print_message(message);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
+
+#ifdef _DEBUG
+	DebugBreak();
+#endif
 }
 
 void
 debug::print_message(std::string_view message)
 {
 	log_file << message << std::endl;
+
+#if defined(_DEBUG) & defined(_WIN32)
+	if (IsDebuggerPresent()) {
+		OutputDebugString("Arkane2D: ");
+		OutputDebugString(message.data());
+		OutputDebugString("\r\n");
+	}
+#endif
 }

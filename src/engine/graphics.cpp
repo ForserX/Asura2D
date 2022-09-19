@@ -1,4 +1,5 @@
-﻿#include "graphics.h"
+﻿#include "arkane.h"
+#include "graphics.h"
 
 extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
@@ -9,15 +10,11 @@ void
 graphics::init()
 {
 	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-	if (renderer == nullptr)
-	{
-		SDL_Log("Error creating SDL_Renderer!");
-		return;
-	}
+	ark_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
 	
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
-	SDL_Log("Current SDL_Renderer: %s", info.name);
+	debug::msg("Current SDL_Renderer: {}", info.name);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
