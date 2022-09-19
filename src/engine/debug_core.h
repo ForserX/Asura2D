@@ -15,17 +15,15 @@
 namespace ark::debug
 {
 	void show_error(std::string_view message);
+	void print_message(std::string_view message);
 
-	class logger
-	{
-		logger() = default;
-		~logger() = default;
+	template <typename... Args>
+	void msg(std::string_view rt_fmt_str, Args&&... args) {
+		print_message(std::vformat(rt_fmt_str, std::make_format_args(args...)));
+	}
 
-		logger(const logger&) = delete;
-		virtual logger& operator=(const logger&) = delete;
-		virtual logger&& operator=(const logger&&) = delete;
-
-	public:
-		void msg(std::string_view format, std::format_args args);
-	};
+	template<>
+	void msg(std::string_view message) {
+		print_message(message);
+	}
 }
