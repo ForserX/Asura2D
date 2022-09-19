@@ -28,7 +28,7 @@ void
 systems::delete_system(system* system_to_delete, update_type type)
 {
 	std::set<system*>* systems_list = get_system_by_type(type);
-	assert(systems_list->contains(system_to_delete));
+	ark_assert(systems_list->contains(system_to_delete), "Pointer not found", std::terminate());
 	systems_list->erase(system_to_delete);
 }
 
@@ -36,7 +36,7 @@ void
 systems::add_system(system* system_to_add, update_type type)
 {
 	std::set<system*>* systems_list = get_system_by_type(type);
-	assert(!systems_list->contains(system_to_add));
+	ark_assert(!systems_list->contains(system_to_add), "Pointer is alive! Duplicate!", std::terminate());
 	systems_list->insert(system_to_add);
 
 	if (is_started) {
