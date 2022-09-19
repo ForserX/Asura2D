@@ -40,7 +40,7 @@ window::destroy()
 }
 
 void
-window::tick(float dt)
+window::tick()
 {
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -84,19 +84,13 @@ window::tick(float dt)
 		}
 	}
 
-	graphics::tick(dt);
+	graphics::tick();
 }
 
 void
 window::loop()
 {
-	auto first_time = std::chrono::high_resolution_clock::now();
-	auto second_time = std::chrono::high_resolution_clock::now();
-	
 	while (!wants_to_exit) {
-		first_time = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> difference_time = second_time - first_time;
-		tick(difference_time.count());
-		second_time = std::chrono::high_resolution_clock::now();
+		tick();
 	}
 }

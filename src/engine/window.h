@@ -4,7 +4,7 @@ namespace ark::window
 {
 	void init();
 	void destroy();
-	void tick(float dt);
+	void tick();
 
 	void loop();	
 }

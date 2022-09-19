@@ -6,5 +6,5 @@ namespace ark::graphics
 	void init_vulkan();
 
 	void destroy();
-	void tick(float dt);
+	void tick();
 }

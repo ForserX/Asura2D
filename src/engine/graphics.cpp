@@ -50,15 +50,16 @@ graphics::destroy()
 }
 
 void
-graphics::tick(float dt)
+graphics::tick()
 {
 	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
 	
 	ImGui_ImplSDLRenderer_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
-	
-	ui::tick(dt);
+
+	const auto& io = ImGui::GetIO();
+	ui::tick(io.DeltaTime);
 	
 	// Rendering
 	ImGui::Render();
