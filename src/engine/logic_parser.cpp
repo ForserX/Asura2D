@@ -21,13 +21,29 @@ logic_parser::load(std::filesystem::path file_path)
     while (std::getline(file, line)) {
         line.erase(std::remove_if(line.begin(), line.end(), [](unsigned char x) {return std::isspace(x);}), line.end());
 
+        size_t comment_start = line.find(';');
+
+        if (comment_start != std::string::npos) {
+            line = line.substr(0, comment_start);
+        }
+
         // Skip empty lines
         if (line.length() < 2) {
             continue;
         }
 
         if (line[0] == '[') {
+            size_t parrent_start = line.find(':');
+
             last_section_name = std::move(line.substr(1, line.find(']') - 1));
+
+            // Parse parrent section
+            if (parrent_start != std::string::npos) {
+                for (auto [lkey, lvalue] : data[line.substr(parrent_start + 1)]) {
+                    data[last_section_name][lkey] = lvalue;
+                }
+            }
+
             continue;
         }
         else {
