@@ -1,4 +1,4 @@
-﻿#include "arkane.h"
+﻿#include "pch.h"
 
 SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
@@ -8,14 +8,14 @@ using namespace ark;
 void
 window::init()
 {
-	SDL_WindowFlags window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_VULKAN);
+	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_VULKAN);
 
 	if (core::get_cmd_int("window_fullscreen")) {
 		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);
 	}
 
-	int width  = (int)core::get_cmd_int("window_width");
-	int height = (int)core::get_cmd_int("window_height");
+	int width  = static_cast<int>(core::get_cmd_int("window_width"));
+	int height = static_cast<int>(core::get_cmd_int("window_height"));
 
 	if (width < 1024)
 	{

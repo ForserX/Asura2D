@@ -1,8 +1,4 @@
-﻿#include "arkane.h"
-#include "graphics.h"
-#ifdef ARK_VULKAN
-#include <vulkan.hpp>
-#endif
+﻿#include "pch.h"
 
 extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
@@ -62,27 +58,7 @@ graphics::tick(float dt)
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 	
-	{
-	    static float f = 0.0f;
-	    static int counter = 0;
-	
-	    ImGui::Begin("Hello, world!");
-	
-	    ImGui::Text("This is some useful text.");
-	    
-	    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-	    ImGui::ColorEdit4("clear color", clear_color);
-	
-	    if (ImGui::Button("Button")) {
-		    counter++;
-	    }
-		
-	    ImGui::SameLine();
-	    ImGui::Text("counter = %d", counter);
-	
-	    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	    ImGui::End();
-	}
+	ui::tick(dt);
 	
 	// Rendering
 	ImGui::Render();

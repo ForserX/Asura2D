@@ -6,7 +6,7 @@ namespace ark
 	class merry_boar
 	{
 		std::unique_ptr<b2World> world;
-		b2Body* ground;
+		b2Body* ground = nullptr;
 
 	public:
 		merry_boar();
@@ -14,7 +14,7 @@ namespace ark
 
 		void create_ground(b2Vec2 pos, b2Vec2 shape);
 		void destroy_world();
-		b2Body* create_boody(b2Vec2 pos, b2Vec2 shape);
+		b2Body* create_body(b2Vec2 pos, b2Vec2 shape);
 	};
 
 	using physics = merry_boar;

@@ -1,4 +1,4 @@
-﻿#include "arkane.h"
+﻿#include "pch.h"
 
 using namespace ark;
 
@@ -61,6 +61,14 @@ systems::init()
 	}
 
 	is_started = true;
+}
+
+void
+systems::destroy()
+{
+	pre_update_systems.clear();
+	update_systems.clear();
+	post_update_systems.clear();
 }
 
 void

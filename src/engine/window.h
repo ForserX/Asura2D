@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-namespace ark::window {
+namespace ark::window
+{
+	void init();
+	void destroy();
+	void tick(float dt);
 
-void init();
-void destroy();
-void tick(float dt);
-
-void loop();	
-	
+	void loop();	
 }

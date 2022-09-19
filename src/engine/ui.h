@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace ark::application
+namespace ark::ui
 {
 	void init();
-	void destroy();	
 	void tick(float dt);
+	void destroy();
 }

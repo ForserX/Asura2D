@@ -29,10 +29,11 @@ set_target_properties("unit_test" PROPERTIES ${ARKANE_PREGEN})
 #set_target_properties("ALL_BUILD" PROPERTIES ${ARKANE_PREGEN})
 #set_target_properties("INSTALL" PROPERTIES ${ARKANE_PREGEN})
 
-add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC})
+add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC} "pch.h")
 target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT marl box2d)
 target_include_directories("libarkane" PUBLIC "engine")
 target_include_directories("libarkane" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_precompile_headers("libarkane" PUBLIC "pch.h")	
 set_target_properties("libarkane" PROPERTIES ${ARKANE_ENGINE})
 
 add_executable("arkgame" ${GAME_SRC} "main.cpp")

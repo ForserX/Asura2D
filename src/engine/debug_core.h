@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include <format>
 
 #ifdef _DEBUG
 #define ark_assert(error_code, message, exist_code) \
@@ -21,12 +19,14 @@ namespace ark::debug
 	void print_message(std::string_view message);
 
 	template <typename... Args>
-	inline void msg(std::string_view rt_fmt_str, Args&&... args) {
+	inline void msg(std::string_view rt_fmt_str, Args&&... args)
+	{
 		print_message(std::vformat(rt_fmt_str, std::make_format_args(args...)));
 	}
 
 	template<>
-	inline void msg(std::string_view message) {
+	inline void msg(std::string_view message)
+	{
 		print_message(message);
 	}
 }

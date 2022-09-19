@@ -1,9 +1,4 @@
-#include "arkane.h"
-#include "debug_core.h"
-
-#include <fstream>
-#include <SDL.h>
-#include <format>
+#include "pch.h"
 
 #ifdef _WIN32
 #include <Windows.h>

@@ -1,4 +1,4 @@
-﻿#include "arkane.h"
+﻿#include "pch.h"
 
 using namespace ark;
 
@@ -6,8 +6,8 @@ void
 engine::init(int argc, char** argv)
 {
 	filesystem::init();
+	
 	debug::init();
-
 	graphics::init();
 	systems::init();
 }
@@ -15,6 +15,7 @@ engine::init(int argc, char** argv)
 void
 engine::destroy()
 {
+	systems::destroy();
 	graphics::destroy();
 	debug::destroy();
 }

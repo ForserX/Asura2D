@@ -1,15 +1,15 @@
-#include "arkane.h"
-#include "physical.h"
+#include "pch.h"
 
 using ark::merry_boar;
 
-merry_boar::merry_boar() : ground(nullptr)
+merry_boar::merry_boar()
 {
 	b2Vec2 gravity(0.0f, -9.8f);
 	world = std::make_unique<b2World>(gravity);
 }
 
-void merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
+void
+merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 {
 	b2BodyDef groundBodyDef;
 	groundBodyDef.position.Set(base.x, base.x);
@@ -21,13 +21,15 @@ void merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 	ground->CreateFixture(&groundBox, 0.0f);
 }
 
-void ark::merry_boar::destroy_world()
+void
+merry_boar::destroy_world()
 {
 	world.reset();
 	ground = nullptr;
 }
 
-b2Body* ark::merry_boar::create_boody(b2Vec2 pos, b2Vec2 shape)
+b2Body*
+merry_boar::create_body(b2Vec2 pos, b2Vec2 shape)
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;

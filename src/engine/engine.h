@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-namespace ark::engine {
-	
-void init(int argc, char** argv);
-void destroy();
+namespace ark::engine
+{
+	void init(int argc, char** argv);
+	void destroy();
 }
