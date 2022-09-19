@@ -27,7 +27,7 @@ set_target_properties("uninstall" PROPERTIES ${ARKANE_PREGEN})
 #set_target_properties("INSTALL" PROPERTIES ${ARKANE_PREGEN})
 
 add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC})
-target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT)
+target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT marl)
 target_include_directories("libarkane" PUBLIC "engine")
 target_include_directories("libarkane" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties("libarkane" PROPERTIES ${ARKANE_ENGINE})

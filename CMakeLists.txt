@@ -11,6 +11,7 @@ set(ARKANE_GAME FOLDER "Game")
 add_subdirectory("libs/SDL")
 add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
+add_subdirectory("libs/marl")
 
 add_subdirectory("src")
 
