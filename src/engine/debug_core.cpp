@@ -42,6 +42,7 @@ void
 debug::print_message(std::string_view message)
 {
 	log_file << message << std::endl;
+	ui::push_console_string(message);
 
 #if defined(_DEBUG) & defined(_WIN32)
 	if (IsDebuggerPresent()) {

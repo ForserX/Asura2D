@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include <string.h>
 
 using namespace ark;
 
@@ -15,7 +16,7 @@ struct UIConsole
 
     UIConsole()
     {
-        ClearLog();
+        clear_log();
         memset(InputBuf, 0, sizeof(InputBuf));
         HistoryPos = -1;
 
@@ -27,41 +28,45 @@ struct UIConsole
         AutoScroll = true;
         ScrollToBottom = false;
     }
-    
+
     ~UIConsole()
     {
-        ClearLog();
+        clear_log();
         for (int i = 0; i < History.Size; i++) {
             free(History[i]);
         }
     }
 
     // Portable helpers
-    static int   Stricmp(const char* s1, const char* s2)         { int d; while ((d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; } return d; }
+    static int   Stricmp(const char* s1, const char* s2) { int d; while ((d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; } return d; }
     static int   Strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
-    static char* Strdup(const char* s)                           { IM_ASSERT(s); size_t len = strlen(s) + 1; void* buf = malloc(len); IM_ASSERT(buf); return (char*)memcpy(buf, (const void*)s, len); }
-    static void  Strtrim(char* s)                                { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
+    static void  Strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
-    void    ClearLog()
+    void    clear_log()
     {
         for (int i = 0; i < Items.Size; i++)
             free(Items[i]);
         Items.clear();
     }
 
-    void    AddLog(const char* fmt, ...) IM_FMTARGS(2)
+    void    add_log(const char* fmt, ...) IM_FMTARGS(2)
     {
         // FIXME-OPT
         char buf[1024];
         va_list args;
         va_start(args, fmt);
         vsnprintf(buf, IM_ARRAYSIZE(buf), fmt, args);
-        buf[IM_ARRAYSIZE(buf)-1] = 0;
+        buf[IM_ARRAYSIZE(buf) - 1] = 0;
         va_end(args);
-        Items.push_back(Strdup(buf));
+        debug::msg(buf);
     }
-    
-    void    Draw(const char* title, bool* p_open)
+
+    void push_log_item(std::string_view str)
+    {
+        Items.push_back(strdup(str.data()));
+    }
+
+    void    draw(const char* title, bool* p_open)
     {
         auto& io = ImGui::GetIO();
 
@@ -106,7 +111,7 @@ struct UIConsole
         ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
         if (ImGui::BeginPopupContextWindow())
         {
-            if (ImGui::Selectable("Clear")) ClearLog();
+            if (ImGui::Selectable("Clear")) clear_log();
             ImGui::EndPopup();
         }
 
@@ -189,7 +194,7 @@ struct UIConsole
 
     void    ExecCommand(const char* command_line)
     {
-        AddLog("# %s\n", command_line);
+        add_log("# %s\n", command_line);
 
         // Insert into history. First find match and delete it so it can be pushed to the back.
         // This isn't trying to be smart or optimal.
@@ -201,28 +206,28 @@ struct UIConsole
                 History.erase(History.begin() + i);
                 break;
             }
-        History.push_back(Strdup(command_line));
+        History.push_back(strdup(command_line));
 
         // Process command
         if (Stricmp(command_line, "CLEAR") == 0)
         {
-            ClearLog();
+            clear_log();
         }
         else if (Stricmp(command_line, "HELP") == 0)
         {
-            AddLog("Commands:");
+            add_log("Commands:");
             for (int i = 0; i < Commands.Size; i++)
-                AddLog("- %s", Commands[i]);
+                add_log("- %s", Commands[i]);
         }
         else if (Stricmp(command_line, "HISTORY") == 0)
         {
             const int first = History.Size - 10;
             for (int i = first > 0 ? first : 0; i < History.Size; i++)
-                AddLog("%3d: %s\n", i, History[i]);
+                add_log("%3d: %s\n", i, History[i]);
         }
         else
         {
-            AddLog("Unknown command: '%s'\n", command_line);
+            add_log("Unknown command: '%s'\n", command_line);
         }
 
         // On command input, we scroll to bottom even if AutoScroll==false
@@ -265,7 +270,7 @@ struct UIConsole
                 if (candidates.Size == 0)
                 {
                     // No match
-                    AddLog("No match for \"%.*s\"!\n", (int)(word_end - word_start), word_start);
+                    add_log("No match for \"%.*s\"!\n", (int)(word_end - word_start), word_start);
                 }
                 else if (candidates.Size == 1)
                 {
@@ -300,9 +305,9 @@ struct UIConsole
                     }
 
                     // List matches
-                    AddLog("Possible matches:\n");
+                    add_log("Possible matches:\n");
                     for (int i = 0; i < candidates.Size; i++)
-                        AddLog("- %s\n", candidates[i]);
+                        add_log("- %s\n", candidates[i]);
                 }
 
                 break;
@@ -353,11 +358,17 @@ ui::init()
 void
 ui::tick(float dt)
 {
-    console.Draw("Arkane console", &show_console);
+    console.draw("Arkane console", &show_console);
+}
+
+void 
+ui::push_console_string(std::string_view str)
+{
+    console.push_log_item(str);
 }
 
 void
 ui::destroy()
 {
-   console.ClearLog();
+   console.clear_log();
 }
