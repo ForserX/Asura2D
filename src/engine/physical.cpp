@@ -20,7 +20,7 @@ merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 
 	b2PolygonShape groundBox;
 	groundBox.SetAsBox(shape.x, shape.y);
-	ground->CreateFixture(&groundBox, 0.0f);
+	ground->CreateFixture(&groundBox, 0.1f);
 }
 
 void
@@ -51,12 +51,7 @@ merry_boar::create_body(b2Vec2 pos, b2Vec2 shape)
 	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(shape.x, shape.y);
 
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-
-	body->CreateFixture(&fixtureDef);
+	body->CreateFixture(&dynamicBox, 1.0f);
 
 	return body;
 }

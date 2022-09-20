@@ -2,6 +2,7 @@
 
 extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
+extern int window_height;
 
 using namespace ark;
 
@@ -37,6 +38,8 @@ graphics::pre_init()
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
 }
 
+b2Body* TestObject;
+
 void
 graphics::init()
 {
@@ -62,6 +65,20 @@ graphics::init()
 
 	ImGui_ImplSDL2_InitForSDLRenderer(window_handle, renderer);
 	ImGui_ImplSDLRenderer_Init(renderer);
+
+	physical.create_ground({ 0, 0 }, { 100, 0 });
+	TestObject = physical.create_body({ 10, 1000 }, { 20, 20 });
+	TestObject->SetLinearVelocity(b2Vec2(10.0f, 0.0f));
+
+	b2CircleShape circle;
+	circle.m_radius = 0.3f;
+
+	b2FixtureDef fd;
+	fd.shape = &circle;
+	fd.density = 20.0f;
+	fd.restitution = 0.0f;
+
+	TestObject->CreateFixture(&fd);
 }
 
 void
@@ -113,10 +130,10 @@ graphics::tick()
 	SDL_RenderClear(renderer);
 
 	SDL_Rect box;
-	box.w = 30;
-	box.h = 30;
-	box.x = 50;
-	box.y = 50;
+	box.w = 10;
+	box.h = 10;
+	box.x = TestObject->GetPosition().x;
+	box.y = window_height -  TestObject->GetPosition().y;
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(renderer, &box);

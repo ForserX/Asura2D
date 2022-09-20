@@ -67,11 +67,13 @@ window::tick()
 			}
 			break;
 		case SDL_KEYDOWN:
+			break;
 		case SDL_KEYUP:
 		{
 			if (event.key.keysym.sym == SDLK_BACKQUOTE) {
-				show_console = true;
+				show_console = !show_console;
 			}
+			break;
 		}
 		default:
 			break;
