@@ -5,10 +5,43 @@ SDL_Renderer* renderer = nullptr;
 
 using namespace ark;
 
+void 
+graphics::pre_init()
+{
+	std::string render_list = "";
+#if defined(_WIN32)
+	std::string mode = "direct3d11";
+#elif defined(__linux__)
+	std::string mode = "opengl";
+#elif defined(__ANDROID__)
+	std::string mode = "opengles2";
+#endif
+
+	for (int i = 0; i < SDL_GetNumRenderDrivers(); ++i)
+	{
+		SDL_RendererInfo rendererInfo = {};
+		SDL_GetRenderDriverInfo(i, &rendererInfo);
+#ifdef ARK_DX12
+		if (rendererInfo.name != std::string("direct3d12")) {
+			mode = rendererInfo.name;
+		}
+#endif
+		render_list += rendererInfo.name;
+		render_list += ", ";
+	}
+
+	debug::msg("SDL Render mode support: {}", render_list);
+
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
+}
+
 void
 graphics::init()
 {
+	pre_init();
+
 	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+
 	ark_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
 	
 	SDL_RendererInfo info;
@@ -17,6 +50,8 @@ graphics::init()
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ark_assert(ImGui::GetCurrentContext() != nullptr, "ImGui Context is broken", std::terminate());
+
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 
