@@ -9,6 +9,12 @@ set(ARKANE_THIRD_PARTY FOLDER "3rd-party")
 set(ARKANE_ENGINE FOLDER "Engine")
 set(ARKANE_GAME FOLDER "Game")
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+endif()
+
 add_subdirectory("libs/SDL")
 add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
