@@ -160,7 +160,7 @@ void UIConsole::draw(const char* title, bool* p_open)
             }
             if (command.find(InputBuf) != std::string::npos)
             {
-                std::string print = command + std::string(" ") + hint;
+                std::string print = command + std::string(" (") + hint + ")";
                 item_list[Iter] = strdup(print.c_str());
                 Iter++;
             }
@@ -252,7 +252,7 @@ void UIConsole::ExecCommand(const char* command_line)
     {
         const int first = History.Size - 10;
         for (int i = first > 0 ? first : 0; i < History.Size; i++)
-            debug::msg("%3d: %s\n", i, History[i]);
+            debug::msg("{}: {}\n", i, History[i]);
     }
     else if (strstr(command_line, "window_height")) {
         std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
@@ -331,7 +331,7 @@ int UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
         if (candidates.Size == 0)
         {
             // No match
-            debug::msg("No match for \"%.*s\"!\n", (int)(word_end - word_start), word_start);
+            debug::msg("No match for \"{}\"!\n", (int)(word_end - word_start), word_start);
         }
         else if (candidates.Size == 1)
         {
@@ -366,9 +366,9 @@ int UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
             }
 
             // List matches
-            debug::msg("Possible matches:\n");
+            debug::msg("Possible matches: \n");
             for (int i = 0; i < candidates.Size; i++)
-                debug::msg("- %s\n", candidates[i]);
+                debug::msg("- {}\n", candidates[i]);
         }
 
         break;
