@@ -22,7 +22,7 @@ graphics::pre_init()
 		SDL_RendererInfo rendererInfo = {};
 		SDL_GetRenderDriverInfo(i, &rendererInfo);
 #ifdef ARK_DX12
-		if (rendererInfo.name != std::string("direct3d12")) {
+		if (rendererInfo.name == std::string("direct3d12")) {
 			mode = rendererInfo.name;
 		}
 #endif

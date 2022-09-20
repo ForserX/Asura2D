@@ -6,5 +6,7 @@ namespace ark::window
 	void destroy();
 	void tick();
 
-	void loop();	
+	void loop();
+	void change_fullscreen();
+	void change_resolution();
 }
