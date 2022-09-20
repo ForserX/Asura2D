@@ -5,6 +5,7 @@
 SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
 bool fullscreen_mode = false;
+extern bool show_console;
 int window_width = 1024;
 int window_height = 614;
 
@@ -68,16 +69,16 @@ window::tick()
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 		{
-			//ImGui_ImplSDL2_UpdateKeyModifiers((SDL_Keymod)event->key.keysym.mod);
-			//ImGuiKey key = ImGui_ImplSDL2_KeycodeToImGuiKey(event->key.keysym.sym);
-			//io.AddKeyEvent(key, (event->type == SDL_KEYDOWN));
-			//io.SetKeyEventNativeData(key, event->key.keysym.sym, event->key.keysym.scancode, event->key.keysym.scancode); // To support legacy indexing (<1.87 user code). Legacy backend uses SDLK_*** as indices to IsKeyXXX() functions.
+			if (event.key.keysym.sym == SDLK_BACKQUOTE) {
+				show_console = true;
+			}
 		}
 		default:
 			break;
 		}
 	}
 
+	physical.tick(1.f);
 	graphics::tick();
 }
 

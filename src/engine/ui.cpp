@@ -9,7 +9,7 @@ extern int window_width;
 extern int window_height;
 
 extern ui::UIConsole console;
-bool show_console = true;
+bool show_console = false;
 
 void
 ui::init()
@@ -20,7 +20,9 @@ ui::init()
 void
 ui::tick(float dt)
 {
-    console.draw("Arkane console", &show_console);
+    if (show_console) {
+        console.draw("Arkane console", &show_console);
+    }
 }
 
 int64_t 

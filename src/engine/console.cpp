@@ -3,6 +3,7 @@
 
 using namespace ark::ui;
 extern bool fullscreen_mode;
+extern bool show_console;
 extern int window_width;
 extern int window_height;
 extern ark::graphics::theme::stryle window_style;
@@ -17,6 +18,9 @@ UIConsole::UIConsole()
     Commands.push_back("help");
     cmd_hint["help"] = "";
 
+    Commands.push_back("hide");
+    cmd_hint["hide"] = "";
+    
     Commands.push_back("history");
     cmd_hint["history"] = "";
 
@@ -241,6 +245,10 @@ void UIConsole::ExecCommand(const char* command_line)
     if (cmd == "clear")
     {
         clear_log();
+    }
+    else if (cmd == "hide")
+    {
+        show_console = false;
     }
     else if (cmd == "help")
     {

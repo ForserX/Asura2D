@@ -12,10 +12,13 @@ namespace ark
 		merry_boar();
 		~merry_boar() = default;
 
+		void tick(float dt);
+
 		void create_ground(b2Vec2 pos, b2Vec2 shape);
 		void destroy_world();
 		b2Body* create_body(b2Vec2 pos, b2Vec2 shape);
 	};
 
+	extern merry_boar physical;
 	using physics = merry_boar;
 }

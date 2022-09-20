@@ -101,6 +101,7 @@ graphics::tick()
 	
 	// Rendering
 	ImGui::Render();
+
 	SDL_SetRenderDrawColor(
 		renderer,
 		static_cast<Uint8>(clear_color[0] * 255),
@@ -110,6 +111,16 @@ graphics::tick()
 	);
 
 	SDL_RenderClear(renderer);
+
+	SDL_Rect box;
+	box.w = 30;
+	box.h = 30;
+	box.x = 50;
+	box.y = 50;
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(renderer, &box);
+
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 	SDL_RenderPresent(renderer);
 }
