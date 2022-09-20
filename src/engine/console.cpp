@@ -293,12 +293,16 @@ void UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "window_fullscreen")) {
         std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
         cmd = cmd.substr(17);
-        fullscreen_mode = !!std::stoi(cmd);
-        window::change_fullscreen();
+        if (!cmd.empty()) {
+            fullscreen_mode = !!std::stoi(cmd);
+            window::change_fullscreen();
+        } else {
+            debug::msg("Invalid parameter: '{}'\n", command_line);
+        }
     }
     else
     {
-        debug::msg("Unknown command: '%s'\n", command_line);
+        debug::msg("Unknown command: '{}'\n", command_line);
     }
 
     // On command input, we scroll to bottom even if AutoScroll==false
