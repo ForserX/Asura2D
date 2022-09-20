@@ -7,6 +7,8 @@ namespace ark::ui
         char InputBuf[256] = {};
         ImVector<char*> Items;
         ImVector<const char*> Commands;
+        std::unordered_map<std::string, std::string> cmd_hint;
+
         ImVector<char*> History;
         int HistoryPos;    // -1: new line, 0..History.Size-1 browsing history.
         ImGuiTextFilter Filter;

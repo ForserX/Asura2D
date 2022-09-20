@@ -15,12 +15,26 @@ UIConsole::UIConsole()
 
     // "CLASSIFY" is here to provide the test case where "C"+[tab] completes to "CL" and display multiple matches.
     Commands.push_back("help");
+    cmd_hint["help"] = "";
+
     Commands.push_back("history");
+    cmd_hint["history"] = "";
+
     Commands.push_back("clear");
+    cmd_hint["clear"] = "";
+
     Commands.push_back("window_style");
+    cmd_hint["window_style"] = "red, dark, white";
+
     Commands.push_back("window_fullscreen");
+    cmd_hint["window_fullscreen"] = "1, 0";
+
     Commands.push_back("window_width");
+    cmd_hint["window_width"] = "int";
+
     Commands.push_back("window_height");
+    cmd_hint["window_height"] = "int";
+
     AutoScroll = true;
     ScrollToBottom = false;
 }
@@ -101,6 +115,7 @@ void UIConsole::draw(const char* title, bool* p_open)
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
     if (copy_to_clipboard)
         ImGui::LogToClipboard();
+
     for (int i = 0; i < Items.Size; i++)
     {
         const char* item = Items[i];
@@ -137,15 +152,16 @@ void UIConsole::draw(const char* title, bool* p_open)
         bool skip = false;
         const char** item_list = new const char* [15];
         size_t Iter = 0;
-        for (const char* command : Commands)
+        for (auto&[command, hint] : cmd_hint)
         {
-            if (strlen(InputBuf) == strlen(command)) {
+            if (strlen(InputBuf) == command.length()) {
                 skip = true;
                 break;
             }
-            if (strstr(command, InputBuf))
+            if (command.find(InputBuf) != std::string::npos)
             {
-                item_list[Iter] = strdup(command);
+                std::string print = command + std::string(" ") + hint;
+                item_list[Iter] = strdup(print.c_str());
                 Iter++;
             }
         }
@@ -163,7 +179,14 @@ void UIConsole::draw(const char* title, bool* p_open)
         }
 
         if (item_current != -1) {
-            strcpy(InputBuf, item_list[item_current]);
+            std::string try_str = item_list[item_current];
+
+            size_t space_iter = try_str.find(" ");
+            if (try_str.find(" ") != std::string::npos) {
+                try_str = try_str.substr(0, space_iter);
+            }
+
+            strcpy(InputBuf, try_str.data());
             item_current = -1;
         }
 
