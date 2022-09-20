@@ -8,4 +8,18 @@ namespace ark::graphics
 
 	void destroy();
 	void tick();
+
+	namespace theme
+	{
+		enum class stryle
+		{
+			red,
+			dark,
+			invalid
+		};
+
+		void red();
+		void dark();
+		void change();
+	}
 }

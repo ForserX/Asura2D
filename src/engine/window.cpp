@@ -4,6 +4,10 @@
 
 SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
+bool fullscreen_mode = false;
+extern bool show_console;
+int window_width = 1024;
+int window_height = 614;
 
 using namespace ark;
 
@@ -12,21 +16,12 @@ window::init()
 {
 	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_VULKAN);
 
-	if (core::get_cmd_int("window_fullscreen")) {
+	if (fullscreen_mode) {
 		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);
 	}
 
-	int width  = static_cast<int>(core::get_cmd_int("window_width"));
-	int height = static_cast<int>(core::get_cmd_int("window_height"));
-
-	if (width < 1024)
-	{
-		width = 1024;
-		height = 614;
-	}
-
 	// Setup window
-	window_handle = SDL_CreateWindow("Arkane", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
+	window_handle = SDL_CreateWindow("Arkane", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, window_flags);
 
 #ifdef ARK_VULKAN
 	graphics::init_vulkan();
@@ -57,34 +52,46 @@ window::tick()
 			break;
 		case SDL_WINDOWEVENT:
 			if (event.window.windowID == SDL_GetWindowID(window_handle)) {
-				switch (event.window.event) {
+				switch (event.window.event) 
+				{
 				case SDL_WINDOWEVENT_CLOSE:
 					wants_to_exit = true;
 					break;
 				case SDL_WINDOWEVENT_RESIZED:
 					break;
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					break;
 				default:
 					break;
-				}
-				if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-					wants_to_exit = true;
 				}
 			}
 			break;
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 		{
-			//ImGui_ImplSDL2_UpdateKeyModifiers((SDL_Keymod)event->key.keysym.mod);
-			//ImGuiKey key = ImGui_ImplSDL2_KeycodeToImGuiKey(event->key.keysym.sym);
-			//io.AddKeyEvent(key, (event->type == SDL_KEYDOWN));
-			//io.SetKeyEventNativeData(key, event->key.keysym.sym, event->key.keysym.scancode, event->key.keysym.scancode); // To support legacy indexing (<1.87 user code). Legacy backend uses SDLK_*** as indices to IsKeyXXX() functions.
+			if (event.key.keysym.sym == SDLK_BACKQUOTE) {
+				show_console = true;
+			}
 		}
 		default:
 			break;
 		}
 	}
 
+	physical.tick(1.f);
 	graphics::tick();
+}
+
+void
+window::change_fullscreen()
+{
+	SDL_SetWindowFullscreen(window_handle, fullscreen_mode ? SDL_WINDOW_FULLSCREEN : 0);
+}
+
+void
+window::change_resolution()
+{
+	SDL_SetWindowSize(window_handle, window_width, window_height);
 }
 
 void

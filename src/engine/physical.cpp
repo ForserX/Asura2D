@@ -2,6 +2,8 @@
 
 using ark::merry_boar;
 
+merry_boar ark::physical;
+
 merry_boar::merry_boar()
 {
 	b2Vec2 gravity(0.0f, -9.8f);
@@ -19,6 +21,16 @@ merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 	b2PolygonShape groundBox;
 	groundBox.SetAsBox(shape.x, shape.y);
 	ground->CreateFixture(&groundBox, 0.0f);
+}
+
+void
+merry_boar::tick(float dt)
+{
+	float timeStep = 1.0f / dt;
+	static int32 velocityIterations = 6;
+	static int32 positionIterations = 2;
+
+	world->Step(timeStep, velocityIterations, positionIterations);
 }
 
 void
