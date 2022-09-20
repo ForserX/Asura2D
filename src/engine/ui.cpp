@@ -21,10 +21,10 @@ struct UIConsole
         HistoryPos = -1;
 
         // "CLASSIFY" is here to provide the test case where "C"+[tab] completes to "CL" and display multiple matches.
-        Commands.push_back("HELP");
-        Commands.push_back("HISTORY");
-        Commands.push_back("CLEAR");
-        Commands.push_back("CLASSIFY");
+        Commands.push_back("help");
+        Commands.push_back("history");
+        Commands.push_back("clear");
+        Commands.push_back("classyfy");
         AutoScroll = true;
         ScrollToBottom = false;
     }
@@ -169,7 +169,45 @@ struct UIConsole
 
         ImGui::PopStyleVar();
         ImGui::EndChild();
+
+        static ImVec2 TextBoxPos;
         ImGui::Separator();
+
+        if (InputBuf[0] && strlen(InputBuf) > 0)
+        {
+            const char** item_list = new const char* [15];
+            size_t Iter = 0;
+            for (const char* command : Commands)
+            {
+                if (strstr(command, InputBuf))
+                {
+                    item_list[Iter] = strdup(command);
+                    Iter++;
+                }
+            }
+
+            ImVec2 safe_pos = ImGui::GetCursorPos();
+            ImVec2 pos = ImGui::GetCursorPos();
+            pos.y -= Iter * (TextBoxPos.y - pos.y) + 5;
+            ImGui::SetCursorPos(pos);
+
+            static int item_current = -1;
+            ImGui::ListBox(" ", &item_current, item_list, Iter);
+            ImGui::SetCursorPos(safe_pos);
+
+            if (item_current != -1) {
+                ExecCommand(item_list[item_current]);
+                item_current = -1;
+                
+                strcpy(InputBuf, "");
+            }
+
+            for (size_t del_iter = 0; del_iter < Iter; del_iter++) {
+                delete(item_list[del_iter]);
+            }
+
+            delete[](item_list);
+        }
 
         // Command-line
         bool reclaim_focus = false;
@@ -183,6 +221,8 @@ struct UIConsole
             strcpy(s, "");
             reclaim_focus = true;
         }
+        
+        TextBoxPos = ImGui::GetCursorPos();
 
         // Auto-focus on window apparition
         ImGui::SetItemDefaultFocus();
@@ -209,17 +249,17 @@ struct UIConsole
         History.push_back(strdup(command_line));
 
         // Process command
-        if (Stricmp(command_line, "CLEAR") == 0)
+        if (Stricmp(command_line, "clear") == 0)
         {
             clear_log();
         }
-        else if (Stricmp(command_line, "HELP") == 0)
+        else if (Stricmp(command_line, "help") == 0)
         {
             add_log("Commands:");
             for (int i = 0; i < Commands.Size; i++)
                 add_log("- %s", Commands[i]);
         }
-        else if (Stricmp(command_line, "HISTORY") == 0)
+        else if (Stricmp(command_line, "history") == 0)
         {
             const int first = History.Size - 10;
             for (int i = first > 0 ? first : 0; i < History.Size; i++)
