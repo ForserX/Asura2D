@@ -5,6 +5,7 @@ using namespace ark::ui;
 extern bool fullscreen_mode;
 extern int window_width;
 extern int window_height;
+extern ark::graphics::theme::stryle window_style;
 
 UIConsole::UIConsole()
 {
@@ -16,6 +17,7 @@ UIConsole::UIConsole()
     Commands.push_back("help");
     Commands.push_back("history");
     Commands.push_back("clear");
+    Commands.push_back("window_style");
     Commands.push_back("window_fullscreen");
     Commands.push_back("window_width");
     Commands.push_back("window_height");
@@ -240,6 +242,22 @@ void UIConsole::ExecCommand(const char* command_line)
         cmd = cmd.substr(12);
         window_width = std::stoi(cmd);
         window::change_resolution();
+    }
+    else if (strstr(command_line, "window_style")) {
+        std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
+        cmd = cmd.substr(12);
+
+        if (cmd == "red") {
+            window_style = graphics::theme::stryle::red;
+        } 
+        else if (cmd == "dark") {
+            window_style = graphics::theme::stryle::dark;
+        }
+        else {
+            window_style = graphics::theme::stryle::invalid;
+        }
+
+        graphics::theme::change();
     }
     else if (strstr(command_line, "window_fullscreen")) {
         std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
