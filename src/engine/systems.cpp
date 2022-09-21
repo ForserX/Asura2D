@@ -8,7 +8,11 @@ std::set<ark::system*> pre_update_systems;
 std::set<ark::system*> update_systems;
 std::set<ark::system*> post_update_systems;
 
-registry global_registry;
+std::set<ark::system*> draw_systems;
+std::set<ark::system*> physics_systems;
+
+std::unique_ptr<ark::system> engine_draw_system;
+std::unique_ptr<ark::system> engine_physics_system;
 
 std::set<ark::system*>*
 get_system_by_type(systems::update_type type)
@@ -20,6 +24,10 @@ get_system_by_type(systems::update_type type)
 		return &update_systems;
 	case systems::update_type::post_update_schedule:
 		return &post_update_systems;
+	case systems::update_type::draw_schedule:
+		return &draw_systems;
+	case systems::update_type::physics_schedule:
+		return &physics_systems;
 	}
 
 	return nullptr;
@@ -46,6 +54,16 @@ systems::add_system(system* system_to_add, update_type type)
 }
 
 void
+systems::pre_init()
+{
+	engine_draw_system = std::make_unique<draw_system>();
+	draw_systems.insert(engine_draw_system.get());
+
+	engine_physics_system = std::make_unique<physics_system>();
+	physics_systems.insert(engine_physics_system.get());
+}
+
+void
 systems::init()
 {
 	for	(const auto system : pre_update_systems) {
@@ -60,29 +78,86 @@ systems::init()
 		system->init();
 	}
 
+	for	(const auto system : draw_systems) {
+		system->init();
+	}
+
+	for	(const auto system : physics_systems) {
+		system->init();
+	}
+	
 	is_started = true;
 }
 
 void
 systems::destroy()
 {
+	is_started = false;
+	
+	for	(const auto system : pre_update_systems) {
+		system->reset();
+	}
+	
+	for	(const auto system : update_systems) {
+		system->reset();
+	}
+
+	for	(const auto system : post_update_systems) {
+		system->reset();
+	}
+
+	for	(const auto system : draw_systems) {
+		system->reset();
+	}
+
+	for	(const auto system : physics_systems) {
+		system->reset();
+	}
+	
 	pre_update_systems.clear();
 	update_systems.clear();
 	post_update_systems.clear();
+	
+	draw_systems.clear();
+	physics_systems.clear();
+}
+
+void
+systems::pre_tick(float dt)
+{
+	for	(const auto system : pre_update_systems) {
+		system->tick(entities::get_registry(), dt);
+	}
 }
 
 void
 systems::tick(float dt)
 {
-	for	(const auto system : pre_update_systems) {
-		system->tick(global_registry, dt);
-	}
-	
 	for	(const auto system : update_systems) {
-		system->tick(global_registry, dt);
+		system->tick(entities::get_registry(), dt);
 	}
+}
 
+void
+systems::post_tick(float dt)
+{
 	for	(const auto system : post_update_systems) {
-		system->tick(global_registry, dt);
+		system->tick(entities::get_registry(), dt);
+	}
+}
+
+void
+systems::draw_tick(float dt)
+{
+	for	(const auto &system : draw_systems) {
+		system->tick(entities::get_registry(), dt);
+	}
+}
+
+void
+systems::physics_tick(float dt)
+{
+	for	(const auto &system : physics_systems) {
+		system->tick(entities::get_registry(), dt);
 	}
 }

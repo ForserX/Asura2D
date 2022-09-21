@@ -60,6 +60,8 @@ window::tick()
 				case SDL_WINDOWEVENT_RESIZED:
 					break;
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					window_width = event.window.data1;
+					window_height = event.window.data2;
 					break;
 				default:
 					break;
@@ -80,7 +82,7 @@ window::tick()
 		}
 	}
 
-	graphics::tick();
+	engine::tick();
 }
 
 void

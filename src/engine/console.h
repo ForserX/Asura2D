@@ -22,7 +22,7 @@ namespace ark::ui
         void clear_log();
 
         void push_log_item(std::string_view str);
-        void draw(const char* title, bool* p_open);
+        void draw(float dt, const char* title, bool* p_open);
 
 
         void ExecCommand(const char* command_line);

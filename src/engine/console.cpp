@@ -6,7 +6,7 @@ extern bool fullscreen_mode;
 extern bool show_console;
 extern int window_width;
 extern int window_height;
-extern ark::graphics::theme::stryle window_style;
+extern ark::graphics::theme::style window_style;
 
 UIConsole::UIConsole()
 {
@@ -67,7 +67,7 @@ void UIConsole::push_log_item(std::string_view str)
     Items.push_back(strdup(str.data()));
 }
 
-void UIConsole::draw(const char* title, bool* p_open)
+void UIConsole::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
@@ -90,6 +90,8 @@ void UIConsole::draw(const char* title, bool* p_open)
     }
 
     const bool copy_to_clipboard = ImGui::SmallButton("Copy");
+    ImGui::SameLine();
+    ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
     //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
 
     ImGui::Separator();
@@ -279,13 +281,13 @@ void UIConsole::ExecCommand(const char* command_line)
         cmd = cmd.substr(12);
 
         if (cmd == "red") {
-            window_style = graphics::theme::stryle::red;
+            window_style = graphics::theme::style::red;
         } 
         else if (cmd == "dark") {
-            window_style = graphics::theme::stryle::dark;
+            window_style = graphics::theme::style::dark;
         }
         else {
-            window_style = graphics::theme::stryle::invalid;
+            window_style = graphics::theme::style::invalid;
         }
 
         graphics::theme::change();

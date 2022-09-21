@@ -13,26 +13,26 @@ namespace ark
 		float w;
 	};
 
-	class merry_boar
+	namespace physics
 	{
-		std::unique_ptr<b2World> world;
-		std::unique_ptr<CollisionLister> cl;
+		class world
+		{
+			std::unique_ptr<b2World> world_holder;
+			std::unique_ptr<CollisionLister> cl;
 
-		b2Body* ground = nullptr;
+		public:
+			world();
+			~world();
+			
+			void init();
+			void destroy();
+			void tick(float dt) const;
 
-	public:
-		merry_boar();
-		~merry_boar() = default;
+			fmatrix get_body_position(b2Body* body);
 
-		void tick(float dt);
-
-		fmatrix get_body_position(b2Body* body);
-
-		b2Body* create_ground(b2Vec2 pos, b2Vec2 shape);
-		void destroy_world();
-		b2Body* create_body(b2Vec2 pos, b2Vec2 shape);
-	};
-
-	extern merry_boar physical;
-	using physics = merry_boar;
+			b2Body* create_ground(b2Vec2 pos, b2Vec2 shape);
+			void destroy_world();
+			b2Body* create_body(b2Vec2 pos, b2Vec2 shape) const;
+		};
+	}
 }

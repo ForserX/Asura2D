@@ -1,11 +1,18 @@
 ﻿#include "movement_system.h"
 
+using namespace ingame;
+
 void
-game::movement_system::init()
+movement_system::init()
 {
 }
 
 void
-game::movement_system::tick(ark::registry& reg, float dt)
+movement_system::tick(ark::registry& reg, float dt)
+{
+}
+
+void
+movement_system::reset()
 {
 }
