@@ -79,10 +79,10 @@ world::destroy()
 }
 
 b2Body*
-world::create_ground(b2Vec2 base, b2Vec2 shape)
+world::create_static(b2Vec2 base, b2Vec2 shape) const
 {
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(base.x, base.x);
+	groundBodyDef.position.Set(base.x, base.y);
 
 	b2Body* ground= world_holder->CreateBody(&groundBodyDef);
 
@@ -137,7 +137,30 @@ world::destroy_world()
 }
 
 b2Body*
-world::create_body(b2Vec2 pos, b2Vec2 shape) const
+world::create_around(b2Vec2 pos, b2Vec2 shape) const
+{
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(pos.x, pos.y);
+	b2Body* body = world_holder->CreateBody(&bodyDef);
+
+	b2CircleShape circle;
+	circle.m_p.Set(shape.x, shape.y);
+	circle.m_radius = shape.x / 2;
+	
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &circle;
+	fixtureDef.density = 0.5f;
+	fixtureDef.friction = 0.4f;
+	fixtureDef.restitution = 0.f;
+
+	body->CreateFixture(&fixtureDef);
+
+	return body;
+}
+
+b2Body*
+world::create_dynamic(b2Vec2 pos, b2Vec2 shape) const
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;

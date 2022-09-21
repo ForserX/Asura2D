@@ -62,4 +62,5 @@ namespace ark::entities
 	
 	entity create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape);
 	entity create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape);
+	entity create_phys_body_entity_cricle(bool draw, b2Vec2 pos, b2Vec2 shape);
 }

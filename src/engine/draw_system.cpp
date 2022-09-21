@@ -41,7 +41,13 @@ draw_system::tick(registry& reg, float dt)
 					color_map.insert(std::make_pair(phys_body_id, ImColor(red_color, green_color, blue_color)));
 				}
 				
-				graphics::draw_physical_object(phys_body.body, color_map[phys_body_id]);
+				if (phys_body.body->GetFixtureList()->GetType() == b2Shape::Type::e_circle) {
+					graphics::draw_physical_cricle_object(phys_body.body, color_map[phys_body_id]);
+				}
+				else {
+					graphics::draw_physical_object(phys_body.body, color_map[phys_body_id]);
+				}
+
 				continue;
 			}
 		}

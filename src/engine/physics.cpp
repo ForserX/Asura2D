@@ -29,9 +29,9 @@ physics::get_body_position(b2Body* body)
 }
 
 b2Body*
-physics::create_ground(b2Vec2 pos, b2Vec2 shape)
+physics::create_static(b2Vec2 pos, b2Vec2 shape)
 {
-	return game_world.create_ground(pos, shape);
+	return game_world.create_static(pos, shape);
 }
 
 void
@@ -41,7 +41,13 @@ physics::destroy_world()
 }
 
 b2Body*
-physics::create_body(b2Vec2 pos, b2Vec2 shape)
+physics::create_dynamic(b2Vec2 pos, b2Vec2 shape)
 {
-	return game_world.create_body(pos, shape);
+	return game_world.create_dynamic(pos, shape);
+}
+
+b2Body*
+physics::create_dynamic_cricle(b2Vec2 pos, b2Vec2 shape)
+{
+	return game_world.create_around(pos, shape);
 }

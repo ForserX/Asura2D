@@ -152,6 +152,20 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 }
 
 void
+graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
+{
+	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
+	b2Transform xf = object->GetTransform();
+
+	b2Vec2 center = b2Mul(xf, circle->m_p);
+	center.y = static_cast<float>(ui::get_cmd_int("window_height")) - center.y;
+
+	float radius = circle->m_radius;
+
+	ImGui::GetWindowDrawList()->AddCircle(*reinterpret_cast<ImVec2*>(&center), radius , clr);
+}
+
+void
 graphics::tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
