@@ -80,7 +80,6 @@ window::tick()
 		}
 	}
 
-	physical.tick(1.f);
 	graphics::tick();
 }
 

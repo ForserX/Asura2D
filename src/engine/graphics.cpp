@@ -100,7 +100,9 @@ graphics::tick()
 
 	const auto& io = ImGui::GetIO();
 	ui::tick(io.DeltaTime);
-	
+
+	physical.tick(io.DeltaTime);
+
 	// Rendering
 	ImGui::Render();
 

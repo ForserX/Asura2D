@@ -3,6 +3,8 @@
 
 namespace ark
 {
+	class CollisionLister;
+
 	struct fmatrix
 	{
 		float x;
@@ -14,6 +16,8 @@ namespace ark
 	class merry_boar
 	{
 		std::unique_ptr<b2World> world;
+		std::unique_ptr<CollisionLister> cl;
+
 		b2Body* ground = nullptr;
 
 	public:

@@ -21,8 +21,8 @@ void
 ui::init()
 {
     TestGround = physical.create_ground({ 10, 0 }, { 1000, 10 });
-    TestObject = physical.create_body({ 10, 50 }, { 20, 10 });
-    TestObject2 = physical.create_body({ 10, 100 }, { 140, 20 });
+    TestObject = physical.create_body({ 250, 50 }, { 20, 10 });
+    TestObject2 = physical.create_body({ 350, 100 }, { 100, 10 });
 }
 
 void AddConvexPolyFilled(ImDrawList* DrawList, const ImVec2* points, const int points_count, ImU32 col) {
