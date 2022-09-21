@@ -10,7 +10,7 @@ merry_boar::merry_boar()
 	world = std::make_unique<b2World>(gravity);
 }
 
-void
+b2Body*
 merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 {
 	b2BodyDef groundBodyDef;
@@ -20,13 +20,45 @@ merry_boar::create_ground(b2Vec2 base, b2Vec2 shape)
 
 	b2PolygonShape groundBox;
 	groundBox.SetAsBox(shape.x, shape.y);
-	ground->CreateFixture(&groundBox, 0.1f);
+	ground->CreateFixture(&groundBox, 1.f);
+
+	return ground;
+}
+
+ark::fmatrix
+merry_boar::get_body_position(b2Body* body)
+{
+	fmatrix pos;
+
+	b2AABB aabb;
+	b2Transform t;
+	t.SetIdentity();
+	b2Fixture* fixture = body->GetFixtureList();
+	while (fixture != NULL) {
+		const b2Shape* shape = fixture->GetShape();
+		const int childCount = shape->GetChildCount();
+		for (int child = 0; child < childCount; ++child) {
+			b2AABB shapeAABB;
+			shape->ComputeAABB(&shapeAABB, t, child);
+			shapeAABB.lowerBound = shapeAABB.lowerBound;
+			shapeAABB.upperBound = shapeAABB.upperBound;
+			aabb.Combine(shapeAABB);
+		}
+		fixture = fixture->GetNext();
+	}
+
+	pos.x = body->GetPosition().x;
+	pos.y = body->GetPosition().y;
+	pos.w = aabb.upperBound.x;
+	pos.h = aabb.upperBound.y;
+
+	return pos;
 }
 
 void
 merry_boar::tick(float dt)
 {
-	float timeStep = 1.0f / dt;
+	float timeStep = 1.0f / 60.0f;
 	static int32 velocityIterations = 6;
 	static int32 positionIterations = 2;
 
@@ -51,7 +83,13 @@ merry_boar::create_body(b2Vec2 pos, b2Vec2 shape)
 	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(shape.x, shape.y);
 
-	body->CreateFixture(&dynamicBox, 1.0f);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.5f;
+	fixtureDef.restitution = 0.f;
+
+	body->CreateFixture(&fixtureDef);
 
 	return body;
 }

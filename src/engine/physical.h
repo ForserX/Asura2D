@@ -3,6 +3,14 @@
 
 namespace ark
 {
+	struct fmatrix
+	{
+		float x;
+		float y;
+		float h;
+		float w;
+	};
+
 	class merry_boar
 	{
 		std::unique_ptr<b2World> world;
@@ -14,7 +22,9 @@ namespace ark
 
 		void tick(float dt);
 
-		void create_ground(b2Vec2 pos, b2Vec2 shape);
+		fmatrix get_body_position(b2Body* body);
+
+		b2Body* create_ground(b2Vec2 pos, b2Vec2 shape);
 		void destroy_world();
 		b2Body* create_body(b2Vec2 pos, b2Vec2 shape);
 	};
