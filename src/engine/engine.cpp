@@ -26,9 +26,13 @@ void
 engine::tick()
 {
 	const auto new_time = std::chrono::steady_clock::now().time_since_epoch();
-	const auto dt = static_cast<float>(static_cast<double>(new_time.count() - current_time.count()) / 1000000000.);
+	float dt = static_cast<float>(static_cast<double>(new_time.count() - current_time.count()) / 100000000.);
 	current_time = new_time;
 	
+	if (dt > 1) {
+		dt = 0.06f;
+	}
+
 	game::tick(dt);
 	render::tick(dt);
 }
