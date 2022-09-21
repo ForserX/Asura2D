@@ -51,9 +51,21 @@ void ingame::init()
 	TestObject = ark::entities::create_phys_body_entity(true, { 250, 50 }, { 20, 10 });
 	TestObject2 = ark::entities::create_phys_body_entity(true, { 350, 100 }, { 100, 10 });
 
-	for (size_t Iter = 0; Iter < 40; Iter++) {
+	for (size_t Iter = 0; Iter < 20; Iter++) {
 		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 250, 250 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 250 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 350 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 150 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 250, 950 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 950 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 850 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 850 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 250, 750 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 750 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 650 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 350, 650 }, { 20, 20 }, ark::physics::material::material_type::rubber));
 	}
 
 	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1000, 0 }, { 10, 1000 });
+	TestGround2 = ark::entities::create_phys_ground_entity(true, { 0, 0 }, { 10, 1000 });
 }

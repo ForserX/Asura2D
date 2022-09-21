@@ -36,6 +36,64 @@ physics::create_static(b2Vec2 pos, b2Vec2 shape, physics::material::material_typ
 	return game_world.create_static(pos, shape, mat);
 }
 
+class QueryCallback : public b2QueryCallback
+{
+public:
+	QueryCallback(const b2Vec2& point)
+	{
+		m_point = point;
+		m_fixture = NULL;
+	}
+
+	bool ReportFixture(b2Fixture* fixture) override
+	{
+		b2Body* body = fixture->GetBody();
+		if (body->GetType() == b2_dynamicBody)
+		{
+			bool inside = fixture->TestPoint(m_point);
+			if (inside)
+			{
+				m_fixture = fixture;
+
+				// We are done, terminate the query.
+				return false;
+			}
+		}
+
+		// Continue the query.
+		return true;
+	}
+
+	b2Vec2 m_point;
+	b2Fixture* m_fixture;
+};
+
+b2Body*
+physics::hit_test(ImVec2 pos)
+{
+	b2Vec2 reintrp = *(b2Vec2*)&pos;
+	// Make a small box.
+	b2AABB aabb;
+	b2Vec2 d;
+	d.Set(0.001f, 0.001f);
+	aabb.lowerBound = reintrp - d;
+	aabb.upperBound = reintrp + d;
+
+	// Query the world for overlapping shapes.
+	QueryCallback callback(reintrp);
+	game_world.get_world().QueryAABB(&callback, aabb);
+
+	if (callback.m_fixture)
+	{
+		float frequencyHz = 5.0f;
+		float dampingRatio = 0.7f;
+
+		return callback.m_fixture->GetBody();
+	}
+
+	return nullptr;
+}
+
 void
 physics::destroy_world()
 {

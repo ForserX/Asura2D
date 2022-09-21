@@ -33,6 +33,18 @@ ui::tick(float dt)
         }
 
         ImGui::SameLine();
+
+        if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+            ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
+            mousePositionAbsolute.y = (float)get_cmd_int("window_height") - mousePositionAbsolute.y;
+
+            b2Body* TestBody = physics::hit_test(mousePositionAbsolute);
+
+            if (TestBody != nullptr) {
+                TestBody->ApplyLinearImpulse({ 11400 , 11400}, { 0 , 100 }, true);
+            }
+        }
+
         ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
         ImGui::End();
     }

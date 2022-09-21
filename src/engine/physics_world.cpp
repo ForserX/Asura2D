@@ -115,6 +115,12 @@ world::tick(float dt) const
 	world_holder->Step(dt, velocityIterations, positionIterations);
 }
 
+b2World& 
+world::get_world() const
+{
+	return *world_holder.get();
+}
+
 void
 world::destroy_world()
 {
