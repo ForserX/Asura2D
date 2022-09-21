@@ -19,6 +19,13 @@ physics::destroy()
 }
 
 void
+physics::destroy_body(b2Body* body)
+{
+	game_world.get_world().DestroyBody(body);
+	body = nullptr;
+}
+
+void
 physics::tick(float dt)
 {
 	game_world.tick(dt);

@@ -19,6 +19,13 @@ entities::create_entity()
 void
 entities::destroy_entity(const entt::entity& ent)
 {
+	auto &reg = global_registry.get();
+	
+	if (reg.any_of<physics_body_component>(ent)) {
+		auto &entity = reg.get<physics_body_component>(ent);
+		physics::destroy_body(entity.body);
+	}
+
 	global_registry.destroy(ent);
 }
 

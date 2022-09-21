@@ -113,6 +113,8 @@ world::tick(float dt) const
 	static int32 velocityIterations = 6;
 	static int32 positionIterations = 2;
 	world_holder->Step(dt, velocityIterations, positionIterations);
+
+	world_holder->ClearForces();
 }
 
 b2World& 
