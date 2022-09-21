@@ -143,8 +143,7 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 	ark_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
 	b2Vec2 vertices[b2_maxPolygonVertices];
 
-	for (int32 i = 0; i < vertexCount; ++i)
-	{
+	for (int32 i = 0; i < vertexCount; ++i) {
 		vertices[i] = b2Mul(object->GetTransform(), poly->m_vertices[i]);
 		vertices[i].y = static_cast<float>(ui::get_cmd_int("window_height")) - vertices[i].y;
 	}
@@ -158,8 +157,7 @@ graphics::tick(float dt)
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
 
-	if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration))
-	{
+	if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
 		draw(dt);
 		ImGui::End();
 	}
@@ -175,8 +173,7 @@ graphics::draw(float dt)
 
 void graphics::theme::change()
 {
-	switch (window_style)
-	{
+	switch (window_style) {
 	case style::dark:
 		dark();
 		break;
