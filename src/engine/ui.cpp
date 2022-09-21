@@ -28,7 +28,7 @@ ui::tick(float dt)
 
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 230), 5 });
         ImGui::SetNextWindowSize({300, 200});
-        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
+        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
         {
             ImGui::End();
             return;
@@ -69,13 +69,17 @@ ui::tick(float dt)
             TestMouseJoint = nullptr;
         }
 
+        if (!ImGui::IsWindowFocused()) {
+            ImGui::SetWindowFocus();
+        }
+
         const auto& registry = entities::get_registry().get();
-        ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
-        ImGui::Text("Physics:");
-        ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
-        ImGui::Text("Entities");
-        ImGui::Text("   Allocated: %d", registry.capacity());
-        ImGui::Text("   Alive: %d", registry.alive());
+        ImGui::TextColored(ImColor(255,255,255), "FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
+        ImGui::TextColored(ImColor(255,255,255), "Physics:");
+        ImGui::TextColored(ImColor(255,255,255), "   Bodies count: %i", physics::get_world().GetBodyCount());
+        ImGui::TextColored(ImColor(255,255,255), "Entities");
+        ImGui::TextColored(ImColor(255,255,255), "   Allocated: %d", registry.capacity());
+        ImGui::TextColored(ImColor(255,255,255), "   Alive: %d", registry.alive());
         ImGui::End();
 
     }

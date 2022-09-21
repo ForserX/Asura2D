@@ -118,10 +118,8 @@ world::tick(float dt) const
 	static int32 positionIterations = 2;
 	
 	phys_accum += dt;
-	if (phys_accum >= 1.f / phys_tps) {
 		world_holder->Step(1.f / phys_tps, velocityIterations, positionIterations);
 		phys_accum = 0.f;
-	}
 
 	world_holder->ClearForces();
 }
@@ -145,6 +143,12 @@ world::create_around(b2Vec2 pos, b2Vec2 size, material::material_type mat) const
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(pos.x, pos.y);
 	b2Body* body = world_holder->CreateBody(&bodyDef);
+	
+	b2MassData mass_data;
+	mass_data.center = { size.x / 2, size.y / 2 };
+	mass_data.mass = 30;
+
+	body->SetMassData(&mass_data);
 
 	b2CircleShape circle;
 	circle.m_p.Set(size.x, size.y);
@@ -188,6 +192,12 @@ world::create_dynamic(b2Vec2 pos, b2Vec2 size, material::material_type mat) cons
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(pos.x, pos.y);
 	b2Body* body = world_holder->CreateBody(&bodyDef);
+
+	b2MassData mass_data;
+	mass_data.center = { size.x / 2, size.y / 2 };
+	mass_data.mass = 30;
+
+	body->SetMassData(&mass_data);
 
 	b2PolygonShape dynamicBox;
 	dynamicBox.SetAsBox(size.x, size.y);
