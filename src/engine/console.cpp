@@ -67,7 +67,7 @@ void UIConsole::push_log_item(std::string_view str)
     Items.push_back(strdup(str.data()));
 }
 
-void UIConsole::draw(const char* title, bool* p_open)
+void UIConsole::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
@@ -90,6 +90,8 @@ void UIConsole::draw(const char* title, bool* p_open)
     }
 
     const bool copy_to_clipboard = ImGui::SmallButton("Copy");
+    ImGui::SameLine();
+    ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
     //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
 
     ImGui::Separator();

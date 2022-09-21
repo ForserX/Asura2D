@@ -19,7 +19,7 @@ void
 ui::tick(float dt)
 {
     if (show_console) {
-        console.draw("Arkane console", &show_console);
+        console.draw(dt, "Arkane console", &show_console);
     }
 }
 
