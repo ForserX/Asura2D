@@ -7,7 +7,7 @@ namespace ark::physics
 	void destroy();
 
 	void destroy_world();
-	world get_world();
+	b2World& get_world();
 	fmatrix get_body_position(b2Body* body);
 	
 	b2Body* create_static(b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);

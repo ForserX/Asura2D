@@ -9,6 +9,7 @@ extern ui::UIConsole console;
 bool show_console = false;
 bool show_fps_counter = true;
 
+b2MouseJoint* TestMouseJoint = nullptr;
 // Test 
 
 void
@@ -38,13 +39,36 @@ ui::tick(float dt)
             ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
             mousePositionAbsolute.y = (float)get_cmd_int("window_height") - mousePositionAbsolute.y;
 
-            b2Body* TestBody = physics::hit_test(mousePositionAbsolute);
+            if (TestMouseJoint == nullptr) {
+                b2Body* TestBody = physics::hit_test(mousePositionAbsolute);
 
-            if (TestBody != nullptr) {
-                TestBody->ApplyLinearImpulse({ 11400 , 11400}, { 0 , 100 }, true);
+                if (TestBody != nullptr) {
+
+                    float frequencyHz = 5.0f;
+                    float dampingRatio = 0.7f;
+
+                    b2MouseJointDef jd;
+                    jd.bodyA = &physics::get_world().GetBodyList()[0];
+                    jd.bodyB = TestBody;
+                    jd.target = *(b2Vec2*)(&mousePositionAbsolute);
+                    jd.maxForce = 1000.0f * TestBody->GetMass();
+                    b2LinearStiffness(jd.stiffness, jd.damping, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
+
+                    TestMouseJoint = (b2MouseJoint*)physics::get_world().CreateJoint(&jd);
+                    TestBody->SetAwake(true);
+                }
+            }
+            else
+            {
+                TestMouseJoint->SetTarget(*(b2Vec2*)&mousePositionAbsolute);
             }
         }
 
+        if (TestMouseJoint != nullptr && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+            physics::get_world().DestroyJoint(TestMouseJoint);
+            TestMouseJoint = nullptr;
+        }
+        
         ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
         ImGui::End();
     }

@@ -100,6 +100,12 @@ physics::destroy_world()
 	game_world.destroy_world();
 }
 
+b2World&
+physics::get_world()
+{
+	return game_world.get_world();
+}
+
 b2Body*
 physics::create_dynamic(b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
 {
