@@ -7,6 +7,7 @@ static material::material_data data[(size_t)material::material_type::out_of];
 void
 material::init()
 {
+	data[(size_t)material_type::rubber].friction = 0.1;
 	data[(size_t)material_type::rubber].density = 1;
 	data[(size_t)material_type::rubber].restitution = 0.9f;
 }

@@ -107,12 +107,21 @@ world::get_body_position(b2Body* body)
 	return pos;
 }
 
+constexpr float phys_tps = 30.f;
+float phys_accum = 0.f;
+
+
 void
 world::tick(float dt) const
 {
 	static int32 velocityIterations = 6;
 	static int32 positionIterations = 2;
-	world_holder->Step(dt, velocityIterations, positionIterations);
+	
+	phys_accum += dt;
+	if (phys_accum >= 1.f / phys_tps) {
+		world_holder->Step(1.f / phys_tps, velocityIterations, positionIterations);
+		phys_accum = 0.f;
+	}
 
 	world_holder->ClearForces();
 }

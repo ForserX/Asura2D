@@ -12,6 +12,7 @@
 #include <random>
 
 #include <entt/entt.hpp>
+#include <fu2/function2.hpp>
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>
@@ -51,6 +52,7 @@
 
 #include "engine/game.h"
 
+#include "engine/input.h"
 #include "engine/window.h"
 #include "engine/ui.h"
 #include "engine/graphics.h"

@@ -31,6 +31,7 @@ set_target_properties("unit_test" PROPERTIES ${ARKANE_PREGEN})
 
 add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC} "pch.h")
 target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT marl box2d)
+target_include_directories("libarkane" PUBLIC "${ARKANE_ROOT}/libs")
 target_include_directories("libarkane" PUBLIC "engine")
 target_include_directories("libarkane" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_precompile_headers("libarkane" PUBLIC "pch.h")	

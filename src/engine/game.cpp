@@ -7,11 +7,13 @@ game::init()
 	physics::init();
 	systems::pre_init();
 	systems::init();
+	entities::init();
 }
 
 void
 game::destroy()
 {
+	entities::destroy();
 	systems::destroy();
 	physics::destroy();
 }
@@ -26,4 +28,6 @@ game::tick(float dt)
 	
 	systems::tick(dt);
 	systems::post_tick(dt);
+
+	entities::tick(dt);
 }

@@ -4,10 +4,45 @@ using namespace ark;
 
 registry global_registry;
 
+std::set<entt::entity> entities_to_destroy;
+
+void
+destroy_entity(const entt::entity& ent)
+{
+	auto &reg = global_registry.get();
+	
+	if (reg.any_of<entities::physics_body_component>(ent)) {
+		const auto &entity = reg.get<entities::physics_body_component>(ent);
+		physics::destroy_body(entity.body);
+	}
+
+	global_registry.destroy(ent);
+}
+
 registry&
 entities::get_registry()
 {
 	return global_registry;
+}
+
+void
+entities::init()
+{
+}
+
+void
+entities::destroy()
+{
+}
+
+void
+entities::tick(float dt)
+{
+	for (const auto& ent : entities_to_destroy) {
+		destroy_entity(ent);
+	}
+	
+	entities_to_destroy.clear();
 }
 
 entt::entity
@@ -17,16 +52,9 @@ entities::create_entity()
 }
 
 void
-entities::destroy_entity(const entt::entity& ent)
+entities::schedule_to_destroy_entity(const entt::entity& ent)
 {
-	auto &reg = global_registry.get();
-	
-	if (reg.any_of<physics_body_component>(ent)) {
-		auto &entity = reg.get<physics_body_component>(ent);
-		physics::destroy_body(entity.body);
-	}
-
-	global_registry.destroy(ent);
+	entities_to_destroy.insert(ent);
 }
 
 entity
