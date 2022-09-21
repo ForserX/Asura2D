@@ -3,6 +3,7 @@
 
 using namespace ark::ui;
 extern bool fullscreen_mode;
+extern bool show_fps_counter;
 extern bool show_console;
 extern int window_width;
 extern int window_height;
@@ -26,6 +27,9 @@ UIConsole::UIConsole()
 
     Commands.push_back("clear");
     cmd_hint["clear"] = "";
+    
+    Commands.push_back("draw_fps");
+    cmd_hint["draw_fps"] = "1, 0";
 
     Commands.push_back("window_style");
     cmd_hint["window_style"] = "red, dark, white";
@@ -243,6 +247,8 @@ void UIConsole::ExecCommand(const char* command_line)
     History.push_back(strdup(command_line));
 
     std::string cmd = command_line;
+    std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
+
     // Process command
     if (cmd == "clear")
     {
@@ -265,19 +271,16 @@ void UIConsole::ExecCommand(const char* command_line)
             debug::msg("{}: {}\n", i, History[i]);
     }
     else if (strstr(command_line, "window_height")) {
-        std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
         cmd = cmd.substr(13);
         window_height = std::stoi(cmd);
         window::change_resolution();
     }
     else if (strstr(command_line, "window_width")) {
-        std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
         cmd = cmd.substr(12);
         window_width = std::stoi(cmd);
         window::change_resolution();
     }
     else if (strstr(command_line, "window_style")) {
-        std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
         cmd = cmd.substr(12);
 
         if (cmd == "red") {
@@ -292,12 +295,20 @@ void UIConsole::ExecCommand(const char* command_line)
 
         graphics::theme::change();
     }
+    else if (strstr(command_line, "draw_fps")) {
+        cmd = cmd.substr(8);
+        if (!cmd.empty()) {
+            show_fps_counter = !!std::stoi(cmd);
+            window::change_fullscreen();
+        }
+        else {
+            debug::msg("Invalid parameter: '{}'\n", command_line);
+        }
+    }
     else if (strstr(command_line, "window_fullscreen")) {
-        std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
         cmd = cmd.substr(17);
         if (!cmd.empty()) {
             fullscreen_mode = !!std::stoi(cmd);
-            window::change_fullscreen();
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }

@@ -7,6 +7,7 @@ extern int window_height;
 
 extern ui::UIConsole console;
 bool show_console = false;
+bool show_fps_counter = true;
 
 // Test 
 
@@ -20,6 +21,20 @@ ui::tick(float dt)
 {
     if (show_console) {
         console.draw(dt, "Arkane console", &show_console);
+    }
+    if (show_fps_counter) {
+
+        ImGui::SetNextWindowPos({ float(window_width - 230), 5 });
+        ImGui::SetNextWindowSize({300, 50});
+        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
+        {
+            ImGui::End();
+            return;
+        }
+
+        ImGui::SameLine();
+        ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
+        ImGui::End();
     }
 }
 
