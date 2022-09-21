@@ -13,6 +13,7 @@ namespace ark
         ~logic_parser() = default;
 
         void load(const std::filesystem::path&);
+        void save(const std::filesystem::path&);
         std::string get(std::string_view section, std::string_view value);
     };
 }

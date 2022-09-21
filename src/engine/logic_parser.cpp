@@ -6,12 +6,12 @@ void
 logic_parser::load(const std::filesystem::path& file_path)
 {
     std::ifstream file(file_path);
+	ark_assert(file.is_open(), "File not found", return);
 
     std::string line;
     std::string last_section_name;
 
-    ark_assert(file.is_open(), "File not found", return);
-
+   
     while (std::getline(file, line)) {
         std::erase_if(line, [](unsigned char x) {return std::isspace(x);});
 
@@ -42,6 +42,28 @@ logic_parser::load(const std::filesystem::path& file_path)
     }
 
     file.close();
+}
+void 
+logic_parser::save(const std::filesystem::path& file_path)
+{
+	std::ofstream file(file_path, std::ios_base::out);
+    
+	ark_assert(file.is_open(), "No access to file", return);
+
+    for (auto &fIter : data)
+    {
+        std::string section_name = fIter.first;
+
+        file << "[" + section_name + "]" << std::endl;
+        for (auto &sIter : fIter.second)
+        {
+            file << sIter.first + " = " + sIter.second << std::endl;
+        }
+
+    } 
+
+    file.flush();
+	file.close();
 }
 
 std::string 
