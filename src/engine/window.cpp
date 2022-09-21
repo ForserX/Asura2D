@@ -70,7 +70,7 @@ window::tick()
 			break;
 		case SDL_KEYUP:
 		{
-			if (event.key.keysym.sym == SDLK_BACKQUOTE) {
+			if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE) {
 				show_console = !show_console;
 			}
 			break;
