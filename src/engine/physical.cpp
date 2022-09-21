@@ -125,9 +125,10 @@ world::get_body_position(b2Body* body)
 void
 world::tick(float dt) const
 {
+	float dt1 = 1.f / 60.f;
 	static int32 velocityIterations = 6;
 	static int32 positionIterations = 2;
-	world_holder->Step(dt, velocityIterations, positionIterations);
+	world_holder->Step(dt1, velocityIterations, positionIterations);
 }
 
 void

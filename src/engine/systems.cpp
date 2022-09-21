@@ -149,7 +149,7 @@ systems::post_tick(float dt)
 void
 systems::draw_tick(float dt)
 {
-	for	(const auto system : draw_systems) {
+	for	(const auto &system : draw_systems) {
 		system->tick(entities::get_registry(), dt);
 	}
 }
@@ -157,7 +157,7 @@ systems::draw_tick(float dt)
 void
 systems::physics_tick(float dt)
 {
-	for	(const auto system : physics_systems) {
+	for	(const auto &system : physics_systems) {
 		system->tick(entities::get_registry(), dt);
 	}
 }

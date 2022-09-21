@@ -17,14 +17,14 @@ void
 draw_system::tick(registry& reg, float dt)
 {
 	entt::registry& registry = reg.get();
-	const auto view = registry.view<drawable_flag>();
+	const auto &view = registry.view<drawable_flag>();
 	for (auto& entity : view) {
 		const bool can_draw = registry.any_of<physics_body_component, screen_visual_component, visual_component>(entity);
 		ark_assert(can_draw, "draw flag was setted, but entity can't be showed because doesn't have any of valiable component", continue);
 
 		// First of all, try to draw physics bodies
 		if (registry.all_of<physics_body_component>(entity)) {
-			const auto phys_body = registry.get<physics_body_component>(entity);
+			const auto &phys_body = registry.get<physics_body_component>(entity);
 			ark_assert(phys_body.body != nullptr, "phys body can't be null!", continue);
 			if (!phys_body.is_drawing) {
 				continue;
