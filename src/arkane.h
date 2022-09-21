@@ -38,11 +38,12 @@
 #include "engine/filesystem.h"
 #include "engine/console.h"
 
+#include "engine/physics_material.h"
+#include "engine/physics_world.h"
+#include "engine/physics.h"
+
 #include "engine/components.h"
 #include "engine/entities.h"
-
-#include "engine/physical.h"
-#include "engine/physics.h"
 
 #include "engine/systems.h"
 #include "engine/physics_system.h"

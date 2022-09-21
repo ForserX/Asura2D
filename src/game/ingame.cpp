@@ -42,14 +42,18 @@ ark::entity TestGround;
 ark::entity TestGround2;
 ark::entity TestObject;
 ark::entity TestObject2;
-ark::entity TestCricle;
+
+std::vector<ark::entity> cricles;
 
 void ingame::init()
 {
 	TestGround = ark::entities::create_phys_ground_entity(true, { 10, 0 }, { 1000, 10 });
 	TestObject = ark::entities::create_phys_body_entity(true, { 250, 50 }, { 20, 10 });
 	TestObject2 = ark::entities::create_phys_body_entity(true, { 350, 100 }, { 100, 10 });
-	TestCricle = ark::entities::create_phys_body_entity_cricle(true, { 250, 250 }, { 20, 20 });
+
+	for (size_t Iter = 0; Iter < 40; Iter++) {
+		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { 250, 250 }, { 20, 20 }, ark::physics::material::material_type::rubber));
+	}
 
 	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1000, 0 }, { 10, 1000 });
 }

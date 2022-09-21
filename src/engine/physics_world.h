@@ -31,9 +31,9 @@ namespace ark
 			fmatrix get_body_position(b2Body* body);
 			void destroy_world();
 
-			b2Body* create_static(b2Vec2 pos, b2Vec2 shape) const;
-			b2Body* create_dynamic(b2Vec2 pos, b2Vec2 shape) const;
-			b2Body* create_around(b2Vec2 pos, b2Vec2 shape) const;
+			b2Body* create_static(b2Vec2 pos, b2Vec2 size, material::material_type mat = material::material_type::solid) const;
+			b2Body* create_around(b2Vec2 pos, b2Vec2 size, material::material_type mat = material::material_type::solid) const;
+			b2Body* create_dynamic(b2Vec2 pos, b2Vec2 size, material::material_type mat = material::material_type::solid) const;
 		};
 	}
 }

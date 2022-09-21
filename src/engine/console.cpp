@@ -299,7 +299,6 @@ void UIConsole::ExecCommand(const char* command_line)
         cmd = cmd.substr(8);
         if (!cmd.empty()) {
             show_fps_counter = !!std::stoi(cmd);
-            window::change_fullscreen();
         }
         else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
@@ -309,6 +308,7 @@ void UIConsole::ExecCommand(const char* command_line)
         cmd = cmd.substr(17);
         if (!cmd.empty()) {
             fullscreen_mode = !!std::stoi(cmd);
+            window::change_fullscreen();
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }

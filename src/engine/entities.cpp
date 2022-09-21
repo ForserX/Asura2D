@@ -23,12 +23,12 @@ entities::destroy_entity(const entt::entity& ent)
 }
 
 entity
-entities::create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape)
+entities::create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();
 
-	b2Body* body = physics::create_static(pos, shape);
+	b2Body* body = physics::create_static(pos, shape, mat);
 	physics_body_component phys_body = {draw, body};
 	add_field<physics_body_component>(ent, phys_body);
 	if (draw) {
@@ -39,13 +39,13 @@ entities::create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape)
 }
 
 entity
-entities::create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape)
+entities::create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();
 
 	physics_body_component phys_body = {};
-	phys_body.body = physics::create_dynamic(pos, shape);
+	phys_body.body = physics::create_dynamic(pos, shape, mat);
 	phys_body.is_drawing = draw;
 
 	add_field<physics_body_component>(ent, phys_body);
@@ -57,13 +57,13 @@ entities::create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape)
 }
 
 entity
-entities::create_phys_body_entity_cricle(bool draw, b2Vec2 pos, b2Vec2 shape)
+entities::create_phys_body_entity_cricle(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();
 
 	physics_body_component phys_body = {};
-	phys_body.body = physics::create_dynamic_cricle(pos, shape);
+	phys_body.body = physics::create_dynamic_cricle(pos, shape, mat);
 	phys_body.is_drawing = draw;
 
 	add_field<physics_body_component>(ent, phys_body);

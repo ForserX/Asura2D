@@ -78,21 +78,6 @@ world::destroy()
 	destroy_world();
 }
 
-b2Body*
-world::create_static(b2Vec2 base, b2Vec2 shape) const
-{
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(base.x, base.y);
-
-	b2Body* ground= world_holder->CreateBody(&groundBodyDef);
-
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(shape.x, shape.y);
-	ground->CreateFixture(&groundBox, 1.f);
-
-	return ground;
-}
-
 ark::fmatrix
 world::get_body_position(b2Body* body)
 {
@@ -137,7 +122,7 @@ world::destroy_world()
 }
 
 b2Body*
-world::create_around(b2Vec2 pos, b2Vec2 shape) const
+world::create_around(b2Vec2 pos, b2Vec2 size, material::material_type mat) const
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
@@ -145,14 +130,17 @@ world::create_around(b2Vec2 pos, b2Vec2 shape) const
 	b2Body* body = world_holder->CreateBody(&bodyDef);
 
 	b2CircleShape circle;
-	circle.m_p.Set(shape.x, shape.y);
-	circle.m_radius = shape.x / 2;
-	
+	circle.m_p.Set(size.x, size.y);
+	circle.m_radius = size.x / 2;
+
 	b2FixtureDef fixtureDef;
+	const material::material_data& mdata = material::get(mat);
+
 	fixtureDef.shape = &circle;
-	fixtureDef.density = 0.5f;
-	fixtureDef.friction = 0.4f;
-	fixtureDef.restitution = 0.f;
+	fixtureDef.density = mdata.density;
+	fixtureDef.friction = mdata.friction;
+	fixtureDef.restitution = mdata.restitution;
+	fixtureDef.isSensor = mdata.ignore_collision;
 
 	body->CreateFixture(&fixtureDef);
 
@@ -160,7 +148,24 @@ world::create_around(b2Vec2 pos, b2Vec2 shape) const
 }
 
 b2Body*
-world::create_dynamic(b2Vec2 pos, b2Vec2 shape) const
+world::create_static(b2Vec2 base, b2Vec2 size, material::material_type mat) const
+{
+	b2BodyDef groundBodyDef;
+	groundBodyDef.position.Set(base.x, base.y);
+
+	b2Body* ground = world_holder->CreateBody(&groundBodyDef);
+
+	const material::material_data& mdata = material::get(mat);
+
+	b2PolygonShape groundBox;
+	groundBox.SetAsBox(size.x, size.y);
+	ground->CreateFixture(&groundBox, mdata.density);
+
+	return ground;
+}
+
+b2Body*
+world::create_dynamic(b2Vec2 pos, b2Vec2 size, material::material_type mat) const
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
@@ -168,13 +173,16 @@ world::create_dynamic(b2Vec2 pos, b2Vec2 shape) const
 	b2Body* body = world_holder->CreateBody(&bodyDef);
 
 	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(shape.x, shape.y);
+	dynamicBox.SetAsBox(size.x, size.y);
 
 	b2FixtureDef fixtureDef;
+	const material::material_data& mdata = material::get(mat);
+
 	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 0.5f;
-	fixtureDef.friction = 0.4f;
-	fixtureDef.restitution = 0.f;
+	fixtureDef.density = mdata.density;
+	fixtureDef.friction = mdata.friction;
+	fixtureDef.restitution = mdata.restitution;
+	fixtureDef.isSensor = mdata.ignore_collision;
 
 	body->CreateFixture(&fixtureDef);
 
