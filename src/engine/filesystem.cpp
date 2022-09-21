@@ -2,6 +2,8 @@
 #include <fstream>
 #include <set>
 
+using namespace ark;
+
 static std::filesystem::path working_dir;
 static std::filesystem::path content_dir;
 static std::filesystem::path userdata_dir;
@@ -9,13 +11,13 @@ static std::filesystem::path userdata_dir;
 static std::set<std::filesystem::path> file_list;
 
 const std::filesystem::path& 
-ark::filesystem::get_working_dir()
+filesystem::get_working_dir()
 {
 	return working_dir;
 }
 
 void 
-ark::filesystem::init()
+filesystem::init()
 {
 	working_dir = std::filesystem::current_path();
 	content_dir = std::filesystem::current_path().append("content");
@@ -31,20 +33,29 @@ ark::filesystem::init()
 
 }
 
+void
+filesystem::destroy()
+{
+	file_list.clear();
+	userdata_dir.clear();
+	content_dir.clear();
+	working_dir.clear();
+}
+
 const std::filesystem::path& 
-ark::filesystem::get_content_dir()
+filesystem::get_content_dir()
 {
 	return working_dir;
 }
 
 const std::filesystem::path& 
-ark::filesystem::get_userdata_dir()
+filesystem::get_userdata_dir()
 {
 	return userdata_dir;
 }
 
 void
-ark::filesystem::create_file(const std::filesystem::path& file_name)
+filesystem::create_file(const std::filesystem::path& file_name)
 {
 	const auto file_iter = file_list.find(file_name);
 	if (file_iter != file_list.end()) {
@@ -58,7 +69,7 @@ ark::filesystem::create_file(const std::filesystem::path& file_name)
 }
 
 void
-ark::filesystem::create_dir(const std::filesystem::path& dir_name)
+filesystem::create_dir(const std::filesystem::path& dir_name)
 {
 	const auto file_iter = file_list.find(dir_name);
 	if (file_iter != file_list.end()) {

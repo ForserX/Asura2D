@@ -4,6 +4,7 @@
 namespace ark::filesystem
 {
 	void init();
+	void destroy();
 
 	const std::filesystem::path& get_working_dir();
 	const std::filesystem::path& get_content_dir();

@@ -1,132 +1,191 @@
 ﻿#include "pch.h"
 
-extern SDL_Window* window_handle;
-SDL_Renderer* renderer = nullptr;
-extern int window_height;
-
 using namespace ark;
 
-graphics::theme::stryle window_style;
-
-void 
-graphics::pre_init()
-{
-	std::string render_list = "";
-#if defined(_WIN32)
-	std::string mode = "direct3d11";
-#elif defined(__linux__)
-	std::string mode = "opengl";
-#elif defined(__ANDROID__)
-	std::string mode = "opengles2";
-#endif
-
-	for (int i = 0; i < SDL_GetNumRenderDrivers(); ++i)
-	{
-		SDL_RendererInfo rendererInfo = {};
-		SDL_GetRenderDriverInfo(i, &rendererInfo);
-#ifdef ARK_DX12
-		if (rendererInfo.name == std::string("direct3d12")) {
-			mode = rendererInfo.name;
-		}
-#endif
-		render_list += rendererInfo.name;
-		render_list += ", ";
-	}
-
-	debug::msg("SDL Render mode support: {}", render_list);
-
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
-}
+graphics::theme::style window_style;
 
 void
 graphics::init()
 {
-	pre_init();
-
-	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
-
-	ark_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
-	
-	SDL_RendererInfo info;
-	SDL_GetRendererInfo(renderer, &info);
-	debug::msg("Current SDL_Renderer: {}", info.name);
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ark_assert(ImGui::GetCurrentContext() != nullptr, "ImGui Context is broken", std::terminate());
-
-	const ImGuiIO& io = ImGui::GetIO();
-	(void)io;
-
-	window_style = theme::stryle::red;
+	window_style = theme::style::red;
 	theme::change();
-
-	ImGui_ImplSDL2_InitForSDLRenderer(window_handle, renderer);
-	ImGui_ImplSDLRenderer_Init(renderer);
+	
 	ui::init();
-}
-
-void
-graphics::init_vulkan()
-{
-#ifdef ARK_VULKAN
-	SDL_Vulkan_LoadLibrary(nullptr);
-	uint32_t extensionCount;
-	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, nullptr);
-
-	const char** extensionNames = new const char* [extensionCount];
-	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, extensionNames);
-#endif
 }
 
 void
 graphics::destroy()
 {
-	ImGui_ImplSDLRenderer_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-
-	SDL_DestroyRenderer(renderer);
+	ui::destroy();
 }
 
 void
-graphics::tick()
+graphics::draw_convex_poly_filled(
+    ImDrawList* draw_list,
+    const ImVec2* points,
+    const int points_count,
+    ImU32 col
+)
 {
-	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
+    if (points_count < 3) return;
+
+    const ImVec2 uv = draw_list->_Data->TexUvWhitePixel;
+
+    if (draw_list->Flags & ImDrawListFlags_AntiAliasedFill) {
+        // Anti-aliased Fill
+        const ImU32 col_trans = col & ~IM_COL32_A_MASK;
+        const int idx_count = (points_count - 2) * 3 + points_count * 6;
+        const int vtx_count = (points_count * 2);
+        draw_list->PrimReserve(idx_count, vtx_count);
+
+        // Add indexes for fill
+        const unsigned int vtx_inner_idx = draw_list->_VtxCurrentIdx;
+        const unsigned int vtx_outer_idx = draw_list->_VtxCurrentIdx + 1;
+        for (int i = 2; i < points_count; i++) {
+            draw_list->_IdxWritePtr[0] = static_cast<ImDrawIdx>(vtx_inner_idx);
+            draw_list->_IdxWritePtr[1] = static_cast<ImDrawIdx>(vtx_inner_idx + ((i - 1) << 1));
+            draw_list->_IdxWritePtr[2] = static_cast<ImDrawIdx>(vtx_inner_idx + (i << 1));
+            draw_list->_IdxWritePtr += 3;
+        }
+
+        // Compute normals
+        auto* temp_normals = static_cast<ImVec2*>(alloca(points_count * sizeof(ImVec2))); //-V630
+        for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
+            const ImVec2& p0 = points[i0];
+            const ImVec2& p1 = points[i1];
+            float dx = p1.x - p0.x;
+            float dy = p1.y - p0.y;
+            {
+                float d2 = dx * dx + dy * dy;
+                if (d2 > 0.0f) {
+                    const float inv_len = 1.0f / ImSqrt(d2);
+                    dx *= inv_len;
+                    dy *= inv_len;
+                }
+            }
+
+            temp_normals[i0].x = dy;
+            temp_normals[i0].y = -dx;
+        }
+
+        for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
+            constexpr float AA_SIZE = 1.0f;
+            
+            // Average normals
+            const ImVec2& n0 = temp_normals[i0];
+            const ImVec2& n1 = temp_normals[i1];
+            float dm_x = (n0.x + n1.x) * 0.5f;
+            float dm_y = (n0.y + n1.y) * 0.5f;
+            {
+                float d2 = dm_x * dm_x + dm_y * dm_y;
+                if (d2 < 0.5f) d2 = 0.5f;
+                float inv_lensq = 1.0f / d2;
+                dm_x *= inv_lensq;
+                dm_y *= inv_lensq;
+            }
+            dm_x *= AA_SIZE * 0.5f;
+            dm_y *= AA_SIZE * 0.5f;
+
+            // Add vertices
+            draw_list->_VtxWritePtr[0].pos.x = (points[i1].x - dm_x);
+            draw_list->_VtxWritePtr[0].pos.y = (points[i1].y - dm_y);
+            draw_list->_VtxWritePtr[0].uv = uv;
+            draw_list->_VtxWritePtr[0].col = col;        // Inner
+            draw_list->_VtxWritePtr[1].pos.x = (points[i1].x + dm_x);
+            draw_list->_VtxWritePtr[1].pos.y = (points[i1].y + dm_y);
+            draw_list->_VtxWritePtr[1].uv = uv;
+            draw_list->_VtxWritePtr[1].col = col_trans;  // Outer
+            draw_list->_VtxWritePtr += 2;
+
+            // Add indexes for fringes
+            draw_list->_IdxWritePtr[0] = static_cast<ImDrawIdx>(vtx_inner_idx + (i1 << 1));
+            draw_list->_IdxWritePtr[1] = static_cast<ImDrawIdx>(vtx_inner_idx + (i0 << 1));
+            draw_list->_IdxWritePtr[2] = static_cast<ImDrawIdx>(vtx_outer_idx + (i0 << 1));
+            draw_list->_IdxWritePtr[3] = static_cast<ImDrawIdx>(vtx_outer_idx + (i0 << 1));
+            draw_list->_IdxWritePtr[4] = static_cast<ImDrawIdx>(vtx_outer_idx + (i1 << 1));
+            draw_list->_IdxWritePtr[5] = static_cast<ImDrawIdx>(vtx_inner_idx + (i1 << 1));
+            draw_list->_IdxWritePtr += 6;
+        }
+        
+        draw_list->_VtxCurrentIdx += static_cast<ImDrawIdx>(vtx_count);
+    } else {
+        // Non Anti-aliased Fill
+        const int idx_count = (points_count - 2) * 3;
+        const int vtx_count = points_count;
+        draw_list->PrimReserve(idx_count, vtx_count);
+        
+        for (int i = 0; i < vtx_count; i++) {
+            draw_list->_VtxWritePtr[0].pos = points[i];
+            draw_list->_VtxWritePtr[0].uv = uv;
+            draw_list->_VtxWritePtr[0].col = col;
+            draw_list->_VtxWritePtr++;
+        }
+        
+        for (int i = 2; i < points_count; i++) {
+            draw_list->_IdxWritePtr[0] = static_cast<ImDrawIdx>(draw_list->_VtxCurrentIdx);
+            draw_list->_IdxWritePtr[1] = static_cast<ImDrawIdx>(draw_list->_VtxCurrentIdx + i - 1);
+            draw_list->_IdxWritePtr[2] = static_cast<ImDrawIdx>(draw_list->_VtxCurrentIdx + i);
+            draw_list->_IdxWritePtr += 3;
+        }
+        
+        draw_list->_VtxCurrentIdx += static_cast<ImDrawIdx>(vtx_count);
+    }
+}
+
+
+void
+graphics::draw_physical_object(b2Body* object, const ImColor& clr)
+{
+	const auto poly = dynamic_cast<b2PolygonShape*>(object->GetFixtureList()->GetShape());
+	ark_assert(poly != nullptr, "Can't cast shape to polygon shape", return);
+    
+	const int32 vertexCount = poly->m_count;
+	ark_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
+	b2Vec2 vertices[b2_maxPolygonVertices];
+
+	for (int32 i = 0; i < vertexCount; ++i)
+	{
+		vertices[i] = b2Mul(object->GetTransform(), poly->m_vertices[i]);
+		vertices[i].y = static_cast<float>(ui::get_cmd_int("window_height")) - vertices[i].y;
+	}
+
+	draw_convex_poly_filled(ImGui::GetWindowDrawList(), reinterpret_cast<ImVec2*>(vertices), vertexCount, clr);
+}
+
+void
+graphics::tick(float dt)
+{
+	ImGui::SetNextWindowPos({ 0, 0 });
+	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
+
+	if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration))
+	{
+		draw(dt);
+		ImGui::End();
+	}
 	
-	ImGui_ImplSDLRenderer_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
+	ui::tick(dt);
+}
 
-	const auto& io = ImGui::GetIO();
-	ui::tick(io.DeltaTime);
-
-	physical.tick(io.DeltaTime);
-
-	// Rendering
-	ImGui::Render();
-
-	SDL_SetRenderDrawColor(
-		renderer,
-		static_cast<Uint8>(clear_color[0] * 255),
-		static_cast<Uint8>(clear_color[1] * 255),
-		static_cast<Uint8>(clear_color[2] * 255),
-		static_cast<Uint8>(clear_color[3] * 255)
-	);
-
-	SDL_RenderClear(renderer);
-	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-	SDL_RenderPresent(renderer);
+void
+graphics::draw(float dt)
+{
+	systems::draw_tick(dt);
 }
 
 void graphics::theme::change()
 {
 	switch (window_style)
 	{
-	case stryle::dark: dark(); break;
-	case stryle::red: red(); break;
-
-	default: ImGui::StyleColorsLight();  break;
+	case style::dark:
+		dark();
+		break;
+	case style::red:
+		red();
+		break;
+	case style::invalid:
+	default:
+		break;
 	}
 }
 

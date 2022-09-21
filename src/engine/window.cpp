@@ -80,7 +80,7 @@ window::tick()
 		}
 	}
 
-	graphics::tick();
+	engine::tick();
 }
 
 void

@@ -6,7 +6,7 @@ extern bool fullscreen_mode;
 extern bool show_console;
 extern int window_width;
 extern int window_height;
-extern ark::graphics::theme::stryle window_style;
+extern ark::graphics::theme::style window_style;
 
 UIConsole::UIConsole()
 {
@@ -279,13 +279,13 @@ void UIConsole::ExecCommand(const char* command_line)
         cmd = cmd.substr(12);
 
         if (cmd == "red") {
-            window_style = graphics::theme::stryle::red;
+            window_style = graphics::theme::style::red;
         } 
         else if (cmd == "dark") {
-            window_style = graphics::theme::stryle::dark;
+            window_style = graphics::theme::style::dark;
         }
         else {
-            window_style = graphics::theme::stryle::invalid;
+            window_style = graphics::theme::style::invalid;
         }
 
         graphics::theme::change();
