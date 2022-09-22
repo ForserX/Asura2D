@@ -21,13 +21,16 @@ game::destroy()
 void
 game::tick(float dt)
 {
+	marl::mutex& mutex = physics::get_physics_mutex();
+
+	//mutex.lock();
 	systems::pre_tick(dt);
 
 	physics::tick(dt);
-	systems::physics_tick(dt);
-	
+		
 	systems::tick(dt);
 	systems::post_tick(dt);
 
 	entities::tick(dt);
+	//mutex.unlock();
 }

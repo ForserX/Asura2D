@@ -53,10 +53,10 @@ void ingame::init()
 
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 400; i++) {
+	for (size_t i = 0; i < 1000; i++) {
 		std::uniform_real_distribution width_dist(20., 1000.);
 		std::uniform_real_distribution height_dist(20., 1000.);
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { float(width_dist(gen)), float(height_dist(gen)) }, { 25, 25 }, ark::physics::material::material_type::rubber));
+		cricles.push_back(ark::entities::create_phys_body_entity_circle(true, { float(width_dist(gen)), float(height_dist(gen)) }, { 25, 25 }, ark::physics::material::material_type::rubber));
 	}
 	
 	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1000, 0 }, { 10, 300 });

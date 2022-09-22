@@ -38,6 +38,7 @@ ui::tick(float dt)
 
         ImGui::SameLine();
 
+        physics::get_physics_mutex().lock();
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
             ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
             mousePositionAbsolute.y = static_cast<float>(get_cmd_int("window_height")) - mousePositionAbsolute.y;
@@ -101,6 +102,8 @@ ui::tick(float dt)
             physics::get_world().DestroyJoint(TestMouseJoint);
             TestMouseJoint = nullptr;
         }
+        
+        physics::get_physics_mutex().unlock();
 
         if (!ImGui::IsWindowFocused()) {
             ImGui::SetWindowFocus();

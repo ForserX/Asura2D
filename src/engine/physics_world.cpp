@@ -1,8 +1,9 @@
 #include "pch.h"
 
-using ark::physics::world;
+using namespace ark;
 
 constexpr int32 k_maxContactPoints = 2048;
+constexpr float phys_tps = 60.f;
 
 class ark::CollisionLister final : public b2ContactListener
 {
@@ -55,33 +56,103 @@ class ark::CollisionLister final : public b2ContactListener
 	}
 };
 
-world::world()
+physics::world::world()
 {
 }
 
-world::~world()
+physics::world::~world()
 {
 }
 
 void
-world::init()
+physics::world::start()
+{
+	enable_thread = true;
+}
+
+void
+physics::world::init()
 {
 	b2Vec2 gravity(0.0f, -9.8f);
 	world_holder = std::make_unique<b2World>(gravity);
 	cl = std::make_unique<CollisionLister>();
 	world_holder->SetContactListener(cl.get());
+
+	if (use_parallel) {
+		physics_thread = std::make_unique<std::thread>([this]() {
+			while (!enable_thread) {
+				std::this_thread::sleep_for(std::chrono::seconds(0));
+			}
+
+			enable_thread = false;
+			std::chrono::nanoseconds begin_physics_time = {};
+			std::chrono::nanoseconds end_physics_time = {};
+			while (!destroy_thread) {
+				if (use_parallel) {
+					physics_mutex.lock();
+					internal_tick(1.f / phys_tps);
+					physics_mutex.unlock();
+					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / phys_tps) * 1000000000.f));
+					while (end_physics_time > begin_physics_time) {
+						begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
+						std::this_thread::sleep_for(std::chrono::seconds(0));
+					}
+				}
+			}
+
+			thread_destroyed_event.signal();
+		});
+	}
 }
 
 void
-world::destroy()
+physics::world::destroy()
 {
 	destroy_world();
 }
 
-ark::fmatrix
-world::get_body_position(b2Body* body)
+void
+physics::world::destroy_all_bodies()
 {
-	fmatrix pos = {};
+	// At this stage, we're calling destructor in our proxy bodies
+	for (const auto body : bodies) {
+		delete body;
+	}
+	
+	bodies.clear();
+}
+
+void
+physics::world::pre_tick()
+{
+	for (const auto body : bodies) {
+		if (!body->is_created()) {
+			body->create();
+		}
+	}
+	
+	for (const auto body : scheduled_to_delete_bodies) {
+		get_world().DestroyBody(body->get_body());
+		if (bodies.contains(body)) {
+			bodies.erase(body);
+		}
+	}
+
+	scheduled_to_delete_bodies.clear();
+}
+
+void
+physics::world::internal_tick(float dt)
+{
+	pre_tick();
+	world_holder->Step(dt, 6, 2);
+	systems::physics_tick(dt);
+}
+
+ark_matrix
+physics::world::get_real_body_position(b2Body* body)
+{
+	ark_matrix pos = {};
 	b2AABB aabb = {};
 	b2Transform t = {};
 	
@@ -107,111 +178,161 @@ world::get_body_position(b2Body* body)
 	return pos;
 }
 
-constexpr float phys_tps = 30.f;
-float phys_accum = 0.f;
-
-
 void
-world::tick(float dt) const
+physics::world::tick(float dt)
 {
-	static int32 velocityIterations = 6;
-	static int32 positionIterations = 2;
-	
-	phys_accum += dt;
-		world_holder->Step(1.f / phys_tps, velocityIterations, positionIterations);
-		phys_accum = 0.f;
+	if (!use_parallel) {
+		static float phys_accum = 0.f;
+		phys_accum += dt;
+		if (phys_accum >= 1.f / phys_tps) {
+			internal_tick(1.f / phys_tps);
+			phys_accum = 0.f;
+		}
+	}
 
 	world_holder->ClearForces();
 }
 
 b2World& 
-world::get_world() const
+physics::world::get_world() const
 {
-	return *world_holder.get();
+	return *world_holder;
 }
 
 void
-world::destroy_world()
+physics::world::destroy_world()
 {
+	destroy_thread = true;
+	thread_destroyed_event.wait();
+	thread_destroyed_event.clear();
+	destroy_thread = false;
+
+	physics_thread.reset();
+
+	destroy_all_bodies();
 	world_holder.reset();
 }
 
-b2Body*
-world::create_around(b2Vec2 pos, b2Vec2 size, material::material_type mat) const
+ark_matrix
+physics::world::get_body_position(const physics_body* body)
+{
+	if (body != nullptr) {
+		return get_real_body_position(body->get_body());
+	}
+
+	// return proxy position, until our project hasn't created
+	return {};
+}
+
+physics::physics_body*
+physics::world::schedule_creation(body_parameters parameters)
+{
+	const auto& [key, value] = bodies.insert(new physics_body(parameters));
+	return *key;
+}
+
+void
+physics::world::schedule_free(physics_body* body)
+{
+	scheduled_to_delete_bodies.emplace(body);
+}
+
+void
+physics::physics_body::create_around()
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(pos.x, pos.y);
-	b2Body* body = world_holder->CreateBody(&bodyDef);
-	
-	b2MassData mass_data;
-	mass_data.center = { size.x / 2, size.y / 2 };
-	mass_data.mass = 30;
-
-	body->SetMassData(&mass_data);
+	bodyDef.position.Set(parameters.pos.x, parameters.pos.y);
+	body = get_world().CreateBody(&bodyDef);
 
 	b2CircleShape circle;
-	circle.m_p.Set(size.x, size.y);
-	circle.m_radius = size.x / 2;
+	circle.m_p.Set(parameters.size.x, parameters.size.y);
+	circle.m_radius = parameters.size.x / 2;
 
 	b2FixtureDef fixtureDef;
-	const material::material_data& mdata = material::get(mat);
-
+	const auto& [friction, restitution, density, ignore_collision] = get(parameters.mat);
 	fixtureDef.shape = &circle;
-	fixtureDef.density = mdata.density;
-	fixtureDef.friction = mdata.friction;
-	fixtureDef.restitution = mdata.restitution;
-	fixtureDef.isSensor = mdata.ignore_collision;
-
+	fixtureDef.density = density;
+	fixtureDef.friction = friction;
+	fixtureDef.restitution = restitution;
+	fixtureDef.isSensor = ignore_collision;
 	body->CreateFixture(&fixtureDef);
-
-	return body;
 }
 
-b2Body*
-world::create_static(b2Vec2 base, b2Vec2 size, material::material_type mat) const
+void
+physics::physics_body::create_static()
 {
 	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(base.x, base.y);
+	groundBodyDef.position.Set(parameters.pos.x, parameters.pos.y);
 
-	b2Body* ground = world_holder->CreateBody(&groundBodyDef);
+	body = get_world().CreateBody(&groundBodyDef);
 
-	const material::material_data& mdata = material::get(mat);
-
+	const auto& [friction, restitution, density, ignore_collision] = get(parameters.mat);
 	b2PolygonShape groundBox;
-	groundBox.SetAsBox(size.x, size.y);
-	ground->CreateFixture(&groundBox, mdata.density);
-
-	return ground;
+	groundBox.SetAsBox(parameters.size.x, parameters.size.y);
+	body->CreateFixture(&groundBox, density);
 }
 
-b2Body*
-world::create_dynamic(b2Vec2 pos, b2Vec2 size, material::material_type mat) const
+void
+physics::physics_body::create_dynamic()
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(pos.x, pos.y);
-	b2Body* body = world_holder->CreateBody(&bodyDef);
-
-	b2MassData mass_data;
-	mass_data.center = { size.x / 2, size.y / 2 };
-	mass_data.mass = 30;
-
-	body->SetMassData(&mass_data);
+	bodyDef.position.Set(parameters.pos.x, parameters.pos.y);
+	body = get_world().CreateBody(&bodyDef);
 
 	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(size.x, size.y);
+	dynamicBox.SetAsBox(parameters.size.x, parameters.size.y);
 
 	b2FixtureDef fixtureDef;
-	const material::material_data& mdata = material::get(mat);
-
+	b2MassData mass_data = {};
+	mass_data.center = { parameters.size.x / 2, parameters.size.y / 2 };
+	mass_data.mass = 5;
+	
+	const auto& [friction, restitution, density, ignore_collision] = get(parameters.mat);
 	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = mdata.density;
-	fixtureDef.friction = mdata.friction;
-	fixtureDef.restitution = mdata.restitution;
-	fixtureDef.isSensor = mdata.ignore_collision;
-
+	fixtureDef.density = density;
+	fixtureDef.friction = friction;
+	fixtureDef.restitution = restitution;
+	fixtureDef.isSensor = ignore_collision;
 	body->CreateFixture(&fixtureDef);
+	//body->SetMassData(&mass_data);
+}
 
-	return body;
+physics::physics_body::physics_body(body_parameters in_parameters)
+	: parameters(in_parameters)
+{
+}
+
+physics::physics_body::~physics_body()
+{
+
+}
+
+const b2Vec2& 
+physics::physics_body::get_position()
+{
+	if (body != nullptr) {
+		proxy_position = body->GetPosition();
+	}
+
+	return proxy_position;
+}
+
+void
+physics::physics_body::create()
+{
+	switch (parameters.type) {
+	case body_type::around_body:
+		create_around();
+		break;
+	case body_type::dynamic_body:
+		create_dynamic();
+		break;
+	case body_type::static_body:
+		create_static();
+		break;
+	}
+
+	created = true;
 }

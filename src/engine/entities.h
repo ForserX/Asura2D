@@ -66,5 +66,5 @@ namespace ark::entities
 	
 	entity create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
 	entity create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
-	entity create_phys_body_entity_cricle(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
+	entity create_phys_body_entity_circle(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
 }

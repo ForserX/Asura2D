@@ -1,5 +1,13 @@
 ﻿#pragma once
 
+struct ark_matrix
+{
+	float x;
+	float y;
+	float h;
+	float w;
+};
+
 template<typename T>
 struct ark_vec2
 {

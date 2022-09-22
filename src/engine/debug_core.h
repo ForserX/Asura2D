@@ -7,7 +7,10 @@
 		exist_code;\
 	}
 #else
-#define assert(error_code, message, exist_code)
+#define ark_assert(error_code, message, exist_code) \
+	if(!(error_code)) {\
+		exist_code;\
+	}
 #endif
 
 namespace ark::debug

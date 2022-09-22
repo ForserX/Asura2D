@@ -123,27 +123,41 @@ systems::destroy()
 }
 
 void
+parallel_tick(float dt, const std::set<ark::system*>& systems)
+{
+	if (use_parallel) {
+		const marl::WaitGroup tasks_waiting(static_cast<int32_t>(systems.size()));
+		for	(const auto system : systems) {
+			marl::schedule([=] {
+				system->tick(entities::get_registry(), dt);
+				tasks_waiting.done();
+		   });
+		}
+
+		tasks_waiting.wait();
+	} else {
+		for	(const auto system : systems) {
+			system->tick(entities::get_registry(), dt);
+		}
+	}
+}
+
+void
 systems::pre_tick(float dt)
 {
-	for	(const auto system : pre_update_systems) {
-		system->tick(entities::get_registry(), dt);
-	}
+	parallel_tick(dt, pre_update_systems);
 }
 
 void
 systems::tick(float dt)
 {
-	for	(const auto system : update_systems) {
-		system->tick(entities::get_registry(), dt);
-	}
+	parallel_tick(dt, update_systems);
 }
 
 void
 systems::post_tick(float dt)
 {
-	for	(const auto system : post_update_systems) {
-		system->tick(entities::get_registry(), dt);
-	}
+	parallel_tick(dt, post_update_systems);
 }
 
 void
