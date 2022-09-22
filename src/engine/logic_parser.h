@@ -14,6 +14,11 @@ namespace ark
 
         void load(const std::filesystem::path&);
         void save(const std::filesystem::path&);
-        std::string get(std::string_view section, std::string_view value);
+
+        std::string get_value(std::string_view section, std::string_view value);
+        int set_value(std::string_view section, std::string_view key, std::string_view value);
+
+        int add_section(std::string_view section);
+        int add_key_in_section(std::string_view section, std::string_view key);
     };
 }

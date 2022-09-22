@@ -4,9 +4,9 @@ namespace ark::physics::material
 {
 	struct material_data
 	{
-		float friction = 0.4;
-		float restitution = 0.f;
-		float density = 0.5f;
+		float friction = 0.01f;
+		float restitution = 0.0f;
+		float density = 2.5f;
 
 		bool ignore_collision = false;
 	};
