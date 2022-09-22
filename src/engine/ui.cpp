@@ -15,6 +15,7 @@ bool show_fps_counter = true;
 void
 ui::init()
 {
+    console.init();
 }
 
 void
@@ -82,5 +83,6 @@ ui::push_console_string(std::string_view str)
 void
 ui::destroy()
 {
+   console.flush();
    console.clear_log();
 }

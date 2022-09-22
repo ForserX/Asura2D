@@ -431,4 +431,43 @@ int UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
     return 0;
 }
 
+
+
+void UIConsole::flush()
+{
+	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
+	cfg_path = cfg_path.append("user.cfg");
+    filesystem::create_file(cfg_path);
+    std::ofstream cfg(cfg_path);
+
+
+    for (auto& [cmd, hint] : cmd_hint)
+    {
+        if (hint.length() > 0)
+        {
+            cfg << cmd << " " << ui::get_cmd_int(cmd) << std::endl;
+        }
+    }
+}
+
+void UIConsole::init()
+{
+	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
+    cfg_path = cfg_path.append("user.cfg");
+    if (!std::filesystem::exists(cfg_path))
+    {
+        return;
+    }
+
+    std::ifstream cfg(cfg_path);
+
+    std::string line;
+
+    while (std::getline(cfg, line))
+    {
+        ExecCommand(line.c_str());
+    }
+
+}
+
 UIConsole console;

@@ -23,7 +23,8 @@ namespace ark::ui
 
         void push_log_item(std::string_view str);
         void draw(float dt, const char* title, bool* p_open);
-
+        void flush();
+        void init();
 
         void ExecCommand(const char* command_line);
         static int TextEditCallbackStub(ImGuiInputTextCallbackData* data);
