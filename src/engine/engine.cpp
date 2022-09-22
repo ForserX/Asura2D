@@ -16,7 +16,8 @@ engine::init(int argc, char** argv)
 {
 	OPTICK_THREAD("Main thread");
 	engine_scheduler.bind();
-	
+
+	threads::init();
 	filesystem::init();
 	debug::init();
 	render::init();
@@ -30,6 +31,7 @@ engine::destroy()
 	render::destroy();
 	debug::destroy();
 	filesystem::destroy();
+	threads::destroy();
 
 	marl::Scheduler::unbind();
 }

@@ -118,7 +118,7 @@ physics::world::init()
 						OPTICK_EVENT("physics wait")
 						while (end_physics_time > begin_physics_time) {
 							const float milliseconds_to_end = static_cast<float>((end_physics_time - begin_physics_time).count()) / 1000000.f;
-							int64_t sleep_time = milliseconds_to_end > 1.f ? 1 : 0;
+							int64_t sleep_time = milliseconds_to_end > 5.f ? 2 : 0;
 							begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
 							std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 						}
