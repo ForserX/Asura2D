@@ -179,8 +179,8 @@ void
 physics::world::joints_tick()
 {
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
-		ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
-		mousePositionAbsolute.y = static_cast<float>(ui::get_cmd_int("window_height")) - mousePositionAbsolute.y;
+		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
+		mousePositionAbsolute = camera::screen2world(mousePositionAbsolute);
 
 		if (ContactBody == nullptr) {
 			ContactBody = hit_test(mousePositionAbsolute);
@@ -195,8 +195,7 @@ physics::world::joints_tick()
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-				jointDef.Initialize(ContactBody, TestBody, *(b2Vec2*)&ContactPoint,
-					*(b2Vec2*)&mousePositionAbsolute);
+				jointDef.Initialize(ContactBody, TestBody, *(b2Vec2*)&ContactPoint, mousePositionAbsolute);
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
@@ -210,8 +209,8 @@ physics::world::joints_tick()
 	}
 
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-		ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
-		mousePositionAbsolute.y = static_cast<float>(ui::get_cmd_int("window_height")) - mousePositionAbsolute.y;
+		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
+		mousePositionAbsolute = camera::screen2world(mousePositionAbsolute);
 
 		if (TestMouseJoint == nullptr) {
 			b2Body* TestBody = hit_test(mousePositionAbsolute);
@@ -223,7 +222,7 @@ physics::world::joints_tick()
 				b2MouseJointDef jd;
 				jd.bodyA = ground;
 				jd.bodyB = TestBody;
-				jd.target = *reinterpret_cast<b2Vec2*>(&mousePositionAbsolute);
+				jd.target = mousePositionAbsolute;
 				jd.maxForce = 1000.0f * TestBody->GetMass();
 				b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
@@ -233,7 +232,7 @@ physics::world::joints_tick()
 		}
 		else
 		{
-			TestMouseJoint->SetTarget(*reinterpret_cast<b2Vec2*>(&mousePositionAbsolute));
+			TestMouseJoint->SetTarget(mousePositionAbsolute);
 		}
 	}
 	if (TestMouseJoint != nullptr && !ImGui::IsMouseDown(ImGuiMouseButton_Left)) {

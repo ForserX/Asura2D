@@ -48,6 +48,7 @@
 #include "engine/threads.h"
 #include "engine/filesystem.h"
 #include "engine/console.h"
+#include "engine/camera.h"
 
 #include "engine/physics_material.h"
 #include "engine/physics_world.h"

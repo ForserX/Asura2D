@@ -89,4 +89,31 @@ bool operator!=(const ark_vec2<T>& a, const ark_vec2<T>& b)
 	return a.x != b.x || a.y != b.y;
 }
 
+class ark_float_vec2 : public b2Vec2
+{
+public:
+	inline ark_float_vec2() : b2Vec2() {};
+
+	inline ark_float_vec2(ImVec2 vec)
+	{
+		x = vec.x;
+		y = vec.y;
+	}
+	inline ark_float_vec2(b2Vec2 vec)
+	{
+		x = vec.x;
+		y = vec.y;
+	}
+
+	operator b2Vec2()
+	{
+		return { x, y };
+	}
+
+	operator ImVec2()
+	{
+		return { x, y };
+	}
+};
+
 using ark_int_vec2 = ark_vec2<int16_t>;
