@@ -80,6 +80,10 @@ physics::world::init()
 
 	if (use_parallel) {
 		physics_thread = std::make_unique<std::jthread>([this]() {
+			OPTICK_THREAD("Physics thread")
+			OPTICK_FRAME_EVENT(Optick::FrameType::CPU)
+			OPTICK_CATEGORY("physics::tick", Optick::Category::Physics)
+			
 			while (!enable_thread) {
 				std::this_thread::sleep_for(std::chrono::seconds(0));
 			}
@@ -88,14 +92,25 @@ physics::world::init()
 			std::chrono::nanoseconds begin_physics_time = {};
 			std::chrono::nanoseconds end_physics_time = {};
 			while (!destroy_thread) {
+				OPTICK_FRAME("Physics")
+				OPTICK_EVENT("physics loop")
 				if (use_parallel) {
 					physics_mutex.lock();
-					internal_tick(1.f / phys_tps);
+					
+					{
+						OPTICK_EVENT("physics tick")
+						internal_tick(1.f / phys_tps);
+					}
+					
 					physics_mutex.unlock();
 					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / phys_tps) * 1000000000.f));
-					while (end_physics_time > begin_physics_time) {
-						begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
-						std::this_thread::sleep_for(std::chrono::seconds(0));
+
+					{
+						OPTICK_EVENT("physics wait")
+						while (end_physics_time > begin_physics_time) {
+							begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
+							std::this_thread::sleep_for(std::chrono::seconds(0));
+						}
 					}
 				}
 			}
@@ -144,9 +159,20 @@ physics::world::pre_tick()
 void
 physics::world::internal_tick(float dt)
 {
-	pre_tick();
-	world_holder->Step(dt, 6, 2);
-	systems::physics_tick(dt);
+	{
+		OPTICK_EVENT("physics pre tick")
+		pre_tick();
+	}
+
+	{
+		OPTICK_EVENT("physics step")
+		world_holder->Step(dt, 6, 2);
+	}
+
+	{
+		OPTICK_EVENT("physics systems tick")
+		systems::physics_tick(dt);
+	}
 }
 
 ark_matrix
@@ -190,7 +216,10 @@ physics::world::tick(float dt)
 		}
 	}
 
-	world_holder->ClearForces();
+	{
+		OPTICK_EVENT("physics substepping")
+		world_holder->ClearForces();
+	}
 }
 
 b2World& 
@@ -202,6 +231,7 @@ physics::world::get_world() const
 void
 physics::world::destroy_world()
 {
+	OPTICK_EVENT("physics destroy world")
 	destroy_thread = true;
 	thread_destroyed_event.wait();
 	thread_destroyed_event.clear();
@@ -240,6 +270,8 @@ physics::world::schedule_free(physics_body* body)
 void
 physics::physics_body::create_around()
 {
+	OPTICK_EVENT("physics create around body")
+	
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(parameters.pos.x, parameters.pos.y);
@@ -262,6 +294,8 @@ physics::physics_body::create_around()
 void
 physics::physics_body::create_static()
 {
+	OPTICK_EVENT("physics create static body")
+	
 	b2BodyDef groundBodyDef;
 	groundBodyDef.position.Set(parameters.pos.x, parameters.pos.y);
 
@@ -276,6 +310,8 @@ physics::physics_body::create_static()
 void
 physics::physics_body::create_dynamic()
 {
+	OPTICK_EVENT("physics create dynamic body")
+	
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.position.Set(parameters.pos.x, parameters.pos.y);

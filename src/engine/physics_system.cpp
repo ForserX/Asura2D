@@ -17,6 +17,7 @@ physics_system::reset()
 void
 physics_system::tick(registry& reg, float dt)
 {
+	OPTICK_EVENT("engine physics system tick")
 	entt::registry& registry = reg.get();
 	const auto &view = registry.view<entities::physics_body_component>();
 	for (auto& entity : view) {

@@ -182,6 +182,7 @@ graphics::tick(float dt)
 void
 graphics::draw(float dt)
 {
+	OPTICK_EVENT("scene draw")
 	systems::draw_tick(dt);
 }
 

@@ -22,7 +22,9 @@ ui::init()
 void
 ui::tick(float dt)
 {
+    OPTICK_EVENT("ui draw")
     if (show_console) {
+		OPTICK_EVENT("ui console draw")
         console.draw(dt, "Arkane console", &show_console);
     }
     

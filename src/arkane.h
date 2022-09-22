@@ -28,6 +28,8 @@
 #include <box2d/box2d.h>
 #include <box2d/b2_math.h>
 
+#include <optick.h>
+
 #ifdef WIN32
 #include <windows.h>
 #endif

@@ -16,6 +16,7 @@ draw_system::reset()
 void
 draw_system::tick(registry& reg, float dt)
 {
+	OPTICK_EVENT("engine draw system tick")
 	entt::registry& registry = reg.get();
 	const auto &view = registry.view<drawable_flag>();
 	for (auto& entity : view) {

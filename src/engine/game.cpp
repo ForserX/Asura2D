@@ -21,16 +21,35 @@ game::destroy()
 void
 game::tick(float dt)
 {
+	OPTICK_EVENT("game tick")
+	OPTICK_CATEGORY("systems tick", Optick::Category::GameLogic)
 	marl::mutex& mutex = physics::get_physics_mutex();
 
 	//mutex.lock();
-	systems::pre_tick(dt);
+	{
+		OPTICK_EVENT("systems pre tick")
+		systems::pre_tick(dt);
+	}
 
-	physics::tick(dt);
-		
-	systems::tick(dt);
-	systems::post_tick(dt);
+	{
+		OPTICK_EVENT("physics tick")
+		physics::tick(dt);
+	}
 
-	entities::tick(dt);
+	{
+		OPTICK_EVENT("systems tick")
+		systems::tick(dt);
+	}
+
+	{
+		OPTICK_EVENT("systems post tick")
+		systems::post_tick(dt);
+	}
+	
+	{
+		OPTICK_EVENT("entities tick")
+		entities::tick(dt);
+	}
+	
 	//mutex.unlock();
 }

@@ -13,3 +13,6 @@
 [submodule "libs/box2d"]
 	path = libs/box2d
 	url = https://github.com/erincatto/box2d
+[submodule "libs/optick"]
+	path = libs/optick
+	url = https://github.com/bombomby/optick

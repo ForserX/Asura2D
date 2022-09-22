@@ -92,26 +92,41 @@ render::destroy()
 void
 render::tick(float dt)
 {
+	OPTICK_EVENT("render tick")
+	OPTICK_CATEGORY("systems tick", Optick::Category::Rendering)
 	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
-	
-	ImGui_ImplSDLRenderer_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
 
-	graphics::tick(dt);
+	{
+		OPTICK_EVENT("render new frame prepare")
+		ImGui_ImplSDLRenderer_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+	}
 
-	// Rendering
-	ImGui::Render();
+	{
+		OPTICK_EVENT("graphics tick")
+		graphics::tick(dt);
+	}
 
-	SDL_SetRenderDrawColor(
-		renderer,
-		static_cast<Uint8>(clear_color[0] * 255),
-		static_cast<Uint8>(clear_color[1] * 255),
-		static_cast<Uint8>(clear_color[2] * 255),
-		static_cast<Uint8>(clear_color[3] * 255)
-	);
+	{
+		OPTICK_EVENT("ImGui render")
+		
+		// Rendering
+		ImGui::Render();
+	}
 
-	SDL_RenderClear(renderer);
-	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-	SDL_RenderPresent(renderer);
+	{
+		OPTICK_EVENT("graphics present")
+		SDL_SetRenderDrawColor(
+			renderer,
+			static_cast<Uint8>(clear_color[0] * 255),
+			static_cast<Uint8>(clear_color[1] * 255),
+			static_cast<Uint8>(clear_color[2] * 255),
+			static_cast<Uint8>(clear_color[3] * 255)
+		);
+
+		SDL_RenderClear(renderer);
+		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+		SDL_RenderPresent(renderer);
+	}
 }

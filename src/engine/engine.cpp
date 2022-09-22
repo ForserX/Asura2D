@@ -14,6 +14,7 @@ engine::start()
 void
 engine::init(int argc, char** argv)
 {
+	OPTICK_THREAD("Main thread");
 	engine_scheduler.bind();
 	
 	filesystem::init();
@@ -36,6 +37,8 @@ engine::destroy()
 void
 engine::tick()
 {
+	OPTICK_FRAME("Engine")
+	OPTICK_EVENT("engine tick")
 	static auto current_time = std::chrono::steady_clock::now().time_since_epoch();
 	const auto new_time = std::chrono::steady_clock::now().time_since_epoch();
 	auto dt = static_cast<float>(static_cast<double>(new_time.count() - current_time.count()) / 1000000000.);
