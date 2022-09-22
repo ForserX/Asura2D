@@ -45,7 +45,7 @@ draw_system::tick(registry& reg, float dt)
 			if (!registry.any_of<draw_color_component, draw_gradient_component, draw_texture_component>(entity)) {
 				const auto phys_body_id = reinterpret_cast<uint64_t>(physical_body);
 				if (!color_map.contains(phys_body_id)) {
-					std::uniform_int_distribution color_dist(0, 255);
+					std::uniform_int_distribution color_dist(55, 255);
 					const int red_color = color_dist(r_engine);
 					const int green_color = color_dist(r_engine);
 					const int blue_color = color_dist(r_engine);

@@ -162,7 +162,7 @@ graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
 
 	float radius = circle->m_radius;
 
-	ImGui::GetWindowDrawList()->AddCircle(*reinterpret_cast<ImVec2*>(&center), radius , clr);
+	ImGui::GetWindowDrawList()->AddCircleFilled(*reinterpret_cast<ImVec2*>(&center), radius , clr);
 }
 
 void

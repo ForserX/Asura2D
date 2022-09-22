@@ -73,6 +73,7 @@ namespace ark
 		private:
 			void destroy_all_bodies();
 			void pre_tick();
+			void joints_tick();
 			void internal_tick(float dt);
 			ark_matrix get_real_body_position(b2Body* body);
 
