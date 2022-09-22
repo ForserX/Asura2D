@@ -234,12 +234,10 @@ physics::world::joints_tick()
 		{
 			TestMouseJoint->SetTarget(*reinterpret_cast<b2Vec2*>(&mousePositionAbsolute));
 		}
-
-
-		if (TestMouseJoint != nullptr && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-			physics::get_world().DestroyJoint(TestMouseJoint);
-			TestMouseJoint = nullptr;
-		}
+	}
+	if (TestMouseJoint != nullptr && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+		physics::get_world().DestroyJoint(TestMouseJoint);
+		TestMouseJoint = nullptr;
 	}
 }
 
