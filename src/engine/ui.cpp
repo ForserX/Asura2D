@@ -30,7 +30,7 @@ ui::tick(float dt)
 
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
         ImGui::SetNextWindowSize({300, 200});
-        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
+        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration))
         {
             ImGui::End();
             return;

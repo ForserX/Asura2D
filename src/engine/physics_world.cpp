@@ -236,7 +236,7 @@ physics::world::joints_tick()
 			TestMouseJoint->SetTarget(*reinterpret_cast<b2Vec2*>(&mousePositionAbsolute));
 		}
 	}
-	if (TestMouseJoint != nullptr && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
+	if (TestMouseJoint != nullptr && !ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
 		physics::get_world().DestroyJoint(TestMouseJoint);
 		TestMouseJoint = nullptr;
 	}
@@ -257,8 +257,7 @@ physics::world::internal_tick(float dt)
 
 	{
 		OPTICK_EVENT("physics step")
-		for (int32 i = 0; i < 30; ++i)
-			world_holder->Step(1.f / 30, 6, 2);
+		world_holder->Step(dt, 6, 2);
 	}
 
 	{
