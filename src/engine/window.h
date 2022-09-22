@@ -9,4 +9,5 @@ namespace ark::window
 	void loop();
 	void change_fullscreen();
 	void change_resolution();
+	void change_window_mode();
 }

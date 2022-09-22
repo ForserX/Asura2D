@@ -18,6 +18,7 @@ namespace ark::camera
 	void reset_view();
 	void reset_wh();
 
+	ark_float_vec2 camera_postion();
 	ark_float_vec2 screen2world(const b2Vec2& screenPoint);
 	ark_float_vec2 world2screen(const b2Vec2& worldPoint);
 	float scale_factor(float in);

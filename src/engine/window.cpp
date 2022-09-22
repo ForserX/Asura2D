@@ -6,8 +6,10 @@ SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
 bool fullscreen_mode = false;
 extern bool show_console;
+
 int window_width = 1024;
 int window_height = 614;
+bool window_maximized = false;
 
 using namespace ark;
 
@@ -58,12 +60,18 @@ window::tick()
 					wants_to_exit = true;
 					break;
 				case SDL_WINDOWEVENT_RESIZED:
-					break;
-				case SDL_WINDOWEVENT_SIZE_CHANGED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
 
 					camera::reset_wh();
+					break;
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					break;
+				case SDL_WINDOWEVENT_MINIMIZED:
+					window_maximized = false;
+					break;
+				case SDL_WINDOWEVENT_MAXIMIZED:
+					window_maximized = true;
 					break;
 				default:
 					break;
@@ -106,10 +114,17 @@ window::change_fullscreen()
 }
 
 void
+window::change_window_mode()
+{
+	window_maximized ? SDL_MaximizeWindow(window_handle) : SDL_RestoreWindow(window_handle);
+}
+
+void
 window::change_resolution()
 {
 	SDL_SetWindowSize(window_handle, window_width, window_height);
 	camera::reset_wh();
+	camera::reset_view();
 }
 
 void

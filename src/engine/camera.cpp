@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "camera.h"
 
-b2Vec2 cam_center;
+ark_float_vec2 cam_center;
 float cam_zoom;
 int64_t cam_width;
 int64_t cam_height;
@@ -34,14 +34,21 @@ void ark::camera::move(cam_move move, float point)
 
 void ark::camera::reset_view()
 {
-	cam_center.Set(cam_width / 2, cam_height / 2);
 	cam_zoom = 16.f;
+
+	float delta_size = (float)cam_width / (float)cam_height;
+	cam_center.Set(496, 320);
 }
 
 void ark::camera::reset_wh()
 {
 	cam_width = ui::get_cmd_int("window_width");
 	cam_height = ui::get_cmd_int("window_height");
+}
+
+ark_float_vec2 ark::camera::camera_postion()
+{
+	return cam_center;
 }
 
 ark_float_vec2 ark::camera::screen2world(const b2Vec2& screenPoint)

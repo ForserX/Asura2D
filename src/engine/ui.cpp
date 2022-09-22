@@ -4,13 +4,13 @@ using namespace ark;
 extern bool fullscreen_mode;
 extern int window_width;
 extern int window_height;
+extern bool window_maximized;
 extern float target_physics_tps;
 extern float target_physics_hertz;
 
 extern ui::UIConsole console;
 bool show_console = false;
 bool show_fps_counter = true;
-
 
 void
 ui::init()
@@ -27,7 +27,7 @@ ui::tick(float dt)
         console.draw(dt, "Arkane console", &show_console);
     }
     
-    if (show_fps_counter) {
+    if (!show_console && show_fps_counter) {
 
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
         ImGui::SetNextWindowSize({300, 200});
@@ -43,6 +43,7 @@ ui::tick(float dt)
             ImGui::SetWindowFocus();
         }
 
+        ark_float_vec2 cursor_pos = ImGui::GetMousePos();
         const auto& registry = entities::get_registry().get();
         ImGui::Text("Render FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
         ImGui::Text("Physics TPS/DeltaTime: %.4f/%.4f", 1.f / physics_delta, physics_delta);
@@ -51,6 +52,9 @@ ui::tick(float dt)
         ImGui::Text("Entities");
         ImGui::Text("   Allocated: %d", registry.capacity());
         ImGui::Text("   Alive: %d", registry.alive());
+        ImGui::Text("UI Info:");
+        ImGui::Text("   Camera position: %.1f, %.1f", camera::camera_postion().x, camera::camera_postion().y);
+        ImGui::Text("   Cursor position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
         ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::End();
@@ -83,6 +87,10 @@ ui::get_cmd_int(std::string_view str)
 
     if (str == "physics_hertz") {
         return target_physics_hertz;
+    }
+
+    if (str == "window_maximized") {
+        return window_maximized;
     }
     
     return -1;

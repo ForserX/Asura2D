@@ -5,6 +5,7 @@ using namespace ark::ui;
 extern bool fullscreen_mode;
 extern bool show_fps_counter;
 extern bool show_console;
+extern bool window_maximized;
 extern int window_width;
 extern int window_height;
 extern ark::graphics::theme::style window_style;
@@ -36,6 +37,9 @@ UIConsole::UIConsole()
     
     Commands.push_back("physics_hertz");
     cmd_hint["physics_hertz"] = "0 - 120";
+
+    Commands.push_back("window_maximized");
+    cmd_hint["window_maximized"] = "1, 0";
 
     Commands.push_back("draw_fps");
     cmd_hint["draw_fps"] = "1, 0";
@@ -318,6 +322,15 @@ void UIConsole::ExecCommand(const char* command_line)
             show_fps_counter = !!std::stoi(cmd);
         }
         else {
+            debug::msg("Invalid parameter: '{}'\n", command_line);
+        }
+    }
+    else if (strstr(command_line, "window_maximized")) {
+        cmd = cmd.substr(16);
+        if (!cmd.empty()) {
+            window_maximized = !!std::stoi(cmd);
+            window::change_window_mode();
+        } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }
     }
