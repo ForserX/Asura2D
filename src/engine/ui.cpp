@@ -30,7 +30,7 @@ ui::tick(float dt)
     if (!show_console && show_fps_counter) {
 
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
-        ImGui::SetNextWindowSize({300, 200});
+        ImGui::SetNextWindowSize({300, 300});
         if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration))
         {
             ImGui::End();
