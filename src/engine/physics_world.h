@@ -65,6 +65,8 @@ namespace ark
 			std::unique_ptr<std::jthread> physics_thread;
 			
 			std::unique_ptr<b2World> world_holder;
+			b2Body* ground = nullptr;
+
 			std::unique_ptr<CollisionLister> cl;
 
 			std::set<physics_body*> scheduled_to_delete_bodies;

@@ -59,6 +59,6 @@ void ingame::init()
 		cricles.push_back(ark::entities::create_phys_body_entity_circle(true, { float(width_dist(gen)), float(height_dist(gen)) }, { 25, 25 }, ark::physics::material::material_type::rubber));
 	}
 	
-	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1000, 0 }, { 10, 300 });
-	TestGround2 = ark::entities::create_phys_ground_entity(true, { 0, 0 }, { 10, 300 });
+	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1000, 0 }, { 10, 500 });
+	TestGround2 = ark::entities::create_phys_ground_entity(true, { 0, 0 }, { 10, 500 });
 }
