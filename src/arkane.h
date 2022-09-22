@@ -32,6 +32,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#else
+#include <pthread.h>
 #endif
 
 #ifdef ARK_VULKAN
@@ -43,6 +45,7 @@
 #include "engine/core.h"
 #include "engine/logic_parser.h"
 
+#include "engine/threads.h"
 #include "engine/filesystem.h"
 #include "engine/console.h"
 

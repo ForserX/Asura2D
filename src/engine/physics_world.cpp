@@ -89,6 +89,9 @@ physics::world::init()
 			OPTICK_THREAD("Physics thread")
 			OPTICK_FRAME_EVENT(Optick::FrameType::CPU)
 			OPTICK_CATEGORY("physics::tick", Optick::Category::Physics)
+
+			// Setup affinity to second thread
+			threads::set_thread_affinity(physics_thread->native_handle(), 1);
 			
 			while (!enable_thread) {
 				std::this_thread::sleep_for(std::chrono::seconds(0));
@@ -114,8 +117,10 @@ physics::world::init()
 					{
 						OPTICK_EVENT("physics wait")
 						while (end_physics_time > begin_physics_time) {
+							const float milliseconds_to_end = static_cast<float>((end_physics_time - begin_physics_time).count()) / 1000000.f;
+							int64_t sleep_time = milliseconds_to_end > 1.f ? 1 : 0;
 							begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
-							std::this_thread::sleep_for(std::chrono::seconds(0));
+							std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 						}
 					}
 
