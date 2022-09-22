@@ -4,6 +4,8 @@ using namespace ark;
 extern bool fullscreen_mode;
 extern int window_width;
 extern int window_height;
+extern float target_physics_tps;
+extern float target_physics_hertz;
 
 extern ui::UIConsole console;
 bool show_console = false;
@@ -48,6 +50,8 @@ ui::tick(float dt)
         ImGui::Text("Entities");
         ImGui::Text("   Allocated: %d", registry.capacity());
         ImGui::Text("   Alive: %d", registry.alive());
+        ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
+        ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::End();
 
     }

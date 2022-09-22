@@ -3,7 +3,8 @@
 using namespace ark;
 
 constexpr int32 k_maxContactPoints = 2048;
-constexpr float target_physics_tps = 60.f;
+float target_physics_tps = 60.f;
+float target_physics_hertz = 60.f;
 float physics_delta = 0.f;
 
 b2MouseJoint* TestMouseJoint = nullptr;
@@ -108,7 +109,7 @@ physics::world::init()
 					physics_event.clear();
 					{
 						OPTICK_EVENT("physics tick")
-						internal_tick(1.f / target_physics_tps);
+						internal_tick(1.f / target_physics_hertz);
 					}
 					physics_event.signal();
 
@@ -299,6 +300,7 @@ physics::world::tick(float dt)
 		static float phys_accum = 0.f;
 		phys_accum += dt;
 		if (phys_accum >= 1.f / target_physics_tps) {
+			physics_delta = phys_accum;
 			internal_tick(1.f / target_physics_tps);
 			phys_accum = 0.f;
 		}

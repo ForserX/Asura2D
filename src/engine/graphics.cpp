@@ -148,7 +148,7 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 		vertices[i].y = static_cast<float>(ui::get_cmd_int("window_height")) - vertices[i].y;
 	}
 
-	draw_convex_poly_filled(ImGui::GetWindowDrawList(), reinterpret_cast<ImVec2*>(vertices), vertexCount, clr);
+	draw_convex_poly_filled(ImGui::GetForegroundDrawList(), reinterpret_cast<ImVec2*>(vertices), vertexCount, clr);
 }
 
 void
@@ -162,7 +162,7 @@ graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
 
 	float radius = circle->m_radius;
 
-	ImGui::GetWindowDrawList()->AddCircleFilled(*reinterpret_cast<ImVec2*>(&center), radius , clr);
+	ImGui::GetForegroundDrawList()->AddCircleFilled(*reinterpret_cast<ImVec2*>(&center), radius , clr);
 }
 
 void
@@ -171,10 +171,10 @@ graphics::tick(float dt)
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
 
-	if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
-		draw(dt);
-		ImGui::End();
-	}
+	draw(dt);
+	//if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
+	//	ImGui::End();
+	//}
 	
 	ui::tick(dt);
 }
