@@ -48,16 +48,6 @@ std::vector<ark::entity> cricles;
 
 void ingame::init()
 {
-	ark::logic_parser parser;
-	parser.load(R"(K:\Drive\Sources\repos\GitHub\Arkane\arkane\bin\src\Debug\test.ini)");
-	//parser.set_value("test_sec_3", "test3_param1", "kekv");
-	parser.add_section("test_sec_4");
-	parser.add_key_in_section("test_sec_4", "test2");
-	parser.save(R"(K:\Drive\Sources\repos\GitHub\Arkane\arkane\bin\src\Debug\test2.ini)");
-
-
-
-
 
 	TestGround = ark::entities::create_phys_ground_entity(true, { 10, 0 }, { 1500, 10 });
 	TestObject = ark::entities::create_phys_body_entity(true, { 50, 50 }, { 20, 10 });
