@@ -159,7 +159,7 @@ graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
 
 	b2Vec2 center = camera::world2screen(b2Mul(xf, circle->m_p));
 
-	float radius = circle->m_radius;
+	float radius = camera::scale_factor(circle->m_radius);
 
 	ImGui::GetForegroundDrawList()->AddCircleFilled(*reinterpret_cast<ImVec2*>(&center), radius , clr);
 }

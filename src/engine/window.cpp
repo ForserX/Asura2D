@@ -78,16 +78,16 @@ window::tick()
 				show_console = !show_console;
 			}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
-				camera::move(camera::cam_move::right, 0.5f);
+				camera::move(camera::cam_move::right, 1.5f);
 			}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-				camera::move(camera::cam_move::left, 0.5f);
+				camera::move(camera::cam_move::left, 1.5f);
 			}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
-				camera::move(camera::cam_move::up, 0.5f);
+				camera::move(camera::cam_move::up, 1.5f);
 			}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN) {
-				camera::move(camera::cam_move::down, 0.5f);
+				camera::move(camera::cam_move::down, 1.5f);
 			}
 			break;
 		}

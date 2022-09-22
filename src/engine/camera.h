@@ -20,6 +20,8 @@ namespace ark::camera
 
 	ark_float_vec2 screen2world(const b2Vec2& screenPoint);
 	ark_float_vec2 world2screen(const b2Vec2& worldPoint);
+	float scale_factor(float in);
+
 	void build_projection_matrix(float* m, float zBias);
 
 }

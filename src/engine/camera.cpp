@@ -84,6 +84,15 @@ ark_float_vec2 ark::camera::world2screen(const b2Vec2& worldPoint)
 	return ps;
 }
 
+float ark::camera::scale_factor(float in)
+{
+	float ws = float(cam_width) / 700.f;
+	ws *= cam_zoom;
+	ws /= 18 * (float(cam_width) / float(cam_height));
+
+	return in * ws;
+}
+
 void ark::camera::build_projection_matrix(float* m, float zBias)
 {
 	float w = float(cam_width);
