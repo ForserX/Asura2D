@@ -24,7 +24,7 @@ namespace ark::entities
 	struct physics_body_component
 	{
 		bool is_drawing = false;
-		b2Body* body = nullptr;
+		physics::physics_body* body = nullptr;
 	};
 
 	struct screen_visual_component

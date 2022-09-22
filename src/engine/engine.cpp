@@ -2,11 +2,22 @@
 
 using namespace ark;
 
-std::chrono::nanoseconds current_time;
+bool use_parallel = true;
+marl::Scheduler engine_scheduler(marl::Scheduler::Config::allCores());
+
+void
+engine::start()
+{
+	physics::start();
+}
 
 void
 engine::init(int argc, char** argv)
 {
+	OPTICK_THREAD("Main thread");
+	engine_scheduler.bind();
+
+	threads::init();
 	filesystem::init();
 	debug::init();
 	render::init();
@@ -20,13 +31,19 @@ engine::destroy()
 	render::destroy();
 	debug::destroy();
 	filesystem::destroy();
+	threads::destroy();
+
+	marl::Scheduler::unbind();
 }
 
 void
 engine::tick()
 {
+	OPTICK_FRAME("Engine")
+	OPTICK_EVENT("engine tick")
+	static auto current_time = std::chrono::steady_clock::now().time_since_epoch();
 	const auto new_time = std::chrono::steady_clock::now().time_since_epoch();
-	float dt = static_cast<float>(static_cast<double>(new_time.count() - current_time.count()) / 100000000.);
+	auto dt = static_cast<float>(static_cast<double>(new_time.count() - current_time.count()) / 1000000000.);
 	current_time = new_time;
 	
 	if (dt > 1) {

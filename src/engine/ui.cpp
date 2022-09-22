@@ -4,13 +4,13 @@ using namespace ark;
 extern bool fullscreen_mode;
 extern int window_width;
 extern int window_height;
+extern float target_physics_tps;
+extern float target_physics_hertz;
 
 extern ui::UIConsole console;
 bool show_console = false;
 bool show_fps_counter = true;
 
-b2MouseJoint* TestMouseJoint = nullptr;
-// Test 
 
 void
 ui::init()
@@ -20,14 +20,17 @@ ui::init()
 void
 ui::tick(float dt)
 {
+    OPTICK_EVENT("ui draw")
     if (show_console) {
+		OPTICK_EVENT("ui console draw")
         console.draw(dt, "Arkane console", &show_console);
     }
+    
     if (show_fps_counter) {
 
-        ImGui::SetNextWindowPos({ float(window_width - 230), 5 });
-        ImGui::SetNextWindowSize({300, 50});
-        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
+        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
+        ImGui::SetNextWindowSize({300, 200});
+        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration))
         {
             ImGui::End();
             return;
@@ -35,42 +38,22 @@ ui::tick(float dt)
 
         ImGui::SameLine();
 
-        if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-            ImVec2 mousePositionAbsolute = ImGui::GetMousePos();
-            mousePositionAbsolute.y = (float)get_cmd_int("window_height") - mousePositionAbsolute.y;
-
-            if (TestMouseJoint == nullptr) {
-                b2Body* TestBody = physics::hit_test(mousePositionAbsolute);
-
-                if (TestBody != nullptr) {
-
-                    float frequencyHz = 5.0f;
-                    float dampingRatio = 0.7f;
-
-                    b2MouseJointDef jd;
-                    jd.bodyA = &physics::get_world().GetBodyList()[0];
-                    jd.bodyB = TestBody;
-                    jd.target = *(b2Vec2*)(&mousePositionAbsolute);
-                    jd.maxForce = 1000.0f * TestBody->GetMass();
-                    b2LinearStiffness(jd.stiffness, jd.damping, frequencyHz, dampingRatio, jd.bodyA, jd.bodyB);
-
-                    TestMouseJoint = (b2MouseJoint*)physics::get_world().CreateJoint(&jd);
-                    TestBody->SetAwake(true);
-                }
-            }
-            else
-            {
-                TestMouseJoint->SetTarget(*(b2Vec2*)&mousePositionAbsolute);
-            }
+        if (!ImGui::IsWindowFocused()) {
+            ImGui::SetWindowFocus();
         }
 
-        if (TestMouseJoint != nullptr && ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
-            physics::get_world().DestroyJoint(TestMouseJoint);
-            TestMouseJoint = nullptr;
-        }
-        
-        ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
+        const auto& registry = entities::get_registry().get();
+        ImGui::Text("Render FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
+        ImGui::Text("Physics TPS/DeltaTime: %.4f/%.4f", 1.f / physics_delta, physics_delta);
+        ImGui::Text("Physics:");
+        ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
+        ImGui::Text("Entities");
+        ImGui::Text("   Allocated: %d", registry.capacity());
+        ImGui::Text("   Alive: %d", registry.alive());
+        ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
+        ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::End();
+
     }
 }
 

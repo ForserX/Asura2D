@@ -9,6 +9,7 @@ int main(int argc, char** argv)
 	ark::engine::init(argc, argv);
 	ingame::init();
 
+	ark::engine::start();
 	ark::window::loop();
 
 	ark::engine::destroy();

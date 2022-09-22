@@ -62,6 +62,8 @@ window::tick()
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
+
+					camera::reset_wh();
 					break;
 				default:
 					break;
@@ -74,6 +76,18 @@ window::tick()
 		{
 			if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE) {
 				show_console = !show_console;
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
+				camera::move(camera::cam_move::right, 1.5f);
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
+				camera::move(camera::cam_move::left, 1.5f);
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
+				camera::move(camera::cam_move::up, 1.5f);
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN) {
+				camera::move(camera::cam_move::down, 1.5f);
 			}
 			break;
 		}

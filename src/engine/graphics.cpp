@@ -11,6 +11,7 @@ graphics::init()
 	theme::change();
 	
 	ui::init();
+	camera::init();
 }
 
 void
@@ -144,11 +145,10 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 	b2Vec2 vertices[b2_maxPolygonVertices];
 
 	for (int32 i = 0; i < vertexCount; ++i) {
-		vertices[i] = b2Mul(object->GetTransform(), poly->m_vertices[i]);
-		vertices[i].y = static_cast<float>(ui::get_cmd_int("window_height")) - vertices[i].y;
+		vertices[i] = camera::world2screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
 	}
 
-	draw_convex_poly_filled(ImGui::GetWindowDrawList(), reinterpret_cast<ImVec2*>(vertices), vertexCount, clr);
+	draw_convex_poly_filled(ImGui::GetForegroundDrawList(), reinterpret_cast<ImVec2*>(vertices), vertexCount, clr);
 }
 
 void
@@ -157,12 +157,11 @@ graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
 
-	b2Vec2 center = b2Mul(xf, circle->m_p);
-	center.y = static_cast<float>(ui::get_cmd_int("window_height")) - center.y;
+	b2Vec2 center = camera::world2screen(b2Mul(xf, circle->m_p));
 
-	float radius = circle->m_radius;
+	float radius = camera::scale_factor(circle->m_radius);
 
-	ImGui::GetWindowDrawList()->AddCircle(*reinterpret_cast<ImVec2*>(&center), radius , clr);
+	ImGui::GetForegroundDrawList()->AddCircleFilled(*reinterpret_cast<ImVec2*>(&center), radius , clr);
 }
 
 void
@@ -171,10 +170,10 @@ graphics::tick(float dt)
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
 
-	if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
-		draw(dt);
-		ImGui::End();
-	}
+	draw(dt);
+	//if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
+	//	ImGui::End();
+	//}
 	
 	ui::tick(dt);
 }
@@ -182,6 +181,7 @@ graphics::tick(float dt)
 void
 graphics::draw(float dt)
 {
+	OPTICK_EVENT("scene draw")
 	systems::draw_tick(dt);
 }
 
