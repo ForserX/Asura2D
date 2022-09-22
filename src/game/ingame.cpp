@@ -53,22 +53,6 @@ void ingame::init()
 	TestObject = ark::entities::create_phys_body_entity(true, { 50, 50 }, { 20, 10 });
 	TestObject2 = ark::entities::create_phys_body_entity(true, { 50, 100 }, { 200, 10 });
 
-
-	for (size_t Iter = 0; Iter < 40; Iter++) {
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2 ) * 30, 450 }, { 15, 15 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2 ) * 20, 550 }, { 25, 25 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2 ) * 30, 650 }, { 35, 35 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2 ) * 20, 750 }, { 25, 25 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2 ) * 30, 850 }, { 25, 25 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2 ) * 20, 950 }, { 25, 25 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2) * 20, 1050 }, { 55, 55 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2) * 30, 1150 }, { 25, 25 }, ark::physics::material::material_type::rubber));
-		cricles.push_back(ark::entities::create_phys_body_entity_cricle(true, { (float(Iter) / 2) * 20, 1250 }, { 25, 25 }, ark::physics::material::material_type::rubber));
-	}
-
-	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1500, 0 }, { 10, 100 });
-	TestGround3 = ark::entities::create_phys_ground_entity(true, { 0, 0 }, { 10, 100 });
-
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
 	for (size_t i = 0; i < 500; i++) {

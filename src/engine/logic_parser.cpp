@@ -109,7 +109,7 @@ logic_parser::set_value(std::string_view section, std::string_view key, std::str
 }
 
 int 
-logic_parser::add_section(std::string_view section, )
+logic_parser::add_section(std::string_view section)
 {
    
     for (auto& fIter : data)
@@ -123,7 +123,7 @@ logic_parser::add_section(std::string_view section, )
 }
 
 int 
-logic_parser::add_key_in_section(std::string_view section, std::string_view key,)
+logic_parser::add_key_in_section(std::string_view section, std::string_view key)
 {
 
 	for (auto& fIter : data)
