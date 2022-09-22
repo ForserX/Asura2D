@@ -109,6 +109,7 @@ void
 window::change_resolution()
 {
 	SDL_SetWindowSize(window_handle, window_width, window_height);
+	camera::reset_wh();
 }
 
 void

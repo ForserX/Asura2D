@@ -64,11 +64,25 @@ ui::get_cmd_int(std::string_view str)
     if (str == "window_fullscreen") {
         return fullscreen_mode;
     }
+
     if (str == "window_width") {
         return window_width;
     }
+
     if (str == "window_height") {
         return window_height;
+    }
+
+    if (str == "draw_fps") {
+        return show_fps_counter;
+    }
+    
+    if (str == "physics_tps") {
+        return target_physics_tps;
+    }
+
+    if (str == "physics_hertz") {
+        return target_physics_hertz;
     }
     
     return -1;

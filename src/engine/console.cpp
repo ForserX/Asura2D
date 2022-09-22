@@ -9,6 +9,9 @@ extern int window_width;
 extern int window_height;
 extern ark::graphics::theme::style window_style;
 
+extern float target_physics_tps;
+extern float target_physics_hertz;
+
 UIConsole::UIConsole()
 {
     clear_log();
@@ -28,6 +31,12 @@ UIConsole::UIConsole()
     Commands.push_back("clear");
     cmd_hint["clear"] = "";
     
+    Commands.push_back("physics_tps");
+    cmd_hint["physics_tps"] = "0 - 120";
+    
+    Commands.push_back("physics_hertz");
+    cmd_hint["physics_hertz"] = "0 - 120";
+
     Commands.push_back("draw_fps");
     cmd_hint["draw_fps"] = "1, 0";
 
@@ -274,6 +283,14 @@ void UIConsole::ExecCommand(const char* command_line)
         cmd = cmd.substr(13);
         window_height = std::stoi(cmd);
         window::change_resolution();
+    }
+    else if (strstr(command_line, "physics_tps")) {
+        cmd = cmd.substr(11);
+        target_physics_tps = std::stoi(cmd);
+    }
+    else if (strstr(command_line, "physics_hertz")) {
+        cmd = cmd.substr(13);
+        target_physics_hertz = std::stoi(cmd);
     }
     else if (strstr(command_line, "window_width")) {
         cmd = cmd.substr(12);
