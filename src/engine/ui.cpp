@@ -26,7 +26,7 @@ ui::tick(float dt)
     
     if (show_fps_counter) {
 
-        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 230), 5 });
+        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
         ImGui::SetNextWindowSize({300, 200});
         if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs))
         {
@@ -41,7 +41,8 @@ ui::tick(float dt)
         }
 
         const auto& registry = entities::get_registry().get();
-        ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
+        ImGui::Text("Render FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
+        ImGui::Text("Physics TPS/DeltaTime: %.4f/%.4f", 1.f / physics_delta, physics_delta);
         ImGui::Text("Physics:");
         ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
         ImGui::Text("Entities");

@@ -102,3 +102,5 @@ namespace ark
 		};
 	}
 }
+
+extern float physics_delta;

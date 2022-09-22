@@ -3,7 +3,8 @@
 using namespace ark;
 
 constexpr int32 k_maxContactPoints = 2048;
-constexpr float phys_tps = 60.f;
+constexpr float target_physics_tps = 60.f;
+float physics_delta = 0.f;
 
 b2MouseJoint* TestMouseJoint = nullptr;
 b2Body* ContactBody = nullptr;
@@ -100,14 +101,15 @@ physics::world::init()
 				OPTICK_FRAME("Physics")
 				OPTICK_EVENT("physics loop")
 				if (use_parallel) {
+					auto temp_physics_time = begin_physics_time;
 					physics_event.clear();
 					{
 						OPTICK_EVENT("physics tick")
-						internal_tick(1.f / phys_tps);
+						internal_tick(1.f / target_physics_tps);
 					}
 					physics_event.signal();
-					
-					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / phys_tps) * 1000000000.f));
+
+					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / target_physics_tps) * 1000000000.f));
 
 					{
 						OPTICK_EVENT("physics wait")
@@ -116,6 +118,9 @@ physics::world::init()
 							std::this_thread::sleep_for(std::chrono::seconds(0));
 						}
 					}
+
+					end_physics_time = begin_physics_time;
+					physics_delta = static_cast<float>((end_physics_time - temp_physics_time).count()) / 1000000000.f;
 				}
 			}
 
@@ -288,8 +293,8 @@ physics::world::tick(float dt)
 	if (!use_parallel) {
 		static float phys_accum = 0.f;
 		phys_accum += dt;
-		if (phys_accum >= 1.f / phys_tps) {
-			internal_tick(1.f / phys_tps);
+		if (phys_accum >= 1.f / target_physics_tps) {
+			internal_tick(1.f / target_physics_tps);
 			phys_accum = 0.f;
 		}
 	}
