@@ -79,7 +79,7 @@ physics::world::init()
 	world_holder->SetContactListener(cl.get());
 
 	if (use_parallel) {
-		physics_thread = std::make_unique<std::thread>([this]() {
+		physics_thread = std::make_unique<std::jthread>([this]() {
 			while (!enable_thread) {
 				std::this_thread::sleep_for(std::chrono::seconds(0));
 			}

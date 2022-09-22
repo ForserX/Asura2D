@@ -62,7 +62,7 @@ namespace ark
 
 			marl::Event thread_destroyed_event;
 			std::atomic_bool destroy_thread;
-			std::unique_ptr<std::thread> physics_thread;
+			std::unique_ptr<std::jthread> physics_thread;
 			
 			std::unique_ptr<b2World> world_holder;
 			std::unique_ptr<CollisionLister> cl;
