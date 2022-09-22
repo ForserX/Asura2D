@@ -23,9 +23,7 @@ game::tick(float dt)
 {
 	OPTICK_EVENT("game tick")
 	OPTICK_CATEGORY("systems tick", Optick::Category::GameLogic)
-	marl::mutex& mutex = physics::get_physics_mutex();
-
-	//mutex.lock();
+	
 	{
 		OPTICK_EVENT("systems pre tick")
 		systems::pre_tick(dt);
@@ -50,6 +48,4 @@ game::tick(float dt)
 		OPTICK_EVENT("entities tick")
 		entities::tick(dt);
 	}
-	
-	//mutex.unlock();
 }

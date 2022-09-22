@@ -13,6 +13,7 @@ std::set<ark::system*> physics_systems;
 
 std::unique_ptr<ark::system> engine_draw_system;
 std::unique_ptr<ark::system> engine_physics_system;
+std::unique_ptr<ark::system> engine_physics_mouse_joint_system;
 
 std::set<ark::system*>*
 get_system_by_type(systems::update_type type)
@@ -59,6 +60,9 @@ systems::pre_init()
 	engine_draw_system = std::make_unique<draw_system>();
 	draw_systems.insert(engine_draw_system.get());
 
+	engine_physics_mouse_joint_system = std::make_unique<physics_mouse_joint_system>();
+	physics_systems.insert(engine_physics_mouse_joint_system.get());
+	
 	engine_physics_system = std::make_unique<physics_system>();
 	physics_systems.insert(engine_physics_system.get());
 }

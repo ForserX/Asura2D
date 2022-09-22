@@ -77,7 +77,7 @@ namespace ark
 			ark_matrix get_real_body_position(b2Body* body);
 
 		public:
-			marl::mutex physics_mutex;
+			marl::Event physics_event;
 			
 		public:
 			world();

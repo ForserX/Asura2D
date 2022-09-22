@@ -9,7 +9,7 @@ namespace ark::physics
 
 	void destroy_world();
 
-	marl::mutex& get_physics_mutex();
+	marl::Event& get_physics_event();
 	b2World& get_world();
 	
 	ark_matrix get_body_position(physics_body* body);

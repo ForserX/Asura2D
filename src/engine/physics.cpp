@@ -107,10 +107,10 @@ physics::destroy_world()
 	game_world.destroy_world();
 }
 
-marl::mutex&
-physics::get_physics_mutex()
+marl::Event&
+physics::get_physics_event()
 {
-	return game_world.physics_mutex;
+	return game_world.physics_event;
 }
 
 b2World&

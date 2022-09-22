@@ -95,14 +95,13 @@ physics::world::init()
 				OPTICK_FRAME("Physics")
 				OPTICK_EVENT("physics loop")
 				if (use_parallel) {
-					physics_mutex.lock();
-					
+					physics_event.clear();
 					{
 						OPTICK_EVENT("physics tick")
 						internal_tick(1.f / phys_tps);
 					}
+					physics_event.signal();
 					
-					physics_mutex.unlock();
 					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / phys_tps) * 1000000000.f));
 
 					{

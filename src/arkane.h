@@ -55,6 +55,7 @@
 
 #include "engine/systems.h"
 #include "engine/physics_system.h"
+#include "engine/physics_mouse_joint_system.h"
 #include "engine/draw_system.h"
 
 #include "engine/game.h"
