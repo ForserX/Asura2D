@@ -84,6 +84,10 @@ physics::world::init()
 	cl = std::make_unique<CollisionLister>();
 	world_holder->SetContactListener(cl.get());
 
+	b2BodyDef groundBodyDef;
+	groundBodyDef.position.Set(0.0f, -10.0f);
+	ground = world_holder->CreateBody(&groundBodyDef);
+
 	if (use_parallel) {
 		physics_thread = std::make_unique<std::jthread>([this]() {
 			OPTICK_THREAD("Physics thread")
@@ -216,7 +220,7 @@ physics::world::joints_tick()
 				constexpr float damping_ratio = 0.7f;
 
 				b2MouseJointDef jd;
-				jd.bodyA = &physics::get_world().GetBodyList()[0];
+				jd.bodyA = ground;
 				jd.bodyB = TestBody;
 				jd.target = *reinterpret_cast<b2Vec2*>(&mousePositionAbsolute);
 				jd.maxForce = 1000.0f * TestBody->GetMass();
@@ -254,7 +258,8 @@ physics::world::internal_tick(float dt)
 
 	{
 		OPTICK_EVENT("physics step")
-		world_holder->Step(dt, 6, 2);
+		for (int32 i = 0; i < 30; ++i)
+			world_holder->Step(1.f / 30, 6, 2);
 	}
 
 	{
