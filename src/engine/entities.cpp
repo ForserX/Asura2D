@@ -3,8 +3,9 @@
 using namespace ark;
 
 registry global_registry;
+entity_view invalid_entity = {};
 
-std::set<entt::entity> entities_to_destroy;
+std::unordered_set<entt::entity> entities_to_destroy;
 std::unordered_map<physics::physics_body*, entities::physics_body_component> physics_component_storage;
 
 void
@@ -13,7 +14,7 @@ destroy_entity(const entt::entity& ent)
 	auto &reg = global_registry.get();
 	if (reg.any_of<entities::physics_body_component>(ent)) {
 		const auto& phys_body_component = reg.get<entities::physics_body_component>(ent);
-		physics::schedule_free(phys_body_component.body);
+		schedule_free(phys_body_component.body);
 	}
 	
 	global_registry.destroy(ent);
@@ -28,6 +29,7 @@ entities::get_registry()
 void
 entities::init()
 {
+	
 }
 
 void
@@ -45,6 +47,27 @@ entities::tick(float dt)
 	entities_to_destroy.clear();
 }
 
+bool
+entities::is_valid(entity_view ent)
+{
+	return global_registry.get().valid(ent.get());
+}
+
+entity_view
+entities::get_entity_from_body(const b2Body* body)
+{
+	const auto& registry = global_registry.get();
+	const auto& view = registry.view<physics_body_component>();
+	for (auto& entity : view) {
+		const auto& phys_component = registry.get<physics_body_component>(entity);
+		if (phys_component.body != nullptr && phys_component.body->get_body() == body) {
+			return entity;
+		}
+	}
+
+	return {};
+}
+
 entt::entity
 entities::create_entity()
 {
@@ -57,56 +80,36 @@ entities::schedule_to_destroy_entity(const entt::entity& ent)
 	entities_to_destroy.insert(ent);
 }
 
-entity
-entities::create_phys_ground_entity(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat)
+ark_float_vec2
+entities::get_position(entity_view entity)
 {
-	auto& reg = get_registry().get();
-	const entt::entity ent = create_entity();
-
-	const physics::body_parameters phys_parameters = physics::body_parameters(pos, shape, physics::body_type::static_body, mat);
-
-	const auto body = schedule_creation(phys_parameters);
-	physics_component_storage[body] = physics_body_component(draw, body);
-	add_field<physics_body_component>(ent, physics_component_storage[body]);
-
-	if (draw) {
-		add_field<drawable_flag>(ent);
+	const auto& registry = global_registry.get();
+	if (registry.any_of<physics_body_component>(entity.get())) {
+		const auto& phys_component = registry.get<physics_body_component>(entity.get());
+		if (phys_component.body != nullptr) {
+			return phys_component.body->get_position();
+		}
 	}
 	
-	return ent;
+	return {};
 }
 
-entity
-entities::create_phys_body_entity(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat)
+entity_view
+entities::create_phys_body(
+	bool draw,
+	ark_float_vec2 pos,
+	ark_float_vec2 shape,
+	physics::body_type type,
+	material::type mat
+)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();
-
-	const physics::body_parameters phys_parameters = physics::body_parameters(pos, shape, physics::body_type::dynamic_body, mat);
-
-	const auto body = schedule_creation(phys_parameters);
+	const physics::body_parameters phys_parameters(pos, shape, type, mat);
+	physics::physics_body* body = schedule_creation(phys_parameters);
+	
 	physics_component_storage[body] = physics_body_component(draw, body);
 	add_field<physics_body_component>(ent, physics_component_storage[body]);
-	
-	if (draw) {
-		add_field<drawable_flag>(ent);
-	}
-	
-	return ent;
-}
-
-entity
-entities::create_phys_body_entity_circle(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat)
-{
-	auto& reg = get_registry().get();
-	const entt::entity ent = create_entity();
-
-	const physics::body_parameters phys_parameters = physics::body_parameters(pos, shape, physics::body_type::around_body, mat);
-
-	const auto body = schedule_creation(phys_parameters);
-	physics_component_storage[body] = physics_body_component(draw, body);
-	add_field<physics_body_component>(ent, physics_component_storage[body]);
-	
 	if (draw) {
 		add_field<drawable_flag>(ent);
 	}

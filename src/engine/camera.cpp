@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "camera.h"
+
+using namespace ark;
 
 static ark_float_vec2 cam_center;
 float cam_zoom;
@@ -7,35 +8,90 @@ static float scaled_cam_zoom;
 static int64_t cam_width;
 static int64_t cam_height;
 
-void ark::camera::init()
+static entity_view attached_entity;
+static bool attached = false;
+
+auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state)
+{
+	if (scan_code == SDL_SCANCODE_ENDCALL + SDL_BUTTON_RIGHT) {
+		const auto screen_cords = ark_float_vec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
+		const b2Body* body = physics::hit_test(camera::screen_to_world(screen_cords));
+		if (body != nullptr) {
+			camera::attach(entities::get_entity_from_body(body));
+		}
+	}
+};
+
+void camera::init()
 {
 	reset_wh();
 	reset_view();
+
+	input::subscribe_key_event(camera_mouse_key_change);
 }
 
-void ark::camera::destroy()
+void camera::destroy()
 {
+	input::unsubscribe_key_event(camera_mouse_key_change);
 }
 
-void ark::camera::tick(float dt)
+void camera::tick(float dt)
 {
-	float delta_size =  (float)cam_height / (float)cam_width;
+	const float delta_size =  static_cast<float>(cam_height) / static_cast<float>(cam_width);
 	scaled_cam_zoom = cam_zoom * delta_size;
-}
-
-void ark::camera::move(cam_move move, float point)
-{
-	switch (move)
-	{
-	case cam_move::left:  cam_center.x += scaled_cam_zoom * point; break;
-	case cam_move::right: cam_center.x -= scaled_cam_zoom * point; break;
-	case cam_move::up:    cam_center.y += scaled_cam_zoom * point; break;
-	case cam_move::down:  cam_center.y -= scaled_cam_zoom * point; break;
-
+	
+	if (attached) {
+		auto pos = entities::get_position(attached_entity);
+		cam_center = world_to_screen(pos);
+		detach();
 	}
 }
 
-void ark::camera::reset_view()
+void camera::move(cam_move move, float point)
+{
+	detach();
+	switch (move) {
+	case cam_move::left:
+		cam_center.x += scaled_cam_zoom * point;
+		break;
+	case cam_move::right:
+		cam_center.x -= scaled_cam_zoom * point;
+		break;
+	case cam_move::up:
+		cam_center.y += scaled_cam_zoom * point;
+		break;
+	case cam_move::down:
+		cam_center.y -= scaled_cam_zoom * point;
+		break;
+	}
+}
+
+bool
+camera::is_attached()
+{
+	return attached;
+}
+
+void
+camera::attach(entity_view entity)
+{
+	if (attached) {
+		detach();
+	}
+
+	attached_entity = entity;
+	attached = true;
+}
+
+void
+camera::detach()
+{
+	attached = false;
+	attached_entity = {};
+}
+
+void
+camera::reset_view()
 {
 	cam_zoom = 30.f;
 	scaled_cam_zoom = 16;
@@ -43,30 +99,32 @@ void ark::camera::reset_view()
 	cam_center.Set(496, 320);
 }
 
-void ark::camera::reset_wh()
+void
+camera::reset_wh()
 {
 	cam_width = ui::get_cmd_int("window_width");
 	cam_height = ui::get_cmd_int("window_height");
 }
 
-ark_float_vec2 ark::camera::camera_postion()
+ark_float_vec2
+camera::camera_position()
 {
 	return cam_center;
 }
 
-ark_float_vec2 ark::camera::screen2world(const ark_float_vec2& screenPoint)
+ark_float_vec2
+camera::screen_to_world(const ark_float_vec2& screenPoint)
 {
-	float w = float(cam_width);
-	float h = float(cam_height);
-	float u = screenPoint.x / w;
-	float v = (h - screenPoint.y) / h;
-
-	float ratio = w / h;
+	const float w = static_cast<float>(cam_width);
+	const float h = static_cast<float>(cam_height);
+	const float u = screenPoint.x / w;
+	const float v = (h - screenPoint.y) / h;
+	const float ratio = w / h;
 	ark_float_vec2 extents(ratio * 25.0f, 25.0f);
 	extents *= scaled_cam_zoom;
 
-	ark_float_vec2 lower = cam_center - extents;
-	ark_float_vec2 upper = cam_center + extents;
+	const ark_float_vec2 lower = cam_center - extents;
+	const ark_float_vec2 upper = cam_center + extents;
 
 	ark_float_vec2 pw;
 	pw.x = (1.0f - u) * lower.x + u * upper.x;
@@ -74,19 +132,19 @@ ark_float_vec2 ark::camera::screen2world(const ark_float_vec2& screenPoint)
 	return pw;
 }
 
-ark_float_vec2 ark::camera::world2screen(const ark_float_vec2& worldPoint)
+ark_float_vec2
+camera::world_to_screen(const ark_float_vec2& worldPoint)
 {
-	float w = float(cam_width);
-	float h = float(cam_height);
-	float ratio = w / h;
+	const float w = static_cast<float>(cam_width);
+	const float h = static_cast<float>(cam_height);
+	const float ratio = w / h;
 	ark_float_vec2 extents(ratio * 25.0f, 25.0f);
 	extents *= scaled_cam_zoom;
 
-	ark_float_vec2 lower = cam_center - extents;
-	ark_float_vec2 upper = cam_center + extents;
-
-	float u = (worldPoint.x - lower.x) / (upper.x - lower.x);
-	float v = (worldPoint.y - lower.y) / (upper.y - lower.y);
+	const ark_float_vec2 lower = cam_center - extents;
+	const ark_float_vec2 upper = cam_center + extents;
+	const float u = (worldPoint.x - lower.x) / (upper.x - lower.x);
+	const float v = (worldPoint.y - lower.y) / (upper.y - lower.y);
 
 	ark_float_vec2 ps;
 	ps.x = u * w;
@@ -94,16 +152,15 @@ ark_float_vec2 ark::camera::world2screen(const ark_float_vec2& worldPoint)
 	return ps;
 }
 
-float ark::camera::scale_factor(float in)
+float
+camera::scale_factor(float in)
 {
-	float w = float(cam_width);
-	float h = float(cam_height);
-	float ratio = w / h;
-
-	float extents = ratio * 25.0f;
-	float lower = w - extents;
-
-	float u = (in - lower) / (w + extents - lower);
+	const float w = static_cast<float>(cam_width);
+	const float h = static_cast<float>(cam_height);
+	const float ratio = w / h;
+	const float extents = ratio * 25.0f;
+	const float lower = w - extents;
+	const float u = (in - lower) / (w + extents - lower);
 
 	float ws = std::abs(u);
 	ws *= 1.f / scaled_cam_zoom;
@@ -112,16 +169,17 @@ float ark::camera::scale_factor(float in)
 	return in * ws;
 }
 
-void ark::camera::build_projection_matrix(float* m, float zBias)
+void
+camera::build_projection_matrix(float* m, float zBias)
 {
-	float w = float(cam_width);
-	float h = float(cam_height);
-	float ratio = w / h;
+	const float w = static_cast<float>(cam_width);
+	const float h = static_cast<float>(cam_height);
+	const float ratio = w / h;
 	ark_float_vec2 extents(ratio * 25.0f, 25.0f);
 	extents *= scaled_cam_zoom;
 
-	ark_float_vec2 lower = cam_center - extents;
-	ark_float_vec2 upper = cam_center + extents;
+	const ark_float_vec2 lower = cam_center - extents;
+	const ark_float_vec2 upper = cam_center + extents;
 
 	m[0] = 2.0f / (upper.x - lower.x);
 	m[1] = 0.0f;

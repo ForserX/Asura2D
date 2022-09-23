@@ -4,18 +4,18 @@ using namespace ark;
 
 bool is_started = false;
 
-std::set<ark::system*> pre_update_systems;
-std::set<ark::system*> update_systems;
-std::set<ark::system*> post_update_systems;
+std::unordered_set<ark::system*> pre_update_systems;
+std::unordered_set<ark::system*> update_systems;
+std::unordered_set<ark::system*> post_update_systems;
 
-std::set<ark::system*> draw_systems;
-std::set<ark::system*> physics_systems;
+std::unordered_set<ark::system*> draw_systems;
+std::unordered_set<ark::system*> physics_systems;
 
 std::unique_ptr<ark::system> engine_draw_system;
 std::unique_ptr<ark::system> engine_physics_system;
 std::unique_ptr<ark::system> engine_physics_mouse_joint_system;
 
-std::set<ark::system*>*
+std::unordered_set<ark::system*>*
 get_system_by_type(systems::update_type type)
 {
 	switch (type) {
@@ -37,7 +37,7 @@ get_system_by_type(systems::update_type type)
 void
 systems::delete_system(system* system_to_delete, update_type type)
 {
-	std::set<system*>* systems_list = get_system_by_type(type);
+	std::unordered_set<system*>* systems_list = get_system_by_type(type);
 	ark_assert(systems_list->contains(system_to_delete), "Pointer not found", std::terminate());
 	systems_list->erase(system_to_delete);
 }
@@ -45,7 +45,7 @@ systems::delete_system(system* system_to_delete, update_type type)
 void
 systems::add_system(system* system_to_add, update_type type)
 {
-	std::set<system*>* systems_list = get_system_by_type(type);
+	std::unordered_set<system*>* systems_list = get_system_by_type(type);
 	ark_assert(!systems_list->contains(system_to_add), "Pointer is alive! Duplicate!", std::terminate());
 	systems_list->insert(system_to_add);
 
@@ -127,7 +127,7 @@ systems::destroy()
 }
 
 void
-parallel_tick(float dt, const std::set<ark::system*>& systems)
+parallel_tick(float dt, const std::unordered_set<ark::system*>& systems)
 {
 	if (use_parallel) {
 		const marl::WaitGroup tasks_waiting(static_cast<int32_t>(systems.size()));

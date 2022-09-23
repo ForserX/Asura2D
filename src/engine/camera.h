@@ -15,12 +15,16 @@ namespace ark::camera
 
 	void move(cam_move move, float point);
 
+	bool is_attached();
+	void attach(entity_view entity);
+	void detach();
+	
 	void reset_view();
 	void reset_wh();
 
-	ark_float_vec2 camera_postion();
-	ark_float_vec2 screen2world(const ark_float_vec2& screenPoint);
-	ark_float_vec2 world2screen(const ark_float_vec2& worldPoint);
+	ark_float_vec2 camera_position();
+	ark_float_vec2 screen_to_world(const ark_float_vec2& screenPoint);
+	ark_float_vec2 world_to_screen(const ark_float_vec2& worldPoint);
 	float scale_factor(float in);
 
 	void build_projection_matrix(float* m, float zBias);

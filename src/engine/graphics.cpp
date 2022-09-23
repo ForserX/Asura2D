@@ -145,10 +145,10 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 	ark_float_vec2 vertices[b2_maxPolygonVertices];
 
 	for (int32 i = 0; i < vertexCount; ++i) {
-		vertices[i] = camera::world2screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
+		vertices[i] = camera::world_to_screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
 	}
 
-	draw_convex_poly_filled(ImGui::GetForegroundDrawList(), vertices, vertexCount, clr);
+	draw_convex_poly_filled(ImGui::GetBackgroundDrawList(), vertices, vertexCount, clr);
 }
 
 void
@@ -157,11 +157,11 @@ graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
 
-	ark_float_vec2 center = camera::world2screen(b2Mul(xf, circle->m_p));
+	ark_float_vec2 center = camera::world_to_screen(b2Mul(xf, circle->m_p));
 
 	float radius = camera::scale_factor(circle->m_radius);
 
-	ImGui::GetForegroundDrawList()->AddCircleFilled(center, radius , clr);
+	ImGui::GetBackgroundDrawList()->AddCircleFilled(center, radius , clr);
 }
 
 void

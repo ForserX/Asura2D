@@ -3,6 +3,7 @@
 using namespace ark;
 
 bool use_parallel = true;
+std::atomic_bool engine_ticking_now;
 marl::Scheduler engine_scheduler(marl::Scheduler::Config::allCores());
 
 void
@@ -20,6 +21,7 @@ engine::init(int argc, char** argv)
 	threads::init();
 	filesystem::init();
 	debug::init();
+	input::init();
 	render::init();
 	game::init();
 }
@@ -30,6 +32,7 @@ engine::destroy()
 	game::destroy();
 	render::destroy();
 	debug::destroy();
+	input::destroy();
 	filesystem::destroy();
 	threads::destroy();
 
@@ -39,6 +42,8 @@ engine::destroy()
 void
 engine::tick()
 {
+	engine_ticking_now = true;
+	
 	OPTICK_FRAME("Engine")
 	OPTICK_EVENT("engine tick")
 	static auto current_time = std::chrono::steady_clock::now().time_since_epoch();
@@ -50,6 +55,15 @@ engine::tick()
 		dt = 0.06f;
 	}
 
+	input::tick(dt);
 	game::tick(dt);
 	render::tick(dt);
+	
+	engine_ticking_now = false;
+}
+
+bool
+engine::is_ticking()
+{
+	return engine_ticking_now;
 }

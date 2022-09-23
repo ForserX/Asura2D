@@ -19,10 +19,10 @@ namespace ark
 			ark_float_vec2 pos;
 			ark_float_vec2 size;
 			body_type type;
-			material::material_type mat;
+			material::type mat;
 
 			body_parameters() = delete;
-			body_parameters(ark_float_vec2 in_pos, ark_float_vec2 in_size, body_type in_type, material::material_type in_mat = material::material_type::solid)
+			body_parameters(ark_float_vec2 in_pos, ark_float_vec2 in_size, body_type in_type, material::type in_mat = material::type::solid)
 				: pos(in_pos), size(in_size), type(in_type), mat(in_mat) {}
 		};
 		
@@ -70,8 +70,8 @@ namespace ark
 
 			std::unique_ptr<CollisionLister> cl;
 
-			std::set<physics_body*> scheduled_to_delete_bodies;
-			std::set<physics_body*> bodies;
+			std::unordered_set<physics_body*> scheduled_to_delete_bodies;
+			std::unordered_set<physics_body*> bodies;
 
 		private:
 			void destroy_all_bodies();

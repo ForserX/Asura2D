@@ -8,7 +8,7 @@
 	}
 #else
 #define ark_assert(error_code, message, exist_code) \
-	if(!(error_code)) {\
+	if (!(error_code)) {\
 		exist_code;\
 	}
 #endif

@@ -123,3 +123,43 @@ public:
 };
 
 using ark_int_vec2 = ark_vec2<int16_t>;
+
+namespace stl_shit
+{
+	template <class T>
+	void hash_combine(std::int64_t& s, const T& v)
+	{
+		std::hash<T> h;
+		s ^= h(v) + 0x9e3779b9 + (s << 6) + (s >> 2);
+	}
+
+	template<typename T>
+	struct function_equal
+	{
+		using callback_type = T;
+			
+		constexpr bool operator()(const callback_type& left, const callback_type& right) const
+		{
+			return left.get_id() == right.get_id();
+		}
+	};
+
+	template<typename T>
+	struct function_hasher
+	{
+		using callback_type = T;
+			
+		std::int64_t operator()(const callback_type& s) const
+		{
+			std::int64_t res = 0;
+			hash_combine(res, s.get_id());
+			return res;
+		}
+	};
+
+	template<typename T>
+	using function_set = std::unordered_set<T, function_hasher<T>, function_equal<T>>;
+
+	template<typename K, typename T>
+	using function_map = std::unordered_map<K, T, function_hasher<T>, function_equal<T>>;
+}

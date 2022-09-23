@@ -88,33 +88,23 @@ window::tick()
 				}
 			}
 			break;
+		case SDL_MOUSEMOTION: {
+			const ark_float_vec2 pos = ImGui::GetMousePos();
+			input::update_mouse_pos({static_cast<short>(pos.x), static_cast<short>(pos.y)});
+		}
+		break;
 		case SDL_KEYDOWN:
-		{
-			if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
-				camera::move(camera::cam_move::right, 1.f);
-			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-				camera::move(camera::cam_move::left, 1.f);
-			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
-				camera::move(camera::cam_move::up, 1.f);
-			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN) {
-				camera::move(camera::cam_move::down, 1.f);
-			}
-
 			input::update_key(event.key.keysym.scancode, true);
 			break;
-		}
 		case SDL_KEYUP:
-		{
-			if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE) {
-				show_console = !show_console;
-			}
-			break;
-
 			input::update_key(event.key.keysym.scancode, false);
-		}
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), true);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), false);
+			break;
 		default:
 			break;
 		}

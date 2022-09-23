@@ -14,16 +14,16 @@ namespace ark
 		void destroy(const entt::entity& entity) { base_registry.destroy(entity); }
 	};
 	
-	class entity
+	class entity_view
 	{
 	private:
 		entt::entity ent;
 		
 	public:
-		entity(entt::entity in_ent) : ent(in_ent) {}
-		entity(entity const&) = default;
-		entity() = default;
-		~entity() = default;
+		entity_view(entt::entity in_ent) : ent(in_ent) {}
+		entity_view(entity_view const&) = default;
+		entity_view() = default;
+		~entity_view() = default;
 
 		const entt::entity& get() const { return ent; }
 	};
@@ -40,7 +40,7 @@ namespace ark::entities
 	}
 	
 	template<typename Type, typename... Args>
-	void add_field(const entity& entt, Args &&...args)
+	void add_field(const entity_view& entt, Args &&...args)
 	{
 		add_field(entt.get(), std::forward<Args>(args)...);
 	}
@@ -52,7 +52,7 @@ namespace ark::entities
 	}
 	
 	template<typename Type>
-	void erase_field(const entity& entt)
+	void erase_field(const entity_view& entt)
 	{
 		erase_field<Type>(entt.get());
 	}
@@ -60,11 +60,20 @@ namespace ark::entities
 	void init();
 	void destroy();
 	void tick(float dt);
+
+	bool is_valid(entity_view ent);
+	entity_view get_entity_from_body(const b2Body* body);
 	
 	entt::entity create_entity();
 	void schedule_to_destroy_entity(const entt::entity& ent);
+
+	ark_float_vec2 get_position(entity_view entity);
 	
-	entity create_phys_ground_entity(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
-	entity create_phys_body_entity(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
-	entity create_phys_body_entity_circle(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat = physics::material::material_type::solid);
+	entity_view create_phys_body(
+		bool draw,
+		ark_float_vec2 pos,
+		ark_float_vec2 shape,
+		physics::body_type type = physics::body_type::dynamic_body,
+		material::type mat = material::type::solid
+	);
 }

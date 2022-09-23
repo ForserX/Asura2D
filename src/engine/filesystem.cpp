@@ -8,7 +8,7 @@ static std::filesystem::path working_dir;
 static std::filesystem::path content_dir;
 static std::filesystem::path userdata_dir;
 
-static std::set<std::filesystem::path> file_list;
+static std::unordered_set<std::filesystem::path> file_list;
 
 const std::filesystem::path& 
 filesystem::get_working_dir()

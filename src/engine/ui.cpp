@@ -29,7 +29,6 @@ ui::tick(float dt)
     }
     
     if (!show_console && show_fps_counter) {
-
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
         ImGui::SetNextWindowSize({300, 400});
         if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration))
@@ -45,25 +44,25 @@ ui::tick(float dt)
         }
 
         ark_float_vec2 cursor_pos = ImGui::GetMousePos();
-        ark_float_vec2 wcursor_pos = camera::screen2world(cursor_pos);
+        ark_float_vec2 wcursor_pos = camera::screen_to_world(cursor_pos);
         const auto& registry = entities::get_registry().get();
+        ImGui::Text("Controls:");
+        ImGui::Checkbox("Debug draw", &physical_debug_draw);
+        ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
+        ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
+        ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::Text("Render:");
         ImGui::Text("   FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
         ImGui::Text("Physics:");
         ImGui::Text("   TPS/DeltaTime: %.4f/%.4f", 1.f / physics_delta, physics_delta);
         ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
-        ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
-        ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
-        ImGui::Checkbox("Debug draw", &physical_debug_draw);
         ImGui::Text("Entities");
         ImGui::Text("   Allocated: %d", registry.capacity());
         ImGui::Text("   Alive: %d", registry.alive());
-
         ImGui::Text("UI Info:");
-        ImGui::Text("   Camera position: %.1f, %.1f", camera::camera_postion().x, camera::camera_postion().y);
+        ImGui::Text("   Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
         ImGui::Text("   Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
         ImGui::Text("   Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
-        ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::End();
     }
 }

@@ -38,29 +38,38 @@ void ingame::pre_init()
 	}
 }
 
-ark::entity TestGround;
-ark::entity TestGround2;
-ark::entity TestGround3;
-ark::entity TestObject;
-ark::entity TestObject2;
+ark::entity_view TestGround;
+ark::entity_view TestGround2;
+ark::entity_view TestGround3;
+ark::entity_view TestObject;
+ark::entity_view TestObject2;
 
-std::vector<ark::entity> cricles;
+std::vector<ark::entity_view> circles;
 
 void ingame::init()
 {
-
-	TestGround = ark::entities::create_phys_ground_entity(true, { 10, 0 }, { 1500, 10 });
-	TestObject = ark::entities::create_phys_body_entity(true, { 50, 50 }, { 20, 10 });
-	TestObject2 = ark::entities::create_phys_body_entity(true, { 50, 100 }, { 200, 10 });
+	ark::event::init();
+	
+	TestGround = ark::entities::create_phys_body(true, { 10, 0 }, { 1500, 10 }, ark::physics::body_type::static_body);
+	TestObject = ark::entities::create_phys_body(true, { 50, 50 }, { 20, 10 });
+	TestObject2 = ark::entities::create_phys_body(true, { 50, 100 }, { 200, 10 });
 
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
 	for (size_t i = 0; i < 500; i++) {
 		std::uniform_real_distribution width_dist(20., 1000.);
 		std::uniform_real_distribution height_dist(20., 1000.);
-		cricles.push_back(ark::entities::create_phys_body_entity_circle(true, { float(width_dist(gen)), float(height_dist(gen)) }, { 25, 25 }, ark::physics::material::material_type::rubber));
+		circles.push_back(
+			ark::entities::create_phys_body(
+				true,
+				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
+				{ 25, 25 },
+				ark::physics::body_type::around_body,
+				ark::material::type::rubber
+			)
+		);
 	}
 	
-	TestGround2 = ark::entities::create_phys_ground_entity(true, { 1000, 0 }, { 10, 500 });
-	TestGround2 = ark::entities::create_phys_ground_entity(true, { 0, 0 }, { 10, 500 });
+	TestGround2 = ark::entities::create_phys_body(true, { 1000, 0 }, { 10, 500 }, ark::physics::body_type::static_body);
+	TestGround2 = ark::entities::create_phys_body(true, { 0, 0 }, { 10, 500 }, ark::physics::body_type::static_body);
 }

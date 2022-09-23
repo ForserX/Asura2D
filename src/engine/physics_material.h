@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace ark::physics::material
+namespace ark::material
 {
-	struct material_data
+	struct data
 	{
 		float friction = 0.01f;
 		float restitution = 0.0f;
@@ -11,7 +11,7 @@ namespace ark::physics::material
 		bool ignore_collision = false;
 	};
 
-	enum class material_type : size_t
+	enum class type : size_t
 	{
 		solid,
 		rubber,
@@ -22,5 +22,5 @@ namespace ark::physics::material
 	void init();
 	void destroy();
 
-	[[nodiscard]] const material_data& get(material_type type);
+	[[nodiscard]] const data& get(type type);
 }

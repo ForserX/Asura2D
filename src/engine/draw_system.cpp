@@ -27,13 +27,17 @@ draw_system::tick(registry& reg, float dt)
 
 		// First of all, try to draw physics bodies
 		if (registry.all_of<physics_body_component>(entity)) {
-			const auto &phys_body = registry.get<physics_body_component>(entity);
-			ark_assert(phys_body.body != nullptr, "phys body can't be null!", continue);
-			if (!phys_body.is_drawing) {
+			const auto phys_body = registry.try_get<physics_body_component>(entity);
+			if (phys_body == nullptr) {
+				continue;
+			}
+			
+			ark_assert(phys_body->body != nullptr, "phys body can't be null!", continue);
+			if (!phys_body->is_drawing) {
 				continue;
 			}
 
-			const auto physical_body = phys_body.body;
+			const auto physical_body = phys_body->body;
 			if (!physical_body->is_created()) {
 				continue;
 			}

@@ -7,6 +7,7 @@ namespace ark::engine
 	void destroy();
 
 	void tick();
+	bool is_ticking();
 }
 
 extern bool use_parallel;

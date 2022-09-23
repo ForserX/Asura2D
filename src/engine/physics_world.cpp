@@ -185,7 +185,7 @@ physics::world::joints_tick()
 {
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
 		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
-		mousePositionAbsolute = camera::screen2world(mousePositionAbsolute);
+		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
 
 		if (ContactBody == nullptr) {
 			ContactBody = hit_test(mousePositionAbsolute);
@@ -215,7 +215,7 @@ physics::world::joints_tick()
 
 	if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
 		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
-		mousePositionAbsolute = camera::screen2world(mousePositionAbsolute);
+		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
 
 		if (TestMouseJoint == nullptr) {
 			b2Body* TestBody = hit_test(mousePositionAbsolute);

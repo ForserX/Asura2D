@@ -10,6 +10,7 @@
 #include <format>
 #include <fstream>
 #include <random>
+#include <variant>
 
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
@@ -48,7 +49,6 @@
 #include "engine/threads.h"
 #include "engine/filesystem.h"
 #include "engine/console.h"
-#include "engine/camera.h"
 
 #include "engine/physics_debug_draw.h"
 #include "engine/physics_material.h"
@@ -63,12 +63,15 @@
 #include "engine/physics_mouse_joint_system.h"
 #include "engine/draw_system.h"
 
-#include "engine/game.h"
+#include "engine/camera.h"
 
+#include "engine/event.h"
 #include "engine/input.h"
 #include "engine/window.h"
 #include "engine/ui.h"
 #include "engine/graphics.h"
 #include "engine/render.h"
 #include "engine/application.h"
+
 #include "engine/engine.h"
+#include "engine/game.h"

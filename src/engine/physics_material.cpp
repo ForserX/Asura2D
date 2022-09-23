@@ -1,15 +1,15 @@
 ﻿#include "pch.h"
 
-using namespace ark::physics;
+using namespace ark;
 
-static material::material_data data[(size_t)material::material_type::out_of];
+static material::data material_data[static_cast<size_t>(material::type::out_of)] = {};
 
 void
 material::init()
 {
-	data[(size_t)material_type::rubber].friction = 0.1;
-	data[(size_t)material_type::rubber].density = 1;
-	data[(size_t)material_type::rubber].restitution = 0.9f;
+	material_data[static_cast<size_t>(type::rubber)].friction = 0.1f;
+	material_data[static_cast<size_t>(type::rubber)].density = 1.f;
+	material_data[static_cast<size_t>(type::rubber)].restitution = 0.9f;
 }
 
 void
@@ -17,8 +17,8 @@ material::destroy()
 {
 }
 
-const material::material_data& 
-material::get(material_type type)
+const material::data& 
+material::get(type type)
 {
-	return data[(size_t)type];
+	return material_data[static_cast<size_t>(type)];
 }

@@ -1011,6 +1011,12 @@ public:
     return bool(data.inplace_storage_);
   }
 
+  void* ptr() const noexcept {
+    data_accessor data;
+    cmd_(nullptr, opcode::op_fetch_empty, nullptr, 0U, &data, 0U);
+    return data.ptr_;
+  }
+  
   /// Invoke the function at the given index
   template <std::size_t Index, typename... Args>
   constexpr decltype(auto) invoke(Args&&... args) const {
@@ -1230,6 +1236,10 @@ public:
     return vtable_.empty();
   }
 
+  constexpr void* ptr() const noexcept {
+    return vtable_.ptr();
+  }
+
   /// Invoke the function of the erasure at the given index
   ///
   /// We define this out of class to be able to forward the qualified
@@ -1345,6 +1355,10 @@ public:
     }
   }
 
+  constexpr void* ptr() const noexcept {
+    return view_.ptr_;
+  }
+  
   /// Returns true when the erasure doesn't hold any erased object
   constexpr bool empty() const noexcept {
     return view_.ptr_ == nullptr;
@@ -1600,6 +1614,10 @@ public:
   /// Returns true when the function is empty
   bool empty() const noexcept {
     return erasure_.empty();
+  }
+  
+  int64_t get_id() const noexcept {
+    return reinterpret_cast<int64_t>(erasure_.ptr());
   }
 
   /// Returns true when the function isn't empty

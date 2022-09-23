@@ -10,6 +10,8 @@ application::init()
 	{
 		return;
 	}
+
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 void
