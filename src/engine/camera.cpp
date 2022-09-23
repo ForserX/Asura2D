@@ -37,7 +37,7 @@ void ark::camera::move(cam_move move, float point)
 
 void ark::camera::reset_view()
 {
-	cam_zoom = 15.f;
+	cam_zoom = 30.f;
 	scaled_cam_zoom = 16;
 
 	cam_center.Set(496, 320);
