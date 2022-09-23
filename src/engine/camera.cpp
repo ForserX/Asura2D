@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "camera.h"
 
-ark_float_vec2 cam_center;
+static ark_float_vec2 cam_center;
 float cam_zoom;
-int64_t cam_width;
-int64_t cam_height;
+static int64_t cam_width;
+static int64_t cam_height;
 
 void ark::camera::init()
 {
@@ -93,9 +93,18 @@ ark_float_vec2 ark::camera::world2screen(const b2Vec2& worldPoint)
 
 float ark::camera::scale_factor(float in)
 {
-	float ws = float(cam_width) / 700.f;
-	ws *= cam_zoom;
-	ws /= 18 * (float(cam_width) / float(cam_height));
+	float w = float(cam_width);
+	float h = float(cam_height);
+	float ratio = w / h;
+
+	float extents = ratio * 25.0f;
+	float lower = w - extents;
+
+	float u = (in - lower) / (w + extents - lower);
+
+	float ws = std::abs(u);
+	ws *= 1.f / cam_zoom;
+	ws *= 1.066f; // magic number
 
 	return in * ws;
 }

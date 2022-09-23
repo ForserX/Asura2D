@@ -7,7 +7,7 @@ extern int window_height;
 extern bool window_maximized;
 extern float target_physics_tps;
 extern float target_physics_hertz;
-
+extern float cam_zoom;
 extern ui::UIConsole console;
 bool show_console = false;
 bool show_fps_counter = true;
@@ -52,13 +52,14 @@ ui::tick(float dt)
         ImGui::Text("Entities");
         ImGui::Text("   Allocated: %d", registry.capacity());
         ImGui::Text("   Alive: %d", registry.alive());
+        ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
+        ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
+
         ImGui::Text("UI Info:");
         ImGui::Text("   Camera position: %.1f, %.1f", camera::camera_postion().x, camera::camera_postion().y);
         ImGui::Text("   Cursor position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
-        ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
-        ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
+        ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::End();
-
     }
 }
 

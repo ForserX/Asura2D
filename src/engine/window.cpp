@@ -66,8 +66,11 @@ window::tick()
 					camera::reset_wh();
 					break;
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					window_width = event.window.data1;
+					window_height = event.window.data2;
+					camera::reset_wh();
 					break;
-				case SDL_WINDOWEVENT_MINIMIZED:
+				case SDL_WINDOWEVENT_RESTORED:
 					window_maximized = false;
 					break;
 				case SDL_WINDOWEVENT_MAXIMIZED:
@@ -116,7 +119,13 @@ window::change_fullscreen()
 void
 window::change_window_mode()
 {
-	window_maximized ? SDL_MaximizeWindow(window_handle) : SDL_RestoreWindow(window_handle);
+	if (window_maximized) {
+		SDL_MaximizeWindow(window_handle);
+	}
+	else if (SDL_GetWindowFlags(window_handle) & SDL_WINDOW_MAXIMIZED)
+	{
+		SDL_RestoreWindow(window_handle);
+	}
 }
 
 void
