@@ -3,6 +3,8 @@
 using namespace ark::systems;
 using namespace ark::entities;
 
+bool physical_debug_draw = false;
+
 void
 draw_system::init()
 {
@@ -51,15 +53,19 @@ draw_system::tick(registry& reg, float dt)
 					const int blue_color = color_dist(r_engine);
 					color_map.insert(std::make_pair(phys_body_id, ImColor(red_color, green_color, blue_color)));
 				}
-
+			
 				if (physical_body->get_body()->GetFixtureList()->GetType() == b2Shape::Type::e_circle) {
 					graphics::draw_physical_cricle_object(physical_body->get_body(), color_map[phys_body_id]);
 				} else {
 					graphics::draw_physical_object(physical_body->get_body(), color_map[phys_body_id]);
 				}
-
+			
 				continue;
 			}
 		}
+	}
+
+	if (physical_debug_draw) {
+		physics::get_world().DebugDraw();
 	}
 }

@@ -65,6 +65,7 @@ namespace ark
 			std::unique_ptr<std::jthread> physics_thread;
 			
 			std::unique_ptr<b2World> world_holder;
+			std::unique_ptr<DebugDraw> world_dbg_draw;
 			b2Body* ground = nullptr;
 
 			std::unique_ptr<CollisionLister> cl;

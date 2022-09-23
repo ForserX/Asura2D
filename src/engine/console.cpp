@@ -2,12 +2,16 @@
 #include "console.h"
 
 using namespace ark::ui;
+
 extern bool fullscreen_mode;
 extern bool show_fps_counter;
 extern bool show_console;
 extern bool window_maximized;
+extern bool physical_debug_draw;
+
 extern int window_width;
 extern int window_height;
+
 extern ark::graphics::theme::style window_style;
 
 extern float target_physics_tps;
@@ -31,6 +35,9 @@ UIConsole::UIConsole()
 
     Commands.push_back("clear");
     cmd_hint["clear"] = "";
+    
+    Commands.push_back("physical_debug_draw");
+    cmd_hint["physical_debug_draw"] = "1 , 0";
     
     Commands.push_back("physics_tps");
     cmd_hint["physics_tps"] = "0 - 120";
@@ -322,6 +329,14 @@ void UIConsole::ExecCommand(const char* command_line)
             show_fps_counter = !!std::stoi(cmd);
         }
         else {
+            debug::msg("Invalid parameter: '{}'\n", command_line);
+        }
+    }
+    else if (strstr(command_line, "physical_debug_draw")) {
+        cmd = cmd.substr(19);
+        if (!cmd.empty()) {
+            physical_debug_draw = !!std::stoi(cmd);
+        } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }
     }

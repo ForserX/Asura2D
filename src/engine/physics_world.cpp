@@ -85,6 +85,11 @@ physics::world::init()
 	cl = std::make_unique<CollisionLister>();
 	world_holder->SetContactListener(cl.get());
 
+	world_dbg_draw = std::make_unique<DebugDraw>();
+	world_dbg_draw->AppendFlags(b2Draw::e_jointBit | b2Draw::e_aabbBit);
+
+	world_holder->SetDebugDraw(world_dbg_draw.get());
+
 	b2BodyDef groundBodyDef;
 	groundBodyDef.position.Set(0.0f, -10.0f);
 	ground = world_holder->CreateBody(&groundBodyDef);

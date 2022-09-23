@@ -50,6 +50,7 @@
 #include "engine/console.h"
 #include "engine/camera.h"
 
+#include "engine/physics_debug_draw.h"
 #include "engine/physics_material.h"
 #include "engine/physics_world.h"
 #include "engine/physics.h"
