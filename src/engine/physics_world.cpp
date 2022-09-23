@@ -244,6 +244,10 @@ physics::world::joints_tick()
 void
 physics::world::internal_tick(float dt)
 {
+	if (window::is_destroyed()) {
+		return;
+	}
+
 	{
 		OPTICK_EVENT("physics pre tick")
 		pre_tick();

@@ -33,7 +33,14 @@ window::init()
 void
 window::destroy()
 {
+	wants_to_exit = true;
 	SDL_DestroyWindow(window_handle);
+}
+
+bool
+window::is_destroyed()
+{
+	return wants_to_exit;
 }
 
 void
@@ -82,25 +89,30 @@ window::tick()
 			}
 			break;
 		case SDL_KEYDOWN:
-			break;
+		{
+			if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
+				camera::move(camera::cam_move::right, 1.f);
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
+				camera::move(camera::cam_move::left, 1.f);
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
+				camera::move(camera::cam_move::up, 1.f);
+			}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN) {
+				camera::move(camera::cam_move::down, 1.f);
+			}
+
+			input::update_key(event.key.keysym.scancode, true);
+		}
 		case SDL_KEYUP:
 		{
 			if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE) {
 				show_console = !show_console;
 			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
-				camera::move(camera::cam_move::right, 1.5f);
-			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-				camera::move(camera::cam_move::left, 1.5f);
-			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_UP) {
-				camera::move(camera::cam_move::up, 1.5f);
-			}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_DOWN) {
-				camera::move(camera::cam_move::down, 1.5f);
-			}
 			break;
+
+			input::update_key(event.key.keysym.scancode, false);
 		}
 		default:
 			break;

@@ -6,6 +6,8 @@ namespace ark::window
 	void destroy();
 	void tick();
 
+	bool is_destroyed();
+
 	void loop();
 	void change_fullscreen();
 	void change_resolution();
