@@ -42,8 +42,7 @@ void camera::tick(float dt)
 	
 	if (attached) {
 		auto pos = entities::get_position(attached_entity);
-		cam_center = world_to_screen(pos);
-		detach();
+		cam_center = pos;
 	}
 }
 
