@@ -58,7 +58,7 @@ entities::schedule_to_destroy_entity(const entt::entity& ent)
 }
 
 entity
-entities::create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
+entities::create_phys_ground_entity(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();
@@ -77,7 +77,7 @@ entities::create_phys_ground_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics
 }
 
 entity
-entities::create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
+entities::create_phys_body_entity(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();
@@ -96,7 +96,7 @@ entities::create_phys_body_entity(bool draw, b2Vec2 pos, b2Vec2 shape, physics::
 }
 
 entity
-entities::create_phys_body_entity_circle(bool draw, b2Vec2 pos, b2Vec2 shape, physics::material::material_type mat)
+entities::create_phys_body_entity_circle(bool draw, ark_float_vec2 pos, ark_float_vec2 shape, physics::material::material_type mat)
 {
 	auto& reg = get_registry().get();
 	const entt::entity ent = create_entity();

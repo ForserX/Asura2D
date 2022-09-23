@@ -43,7 +43,7 @@ draw_system::tick(registry& reg, float dt)
 
 			// If we don't have any of draw components - try to draw physics body with debug view
 			if (!registry.any_of<draw_color_component, draw_gradient_component, draw_texture_component>(entity)) {
-				const auto phys_body_id = reinterpret_cast<uint64_t>(physical_body);
+				const auto phys_body_id = reinterpret_cast<ptrdiff_t>(physical_body);
 				if (!color_map.contains(phys_body_id)) {
 					std::uniform_int_distribution color_dist(55, 255);
 					const int red_color = color_dist(r_engine);

@@ -16,5 +16,5 @@ namespace ark::physics
 	physics_body* schedule_creation(body_parameters parameters);
 	void schedule_free(physics_body* body);
 	
-	b2Body* hit_test(ImVec2 pos);
+	b2Body* hit_test(ark_float_vec2 pos);
 }

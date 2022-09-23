@@ -128,14 +128,14 @@ void UIConsole::draw(float dt, const char* title, bool* p_open)
 
     // Reserve enough left-over height for 1 separator + 1 input text
     const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-    ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::BeginChild("ScrollingRegion", ark_float_vec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
     if (ImGui::BeginPopupContextWindow())
     {
         if (ImGui::Selectable("Clear")) clear_log();
         ImGui::EndPopup();
     }
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ark_float_vec2(4, 1)); // Tighten spacing
     if (copy_to_clipboard)
         ImGui::LogToClipboard();
 
@@ -167,7 +167,7 @@ void UIConsole::draw(float dt, const char* title, bool* p_open)
     ImGui::PopStyleVar();
     ImGui::EndChild();
 
-    static ImVec2 TextBoxPos;
+    static ark_float_vec2 TextBoxPos;
     ImGui::Separator();
 
     if (InputBuf[0] && strlen(InputBuf) > 0)
@@ -192,8 +192,8 @@ void UIConsole::draw(float dt, const char* title, bool* p_open)
         static int item_current = -1;
         if (!skip && Iter > 0)
         {
-            ImVec2 safe_pos = ImGui::GetCursorPos();
-            ImVec2 pos = ImGui::GetCursorPos();
+            ark_float_vec2 safe_pos = ImGui::GetCursorPos();
+            ark_float_vec2 pos = ImGui::GetCursorPos();
             pos.y -= Iter * (TextBoxPos.y - pos.y) + 5;
             ImGui::SetCursorPos(pos);
 

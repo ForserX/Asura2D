@@ -51,7 +51,7 @@ physics::schedule_free(physics_body* body)
 class QueryCallback : public b2QueryCallback
 {
 public:
-	QueryCallback(const b2Vec2& point)
+	QueryCallback(const ark_float_vec2& point)
 		: m_point(point) {}
 
 	bool ReportFixture(b2Fixture* fixture) override
@@ -73,24 +73,22 @@ public:
 		return true;
 	}
 
-	b2Vec2 m_point = {};
+	ark_float_vec2 m_point = {};
 	b2Fixture* m_fixture = nullptr;
 };
 
 b2Body*
-physics::hit_test(ImVec2 pos)
-{
-	const b2Vec2 reintrp = *reinterpret_cast<b2Vec2*>(&pos);
-	
+physics::hit_test(ark_float_vec2 pos)
+{	
 	// Make a small box.
 	b2AABB aabb = {};
-	b2Vec2 d = {};
+	ark_float_vec2 d = {};
 	d.Set(0.001f, 0.001f);
-	aabb.lowerBound = reintrp - d;
-	aabb.upperBound = reintrp + d;
+	aabb.lowerBound = pos - d;
+	aabb.upperBound = pos + d;
 
 	// Query the world for overlapping shapes.
-	QueryCallback callback(reintrp);
+	QueryCallback callback(pos);
 	game_world.get_world().QueryAABB(&callback, aabb);
 
 	if (callback.m_fixture)

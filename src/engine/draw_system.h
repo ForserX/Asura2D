@@ -8,7 +8,7 @@ namespace ark::systems
 		std::random_device r_device;
 		std::default_random_engine r_engine;
 
-		std::unordered_map<uint64_t, ImColor> color_map;
+		std::unordered_map<ptrdiff_t, ImColor> color_map;
 		
 	public:
 		draw_system() : r_engine(r_device()) {}

@@ -16,13 +16,13 @@ namespace ark
 		
 		struct body_parameters
 		{
-			b2Vec2 pos;
-			b2Vec2 size;
+			ark_float_vec2 pos;
+			ark_float_vec2 size;
 			body_type type;
 			material::material_type mat;
 
 			body_parameters() = delete;
-			body_parameters(b2Vec2 in_pos, b2Vec2 in_size, body_type in_type, material::material_type in_mat = material::material_type::solid)
+			body_parameters(ark_float_vec2 in_pos, ark_float_vec2 in_size, body_type in_type, material::material_type in_mat = material::material_type::solid)
 				: pos(in_pos), size(in_size), type(in_type), mat(in_mat) {}
 		};
 		
@@ -34,7 +34,7 @@ namespace ark
 			body_parameters parameters;
 
 		private:
-			b2Vec2 proxy_position = {};
+			ark_float_vec2 proxy_position = {};
 
 		private:
 			void create_static();
@@ -50,7 +50,7 @@ namespace ark
 			
 			b2Body* get_body() const { return body; }
 			const body_parameters& get_parameters() const { return parameters; }
-			const b2Vec2& get_position();
+			const ark_float_vec2& get_position();
 			
 			void create();
 		};

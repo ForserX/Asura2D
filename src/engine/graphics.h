@@ -10,7 +10,7 @@ namespace ark::graphics
 	
 	void draw_physical_object(b2Body* object, const ImColor& clr);
 	void draw_physical_cricle_object(b2Body* object, const ImColor& clr);
-	void draw_convex_poly_filled(ImDrawList* draw_list, const ImVec2* points, const int points_count, ImU32 col);
+	void draw_convex_poly_filled(ImDrawList* draw_list, const ark_float_vec2* points, const int points_count, ImU32 col);
 	
 	namespace theme
 	{

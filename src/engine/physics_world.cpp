@@ -9,7 +9,7 @@ float physics_delta = 0.f;
 
 b2MouseJoint* TestMouseJoint = nullptr;
 b2Body* ContactBody = nullptr;
-ImVec2 ContactPoint = {};
+ark_float_vec2 ContactPoint = {};
 // Test 
 
 class ark::CollisionLister final : public b2ContactListener
@@ -18,8 +18,8 @@ class ark::CollisionLister final : public b2ContactListener
 	{
 		b2Fixture* fixtureA;
 		b2Fixture* fixtureB;
-		b2Vec2 normal;
-		b2Vec2 position;
+		ark_float_vec2 normal;
+		ark_float_vec2 position;
 		b2PointState state;
 		float normalImpulse;
 		float tangentImpulse;
@@ -80,7 +80,7 @@ physics::world::start()
 void
 physics::world::init()
 {
-	b2Vec2 gravity(0.0f, -9.8f);
+	ark_float_vec2 gravity(0.0f, -9.8f);
 	world_holder = std::make_unique<b2World>(gravity);
 	cl = std::make_unique<CollisionLister>();
 	world_holder->SetContactListener(cl.get());
@@ -195,7 +195,7 @@ physics::world::joints_tick()
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-				jointDef.Initialize(ContactBody, TestBody, *(b2Vec2*)&ContactPoint, mousePositionAbsolute);
+				jointDef.Initialize(ContactBody, TestBody, *(ark_float_vec2*)&ContactPoint, mousePositionAbsolute);
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
@@ -436,7 +436,7 @@ physics::physics_body::~physics_body()
 
 }
 
-const b2Vec2& 
+const ark_float_vec2& 
 physics::physics_body::get_position()
 {
 	if (body != nullptr) {

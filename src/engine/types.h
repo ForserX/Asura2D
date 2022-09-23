@@ -94,6 +94,12 @@ class ark_float_vec2 : public b2Vec2
 public:
 	inline ark_float_vec2() : b2Vec2() {};
 
+	inline ark_float_vec2(float fx, float fy)
+	{
+		x = fx;
+		y = fy;
+	}
+
 	inline ark_float_vec2(ImVec2 vec)
 	{
 		x = vec.x;
@@ -105,12 +111,12 @@ public:
 		y = vec.y;
 	}
 
-	operator b2Vec2()
+	operator b2Vec2() const
 	{
 		return { x, y };
 	}
 
-	operator ImVec2()
+	operator ImVec2() const
 	{
 		return { x, y };
 	}

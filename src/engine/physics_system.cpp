@@ -23,7 +23,7 @@ physics_system::tick(registry& reg, float dt)
 	for (auto& entity : view) {
 		const auto phys_body = registry.get<entities::physics_body_component>(entity);
 		if (phys_body.body != nullptr) {
-			const b2Vec2& pos =	phys_body.body->get_position();
+			const ark_float_vec2& pos =	phys_body.body->get_position();
 			if (pos.y < y_destroy_coord) {
 				entities::schedule_to_destroy_entity(entity);
 				continue;
