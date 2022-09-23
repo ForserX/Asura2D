@@ -176,6 +176,7 @@ graphics::tick(float dt)
 	//}
 	
 	ui::tick(dt);
+	camera::tick(dt);
 }
 
 void
