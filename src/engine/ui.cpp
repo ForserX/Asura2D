@@ -45,6 +45,7 @@ ui::tick(float dt)
         }
 
         ark_float_vec2 cursor_pos = ImGui::GetMousePos();
+        ark_float_vec2 wcursor_pos = camera::screen2world(cursor_pos);
         const auto& registry = entities::get_registry().get();
         ImGui::Text("Render:");
         ImGui::Text("   FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
@@ -60,7 +61,8 @@ ui::tick(float dt)
 
         ImGui::Text("UI Info:");
         ImGui::Text("   Camera position: %.1f, %.1f", camera::camera_postion().x, camera::camera_postion().y);
-        ImGui::Text("   Cursor position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
+        ImGui::Text("   Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
+        ImGui::Text("   Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::End();
     }

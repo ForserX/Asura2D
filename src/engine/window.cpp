@@ -104,6 +104,7 @@ window::tick()
 			}
 
 			input::update_key(event.key.keysym.scancode, true);
+			break;
 		}
 		case SDL_KEYUP:
 		{
