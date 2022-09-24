@@ -16,6 +16,3 @@
 [submodule "libs/optick"]
 	path = libs/optick
 	url = https://github.com/bombomby/optick
-[submodule "libs/box2d-optimized"]
-	path = libs/box2d-optimized
-	url = https://github.com/mtsamis/box2d-optimized

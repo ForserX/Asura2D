@@ -4,7 +4,6 @@ project(arkane C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "no tests for box2d" FORCE)
 
-set(ARKANE_BOX2D_OPTIMIZED ON)
 set(ARKANE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(ARKANE_PREGEN FOLDER "Pre-generated")
 set(ARKANE_THIRD_PARTY FOLDER "3rd-party")
@@ -13,6 +12,13 @@ set(ARKANE_GAME FOLDER "Game")
 
 # OPTICK_ENABLED
 option(ARKANE_SHIPPING "Shipping build of arkane" OFF)
+option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
+option(ARKANE_ASAN "Enable address sanitizer" OFF)
+
+if (ARKANE_ASAN) 
+	add_compile_options(-fsanitize=address)
+	add_link_options(-fsanitize=address)
+endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
