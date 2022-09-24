@@ -13,12 +13,33 @@ static bool attached = false;
 
 auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state)
 {
-	if (scan_code == SDL_SCANCODE_ENDCALL + SDL_BUTTON_RIGHT) {
-		const auto screen_cords = ark_float_vec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
-		const b2Body* body = physics::hit_test(camera::screen_to_world(screen_cords));
-		if (body != nullptr) {
-			camera::attach(entities::get_entity_from_body(body));
+	switch (scan_code) {
+		case SDL_SCANCODE_MOUSE_RIGHT: {
+			if (state == input::key_state::press) {
+				const auto screen_cords = ark_float_vec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
+				const b2Body* body = physics::hit_test(camera::screen_to_world(screen_cords));
+				if (body != nullptr) {
+					camera::attach(entities::get_entity_from_body(body));
+				} else {
+					camera::detach();
+				}
+			}
+			break;
 		}
+		case SDL_SCANCODE_LEFT:
+			move(camera::cam_move::left, 1.f);
+			break;
+		case SDL_SCANCODE_RIGHT:
+			move(camera::cam_move::right, 1.f);
+			break;
+		case SDL_SCANCODE_UP:
+			move(camera::cam_move::up, 1.f);
+			break;
+		case SDL_SCANCODE_DOWN:
+			move(camera::cam_move::down, 1.f);
+			break;
+		default:
+			break;
 	}
 };
 
@@ -41,8 +62,11 @@ void camera::tick(float dt)
 	scaled_cam_zoom = cam_zoom * delta_size;
 	
 	if (attached) {
-		auto pos = entities::get_position(attached_entity);
-		cam_center = pos;
+		if (!entities::is_valid(attached_entity)) {
+			detach();
+		} else {
+			cam_center = entities::get_position(attached_entity);
+		}
 	}
 }
 
@@ -51,10 +75,10 @@ void camera::move(cam_move move, float point)
 	detach();
 	switch (move) {
 	case cam_move::left:
-		cam_center.x += scaled_cam_zoom * point;
+		cam_center.x -= scaled_cam_zoom * point;
 		break;
 	case cam_move::right:
-		cam_center.x -= scaled_cam_zoom * point;
+		cam_center.x += scaled_cam_zoom * point;
 		break;
 	case cam_move::up:
 		cam_center.y += scaled_cam_zoom * point;

@@ -30,6 +30,7 @@ namespace ark
 		{
 		private:
 			bool created = false;
+			bool destroyed = false;
 			b2Body* body = nullptr;
 			body_parameters parameters;
 
@@ -47,12 +48,14 @@ namespace ark
 			~physics_body();
 			
 			bool is_created() const { return created; }
+			bool is_destroyed() const { return destroyed; }
 			
 			b2Body* get_body() const { return body; }
 			const body_parameters& get_parameters() const { return parameters; }
 			const ark_float_vec2& get_position();
 			
 			void create();
+			void destroy();
 		};
 		
 		class world

@@ -171,7 +171,7 @@ physics::world::pre_tick()
 	}
 	
 	for (const auto body : scheduled_to_delete_bodies) {
-		get_world().DestroyBody(body->get_body());
+		body->destroy();
 		if (bodies.contains(body)) {
 			bodies.erase(body);
 		}
@@ -183,7 +183,7 @@ physics::world::pre_tick()
 void
 physics::world::joints_tick()
 {
-	if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1)) {
 		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
 		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
 
@@ -213,10 +213,25 @@ physics::world::joints_tick()
 		}
 	}
 
-	if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
 		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
 		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
 
+		if (TestMouseJoint != nullptr) {
+			const auto entity = entities::get_entity_from_body(TestMouseJoint->GetBodyB());
+			if (entities::is_valid(entity)) {
+				const auto& registry = entities::get_registry().get();
+				const auto phys_body_component = registry.try_get<entities::physics_body_component>(entity.get());
+				if (phys_body_component != nullptr) {
+					if (phys_body_component->body->is_destroyed()) {
+						TestMouseJoint = nullptr;
+					}
+				}
+			} else {
+				TestMouseJoint = nullptr;
+			}
+		}
+		
 		if (TestMouseJoint == nullptr) {
 			b2Body* TestBody = hit_test(mousePositionAbsolute);
 
@@ -233,14 +248,15 @@ physics::world::joints_tick()
 
 				TestMouseJoint = dynamic_cast<b2MouseJoint*>(physics::get_world().CreateJoint(&jd));
 				TestBody->SetAwake(true);
+			} else {
+				TestMouseJoint = nullptr;
 			}
-		}
-		else
-		{
+		} else {
 			TestMouseJoint->SetTarget(mousePositionAbsolute);
 		}
 	}
-	if (TestMouseJoint != nullptr && !ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+	
+	if (TestMouseJoint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
 		physics::get_world().DestroyJoint(TestMouseJoint);
 		TestMouseJoint = nullptr;
 	}
@@ -471,4 +487,19 @@ physics::physics_body::create()
 	}
 
 	created = true;
+	destroyed = false;
+}
+
+void
+physics::physics_body::destroy()
+{
+	destroyed = true;
+	for (auto joint = body->GetJointList(); joint != nullptr; ) {
+		const auto next_joint = joint->next;
+		get_world().DestroyJoint(joint->joint);
+		joint = next_joint;
+	}
+	
+	get_world().DestroyBody(body);
+	body = nullptr;
 }

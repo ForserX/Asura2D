@@ -42,6 +42,8 @@ input::tick(float dt)
 				callback(key, new_state);
 			}
 		}
+
+		keys_states[key] = state;
 	}
 	
 	changed_keys.clear();
