@@ -30,7 +30,31 @@ set_target_properties("unit_test" PROPERTIES ${ARKANE_PREGEN})
 #set_target_properties("INSTALL" PROPERTIES ${ARKANE_PREGEN})
 
 add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC} "pch.h")
-target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT marl box2d OptickCore)
+if (ARKANE_ASAN)
+	target_compile_options("libarkane" PUBLIC "-fsanitize=address")
+    target_link_libraries("libarkane" PUBLIC "-fsanitize=address")
+
+	target_compile_options("box2d" PUBLIC "-fsanitize=address")
+    target_link_libraries("box2d" PUBLIC "-fsanitize=address")
+
+	target_compile_options("imgui" PUBLIC "-fsanitize=address")
+    target_link_libraries("imgui" PUBLIC "-fsanitize=address")
+
+	target_compile_options("SDL2" PUBLIC "-fsanitize=address")
+    target_link_libraries("SDL2" PUBLIC "-fsanitize=address")
+
+	target_compile_options("SDL2-static" PUBLIC "-fsanitize=address")
+    target_link_libraries("SDL2-static" PUBLIC "-fsanitize=address")
+
+	target_compile_options("SDL2-static" PUBLIC "-fsanitize=address")
+    target_link_libraries("SDL2main" PUBLIC "-fsanitize=address")
+
+
+	target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT marl box2d OptickCore "libsancov.lib")
+else()
+	target_link_libraries("libarkane" PUBLIC "imgui" EnTT::EnTT marl box2d OptickCore)
+endif()
+
 target_include_directories("libarkane" PUBLIC "${ARKANE_ROOT}/libs")
 target_include_directories("libarkane" PUBLIC "engine")
 target_include_directories("libarkane" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

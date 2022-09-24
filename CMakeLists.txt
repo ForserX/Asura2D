@@ -15,15 +15,14 @@ option(ARKANE_SHIPPING "Shipping build of arkane" OFF)
 option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
 option(ARKANE_ASAN "Enable address sanitizer" OFF)
 
-if (ARKANE_ASAN) 
-	add_compile_options(-fsanitize=address)
-	add_link_options(-fsanitize=address)
-endif()
-
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
+endif()
+
+if (ARKANE_ASAN)
+	set(MARL_ASAN ON CACHE BOOL "marl asan" FORCE)
 endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bins/lib)
