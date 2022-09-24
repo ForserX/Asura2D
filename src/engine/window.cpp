@@ -94,16 +94,19 @@ window::tick()
 		}
 		break;
 		case SDL_KEYDOWN:
-			input::update_key(event.key.keysym.scancode, true);
+			input::update_key(event.key.keysym.scancode, 1.f);
 			break;
 		case SDL_KEYUP:
-			input::update_key(event.key.keysym.scancode, false);
+			input::update_key(event.key.keysym.scancode, 0.f);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), true);
+			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 1.f);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), false);
+			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 0.f);
+			break;
+		case SDL_MOUSEWHEEL:
+			input::update_key(SDL_SCANCODE_MOUSEWHEEL, event.wheel.y);
 			break;
 		default:
 			break;

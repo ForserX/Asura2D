@@ -18,16 +18,12 @@ auto physical_mouse_key_change = [](int16_t scan_code, input::key_state state) {
 	if (scan_code == SDL_SCANCODE_MOUSE_X1 && state == input::key_state::press) {
 		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
 		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
-
 		if (ContactBody == nullptr) {
 			ContactBody = physics::hit_test(mousePositionAbsolute);
 			ContactPoint = mousePositionAbsolute;
-		}
-		else {
-			physics::physics_body* TestBody = physics::hit_test(mousePositionAbsolute);
-
-			if (TestBody != nullptr && TestBody != ContactBody)
-			{
+		} else {
+			const auto TestBody = physics::hit_test(mousePositionAbsolute);
+			if (TestBody != nullptr && TestBody != ContactBody) {
 				constexpr float frequency_hz = 5.0f;
 				constexpr float damping_ratio = 0.7f;
 
@@ -45,15 +41,13 @@ auto physical_mouse_key_change = [](int16_t scan_code, input::key_state state) {
 		}
 	}
 
-	if (scan_code == SDL_SCANCODE_MOUSE_LEFT)
-	{
+	if (scan_code == SDL_SCANCODE_MOUSE_LEFT) {
 		if (state == input::key_state::press) {
 			ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
 			mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
 
 			if (TestMouseJoint == nullptr) {
 				MoveBody = physics::hit_test(mousePositionAbsolute);
-
 				if (MoveBody != nullptr) {
 					constexpr float frequency_hz = 5.0f;
 					constexpr float damping_ratio = 0.7f;
@@ -67,16 +61,13 @@ auto physical_mouse_key_change = [](int16_t scan_code, input::key_state state) {
 
 					TestMouseJoint = dynamic_cast<b2MouseJoint*>(physics::get_world().CreateJoint(&jd));
 					MoveBody->get_body()->SetAwake(true);
-				}
-				else {
+				} else {
 					TestMouseJoint = nullptr;
 				}
-			}
-			else {
+			} else {
 				if (!MoveBody->is_destroyed()) {
 					TestMouseJoint->SetTarget(mousePositionAbsolute);
-				}
-				else {
+				} else {
 					TestMouseJoint = nullptr;
 				}
 			}

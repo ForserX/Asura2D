@@ -11,8 +11,7 @@ static int64_t cam_height;
 static entity_view attached_entity;
 static bool attached = false;
 
-auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state)
-{
+auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state) {
 	switch (scan_code) {
 		case SDL_SCANCODE_MOUSE_RIGHT: {
 			if (state == input::key_state::press) {
@@ -23,6 +22,14 @@ auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state)
 				} else {
 					camera::detach();
 				}
+			}
+			break;
+		}
+		case SDL_SCANCODE_MOUSE_MIDDLE: {
+			if (state == input::key_state::hold) {
+				const auto& mouse_delta = input::get_mouse_delta();
+				cam_center.x -= (mouse_delta.x * 0.05f) * scaled_cam_zoom;
+				cam_center.y += (mouse_delta.y * 0.05f) * scaled_cam_zoom;
 			}
 			break;
 		}
@@ -43,17 +50,33 @@ auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state)
 	}
 };
 
+auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
+	switch (scan_code) {
+	case SDL_SCANCODE_MOUSEWHEEL:
+		cam_zoom += (-1.f * state) * (static_cast<float>(cam_width) / static_cast<float>(cam_height));
+		cam_zoom = std::clamp(cam_zoom, 1.f, 100.f);
+		break;
+	default:
+		break;
+	}
+};
+
+input::on_key_change camera_mouse_key_event;
+input::on_input_change camera_camera_mouse_wheel_event;
+
 void camera::init()
 {
 	reset_wh();
 	reset_view();
 
-	input::subscribe_key_event(camera_mouse_key_change);
+	camera_mouse_key_event = input::subscribe_key_event(camera_mouse_key_change);
+	camera_camera_mouse_wheel_event = input::subscribe_input_event(camera_mouse_wheel_change);
 }
 
 void camera::destroy()
 {
-	input::unsubscribe_key_event(camera_mouse_key_change);
+	input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
+	input::unsubscribe_key_event(camera_mouse_key_event);
 }
 
 void camera::tick(float dt)

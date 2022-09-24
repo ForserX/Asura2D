@@ -1010,12 +1010,6 @@ public:
     cmd_(nullptr, opcode::op_fetch_empty, nullptr, 0U, &data, 0U);
     return bool(data.inplace_storage_);
   }
-
-  void* ptr() const noexcept {
-    data_accessor data;
-    cmd_(nullptr, opcode::op_fetch_empty, nullptr, 0U, &data, 0U);
-    return data.ptr_;
-  }
   
   /// Invoke the function at the given index
   template <std::size_t Index, typename... Args>
@@ -1237,7 +1231,7 @@ public:
   }
 
   constexpr void* ptr() const noexcept {
-    return vtable_.ptr();
+    return static_cast<void*>(this->opaque_ptr()->ptr_);
   }
 
   /// Invoke the function of the erasure at the given index
