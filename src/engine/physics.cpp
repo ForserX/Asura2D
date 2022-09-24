@@ -42,6 +42,12 @@ physics::schedule_creation(body_parameters parameters)
 	return game_world.schedule_creation(parameters);
 }
 
+b2Body*
+physics::get_ground()
+{
+	return game_world.get_ground();
+}
+
 void
 physics::schedule_free(physics_body* body)
 {

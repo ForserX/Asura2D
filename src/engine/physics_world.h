@@ -96,6 +96,7 @@ namespace ark
 			void tick(float dt);
 			
 			b2World& get_world() const;
+			b2Body* get_ground() const;
 
 			void destroy_world();
 		

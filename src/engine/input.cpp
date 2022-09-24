@@ -83,7 +83,7 @@ input::get_mouse_delta()
 void
 input::subscribe_key_event(const on_key_change& input_callback)
 {
-	change_callbacks.insert(input_callback);
+	change_callbacks.emplace(input_callback);
 }
 
 void
