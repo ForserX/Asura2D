@@ -37,6 +37,10 @@ target_include_directories("libarkane" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_precompile_headers("libarkane" PUBLIC "pch.h")	
 set_target_properties("libarkane" PROPERTIES ${ARKANE_ENGINE})
 
+if (ARKANE_BOX2D_OPTIMIZED)
+    target_compile_definitions("libarkane" PUBLIC ARKANE_BOX2D_OPTIMIZED)
+endif()
+
 add_executable("arkgame" ${GAME_SRC} "main.cpp")
 target_link_libraries("arkgame" PUBLIC "libarkane")
 set_target_properties("arkgame" PROPERTIES ${ARKANE_GAME})

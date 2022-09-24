@@ -4,6 +4,7 @@ project(arkane C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "no tests for box2d" FORCE)
 
+set(ARKANE_BOX2D_OPTIMIZED ON)
 set(ARKANE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(ARKANE_PREGEN FOLDER "Pre-generated")
 set(ARKANE_THIRD_PARTY FOLDER "3rd-party")
@@ -31,7 +32,13 @@ add_subdirectory("libs/SDL")
 add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
 add_subdirectory("libs/marl")
-add_subdirectory("libs/box2d")
+
+if (ARKANE_BOX2D_OPTIMIZED)
+	add_subdirectory("libs/box2d-optimized")
+else()
+	add_subdirectory("libs/box2d")
+endif()
+
 add_subdirectory("libs/optick")
 
 add_subdirectory("src")

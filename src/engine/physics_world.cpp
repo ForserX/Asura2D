@@ -295,12 +295,17 @@ physics::world::get_real_body_position(b2Body* body)
 	b2Fixture* fixture = body->GetFixtureList();
 	while (fixture != nullptr) {
 		const b2Shape* shape = fixture->GetShape();
+#ifdef ARKANE_BOX2D_OPTIMIZED
+		b2AABB shapeAABB = {};
+		shape->ComputeAABB(&shapeAABB, t);
+#else
 		const int childCount = shape->GetChildCount();
 		for (int child = 0; child < childCount; ++child) {
 			b2AABB shapeAABB = {};
 			shape->ComputeAABB(&shapeAABB, t, child);
 			aabb.Combine(shapeAABB);
 		}
+#endif
 		
 		fixture = fixture->GetNext();
 	}
