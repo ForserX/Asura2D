@@ -12,7 +12,7 @@ set(ARKANE_GAME FOLDER "Game")
 
 # OPTICK_ENABLED
 option(ARKANE_SHIPPING "Shipping build of arkane" OFF)
-option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
+option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" OFF)
 option(ARKANE_ASAN "Enable address sanitizer" OFF)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")

@@ -85,6 +85,7 @@ void DebugDraw::DrawAABB(b2AABB* aabb, const b2Color& color)
 	ImGui::GetForegroundDrawList()->AddLine(p4, p1, ImColor(color.r, color.g, color.b, color.a));
 }
 
+#ifdef ARKANE_BOX2D_OPTIMIZED
 void
 DebugDraw::DrawParticles(
 	const b2Vec2* centers,
@@ -94,3 +95,4 @@ DebugDraw::DrawParticles(
 )
 {
 }
+#endif
