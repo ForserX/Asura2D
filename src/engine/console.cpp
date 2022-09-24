@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
-#include "console.h"
 
-using namespace ark::ui;
+using namespace ark;
 
 extern bool fullscreen_mode;
 extern bool show_fps_counter;
@@ -12,12 +11,14 @@ extern bool physical_debug_draw;
 extern int window_width;
 extern int window_height;
 
-extern ark::graphics::theme::style window_style;
+extern graphics::theme::style window_style;
 
 extern float target_physics_tps;
 extern float target_physics_hertz;
 
-UIConsole::UIConsole()
+input::on_key_change console_key_change;
+
+ui::UIConsole::UIConsole()
 {
     clear_log();
     memset(InputBuf, 0, sizeof(InputBuf));
@@ -65,33 +66,44 @@ UIConsole::UIConsole()
 
     AutoScroll = true;
     ScrollToBottom = false;
+
+    console_key_change = input::subscribe_key_event(
+        [](int16_t scan_code, input::key_state state)
+        {
+            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
+                show_console = !show_console;
+            }
+        }
+    );
 }
 
-UIConsole::~UIConsole()
+ui::UIConsole::~UIConsole()
 {
     clear_log();
     for (int i = 0; i < History.Size; i++) {
         free(History[i]);
     }
+
+    input::unsubscribe_key_event(console_key_change);
 }
 
 // Portable helpers
 int  strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
 void strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
-void UIConsole::clear_log()
+void ui::UIConsole::clear_log()
 {
     for (int i = 0; i < Items.Size; i++)
         free(Items[i]);
     Items.clear();
 }
 
-void UIConsole::push_log_item(std::string_view str)
+void ui::UIConsole::push_log_item(std::string_view str)
 {
     Items.push_back(strdup(str.data()));
 }
 
-void UIConsole::draw(float dt, const char* title, bool* p_open)
+void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
@@ -250,7 +262,7 @@ void UIConsole::draw(float dt, const char* title, bool* p_open)
     ImGui::End();
 }
 
-void UIConsole::ExecCommand(const char* command_line)
+void ui::UIConsole::ExecCommand(const char* command_line)
 {
     debug::msg("# {} \n", command_line);
 
@@ -367,13 +379,13 @@ void UIConsole::ExecCommand(const char* command_line)
     ScrollToBottom = true;
 }
 
-int UIConsole::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
+int ui::UIConsole::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 {
     auto* console = static_cast<UIConsole*>(data->UserData);
     return console->TextEditCallback(data);
 }
 
-int UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
+int ui::UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
@@ -478,7 +490,7 @@ int UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
 
 
 
-void UIConsole::flush()
+void ui::UIConsole::flush()
 {
 	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
 	cfg_path = cfg_path.append("user.cfg");
@@ -495,7 +507,7 @@ void UIConsole::flush()
     }
 }
 
-void UIConsole::init()
+void ui::UIConsole::init()
 {
 	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
     cfg_path = cfg_path.append("user.cfg");
@@ -515,4 +527,4 @@ void UIConsole::init()
 
 }
 
-UIConsole console;
+ui::UIConsole console;

@@ -53,7 +53,7 @@ auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state) {
 auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
 	switch (scan_code) {
 	case SDL_SCANCODE_MOUSEWHEEL:
-		cam_zoom += (-1.f * state) * (static_cast<float>(cam_width) / static_cast<float>(cam_height));
+		cam_zoom += ((-1.f * state) *  2.f) * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
 		cam_zoom = std::clamp(cam_zoom, 1.f, 100.f);
 		break;
 	default:

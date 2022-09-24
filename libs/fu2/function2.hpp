@@ -1155,7 +1155,7 @@ public:
   FU2_DETAIL_CXX14_CONSTEXPR erasure(std::true_type /*use_bool_op*/,
                                      T&& callable,
                                      Allocator&& allocator = Allocator{}) {
-    if (bool(callable)) {
+    if (!!callable) {
       vtable_t::init(vtable_,
                      type_erasure::make_box(
                          std::integral_constant<bool, Config::is_copyable>{},
