@@ -114,7 +114,7 @@ physics::world::init()
 			while (!destroy_thread) {
 				OPTICK_FRAME("Physics")
 				OPTICK_EVENT("physics loop")
-				if (use_parallel) {
+				if (use_parallel && !paused) {
 					auto temp_physics_time = begin_physics_time;
 					physics_event.clear();
 					{

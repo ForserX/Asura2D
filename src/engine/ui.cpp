@@ -48,6 +48,8 @@ ui::tick(float dt)
         const auto& registry = entities::get_registry().get();
         ImGui::Text("Controls:");
         ImGui::Checkbox("Debug draw", &physical_debug_draw);
+        ImGui::Checkbox("Paused", &paused);
+        ImGui::Checkbox("Use parallel", &use_parallel);
         ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);

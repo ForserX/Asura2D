@@ -2,6 +2,7 @@
 
 using namespace ark;
 
+bool paused = false;
 bool use_parallel = true;
 std::atomic_bool engine_ticking_now;
 marl::Scheduler engine_scheduler(marl::Scheduler::Config::allCores());
@@ -56,7 +57,10 @@ engine::tick()
 	}
 
 	input::tick(dt);
-	game::tick(dt);
+	if (!paused) {
+		game::tick(dt);
+	}
+	
 	render::tick(dt);
 	
 	engine_ticking_now = false;

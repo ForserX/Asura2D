@@ -10,5 +10,6 @@ namespace ark::engine
 	bool is_ticking();
 }
 
+extern bool paused;
 extern bool use_parallel;
 extern marl::Scheduler engine_scheduler;

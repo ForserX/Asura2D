@@ -39,6 +39,12 @@ ui::UIConsole::UIConsole()
     
     Commands.push_back("physical_debug_draw");
     cmd_hint["physical_debug_draw"] = "1 , 0";
+
+    Commands.push_back("use_parallel");
+    cmd_hint["use_parallel"] = "1 , 0";
+    
+    Commands.push_back("pause");
+    cmd_hint["pause"] = {};
     
     Commands.push_back("physics_tps");
     cmd_hint["physics_tps"] = "0 - 120";
@@ -366,6 +372,22 @@ void ui::UIConsole::ExecCommand(const char* command_line)
         if (!cmd.empty()) {
             fullscreen_mode = !!std::stoi(cmd);
             window::change_fullscreen();
+        } else {
+            debug::msg("Invalid parameter: '{}'\n", command_line);
+        }
+    }
+    else if (strstr(command_line, "use_parallel")) {
+        cmd = cmd.substr(12);
+        if (!cmd.empty()) {
+            use_parallel = !!std::stoi(cmd);
+        } else {
+            debug::msg("Invalid parameter: '{}'\n", command_line);
+        }
+    }
+    else if (strstr(command_line, "pause")) {
+        cmd = cmd.substr(4);
+        if (!cmd.empty()) {
+            paused = !!std::stoi(cmd);
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }
