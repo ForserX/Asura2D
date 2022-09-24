@@ -53,7 +53,7 @@ namespace ark
 			b2Body* get_body() const { return body; }
 			const body_parameters& get_parameters() const { return parameters; }
 			const ark_float_vec2& get_position();
-			
+
 			void create();
 			void destroy();
 		};

@@ -8,7 +8,8 @@ float target_physics_hertz = 60.f;
 float physics_delta = 0.f;
 
 b2MouseJoint* TestMouseJoint = nullptr;
-b2Body* ContactBody = nullptr;
+physics::physics_body* ContactBody = nullptr;
+physics::physics_body* MoveBody = nullptr;
 ark_float_vec2 ContactPoint = {};
 // Test 
 
@@ -192,7 +193,7 @@ physics::world::joints_tick()
 			ContactPoint = mousePositionAbsolute;
 		}
 		else {
-			b2Body* TestBody = hit_test(mousePositionAbsolute);
+			physics_body* TestBody = hit_test(mousePositionAbsolute);
 
 			if (TestBody != nullptr && TestBody != ContactBody)
 			{
@@ -200,13 +201,13 @@ physics::world::joints_tick()
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-				jointDef.Initialize(ContactBody, TestBody, *(ark_float_vec2*)&ContactPoint, mousePositionAbsolute);
+				jointDef.Initialize(ContactBody->get_body(), TestBody->get_body(), *(ark_float_vec2*)&ContactPoint, mousePositionAbsolute);
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
 
 				physics::get_world().CreateJoint(&jointDef);
-				TestBody->SetAwake(true);
+				TestBody->get_body()->SetAwake(true);
 
 				ContactBody = nullptr;
 			}
@@ -216,49 +217,40 @@ physics::world::joints_tick()
 	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
 		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
 		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
-
-		if (TestMouseJoint != nullptr) {
-			const auto entity = entities::get_entity_from_body(TestMouseJoint->GetBodyB());
-			if (entities::is_valid(entity)) {
-				const auto& registry = entities::get_registry().get();
-				const auto phys_body_component = registry.try_get<entities::physics_body_component>(entity.get());
-				if (phys_body_component != nullptr) {
-					if (phys_body_component->body->is_destroyed()) {
-						TestMouseJoint = nullptr;
-					}
-				}
-			} else {
-				TestMouseJoint = nullptr;
-			}
-		}
 		
 		if (TestMouseJoint == nullptr) {
-			b2Body* TestBody = hit_test(mousePositionAbsolute);
+			MoveBody = hit_test(mousePositionAbsolute);
 
-			if (TestBody != nullptr) {
+			if (MoveBody != nullptr) {
 				constexpr float frequency_hz = 5.0f;
 				constexpr float damping_ratio = 0.7f;
 
 				b2MouseJointDef jd;
 				jd.bodyA = ground;
-				jd.bodyB = TestBody;
+				jd.bodyB = MoveBody->get_body();
 				jd.target = mousePositionAbsolute;
-				jd.maxForce = 1000.0f * TestBody->GetMass();
+				jd.maxForce = 1000.0f * MoveBody->get_body()->GetMass();
 				b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
 				TestMouseJoint = dynamic_cast<b2MouseJoint*>(physics::get_world().CreateJoint(&jd));
-				TestBody->SetAwake(true);
+				MoveBody->get_body()->SetAwake(true);
 			} else {
 				TestMouseJoint = nullptr;
 			}
 		} else {
-			TestMouseJoint->SetTarget(mousePositionAbsolute);
+			if (!MoveBody->is_destroyed()) {
+				TestMouseJoint->SetTarget(mousePositionAbsolute);
+			}
+			else {
+				TestMouseJoint = nullptr;
+			}
 		}
 	}
 	
 	if (TestMouseJoint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
 		physics::get_world().DestroyJoint(TestMouseJoint);
 		TestMouseJoint = nullptr;
+		MoveBody = nullptr;
 	}
 }
 

@@ -77,7 +77,7 @@ public:
 	b2Fixture* m_fixture = nullptr;
 };
 
-b2Body*
+physics::physics_body*
 physics::hit_test(ark_float_vec2 pos)
 {	
 	// Make a small box.
@@ -93,7 +93,14 @@ physics::hit_test(ark_float_vec2 pos)
 
 	if (callback.m_fixture)
 	{
-		return callback.m_fixture->GetBody();
+		b2Body* PhysBody = callback.m_fixture->GetBody();
+		const auto& entity = entities::get_entity_from_body(PhysBody);
+		const auto& reg = entities::get_registry().get();
+		const auto entt_object = reg.try_get<entities::physics_body_component>(entity.get());
+
+		if (entt_object != nullptr) {
+			return entt_object->body;
+		}
 	}
 
 	return nullptr;

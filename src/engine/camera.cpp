@@ -17,9 +17,9 @@ auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state)
 		case SDL_SCANCODE_MOUSE_RIGHT: {
 			if (state == input::key_state::press) {
 				const auto screen_cords = ark_float_vec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
-				const b2Body* body = physics::hit_test(camera::screen_to_world(screen_cords));
+				const physics::physics_body* body = physics::hit_test(camera::screen_to_world(screen_cords));
 				if (body != nullptr) {
-					camera::attach(entities::get_entity_from_body(body));
+					camera::attach(entities::get_entity_from_body(body->get_body()));
 				} else {
 					camera::detach();
 				}
