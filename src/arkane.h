@@ -64,6 +64,7 @@
 #include "engine/draw_system.h"
 
 #include "engine/camera.h"
+#include "engine/level.h"
 
 #include "engine/event.h"
 #include "engine/input.h"

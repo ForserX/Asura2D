@@ -45,7 +45,7 @@ filesystem::destroy()
 const std::filesystem::path& 
 filesystem::get_content_dir()
 {
-	return working_dir;
+	return content_dir;
 }
 
 const std::filesystem::path& 

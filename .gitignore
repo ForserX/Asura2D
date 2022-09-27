@@ -44,6 +44,8 @@ cmake-build-debug
 bin/
 bins/
 build/
+userdata/
 out/
 deps/
 deps/desktop.ini
+imgui.ini

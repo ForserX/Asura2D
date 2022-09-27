@@ -35,6 +35,8 @@ logic_parser::load(const std::filesystem::path& file_path)
                     data[last_section_name][data_key] = data_value;
                 }
             }
+
+            section_count++;
         } else {
             const size_t found_equal_char = line.find('=');
             data[last_section_name][line.substr(0, found_equal_char)] = line.substr(found_equal_char + 1);

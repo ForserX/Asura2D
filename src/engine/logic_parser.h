@@ -6,7 +6,9 @@ namespace ark
 {
     class logic_parser
     {
-        std::unordered_map<std::string, std::unordered_map<std::string, std::string>> data;
+        using data_type = std::unordered_map<std::string, std::unordered_map<std::string, std::string>>;
+        data_type data;
+        size_t section_count = 0;
 
     public:
         logic_parser() noexcept = default;
@@ -15,6 +17,8 @@ namespace ark
         void load(const std::filesystem::path&);
         void save(const std::filesystem::path&);
 
+        [[nodiscard]] inline size_t get_count() const { return section_count; }
+        [[nodiscard]] inline data_type get_data() const { return data; }
         std::string get_value(std::string_view section, std::string_view value);
         int set_value(std::string_view section, std::string_view key, std::string_view value);
 

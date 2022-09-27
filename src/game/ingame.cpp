@@ -38,9 +38,6 @@ void ingame::pre_init()
 	}
 }
 
-ark::entity_view TestGround;
-ark::entity_view TestGround2;
-ark::entity_view TestGround3;
 ark::entity_view TestObject;
 ark::entity_view TestObject2;
 
@@ -48,9 +45,9 @@ std::vector<ark::entity_view> circles;
 
 void ingame::init()
 {
+	ark::level::init();
 	ark::event::init();
 	
-	TestGround = ark::entities::create_phys_body(true, { 10, 0 }, { 1500, 10 }, ark::physics::body_type::static_body);
 	TestObject = ark::entities::create_phys_body(true, { 50, 50 }, { 20, 10 });
 	TestObject2 = ark::entities::create_phys_body(true, { 50, 100 }, { 200, 10 });
 
@@ -69,7 +66,4 @@ void ingame::init()
 			)
 		);
 	}
-	
-	TestGround2 = ark::entities::create_phys_body(true, { 1000, 0 }, { 10, 500 }, ark::physics::body_type::static_body);
-	TestGround2 = ark::entities::create_phys_body(true, { 0, 0 }, { 10, 500 }, ark::physics::body_type::static_body);
 }
