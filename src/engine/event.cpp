@@ -73,6 +73,7 @@ event::internal::trigger(std::string_view name, parameter callback_parameter_1, 
 			current_callback(callback_parameter_1);
 		} else if (subscriber_callback.index() == 2) {
 			callback_2 current_callback = std::get<callback_2>(subscriber_callback);
+			current_callback(callback_parameter_1, callback_parameter_2);
 		}
 	}
 }
