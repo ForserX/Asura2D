@@ -26,7 +26,7 @@ namespace ark::level
 			level_w = std::stof(level_data.get_value(section, "w"));
 			level_h = std::stof(level_data.get_value(section, "h"));
 
-			std::string_view type_str = std::move(level_data.get_value(section, "type"));
+			std::string type_str = level_data.get_value(section, "type");
 			if (type_str == "dynamic") {
 				body_type = physics::body_type::dynamic_body;
 			} 
