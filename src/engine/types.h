@@ -127,7 +127,7 @@ using ark_int_vec2 = ark_vec2<int16_t>;
 void* ark_alloc(size_t size_to_alloc);
 void ark_free(void* ptr);
 
-namespace stl_shit
+namespace ark::stl
 {
 	template <class T>
 	struct ark_allocator
@@ -144,7 +144,7 @@ namespace stl_shit
 				return nullptr;
 			}
 
-			if (auto p = static_cast<T*>(malloc(n * sizeof(T)))) {
+			if (auto p = static_cast<T*>(ark_alloc(n * sizeof(T)))) {
 				return p;
 			}
 
@@ -152,7 +152,7 @@ namespace stl_shit
 		}
 
 		void deallocate(T* p, std::size_t n) noexcept {
-			free(p);
+			ark_free(p);
 		}
 	};
 	
@@ -191,8 +191,13 @@ namespace stl_shit
 	using function_set = std::unordered_set<T, function_hasher<T>, function_equal<T>>;
 
 	template<typename K, typename T>
-	using function_map = std::unordered_map<K, T, function_hasher<T>, function_equal<T>>;
+	using hash_map = std::unordered_map<K, T, std::hash<K>, std::equal_to<K>, ark_allocator<std::pair<const K, T>>>;
 	
+	template<typename K>
+	using hash_set = std::unordered_set<K, std::hash<K>, std::equal_to<K>, ark_allocator<K>>;
+	
+	template<typename K>
+	using vector = std::vector<K, ark_allocator<K>>;
 	//template<typename K, typename T>
 	//using hash_map = std::unordered_map<K, T, std::hash<K>, std::equal_to<K>, 
 }

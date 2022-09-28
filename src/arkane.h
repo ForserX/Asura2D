@@ -37,7 +37,7 @@
 #include <SDL_vulkan.h>
 
 #ifdef MIMALLOC_ENABLED
-
+#include <mimalloc.h>
 #endif
 
 #include <box2d/box2d.h>

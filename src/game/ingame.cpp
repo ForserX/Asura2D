@@ -46,11 +46,11 @@ std::vector<ark::entity_view> circles;
 void ingame::init()
 {
 	TestObject = ark::entities::create_phys_body(true, { 50, 50 }, { 20, 10 });
-	TestObject2 = ark::entities::create_phys_body(true, { 50, 100 }, { 200, 10 });
+	TestObject2 = ark::entities::create_phys_body(true, { 350, 100 }, { 200, 10 });
 
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 2000; i++) {
+	for (size_t i = 0; i < 800; i++) {
 		std::uniform_real_distribution width_dist(20., 1000.);
 		std::uniform_real_distribution height_dist(20., 1000.);
 		circles.push_back(

@@ -5,8 +5,8 @@ using namespace ark;
 registry global_registry;
 entity_view invalid_entity = {};
 
-std::unordered_set<entt::entity> entities_to_destroy;
-std::unordered_map<physics::physics_body*, entities::physics_body_component> physics_component_storage;
+stl::hash_set<entt::entity> entities_to_destroy;
+stl::hash_map<physics::physics_body*, entities::physics_body_component> physics_component_storage;
 
 void
 destroy_entity(const entt::entity& ent)

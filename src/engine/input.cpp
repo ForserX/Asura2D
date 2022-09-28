@@ -7,9 +7,9 @@ float keys_states[1024] = {};
 ark_int_vec2 current_mouse_pos = {};
 ark_float_vec2 delta_mouse_pos = {};
 
-std::unordered_map<int16_t, float> changed_keys;
-stl_shit::function_set<input::on_key_change> key_change_callbacks;
-stl_shit::function_set<input::on_input_change> input_change_callbacks;
+stl::hash_map<int16_t, float> changed_keys;
+stl::function_set<input::on_key_change> key_change_callbacks;
+stl::function_set<input::on_input_change> input_change_callbacks;
 
 input::key_state
 get_enum_from_state(int16_t scan_code)

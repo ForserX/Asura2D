@@ -77,7 +77,7 @@ namespace ark::event
 				std::int64_t res = 0;
 
 				std::visit([&]<typename T0>(T0&& arg_0) {
-					stl_shit::hash_combine(res, arg_0.get_id());
+					stl::hash_combine(res, arg_0.get_id());
 				}, s);
 
 				return res;
