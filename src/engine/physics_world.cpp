@@ -6,6 +6,7 @@ constexpr int32 k_maxContactPoints = 2048;
 float target_physics_tps = 60.f;
 float target_physics_hertz = 60.f;
 float physics_delta = 0.f;
+float physics_real_delta = 0.f;
 
 b2MouseJoint* TestMouseJoint = nullptr;
 physics::physics_body* ContactBody = nullptr;
@@ -119,7 +120,10 @@ physics::world::init()
 					physics_event.clear();
 					{
 						OPTICK_EVENT("physics tick")
+						auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
 						internal_tick(1.f / target_physics_hertz);
+						auto end_real_time = std::chrono::steady_clock::now().time_since_epoch();
+						physics_real_delta = static_cast<float>((end_real_time - begin_real_time).count()) / 1000000000.f;
 					}
 					physics_event.signal();
 
