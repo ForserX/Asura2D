@@ -12,6 +12,15 @@
 #include <random>
 #include <variant>
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#include <timeapi.h>
+#else
+#include <pthread.h>
+#endif
+
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
 
@@ -26,16 +35,15 @@
 #include <imgui_internal.h>
 #include <SDL.h>
 #include <SDL_vulkan.h>
+
+#ifdef MIMALLOC_ENABLED
+
+#endif
+
 #include <box2d/box2d.h>
 #include <box2d/b2_math.h>
 
 #include <optick.h>
-
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <pthread.h>
-#endif
 
 #ifdef ARK_VULKAN
 #include <vulkan.hpp>

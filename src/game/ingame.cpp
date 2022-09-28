@@ -45,9 +45,6 @@ std::vector<ark::entity_view> circles;
 
 void ingame::init()
 {
-	ark::level::init();
-	ark::event::init();
-	
 	TestObject = ark::entities::create_phys_body(true, { 50, 50 }, { 20, 10 });
 	TestObject2 = ark::entities::create_phys_body(true, { 50, 100 }, { 200, 10 });
 

@@ -20,6 +20,7 @@ engine::init(int argc, char** argv)
 	engine_scheduler.bind();
 
 	threads::init();
+	event::init();
 	filesystem::init();
 	debug::init();
 	input::init();
@@ -35,6 +36,7 @@ engine::destroy()
 	debug::destroy();
 	input::destroy();
 	filesystem::destroy();
+	event::destroy();
 	threads::destroy();
 
 	marl::Scheduler::unbind();

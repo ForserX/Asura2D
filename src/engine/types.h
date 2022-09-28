@@ -124,8 +124,38 @@ public:
 
 using ark_int_vec2 = ark_vec2<int16_t>;
 
+void* ark_alloc(size_t size_to_alloc);
+void ark_free(void* ptr);
+
 namespace stl_shit
 {
+	template <class T>
+	struct ark_allocator
+	{
+		typedef T value_type;
+
+		ark_allocator() = default;
+		
+		template <class U>
+		constexpr ark_allocator(const ark_allocator <U>&) noexcept {}
+
+		[[nodiscard]] T* allocate(std::size_t n) {
+			if (n > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
+				return nullptr;
+			}
+
+			if (auto p = static_cast<T*>(malloc(n * sizeof(T)))) {
+				return p;
+			}
+
+			return nullptr;
+		}
+
+		void deallocate(T* p, std::size_t n) noexcept {
+			free(p);
+		}
+	};
+	
 	template <class T>
 	void hash_combine(std::int64_t& s, const T& v)
 	{
@@ -162,4 +192,7 @@ namespace stl_shit
 
 	template<typename K, typename T>
 	using function_map = std::unordered_map<K, T, function_hasher<T>, function_equal<T>>;
+	
+	//template<typename K, typename T>
+	//using hash_map = std::unordered_map<K, T, std::hash<K>, std::equal_to<K>, 
 }

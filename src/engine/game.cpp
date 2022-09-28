@@ -8,11 +8,13 @@ game::init()
 	systems::pre_init();
 	systems::init();
 	entities::init();
+	level::init();
 }
 
 void
 game::destroy()
 {
+	level::destroy();
 	entities::destroy();
 	systems::destroy();
 	physics::destroy();
