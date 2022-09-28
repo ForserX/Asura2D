@@ -95,3 +95,6 @@ set_target_properties("unit_test" PROPERTIES ${ARKANE_FOLDER_PREGEN})
 
 set_target_properties("libarkane" PROPERTIES ${ARKANE_FOLDER_ENGINE})
 set_target_properties("arkgame" PROPERTIES ${ARKANE_FOLDER_GAME})
+set_target_properties("arkgame" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
+
+#set_property(DIRECTORY ${ARKANE_FOLDER_GAME} PROPERTY VS_STARTUP_PROJECT "arkgame")
