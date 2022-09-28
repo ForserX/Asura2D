@@ -19,3 +19,6 @@
 [submodule "libs/box2d-optimized"]
 	path = libs/box2d-optimized
 	url = https://github.com/Vertver/box2d-optimized
+[submodule "libs/mimalloc"]
+	path = libs/mimalloc
+	url = https://github.com/microsoft/mimalloc
