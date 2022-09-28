@@ -17,6 +17,18 @@ void
 ui::init()
 {
     console.init();
+
+#ifdef _WIN32
+    int SysLangID = GetSystemDefaultLangID();
+
+    if (SysLangID == 1049) {
+        std::filesystem::path font_dir = filesystem::get_content_dir();
+        font_dir.append("fonts").append("RobotoCondensed.ttf");
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 14, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+    }
+#endif
 }
 
 void
