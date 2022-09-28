@@ -54,9 +54,11 @@ ui::tick(float dt)
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::Text("Render:");
-        ImGui::Text("   FPS/DeltaTime: %.4f/%.4f", 1.f / dt, dt);
+        ImGui::Text("   FPS/DeltaTime: %.4f/%3.3fms", 1.f / dt, dt * 1000.f);
         ImGui::Text("Physics:");
-        ImGui::Text("   TPS/DeltaTime: %.4f/%.4f", 1.f / physics_delta, physics_delta);
+        ImGui::Text("   TPS/DeltaTime: %.4f/%3.3fms", 1.f / physics_delta, physics_delta * 1000.f);
+        ImGui::Text("   Real TPS/DeltaTime: %.4f/%3.3fms", 1.f / physics_real_delta, physics_real_delta * 1000.f);
+        ImGui::Text("   Physics thread load: %3.0f%%", (physics_real_delta / physics_delta) * 100.f);
         ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
         ImGui::Text("Entities");
         ImGui::Text("   Allocated: %d", registry.capacity());

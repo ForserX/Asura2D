@@ -15,7 +15,7 @@ option(ARKANE_SHIPPING "Shipping build of arkane" OFF)
 option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" OFF)
 option(ARKANE_OPTICK "Enable optick profiler" ON)
 option(ARKANE_ASAN "Enable address sanitizer" OFF)
-option(ARKANE_MIMALLOC "Enable mimalloc" OFF)
+option(ARKANE_MIMALLOC "Enable mimalloc" ON)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")

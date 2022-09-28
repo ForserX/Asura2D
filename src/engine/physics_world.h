@@ -111,3 +111,4 @@ namespace ark
 }
 
 extern float physics_delta;
+extern float physics_real_delta;
