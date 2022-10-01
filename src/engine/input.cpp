@@ -14,8 +14,8 @@ stl::function_set<input::on_input_change> input_change_callbacks;
 input::key_state
 get_enum_from_state(int16_t scan_code)
 {
-	const bool new_state = static_cast<bool>(changed_keys[scan_code]);
-	if (new_state != static_cast<bool>(keys_states[scan_code])) {
+	const int new_state = static_cast<int>(changed_keys[scan_code]);
+	if (new_state != static_cast<int>(keys_states[scan_code])) {
 		return new_state ? input::key_state::press : input::key_state::release;
 	}
 

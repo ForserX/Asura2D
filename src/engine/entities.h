@@ -42,7 +42,7 @@ namespace ark::entities
 	template<typename Type, typename... Args>
 	void add_field(const entity_view& entt, Args &&...args)
 	{
-		add_field(entt.get(), std::forward<Args>(args)...);
+		add_field<Type, Args...>(entt.get(), std::forward<Args>(args)...);
 	}
 
 	template<typename Type>
@@ -64,13 +64,13 @@ namespace ark::entities
 	bool is_valid(entity_view ent);
 	entity_view get_entity_from_body(const b2Body* body);
 	
-	entt::entity create_entity();
+	entity_view create_entity();
 	void schedule_to_destroy_entity(const entt::entity& ent);
 
 	ark_float_vec2 get_position(entity_view entity);
-	
-	entity_view create_phys_body(
-		bool draw,
+
+	entity_view add_phys_body(
+		entity_view ent,
 		ark_float_vec2 pos,
 		ark_float_vec2 shape,
 		physics::body_type type = physics::body_type::dynamic_body,
