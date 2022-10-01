@@ -179,6 +179,7 @@ physics::world::pre_tick()
 		if (phys_body != nullptr) {
 			// In this case, we're trying to write temp pointer to this element to
 			// delete after searching this contact in all bodies.
+			contacts.reserve(std::max(contacts.size(), static_cast<size_t>(phys_body->GetContactCount())));
 			for (int i = 0; i < phys_body->GetContactCount(); i++) {
 				const auto contact = phys_body->GetContact(i);
 				if (contact != nullptr) {
