@@ -188,14 +188,6 @@ physics::world::pre_tick()
 
 			// Second - try to delete all referenced links in body
 			phys_body->ClearContacts();
-
-			// Third - delete all fixtures by self
-			auto fixture = phys_body->GetFixtureList();
-			while (fixture != nullptr) {
-				const auto next_fixture = fixture->GetNext();
-				phys_body->DestroyFixture(fixture);
-				fixture = next_fixture;
-			}
 		}
 	}
 
