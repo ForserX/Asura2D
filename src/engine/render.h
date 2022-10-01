@@ -9,4 +9,6 @@ namespace ark::render
 
 	void destroy();
 	void tick(float dt);
+
+	ImTextureID* load_texture(std::string_view path);
 }

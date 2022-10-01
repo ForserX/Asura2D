@@ -1,8 +1,11 @@
 ﻿#include "pch.h"
+#include <SDL_image/SDL_image.h>
 
 using namespace ark;
 
+std::filesystem::path landscape_path;
 graphics::theme::style window_style;
+static ImTextureID landscape_image = 0;
 
 void
 graphics::init()
@@ -12,6 +15,10 @@ graphics::init()
 	
 	ui::init();
 	camera::init();
+
+	landscape_path = filesystem::get_content_dir();
+	landscape_path.append("textures").append("landscape.jpg");
+	landscape_image = render::load_texture(landscape_path.generic_string().c_str());
 }
 
 void
@@ -133,6 +140,10 @@ graphics::draw_convex_poly_filled(
     }
 }
 
+void ark::graphics::draw_background()
+{
+	ImGui::GetBackgroundDrawList()->AddImage(landscape_image, { 0, 0 }, { static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
+}
 
 void
 graphics::draw_physical_object(b2Body* object, const ImColor& clr)
@@ -169,8 +180,10 @@ graphics::tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
-
+	
+	draw_background();
 	draw(dt);
+
 	//if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
 	//	ImGui::End();
 	//}
