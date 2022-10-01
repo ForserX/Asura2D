@@ -141,5 +141,6 @@ ImTextureID* render::load_texture(std::string_view path)
 	std::string error_msg = "Texture not found: ";
 	error_msg += path;
 
-	ark_assert(std::filesystem::exists(path), error_msg, return nullptr);
+	ark_assert(std::filesystem::exists(path), error_msg);
+	return nullptr;
 }

@@ -83,7 +83,6 @@ target_link_libraries("arkgame" PUBLIC "libarkane")
 #
 ################################################
 set_target_properties("imgui" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
-set_target_properties("SDL2" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2-static" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2_image" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2_test" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})

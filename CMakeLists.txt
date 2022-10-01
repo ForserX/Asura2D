@@ -12,7 +12,7 @@ set(ARKANE_FOLDER_GAME FOLDER "Game")
 
 # OPTICK_ENABLED
 option(ARKANE_SHIPPING "Shipping build of arkane" OFF)
-option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" OFF)
+option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
 option(ARKANE_OPTICK "Enable optick profiler" ON)
 option(ARKANE_ASAN "Enable address sanitizer" OFF)
 option(ARKANE_MIMALLOC "Enable mimalloc" ON)
@@ -29,6 +29,8 @@ elseif (ARKANE_SHIPPING)
 	set(ARKANE_OPTICK OFF CACHE BOOL "force optick" FORCE)
 endif()
 
+set(BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
+#set(SDL2IMAGE_BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
 set(OPTICK_ENABLED ${ARKANE_OPTICK} CACHE BOOL "optick enabled" FORCE)
 set(MIMALLOC_ENABLED ${ARKANE_MIMALLOC} CACHE BOOL "mimalloc enabled" FORCE)
 
