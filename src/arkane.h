@@ -34,7 +34,10 @@
 #include <imgui_impl_sdlrenderer.h>
 #include <imgui_internal.h>
 #include <SDL.h>
+#ifdef ARK_VULKAN
 #include <SDL_vulkan.h>
+#endif
+#include <SDL_image.h>
 
 #ifdef MIMALLOC_ENABLED
 #include <mimalloc.h>
