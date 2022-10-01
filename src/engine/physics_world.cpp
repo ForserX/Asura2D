@@ -113,17 +113,13 @@ physics::world::init()
 			std::chrono::nanoseconds begin_physics_time = {};
 			std::chrono::nanoseconds end_physics_time = {};
 			while (!destroy_thread) {
-				OPTICK_FRAME("Physics")
 				OPTICK_EVENT("physics loop")
 				if (use_parallel && !paused) {
 					auto temp_physics_time = begin_physics_time;
 					physics_event.clear();
 					{
 						OPTICK_EVENT("physics tick")
-						auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
 						internal_tick(1.f / target_physics_hertz);
-						auto end_real_time = std::chrono::steady_clock::now().time_since_epoch();
-						physics_real_delta = static_cast<float>((end_real_time - begin_real_time).count()) / 1000000000.f;
 					}
 					physics_event.signal();
 
@@ -174,6 +170,40 @@ physics::world::pre_tick()
 			body->create();
 		}
 	}
+
+#ifdef ARKANE_BOX2D_OPTIMIZED
+	stl::hash_set<b2Contact*> contacts;
+	for (const auto body : scheduled_to_delete_bodies) {
+		const auto phys_body = body->get_body();
+		if (phys_body != nullptr) {
+			// In this case, we're trying to write temp pointer to this element to
+			// delete after searching this contact in all bodies.
+			for (int i = 0; i < phys_body->GetContactCount(); i++) {
+				const auto contact = phys_body->GetContact(i);
+				if (contact != nullptr) {
+					contacts.insert(contact);
+				}
+			}
+
+			// Second - try to delete all referenced links in body
+			phys_body->ClearContacts();
+
+			// Third - delete all fixtures by self
+			auto fixture = phys_body->GetFixtureList();
+			while (fixture != nullptr) {
+				const auto next_fixture = fixture->GetNext();
+				phys_body->DestroyFixture(fixture);
+				fixture = next_fixture;
+			}
+		}
+	}
+
+	// Yep, this is most interesting part: we're deleting all founded by iterating
+	// contacts and free it after processing
+	for	(const auto contact : contacts) {
+		world_holder->GetContactManager().Destroy(contact);
+	}
+#endif
 	
 	for (const auto body : scheduled_to_delete_bodies) {
 		body->destroy();
@@ -263,6 +293,7 @@ physics::world::joints_tick()
 void
 physics::world::internal_tick(float dt)
 {
+	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
 	if (window::is_destroyed()) {
 		return;
 	}
@@ -286,6 +317,9 @@ physics::world::internal_tick(float dt)
 		OPTICK_EVENT("physics systems tick")
 		systems::physics_tick(dt);
 	}
+
+	const auto end_real_time = std::chrono::steady_clock::now().time_since_epoch();
+	physics_real_delta = static_cast<float>((end_real_time - begin_real_time).count()) / 1000000000.f;
 }
 
 ark_matrix
@@ -302,6 +336,7 @@ physics::world::get_real_body_position(b2Body* body)
 #ifdef ARKANE_BOX2D_OPTIMIZED
 		b2AABB shapeAABB = {};
 		shape->ComputeAABB(&shapeAABB, t);
+		aabb.Combine(shapeAABB);
 #else
 		const int childCount = shape->GetChildCount();
 		for (int child = 0; child < childCount; ++child) {

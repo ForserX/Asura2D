@@ -23,7 +23,6 @@ namespace ark::entities
 	
 	struct physics_body_component
 	{
-		bool is_drawing = false;
 		physics::physics_body* body = nullptr;
 	};
 

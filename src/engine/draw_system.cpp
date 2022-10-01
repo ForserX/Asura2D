@@ -33,9 +33,6 @@ draw_system::tick(registry& reg, float dt)
 			}
 			
 			ark_assert(phys_body->body != nullptr, "phys body can't be null!", continue);
-			if (!phys_body->is_drawing) {
-				continue;
-			}
 
 			const auto physical_body = phys_body->body;
 			if (!physical_body->is_created()) {

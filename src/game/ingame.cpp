@@ -45,22 +45,28 @@ std::vector<ark::entity_view> circles;
 
 void ingame::init()
 {
-	TestObject = ark::entities::create_phys_body(true, { 50, 50 }, { 20, 10 });
-	TestObject2 = ark::entities::create_phys_body(true, { 350, 100 }, { 200, 10 });
+	TestObject = ark::entities::add_phys_body(ark::entities::create_entity(), { 50, 50 }, { 20, 10 });
+	TestObject2 = ark::entities::add_phys_body(ark::entities::create_entity(), { 350, 100 }, { 200, 10 });
 
+	ark::entities::add_field<ark::entities::drawable_flag>(TestObject);
+	ark::entities::add_field<ark::entities::drawable_flag>(TestObject2);
+	
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 2000; i++) {
-		std::uniform_real_distribution width_dist(20., 1000.);
-		std::uniform_real_distribution height_dist(20., 1000.);
-		circles.push_back(
-			ark::entities::create_phys_body(
-				true,
+	for (size_t i = 0; i < 4000; i++) {
+		std::uniform_real_distribution width_dist(260., 800.);
+		std::uniform_real_distribution height_dist(260., 800.);
+		// add_field<drawable_flag>(ent);
+		auto& ent = circles.emplace_back(
+			ark::entities::add_phys_body(
+				ark::entities::create_entity(),
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
-				{ 25, 25 },
+				{ 10, 10 },
 				ark::physics::body_type::around_body,
 				ark::material::type::rubber
 			)
 		);
+
+		ark::entities::add_field<ark::entities::drawable_flag>(ent);
 	}
 }

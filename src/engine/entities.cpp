@@ -68,7 +68,7 @@ entities::get_entity_from_body(const b2Body* body)
 	return {};
 }
 
-entt::entity
+entity_view
 entities::create_entity()
 {
 	return global_registry.create();
@@ -95,8 +95,8 @@ entities::get_position(entity_view entity)
 }
 
 entity_view
-entities::create_phys_body(
-	bool draw,
+entities::add_phys_body(
+	entity_view ent,
 	ark_float_vec2 pos,
 	ark_float_vec2 shape,
 	physics::body_type type,
@@ -104,15 +104,11 @@ entities::create_phys_body(
 )
 {
 	auto& reg = get_registry().get();
-	const entt::entity ent = create_entity();
 	const physics::body_parameters phys_parameters(pos, shape, type, mat);
 	physics::physics_body* body = schedule_creation(phys_parameters);
 	
-	physics_component_storage[body] = physics_body_component(draw, body);
+	physics_component_storage[body] = physics_body_component(body);
 	add_field<physics_body_component>(ent, physics_component_storage[body]);
-	if (draw) {
-		add_field<drawable_flag>(ent);
-	}
-	
+
 	return ent;
 }

@@ -42,8 +42,8 @@ ui::tick(float dt)
     
     if (!show_console && show_fps_counter) {
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
-        ImGui::SetNextWindowSize({300, 400});
-        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration))
+        ImGui::SetNextWindowSize({300, 600});
+        if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
         {
             ImGui::End();
             return;
@@ -57,6 +57,15 @@ ui::tick(float dt)
 
         ark_float_vec2 cursor_pos = ImGui::GetMousePos();
         ark_float_vec2 wcursor_pos = camera::screen_to_world(cursor_pos);
+        
+        const float draw_fps = 1.f / dt;
+        const float draw_ms = dt * 1000.f;
+        const float phys_tps = 1.f / physics_delta;
+        const float phys_ms = physics_delta * 1000.f;
+        const float phys_real_tps =  1.f / physics_real_delta;
+        const float phys_real_dt = physics_real_delta * 1000.f;
+        const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
+        
         const auto& registry = entities::get_registry().get();
         ImGui::Text("Controls:");
         ImGui::Checkbox("Debug draw", &physical_debug_draw);
@@ -65,12 +74,13 @@ ui::tick(float dt)
         ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
-        ImGui::Text("Render:");
-        ImGui::Text("   FPS/DeltaTime: %.4f/%3.3fms", 1.f / dt, dt * 1000.f);
+        ImGui::Text("Game:");
+        ImGui::Text("   TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
         ImGui::Text("Physics:");
-        ImGui::Text("   TPS/DeltaTime: %.4f/%3.3fms", 1.f / physics_delta, physics_delta * 1000.f);
-        ImGui::Text("   Real TPS/DeltaTime: %.4f/%3.3fms", 1.f / physics_real_delta, physics_real_delta * 1000.f);
-        ImGui::Text("   Physics thread load: %3.0f%%", (physics_real_delta / physics_delta) * 100.f);
+        ImGui::Text("   TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
+        ImGui::Text("   Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
+        ImGui::Text("   Physics thread load: %3.0f%%", phys_load_percent * 100.f);
+        ImGui::ProgressBar(phys_load_percent);
         ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
         ImGui::Text("Entities");
         ImGui::Text("   Allocated: %d", registry.capacity());

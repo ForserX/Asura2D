@@ -2,7 +2,7 @@
 
 using namespace ark;
 std::filesystem::path path_level;
-stl::vector<ark::entity_view> ent_list;
+stl::vector<entity_view> ent_list;
 #undef max
 #undef min
 namespace ark::level
@@ -20,7 +20,7 @@ namespace ark::level
 		physics::body_type body_type = physics::body_type::static_body;
 
 		for (const auto &[section, kv] : level_data.get_data()) {
-			
+			const bool is_drawable = level_data.get_value(section, "drawable") == "true";
 			level_x = std::stof(level_data.get_value(section, "x"));
 			level_y = std::stof(level_data.get_value(section, "y"));
 			level_w = std::stof(level_data.get_value(section, "w"));
@@ -40,9 +40,13 @@ namespace ark::level
 			level_x = std::max(level_w, level_x) - std::min(level_w, level_x);
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
-			ent_list.emplace_back(
-				entities::create_phys_body(true, { level_x, level_y }, { level_w, level_h }, body_type)
+			auto& ent = ent_list.emplace_back(
+				entities::add_phys_body(entities::create_entity(), { level_x, level_y }, { level_w, level_h }, body_type)
 			);
+
+			if (is_drawable) {
+				entities::add_field<entities::drawable_flag>(ent);
+			}
 		}
 
 	};
