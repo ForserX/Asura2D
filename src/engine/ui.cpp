@@ -74,6 +74,7 @@ ui::tick(float dt)
         ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
+        ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
         ImGui::Text("Game:");
         ImGui::Text("   TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
         ImGui::Text("Physics:");

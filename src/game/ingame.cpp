@@ -61,7 +61,7 @@ void ingame::init()
 			ark::entities::add_phys_body(
 				ark::entities::create_entity(),
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
-				{ 10, 10 },
+				{ 5, 5 },
 				ark::physics::body_type::around_body,
 				ark::material::type::rubber
 			)

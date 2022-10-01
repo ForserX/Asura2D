@@ -3,6 +3,7 @@
 using namespace ark;
 
 constexpr int32 k_maxContactPoints = 2048;
+int target_steps_count = 1;
 float target_physics_tps = 60.f;
 float target_physics_hertz = 60.f;
 float physics_delta = 0.f;
@@ -308,7 +309,7 @@ physics::world::internal_tick(float dt)
 		joints_tick();
 	}
 
-	{
+	for (int i = 0; i < target_steps_count; i++) {
 		OPTICK_EVENT("physics step")
 		world_holder->Step(dt, 6, 2);
 	}
