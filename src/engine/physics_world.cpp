@@ -3,6 +3,7 @@
 using namespace ark;
 
 constexpr int32 k_maxContactPoints = 2048;
+int target_steps_count = 1;
 float target_physics_tps = 60.f;
 float target_physics_hertz = 60.f;
 float physics_delta = 0.f;
@@ -178,6 +179,7 @@ physics::world::pre_tick()
 		if (phys_body != nullptr) {
 			// In this case, we're trying to write temp pointer to this element to
 			// delete after searching this contact in all bodies.
+			contacts.reserve(std::max(contacts.size(), static_cast<size_t>(phys_body->GetContactCount())));
 			for (int i = 0; i < phys_body->GetContactCount(); i++) {
 				const auto contact = phys_body->GetContact(i);
 				if (contact != nullptr) {
@@ -187,14 +189,6 @@ physics::world::pre_tick()
 
 			// Second - try to delete all referenced links in body
 			phys_body->ClearContacts();
-
-			// Third - delete all fixtures by self
-			auto fixture = phys_body->GetFixtureList();
-			while (fixture != nullptr) {
-				const auto next_fixture = fixture->GetNext();
-				phys_body->DestroyFixture(fixture);
-				fixture = next_fixture;
-			}
 		}
 	}
 
@@ -308,7 +302,7 @@ physics::world::internal_tick(float dt)
 		joints_tick();
 	}
 
-	{
+	for (int i = 0; i < target_steps_count; i++) {
 		OPTICK_EVENT("physics step")
 		world_holder->Step(dt, 6, 2);
 	}

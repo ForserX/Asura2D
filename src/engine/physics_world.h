@@ -112,3 +112,4 @@ namespace ark
 
 extern float physics_delta;
 extern float physics_real_delta;
+extern int target_steps_count;
