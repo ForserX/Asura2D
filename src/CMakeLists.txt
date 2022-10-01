@@ -90,6 +90,8 @@ set_target_properties("SDL2_test" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2main" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("marl" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("box2d" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("mimalloc-static" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("OptickCore" PROPERTIES ${ARKANE_FOLDER_PROFILR})
 
 set_target_properties("sdl_headers_copy" PROPERTIES ${ARKANE_FOLDER_PREGEN})
 set_target_properties("uninstall" PROPERTIES ${ARKANE_FOLDER_PREGEN})
