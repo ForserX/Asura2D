@@ -19,7 +19,17 @@ namespace ark::level
 
 		physics::body_type body_type = physics::body_type::static_body;
 
+		// сука, это нужно будет переделать
 		for (const auto &[section, kv] : level_data.get_data()) {
+			if (section == "background") {
+				auto landscape_path = filesystem::get_content_dir();
+				landscape_path.append("textures").append(level_data.get_value(section, "path"));
+
+				auto& background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), landscape_path.generic_string().c_str()));
+				entities::add_field<entities::background_flag>(background_ent);
+				continue;
+			}
+			
 			const bool is_drawable = level_data.get_value(section, "drawable") == "true";
 			level_x = std::stof(level_data.get_value(section, "x"));
 			level_y = std::stof(level_data.get_value(section, "y"));
@@ -29,8 +39,7 @@ namespace ark::level
 			std::string type_str = level_data.get_value(section, "type");
 			if (type_str == "dynamic") {
 				body_type = physics::body_type::dynamic_body;
-			} 
-			else if (type_str == "circle") {
+			} else if (type_str == "circle") {
 				body_type = physics::body_type::around_body;
 			}
 
@@ -41,7 +50,7 @@ namespace ark::level
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
 			auto& ent = ent_list.emplace_back(
-				entities::add_phys_body(entities::create_entity(), { level_x, level_y }, { level_w, level_h }, body_type)
+				entities::add_phys_body(entities::create(), { level_x, level_y }, { level_w, level_h }, body_type)
 			);
 
 			if (is_drawable) {

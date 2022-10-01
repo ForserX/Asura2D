@@ -92,20 +92,21 @@ bool operator!=(const ark_vec2<T>& a, const ark_vec2<T>& b)
 class ark_float_vec2 : public b2Vec2
 {
 public:
-	inline ark_float_vec2() : b2Vec2() {};
+	ark_float_vec2() : b2Vec2() {};
 
-	inline ark_float_vec2(float fx, float fy)
+	ark_float_vec2(float fx, float fy)
 	{
 		x = fx;
 		y = fy;
 	}
 
-	inline ark_float_vec2(ImVec2 vec)
+	ark_float_vec2(ImVec2 vec)
 	{
 		x = vec.x;
 		y = vec.y;
 	}
-	inline ark_float_vec2(b2Vec2 vec)
+	
+	ark_float_vec2(b2Vec2 vec)
 	{
 		x = vec.x;
 		y = vec.y;

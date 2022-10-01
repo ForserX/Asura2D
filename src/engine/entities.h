@@ -64,11 +64,16 @@ namespace ark::entities
 	bool is_valid(entity_view ent);
 	entity_view get_entity_from_body(const b2Body* body);
 	
-	entity_view create_entity();
-	void schedule_to_destroy_entity(const entt::entity& ent);
+	entity_view create();
+	void schedule_to_destroy(const entt::entity& ent);
 
 	ark_float_vec2 get_position(entity_view entity);
 
+	entity_view add_texture(
+		entity_view ent,
+		std::string_view path
+	);
+	
 	entity_view add_phys_body(
 		entity_view ent,
 		ark_float_vec2 pos,

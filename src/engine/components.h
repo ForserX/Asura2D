@@ -2,6 +2,8 @@
 
 namespace ark::entities
 {
+	struct dont_free_after_reset {};	// created for engine/base game entities, which requirement is to be stable 
+	struct background_flag {};
 	struct drawable_flag {};
 	struct ground_flag {};
 
@@ -20,20 +22,19 @@ namespace ark::entities
 	{
 		ImTextureID texture;
 	};
+
+	struct scene_component
+	{
+		ark_float_vec2 position;	
+	};
 	
 	struct physics_body_component
 	{
 		physics::physics_body* body = nullptr;
 	};
-
-	struct screen_visual_component
-	{
-		std::vector<ark_int_vec2> points;
-	};
-
+	
 	struct visual_component
 	{
-		ark_int_vec2 position;
-		std::vector<ark_int_vec2> points;
+		stl::vector<ark_float_vec2> points;
 	};
 }

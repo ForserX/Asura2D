@@ -3,9 +3,7 @@
 
 using namespace ark;
 
-std::filesystem::path landscape_path;
 graphics::theme::style window_style;
-static ImTextureID landscape_image = 0;
 
 void
 graphics::init()
@@ -15,10 +13,6 @@ graphics::init()
 	
 	ui::init();
 	camera::init();
-
-	landscape_path = filesystem::get_content_dir();
-	landscape_path.append("textures").append("landscape.jpg");
-	landscape_image = render::load_texture(landscape_path.generic_string().c_str());
 }
 
 void
@@ -140,9 +134,27 @@ graphics::draw_convex_poly_filled(
     }
 }
 
-void ark::graphics::draw_background()
+void
+graphics::draw_rect(
+	ImColor color,
+	ark_float_vec2 p_min,
+	ark_float_vec2 p_max,
+	bool filled
+)
 {
-	ImGui::GetBackgroundDrawList()->AddImage(landscape_image, { 0, 0 }, { static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
+	if (filled) {
+		ImGui::GetBackgroundDrawList()->AddRectFilled(p_min, p_max, color);
+	} else {
+		ImGui::GetBackgroundDrawList()->AddRect(p_min, p_max, color);
+	}
+}
+
+void
+graphics::draw_background(ImTextureID texture_id)
+{
+	const int64_t width = ui::get_cmd_int("window_width");
+	const int64_t height = ui::get_cmd_int("window_height");
+	ImGui::GetBackgroundDrawList()->AddImage(texture_id, {0,0}, {static_cast<float>(width), static_cast<float>(height)});
 }
 
 void
@@ -163,7 +175,7 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 }
 
 void
-graphics::draw_physical_cricle_object(b2Body* object, const ImColor& clr)
+graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 {
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
@@ -181,7 +193,6 @@ graphics::tick(float dt)
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
 	
-	draw_background();
 	draw(dt);
 
 	//if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {

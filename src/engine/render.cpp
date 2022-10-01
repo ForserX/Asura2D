@@ -131,11 +131,10 @@ render::tick(float dt)
 	}
 }
 
-ImTextureID* render::load_texture(std::string_view path)
+ImTextureID render::load_texture(std::string_view path)
 {
 	if (std::filesystem::exists(path)) {
-		SDL_Texture* texture = IMG_LoadTexture(renderer, path.data());
-		return reinterpret_cast<ImTextureID*>(texture);
+		return IMG_LoadTexture(renderer, path.data());
 	}
 
 	std::string error_msg = "Texture not found: ";

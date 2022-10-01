@@ -25,7 +25,7 @@ physics_system::tick(registry& reg, float dt)
 		if (phys_body != nullptr && phys_body->body != nullptr) {
 			const ark_float_vec2& pos =	phys_body->body->get_position();
 			if (pos.y < y_destroy_coord) {
-				entities::schedule_to_destroy_entity(entity);
+				entities::schedule_to_destroy(entity);
 				continue;
 			}
 		}

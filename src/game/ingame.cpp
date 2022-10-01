@@ -2,11 +2,11 @@
 
 using namespace ark::systems;
 
-std::vector<std::unique_ptr<ark::system>> pre_game_update_systems;
-std::vector<std::unique_ptr<ark::system>> game_update_systems;
-std::vector<std::unique_ptr<ark::system>> post_game_update_systems;
-std::vector<std::unique_ptr<ark::system>> game_physics_systems;
-std::vector<std::unique_ptr<ark::system>> game_draw_systems;
+ark::stl::vector<std::unique_ptr<ark::system>> pre_game_update_systems;
+ark::stl::vector<std::unique_ptr<ark::system>> game_update_systems;
+ark::stl::vector<std::unique_ptr<ark::system>> post_game_update_systems;
+ark::stl::vector<std::unique_ptr<ark::system>> game_physics_systems;
+ark::stl::vector<std::unique_ptr<ark::system>> game_draw_systems;
 
 void init_systems()
 {
@@ -41,32 +41,34 @@ void ingame::pre_init()
 ark::entity_view TestObject;
 ark::entity_view TestObject2;
 
-std::vector<ark::entity_view> circles;
+ark::stl::vector<ark::entity_view> circles;
 
 void ingame::init()
 {
-	TestObject = ark::entities::add_phys_body(ark::entities::create_entity(), { 50, 50 }, { 20, 10 });
-	TestObject2 = ark::entities::add_phys_body(ark::entities::create_entity(), { 350, 100 }, { 200, 10 });
+	using namespace ark;
+	using namespace entities;
+	
+	TestObject = add_phys_body(create(), { 50, 50 }, { 20, 10 });
+	TestObject2 = add_phys_body(create(), { 350, 100 }, { 200, 10 });
 
-	ark::entities::add_field<ark::entities::drawable_flag>(TestObject);
-	ark::entities::add_field<ark::entities::drawable_flag>(TestObject2);
+	add_field<drawable_flag>(TestObject);
+	add_field<drawable_flag>(TestObject2);
 	
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 4000; i++) {
+	for (size_t i = 0; i < 2000; i++) {
 		std::uniform_real_distribution width_dist(260., 800.);
 		std::uniform_real_distribution height_dist(260., 800.);
-		// add_field<drawable_flag>(ent);
 		auto& ent = circles.emplace_back(
-			ark::entities::add_phys_body(
-				ark::entities::create_entity(),
+			add_phys_body(
+				create(),
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
-				{ 5, 5 },
-				ark::physics::body_type::around_body,
-				ark::material::type::rubber
+				{ 20, 20 },
+				physics::body_type::around_body,
+				material::type::rubber
 			)
 		);
 
-		ark::entities::add_field<ark::entities::drawable_flag>(ent);
+		add_field<drawable_flag>(ent);
 	}
 }

@@ -29,16 +29,6 @@ namespace ark::event
 			Arg
 		>;
 		
-		// Basically, this template is fucking awful, because it was created only for one purpose - obtaining the type
-		// of function arguments. We need to get count of function arguments manually to return delegate with
-		// acceptable type for it.
-		template<typename> struct function_args final {};
-		template<typename T, typename... Args>
-		struct function_args<T(Args...)> final
-		{
-			static constexpr std::size_t args_count = sizeof...(Args);
-		};
-
 		using callback_0_arg = void() const;
 		using callback_1_arg = void(parameter) const;
 		using callback_2_arg = void(parameter, parameter) const;
