@@ -69,7 +69,7 @@ logic_parser::save(const std::filesystem::path& file_path)
 }
 
 std::string 
-logic_parser::get_value(std::string_view section, std::string_view key)
+logic_parser::get(std::string_view section, std::string_view key)
 {
     auto current_data = data[section.data()];
     for (auto& [lkey, lvalue] : current_data)
