@@ -20,7 +20,7 @@ physics_system::tick(registry& reg, float dt)
 	OPTICK_EVENT("engine physics system tick")
 	entt::registry& registry = reg.get();
 	const auto view = registry.view<entities::physics_body_component>();
-	for (auto& entity : view) {
+	for (const auto entity : view) {
 		const auto phys_body = registry.try_get<entities::physics_body_component>(entity);
 		if (phys_body != nullptr && phys_body->body != nullptr) {
 			const ark_float_vec2& pos =	phys_body->body->get_position();

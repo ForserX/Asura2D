@@ -23,7 +23,7 @@ draw_system::tick(registry& reg, float dt)
 	const auto draw_view = registry.view<drawable_flag>();
 	const auto background_view = registry.view<background_flag>();
 
-	for (auto& entity : background_view) {
+	for (const auto entity : background_view) {
 		ark_assert(!registry.all_of<drawable_flag>(entity), "background entity can't contain draw flag!", continue)
 		
 		const int64_t width = ui::get_cmd_int("window_width");

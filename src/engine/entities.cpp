@@ -42,7 +42,7 @@ void
 entities::tick(float dt)
 {
 	const auto view = global_registry.get().view<garbage_flag>();
-	for (const auto& ent : view) {
+	for (const auto ent : view) {
 		destroy_entity(ent);
 	}
 }
@@ -58,7 +58,7 @@ entities::get_entity_from_body(const b2Body* body)
 {
 	const auto& registry = global_registry.get();
 	const auto view = registry.view<physics_body_component>();
-	for (auto& entity : view) {
+	for (const auto entity : view) {
 		const auto& phys_component = registry.get<physics_body_component>(entity);
 		if (phys_component.body != nullptr && phys_component.body->get_body() == body) {
 			return entity;
