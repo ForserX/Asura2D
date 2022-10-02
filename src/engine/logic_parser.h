@@ -31,7 +31,12 @@ namespace ark
                 return "true" == get(section, value);
             }
             else if constexpr (std::is_integral_v<T>) {
-                return (T)std::stoll(get(section, value));
+                if constexpr (std::is_unsigned_v<T>) {
+                    return (T)std::stoull(get(section, value));
+                }
+                else {
+                    return (T)std::stoll(get(section, value));
+                }
             }
             else if constexpr (std::is_floating_point_v<T>) {
                 return std::stof(get(section, value));
