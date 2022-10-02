@@ -56,7 +56,7 @@ void ingame::init()
 	
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 2000; i++) {
+	for (size_t i = 0; i < 400; i++) {
 		std::uniform_real_distribution width_dist(260., 800.);
 		std::uniform_real_distribution height_dist(260., 800.);
 		auto& ent = circles.emplace_back(

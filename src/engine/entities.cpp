@@ -77,7 +77,10 @@ entities::create()
 void
 entities::mark_as_garbage(const entt::entity& ent)
 {
-	add_field<garbage_flag>(ent);
+	const auto& registry = global_registry.get();
+	if (!registry.all_of<dont_free_after_reset>(ent) && !registry.all_of<garbage_flag>(ent)) {
+		add_field<garbage_flag>(ent);
+	}
 }
 
 ark_float_vec2
