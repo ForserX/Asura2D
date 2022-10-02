@@ -72,7 +72,7 @@ namespace ark::level
 			level_x = std::max(level_w, level_x) - std::min(level_w, level_x);
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
-			auto& ent = ent_list.emplace_back(
+			auto ent = ent_list.emplace_back(
 				entities::add_phys_body(
 					entities::create(),
 					{},

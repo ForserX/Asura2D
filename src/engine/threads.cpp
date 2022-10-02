@@ -28,3 +28,24 @@ void threads::set_thread_affinity(void* handle, int64_t core)
 #endif
 	
 }
+
+inline void nop()
+{
+#if defined(_WIN32)
+	__nop();
+#else
+	__asm__ __volatile__("nop");
+#endif
+}
+
+void
+threads::switch_context()
+{
+	for (int i = 0; i < 256; i++)
+	{
+		nop(); nop(); nop(); nop(); nop(); nop(); nop(); nop();
+		nop(); nop(); nop(); nop(); nop(); nop(); nop(); nop();
+		nop(); nop(); nop(); nop(); nop(); nop(); nop(); nop();
+		nop(); nop(); nop(); nop(); nop(); nop(); nop(); nop();
+	}
+}

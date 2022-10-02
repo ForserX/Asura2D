@@ -100,14 +100,12 @@ physics::world::init()
 	if (use_parallel) {
 		physics_thread = std::make_unique<std::jthread>([this]() {
 			OPTICK_THREAD("Physics thread")
-			OPTICK_FRAME_EVENT(Optick::FrameType::CPU)
-			OPTICK_CATEGORY("physics::tick", Optick::Category::Physics)
 
 			// Setup affinity to second thread
 			threads::set_thread_affinity(physics_thread->native_handle(), 1);
 			
 			while (!enable_thread) {
-				std::this_thread::sleep_for(std::chrono::seconds(0));
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			}
 
 			enable_thread = false;
@@ -125,17 +123,18 @@ physics::world::init()
 					physics_event.signal();
 
 					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / target_physics_tps) * 1000000000.f));
-
 					{
 						OPTICK_EVENT("physics wait")
 						while (end_physics_time > begin_physics_time) {
 							const float milliseconds_to_end = static_cast<float>((end_physics_time - begin_physics_time).count()) / 1000000.f;
-							int64_t sleep_time = milliseconds_to_end > 5.f ? 2 : 0;
 							begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
-							std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+							if (milliseconds_to_end > 5.f) {
+								std::this_thread::sleep_for(std::chrono::milliseconds(2));
+							} else {
+								threads::switch_context();
+							}
 						}
 					}
-
 					end_physics_time = begin_physics_time;
 					physics_delta = static_cast<float>((end_physics_time - temp_physics_time).count()) / 1000000000.f;
 				}
@@ -250,8 +249,8 @@ physics::world::joints_tick()
 			MoveBody = hit_test(mousePositionAbsolute);
 
 			if (MoveBody != nullptr) {
-				constexpr float frequency_hz = 5.0f;
-				constexpr float damping_ratio = 0.7f;
+				constexpr float frequency_hz = 60.0f;
+				constexpr float damping_ratio = 1.f;
 
 				b2MouseJointDef jd;
 				jd.bodyA = ground;
