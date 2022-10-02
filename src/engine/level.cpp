@@ -26,20 +26,20 @@ namespace ark::level
 		for (const auto &[section, kv] : level_data.get_data()) {
 			if (section == "background") {
 				auto landscape_path = filesystem::get_content_dir();
-				landscape_path.append("textures").append(level_data.get_value(section, "path"));
+				landscape_path.append("textures").append(level_data.get_value<std::string>(section, "path"));
 
 				auto& background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), landscape_path.generic_string().c_str()));
 				entities::add_field<entities::background_flag>(background_ent);
 				continue;
 			}
 			
-			const bool is_drawable = level_data.get_value(section, "drawable") == "true";
-			level_x = std::stof(level_data.get_value(section, "x"));
-			level_y = std::stof(level_data.get_value(section, "y"));
-			level_w = std::stof(level_data.get_value(section, "w"));
-			level_h = std::stof(level_data.get_value(section, "h"));
+			const bool is_drawable = level_data.get_value<bool>(section, "drawable");
+			level_x = level_data.get_value<float>(section, "x");
+			level_y = level_data.get_value<float>(section, "y");
+			level_w = level_data.get_value<float>(section, "w");
+			level_h = level_data.get_value<float>(section, "h");
 
-			std::string type_str = level_data.get_value(section, "type");
+			std::string type_str = level_data.get_value<std::string>(section, "type");
 			if (type_str == "dynamic") {
 				body_type = physics::body_type::dynamic_body;
 			} else if (type_str == "static") {
@@ -48,7 +48,7 @@ namespace ark::level
 				ark_assert(false, "this is bad, bro", {})
 			}
 
-			std::string shape_str = level_data.get_value(section, "shape");
+			std::string shape_str = level_data.get_value<std::string>(section, "shape");
 			if (shape_str == "box") {
 				body_shape = physics::body_shape::box_shape;
 			} else if (shape_str == "circle") {
@@ -57,7 +57,7 @@ namespace ark::level
 				ark_assert(false, "this is bad, bro", {})
 			}
 			
-			std::string material_str = level_data.get_value(section, "material");
+			std::string material_str = level_data.get_value<std::string>(section, "material");
 			if (material_str == "solid") {
 				material_type = material::type::solid;
 			} else if (material_str == "rubber") {
