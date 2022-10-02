@@ -2,7 +2,7 @@
 
 namespace ark::camera
 {
-	enum class cam_move {
+	enum class cam_move : int64_t {
 		left,
 		right,
 		up,

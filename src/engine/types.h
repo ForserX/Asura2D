@@ -192,21 +192,25 @@ namespace ark::stl
 			return res;
 		}
 	};
+	
+	template<typename K, typename T, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
+	using hash_map = std::unordered_map<K, T, Hash, Equal, ark_allocator<std::pair<const K, T>>>;
+	
+	template<typename K, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
+	using hash_set = std::unordered_set<K, Hash, Equal, ark_allocator<K>>;
 
 	template<typename T>
-	using function_set = std::unordered_set<T, function_hasher<T>, function_equal<T>>;
-
-	template<typename K, typename T>
-	using hash_map = std::unordered_map<K, T, std::hash<K>, std::equal_to<K>, ark_allocator<std::pair<const K, T>>>;
-	
-	template<typename K>
-	using hash_set = std::unordered_set<K, std::hash<K>, std::equal_to<K>, ark_allocator<K>>;
+	using function_set = hash_set<T, function_hasher<T>, function_equal<T>>;
 	
 	template<typename K>
 	using vector = std::vector<K, ark_allocator<K>>;
 	
 	using byte_vector = vector<char>;
 	using stream_vector = std::pair<int64_t, byte_vector>;
-	//template<typename K, typename T>
-	//using hash_map = std::unordered_map<K, T, std::hash<K>, std::equal_to<K>, 
+
+	using string = std::basic_string<char>;
+	using string_view = std::basic_string_view<char>;
+
+	template<class... Args>
+	using variant = std::variant<Args...>;
 }

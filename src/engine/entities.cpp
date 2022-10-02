@@ -5,7 +5,6 @@ using namespace ark;
 registry global_registry;
 entity_view invalid_entity = {};
 
-stl::hash_set<entt::entity> entities_to_destroy;
 stl::hash_map<physics::physics_body*, entities::physics_body_component> physics_component_storage;
 
 void
@@ -42,11 +41,10 @@ entities::destroy()
 void
 entities::tick(float dt)
 {
-	for (const auto& ent : entities_to_destroy) {
+	const auto view = global_registry.get().view<garbage_flag>();
+	for (const auto& ent : view) {
 		destroy_entity(ent);
 	}
-	
-	entities_to_destroy.clear();
 }
 
 bool
@@ -59,7 +57,7 @@ entity_view
 entities::get_entity_from_body(const b2Body* body)
 {
 	const auto& registry = global_registry.get();
-	const auto& view = registry.view<physics_body_component>();
+	const auto view = registry.view<physics_body_component>();
 	for (auto& entity : view) {
 		const auto& phys_component = registry.get<physics_body_component>(entity);
 		if (phys_component.body != nullptr && phys_component.body->get_body() == body) {
@@ -77,9 +75,9 @@ entities::create()
 }
 
 void
-entities::schedule_to_destroy(const entt::entity& ent)
+entities::mark_as_garbage(const entt::entity& ent)
 {
-	entities_to_destroy.insert(ent);
+	add_field<garbage_flag>(ent);
 }
 
 ark_float_vec2
@@ -106,7 +104,7 @@ entities::get_position(entity_view entity)
 entity_view
 entities::add_texture(
 	entity_view ent,
-	std::string_view path
+	stl::string_view path
 )
 {
 	const auto texture_id = render::load_texture(path);

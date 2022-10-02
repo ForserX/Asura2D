@@ -11,7 +11,7 @@ namespace ark::material
 		bool ignore_collision = false;
 	};
 
-	enum class type : uint32_t
+	enum class type : int64_t
 	{
 		solid,
 		rubber,

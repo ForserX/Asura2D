@@ -2,6 +2,7 @@
 
 namespace ark::entities
 {
+	struct garbage_flag {};
 	struct dont_free_after_reset {};	// non-serializable, created for engine/base game entities, which requirement is to be stable 
 	struct background_flag {};			// serializable, for background 
 	struct drawable_flag {};			// serializable, for drawing

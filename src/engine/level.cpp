@@ -18,53 +18,25 @@ namespace ark::level
 		float level_w = 0;
 		float level_h = 0;
 
-		physics::body_type body_type = {};
-		physics::body_shape body_shape = {};
-		material::type material_type = {};
-
 		// сука, это нужно будет переделать
 		for (const auto &[section, kv] : level_data.get_data()) {
 			if (section == "background") {
 				auto landscape_path = filesystem::get_content_dir();
-				landscape_path.append("textures").append(level_data.get_value<std::string>(section, "path"));
-
+				landscape_path.append("textures").append(level_data.get<stl::string_view>(section, "path"));
 				auto& background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), landscape_path.generic_string().c_str()));
 				entities::add_field<entities::background_flag>(background_ent);
 				continue;
 			}
 			
-			const bool is_drawable = level_data.get_value<bool>(section, "drawable");
-			level_x = level_data.get_value<float>(section, "x");
-			level_y = level_data.get_value<float>(section, "y");
-			level_w = level_data.get_value<float>(section, "w");
-			level_h = level_data.get_value<float>(section, "h");
-
-			std::string type_str = level_data.get_value<std::string>(section, "type");
-			if (type_str == "dynamic") {
-				body_type = physics::body_type::dynamic_body;
-			} else if (type_str == "static") {
-				body_type = physics::body_type::static_body;
-			} else {
-				ark_assert(false, "this is bad, bro", {})
-			}
-
-			std::string shape_str = level_data.get_value<std::string>(section, "shape");
-			if (shape_str == "box") {
-				body_shape = physics::body_shape::box_shape;
-			} else if (shape_str == "circle") {
-				body_shape = physics::body_shape::circle_shape;
-			} else {
-				ark_assert(false, "this is bad, bro", {})
-			}
-			
-			std::string material_str = level_data.get_value<std::string>(section, "material");
-			if (material_str == "solid") {
-				material_type = material::type::solid;
-			} else if (material_str == "rubber") {
-				material_type = material::type::rubber;
-			} else {
-				ark_assert(false, "this is bad, bro", {})
-			}
+			const bool is_drawable = level_data.get<bool>(section, "drawable");
+			level_x = level_data.get<float>(section, "x");
+			level_y = level_data.get<float>(section, "y");
+			level_w = level_data.get<float>(section, "w");
+			level_h = level_data.get<float>(section, "h");
+					
+			const auto body_type = level_data.get<physics::body_type>(section, "type");
+			const auto body_shape = level_data.get<physics::body_shape>(section, "shape");
+			const auto material_type = level_data.get<material::type>(section, "material");
 			
 			level_w /= 2;
 			level_h /= 2;

@@ -20,7 +20,7 @@ event::tick()
 }
 
 void
-event::create(std::string_view name, int64_t parameters_count)
+event::create(stl::string_view name, int64_t parameters_count)
 {
 	ark_assert(parameters_count >= 0 && parameters_count <= internal::max_parameters_count, "invalid parameters count", return);
 	ark_assert(!exists(name), "event already exists", return);
@@ -29,7 +29,7 @@ event::create(std::string_view name, int64_t parameters_count)
 }
 
 void
-event::remove(std::string_view name)
+event::remove(stl::string_view name)
 {
 	if (events.contains(name.data())) {
 		events.erase(name.data());
@@ -39,13 +39,13 @@ event::remove(std::string_view name)
 }
 
 bool
-event::exists(std::string_view name)
+event::exists(stl::string_view name)
 {
 	return events.contains(name.data());
 }
 
 void
-event::internal::subscribe(std::string_view name, const callback& sub_callback)
+event::internal::subscribe(stl::string_view name, const callback& sub_callback)
 {
 	auto& subscribers = events[name.data()];
 	ark_assert(!subscribers.contains(sub_callback), "callback already subscribed", return);
@@ -53,14 +53,14 @@ event::internal::subscribe(std::string_view name, const callback& sub_callback)
 }
 
 void
-event::internal::unsubscribe(std::string_view name, const callback& sub_callback)
+event::internal::unsubscribe(stl::string_view name, const callback& sub_callback)
 {
 	auto& subscribers = events[name.data()];
 	subscribers.erase(sub_callback);
 }
 
 void
-event::internal::trigger(std::string_view name, parameter callback_parameter_1, parameter callback_parameter_2)
+event::internal::trigger(stl::string_view name, parameter callback_parameter_1, parameter callback_parameter_2)
 {
 	ark_assert(events.contains(name.data()), "event doesn't exists", return);
 	const auto& subscribers = events[name.data()];

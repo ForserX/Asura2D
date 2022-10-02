@@ -16,7 +16,8 @@ core::destroy()
 {
 }
 
-int64_t ark::core::get_cmd_int(std::string_view key)
+int64_t
+core::get_cmd_int(stl::string_view key)
 {
     return ui::get_cmd_int(key);
 }

@@ -18,17 +18,17 @@ namespace ark::debug
 	void init();
 	void destroy();
 
-	void show_error(std::string_view message);
-	void print_message(std::string_view message);
+	void show_error(stl::string_view message);
+	void print_message(stl::string_view message);
 
 	template <typename... Args>
-	inline void msg(std::string_view rt_fmt_str, Args&&... args)
+	inline void msg(stl::string_view rt_fmt_str, Args&&... args)
 	{
-		print_message(std::vformat(rt_fmt_str, std::make_format_args(args...)));
+		print_message(std::vformat(rt_fmt_str.data(), std::make_format_args(args...)));
 	}
 
 	template<>
-	inline void msg(std::string_view message)
+	inline void msg(stl::string_view message)
 	{
 		print_message(message);
 	}

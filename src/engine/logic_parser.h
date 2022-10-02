@@ -4,45 +4,45 @@ namespace ark
 {
     class logic_parser
     {
-        using data_type = std::unordered_map<std::string, std::unordered_map<std::string, std::string>>;
+        using data_type = stl::hash_map<stl::string, stl::hash_map<stl::string, stl::string>>;
         data_type data;
         size_t section_count = 0;
 
     private:
-        std::string get(std::string_view section, std::string_view value);
+        const stl::string& get(stl::string_view section, stl::string_view value) const;
 
     public:
         logic_parser() noexcept = default;
         ~logic_parser() = default;
 
         void load(const std::filesystem::path&);
-        void save(const std::filesystem::path&);
+        void save(const std::filesystem::path&) const;
 
         [[nodiscard]] inline size_t get_count() const { return section_count; }
         [[nodiscard]] inline data_type get_data() const { return data; }
-        int set_value(std::string_view section, std::string_view key, std::string_view value);
+        int set_value(stl::string_view section, stl::string_view key, stl::string_view value);
 
-        int add_section(std::string_view section);
-        int add_key_in_section(std::string_view section, std::string_view key);
+        int add_section(stl::string_view section);
+        int add_key_in_section(stl::string_view section, stl::string_view key);
 
-        template <typename T>
-        auto get_value(std::string_view section, std::string_view value) {
-            if constexpr (std::is_same_v<T, bool>) {
-                return "true" == get(section, value);
-            }
-            else if constexpr (std::is_integral_v<T>) {
+        template<typename T>
+        T get(stl::string_view section, stl::string_view value)
+        {
+            const auto& value_string = get(section, value);
+            if constexpr (std::is_floating_point_v<T>) {
+                return static_cast<T>(std::stod(value_string));
+            } else if constexpr (std::is_same_v<T, bool>) {
+                return value_string == "true";
+            } else if constexpr (std::is_integral_v<T>) {
                 if constexpr (std::is_unsigned_v<T>) {
-                    return (T)std::stoull(get(section, value));
+                    return static_cast<T>(std::stoull(value_string));
+                } else {
+                    return static_cast<T>(std::stoll(value_string));
                 }
-                else {
-                    return (T)std::stoll(get(section, value));
-                }
-            }
-            else if constexpr (std::is_floating_point_v<T>) {
-                return std::stof(get(section, value));
-            }
-            else {
-                return get(section, value);
+            } else if constexpr (std::is_enum_v<T>) {
+                return static_cast<T>(std::stoll(value_string));
+            } else {
+                return value_string.data();
             }
         }
     };

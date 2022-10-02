@@ -28,7 +28,7 @@ debug::destroy()
 }
 
 void
-debug::show_error(std::string_view message)
+debug::show_error(stl::string_view message)
 {
 	print_message(message);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
@@ -39,7 +39,7 @@ debug::show_error(std::string_view message)
 }
 
 void
-debug::print_message(std::string_view message)
+debug::print_message(stl::string_view message)
 {
 	log_file << message << std::endl;
 	ui::push_console_string(message);

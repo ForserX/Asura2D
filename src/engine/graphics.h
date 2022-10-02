@@ -17,7 +17,7 @@ namespace ark::graphics
 
 	namespace theme
 	{
-		enum class style
+		enum class style : int64_t
 		{
 			red,
 			dark,

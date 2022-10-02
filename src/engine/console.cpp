@@ -104,7 +104,7 @@ void ui::UIConsole::clear_log()
     Items.clear();
 }
 
-void ui::UIConsole::push_log_item(std::string_view str)
+void ui::UIConsole::push_log_item(stl::string_view str)
 {
     Items.push_back(strdup(str.data()));
 }
@@ -206,9 +206,9 @@ void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
                 skip = true;
                 break;
             }
-            if (command.find(InputBuf) != std::string::npos)
+            if (command.find(InputBuf) != stl::string::npos)
             {
-                std::string print = command + std::string(" (") + hint + ")";
+                stl::string print = command + stl::string(" (") + hint + ")";
                 item_list[Iter] = strdup(print.c_str());
                 Iter++;
             }
@@ -217,7 +217,7 @@ void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
         static int item_current = -1;
         if (!skip && Iter > 0)
         {
-            ark_float_vec2 safe_pos = ImGui::GetCursorPos();
+            const ark_float_vec2 safe_pos = ImGui::GetCursorPos();
             ark_float_vec2 pos = ImGui::GetCursorPos();
             pos.y -= Iter * (TextBoxPos.y - pos.y) + 5;
             ImGui::SetCursorPos(pos);
@@ -227,14 +227,14 @@ void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
         }
 
         if (item_current != -1) {
-            std::string try_str = item_list[item_current];
+            stl::string try_str = item_list[item_current];
 
-            size_t space_iter = try_str.find(" ");
-            if (try_str.find(" ") != std::string::npos) {
+            const size_t space_iter = try_str.find(' ');
+            if (space_iter != stl::string::npos) {
                 try_str = try_str.substr(0, space_iter);
             }
 
-            strcpy(InputBuf, try_str.data());
+            try_str.copy(InputBuf, try_str.size());
             item_current = -1;
         }
 
@@ -284,7 +284,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
         }
     History.push_back(strdup(command_line));
 
-    std::string cmd = command_line;
+    stl::string cmd = command_line;
     std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
 
     // Process command
@@ -540,7 +540,7 @@ void ui::UIConsole::init()
 
     std::ifstream cfg(cfg_path);
 
-    std::string line;
+    stl::string line;
 
     while (std::getline(cfg, line))
     {

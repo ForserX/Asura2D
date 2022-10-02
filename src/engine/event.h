@@ -4,7 +4,7 @@ namespace ark::event
 {
 	using parameter = std::variant<
  		std::monostate,
- 		std::string_view,
+ 		stl::string_view,
  		entity_view,
  		int64_t,
  		ark_int_vec2,
@@ -74,14 +74,14 @@ namespace ark::event
 			}
 		};
 		
-		using subscribers_storage = std::unordered_set<
+		using subscribers_storage = stl::hash_set<
 			callback,
 			callback_hasher,
 			callback_equal
 		>;
 		
-		using event_callback_storage = std::unordered_map<
-			std::string_view,
+		using event_callback_storage = stl::hash_map<
+			stl::string_view,
 			subscribers_storage
 		>;
 	}
@@ -90,10 +90,10 @@ namespace ark::event
 	void destroy();
 	void tick();
 
-	void create(std::string_view name, int64_t parameters_count);
-	void remove(std::string_view name);
+	void create(stl::string_view name, int64_t parameters_count);
+	void remove(stl::string_view name);
 
-	bool exists(std::string_view name);
+	bool exists(stl::string_view name);
 
 	namespace internal
 	{
@@ -120,14 +120,14 @@ namespace ark::event
 			return callback();
 		}
 		
-		void subscribe(std::string_view name, const callback& sub_callback);
-		void unsubscribe(std::string_view name, const callback& sub_callback);
+		void subscribe(stl::string_view name, const callback& sub_callback);
+		void unsubscribe(stl::string_view name, const callback& sub_callback);
 
-		void trigger(std::string_view name, parameter callback_parameter_1 = std::monostate(), parameter callback_parameter_2 = std::monostate());
+		void trigger(stl::string_view name, parameter callback_parameter_1 = std::monostate(), parameter callback_parameter_2 = std::monostate());
 	}
 		
 	template<std::size_t args_count>
-	auto subscribe(std::string_view name, auto&& functor)
+	auto subscribe(stl::string_view name, auto&& functor)
 	{
 		auto callback_delegate = internal::make_callback<args_count>(functor);
 		internal::subscribe(name, callback_delegate);
@@ -135,7 +135,7 @@ namespace ark::event
 	}
 	
 	template<class... Args>
-	void trigger(std::string_view name, Args... arguments)
+	void trigger(stl::string_view name, Args... arguments)
 	{
 		constexpr size_t args_count = sizeof...(arguments);
 		internal::trigger(name, arguments...);

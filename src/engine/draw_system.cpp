@@ -20,8 +20,8 @@ draw_system::tick(registry& reg, float dt)
 {
 	OPTICK_EVENT("engine draw system tick")
 	entt::registry& registry = reg.get();
-	const auto &draw_view = registry.view<drawable_flag>();
-	const auto &background_view = registry.view<background_flag>();
+	const auto draw_view = registry.view<drawable_flag>();
+	const auto background_view = registry.view<background_flag>();
 
 	for (auto& entity : background_view) {
 		ark_assert(!registry.all_of<drawable_flag>(entity), "background entity can't contain draw flag!", continue)

@@ -9,15 +9,15 @@ using namespace ark;
 void 
 render::pre_init()
 {
-	std::string render_list;
+	stl::string render_list;
 #if defined(_WIN32)
-	std::string mode = "direct3d11";
+	stl::string mode = "direct3d11";
 #elif defined(__linux__)
-	std::string mode = "opengl";
+	stl::string mode = "opengl";
 #elif defined(__ANDROID__)
-	std::string mode = "opengles2";
+	stl::string mode = "opengles2";
 #else
-	std::string mode = "opengl";
+	stl::string mode = "opengl";
 #endif
 
 	for (int i = 0; i < SDL_GetNumRenderDrivers(); ++i)
@@ -25,7 +25,7 @@ render::pre_init()
 		SDL_RendererInfo rendererInfo = {};
 		SDL_GetRenderDriverInfo(i, &rendererInfo);
 #ifdef ARK_DX12
-		if (rendererInfo.name == std::string("direct3d12")) {
+		if (!stl::string_view("direct3d12").compare(rendererInfo.name)) {
 			mode = rendererInfo.name;
 		}
 #endif
@@ -131,13 +131,13 @@ render::tick(float dt)
 	}
 }
 
-ImTextureID render::load_texture(std::string_view path)
+ImTextureID render::load_texture(stl::string_view path)
 {
 	if (std::filesystem::exists(path)) {
 		return IMG_LoadTexture(renderer, path.data());
 	}
 
-	std::string error_msg = "Texture not found: ";
+	stl::string error_msg = "Texture not found: ";
 	error_msg += path;
 
 	ark_assert(std::filesystem::exists(path), error_msg, {});

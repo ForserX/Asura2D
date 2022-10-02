@@ -95,7 +95,7 @@ ui::tick(float dt)
 }
 
 int64_t 
-ui::get_cmd_int(std::string_view str)
+ui::get_cmd_int(stl::string_view str)
 {
     if (str == "window_fullscreen") {
         return fullscreen_mode;
@@ -133,7 +133,7 @@ ui::get_cmd_int(std::string_view str)
 }
 
 void 
-ui::push_console_string(std::string_view str)
+ui::push_console_string(stl::string_view str)
 {
     console.push_log_item(str);
 }

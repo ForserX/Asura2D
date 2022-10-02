@@ -7,13 +7,13 @@ namespace ark
 	
 	namespace physics
 	{
-		enum class body_shape : uint32_t
+		enum class body_shape : int64_t
 		{
 			box_shape,
 			circle_shape
 		};
 		
-		enum class body_type : uint32_t
+		enum class body_type : int64_t
 		{
 			static_body,
 			dynamic_body,
@@ -127,8 +127,8 @@ namespace ark
 
 			std::unique_ptr<CollisionLister> cl;
 
-			std::unordered_set<physics_body*> scheduled_to_delete_bodies;
-			std::unordered_set<physics_body*> bodies;
+			stl::hash_set<physics_body*> scheduled_to_delete_bodies;
+			stl::hash_set<physics_body*> bodies;
 
 		private:
 			void destroy_all_bodies();

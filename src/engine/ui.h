@@ -6,6 +6,6 @@ namespace ark::ui
 	void tick(float dt);
 	void destroy();
 
-	int64_t get_cmd_int(std::string_view key);
-	void push_console_string(std::string_view str);
+	int64_t get_cmd_int(stl::string_view key);
+	void push_console_string(stl::string_view str);
 }
