@@ -105,10 +105,7 @@ entities::get_position(entity_view entity)
 }
 
 entity_view
-entities::add_texture(
-	entity_view ent,
-	stl::string_view path
-)
+entities::add_texture(entity_view ent, stl::string_view path)
 {
 	const auto texture_id = render::load_texture(path);
 	ark_assert(texture_id != nullptr, "can't load texture", return {})
