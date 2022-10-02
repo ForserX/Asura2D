@@ -9,7 +9,8 @@ namespace ark::level
 {
 	logic_parser level_data;
 
-	void load(std::filesystem::path path) {
+	void load(const std::filesystem::path path)
+	{
 		level_data.load(path);
 
 		float level_x = 0;
@@ -17,7 +18,9 @@ namespace ark::level
 		float level_w = 0;
 		float level_h = 0;
 
-		physics::body_type body_type = physics::body_type::static_body;
+		physics::body_type body_type = {};
+		physics::body_shape body_shape = {};
+		material::type material_type = {};
 
 		// сука, это нужно будет переделать
 		for (const auto &[section, kv] : level_data.get_data()) {
@@ -39,10 +42,30 @@ namespace ark::level
 			std::string type_str = level_data.get_value(section, "type");
 			if (type_str == "dynamic") {
 				body_type = physics::body_type::dynamic_body;
-			} else if (type_str == "circle") {
-				body_type = physics::body_type::around_body;
+			} else if (type_str == "static") {
+				body_type = physics::body_type::static_body;
+			} else {
+				ark_assert(false, "this is bad, bro", {})
 			}
 
+			std::string shape_str = level_data.get_value(section, "shape");
+			if (shape_str == "box") {
+				body_shape = physics::body_shape::box_shape;
+			} else if (shape_str == "circle") {
+				body_shape = physics::body_shape::circle_shape;
+			} else {
+				ark_assert(false, "this is bad, bro", {})
+			}
+			
+			std::string material_str = level_data.get_value(section, "material");
+			if (material_str == "solid") {
+				material_type = material::type::solid;
+			} else if (material_str == "rubber") {
+				material_type = material::type::rubber;
+			} else {
+				ark_assert(false, "this is bad, bro", {})
+			}
+			
 			level_w /= 2;
 			level_h /= 2;
 
@@ -50,14 +73,21 @@ namespace ark::level
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
 			auto& ent = ent_list.emplace_back(
-				entities::add_phys_body(entities::create(), { level_x, level_y }, { level_w, level_h }, body_type)
+				entities::add_phys_body(
+					entities::create(),
+					{},
+					{ level_x, level_y },
+					{ level_w, level_h },
+					body_type,
+					body_shape,
+					material_type
+				)
 			);
 
 			if (is_drawable) {
 				entities::add_field<entities::drawable_flag>(ent);
 			}
 		}
-
 	};
 };
 

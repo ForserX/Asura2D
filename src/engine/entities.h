@@ -61,6 +61,9 @@ namespace ark::entities
 	void destroy();
 	void tick(float dt);
 
+	void serialize(entity_view ent, stl::stream_vector& data);
+	void deserialize(stl::byte_vector& data);
+
 	bool is_valid(entity_view ent);
 	entity_view get_entity_from_body(const b2Body* body);
 	
@@ -76,9 +79,11 @@ namespace ark::entities
 	
 	entity_view add_phys_body(
 		entity_view ent,
+		ark_float_vec2 vel,
 		ark_float_vec2 pos,
-		ark_float_vec2 shape,
+		ark_float_vec2 size,
 		physics::body_type type = physics::body_type::dynamic_body,
+		physics::body_shape shape = physics::body_shape::box_shape,
 		material::type mat = material::type::solid
 	);
 }

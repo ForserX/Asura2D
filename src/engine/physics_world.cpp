@@ -421,74 +421,6 @@ physics::world::schedule_free(physics_body* body)
 	scheduled_to_delete_bodies.emplace(body);
 }
 
-void
-physics::physics_body::create_around()
-{
-	OPTICK_EVENT("physics create around body")
-	
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(parameters.pos.x, parameters.pos.y);
-	body = get_world().CreateBody(&bodyDef);
-
-	b2CircleShape circle;
-	circle.m_p.Set(parameters.size.x, parameters.size.y);
-	circle.m_radius = parameters.size.x / 2;
-
-	b2FixtureDef fixtureDef;
-	const auto& [friction, restitution, density, ignore_collision] = get(parameters.mat);
-	fixtureDef.shape = &circle;
-	fixtureDef.density = density;
-	fixtureDef.friction = friction;
-	fixtureDef.restitution = restitution;
-	fixtureDef.isSensor = ignore_collision;
-	body->CreateFixture(&fixtureDef);
-}
-
-void
-physics::physics_body::create_static()
-{
-	OPTICK_EVENT("physics create static body")
-	
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(parameters.pos.x, parameters.pos.y);
-
-	body = get_world().CreateBody(&groundBodyDef);
-
-	const auto& [friction, restitution, density, ignore_collision] = get(parameters.mat);
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(parameters.size.x, parameters.size.y);
-	body->CreateFixture(&groundBox, density);
-}
-
-void
-physics::physics_body::create_dynamic()
-{
-	OPTICK_EVENT("physics create dynamic body")
-	
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(parameters.pos.x, parameters.pos.y);
-	body = get_world().CreateBody(&bodyDef);
-
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(parameters.size.x, parameters.size.y);
-
-	b2FixtureDef fixtureDef;
-	b2MassData mass_data = {};
-	mass_data.center = { parameters.size.x / 2, parameters.size.y / 2 };
-	mass_data.mass = 5;
-	
-	const auto& [friction, restitution, density, ignore_collision] = get(parameters.mat);
-	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = density;
-	fixtureDef.friction = friction;
-	fixtureDef.restitution = restitution;
-	fixtureDef.isSensor = ignore_collision;
-	body->CreateFixture(&fixtureDef);
-	//body->SetMassData(&mass_data);
-}
-
 physics::physics_body::physics_body(body_parameters in_parameters)
 	: parameters(in_parameters)
 {
@@ -509,21 +441,54 @@ physics::physics_body::get_position()
 	return proxy_position;
 }
 
+physics::body_parameters
+physics::physics_body::copy_parameters() const
+{
+	body_parameters params = parameters;
+	if (body != nullptr) {
+		params.angle = body->GetAngle();
+		params.vel_angle = body->GetAngularVelocity();
+		params.vel = body->GetLinearVelocity();
+		params.pos = body->GetPosition();
+	}
+
+	return params;
+}
+
 void
 physics::physics_body::create()
 {
-	switch (parameters.type) {
-	case body_type::around_body:
-		create_around();
+	const b2BodyDef body_def = parameters;
+	const b2MassData mass_data = parameters;
+	body = get_world().CreateBody(&body_def);
+
+	b2FixtureDef fixtureDef;
+	b2PolygonShape poly_shape = {};
+	b2CircleShape circle_shape = {};
+
+	switch (parameters.shape) {
+	case body_shape::box_shape:
+		poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
+		fixtureDef.shape = &poly_shape;
 		break;
-	case body_type::dynamic_body:
-		create_dynamic();
-		break;
-	case body_type::static_body:
-		create_static();
+	case body_shape::circle_shape:
+		circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
+		circle_shape.m_radius = parameters.size.x / 2;
+		fixtureDef.shape = &circle_shape;
 		break;
 	}
 
+	const auto& [friction, restitution, density, ignore_collision] = material::get(parameters.mat);
+	fixtureDef.density = density;
+	fixtureDef.friction = friction;
+	fixtureDef.restitution = restitution;
+	fixtureDef.isSensor = ignore_collision;
+	body->CreateFixture(&fixtureDef);
+
+	if (mass_data.mass != 0.f) {
+		body->SetMassData(&mass_data);
+	}
+	
 	created = true;
 	destroyed = false;
 }

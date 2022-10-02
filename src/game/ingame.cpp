@@ -48,8 +48,8 @@ void ingame::init()
 	using namespace ark;
 	using namespace entities;
 	
-	TestObject = add_phys_body(create(), { 50, 50 }, { 20, 10 });
-	TestObject2 = add_phys_body(create(), { 350, 100 }, { 200, 10 });
+	TestObject = add_phys_body(create(), {}, { 50, 50 }, { 20, 10 });
+	TestObject2 = add_phys_body(create(), {}, { 350, 100 }, { 200, 10 });
 
 	add_field<drawable_flag>(TestObject);
 	add_field<drawable_flag>(TestObject2);
@@ -62,9 +62,11 @@ void ingame::init()
 		auto& ent = circles.emplace_back(
 			add_phys_body(
 				create(),
+				{},
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
 				{ 20, 20 },
-				physics::body_type::around_body,
+				physics::body_type::dynamic_body,
+				physics::body_shape::circle_shape,
 				material::type::rubber
 			)
 		);
