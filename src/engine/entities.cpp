@@ -119,14 +119,16 @@ entities::add_texture(
 entity_view
 entities::add_phys_body(
 	entity_view ent,
+	ark_float_vec2 vel,
 	ark_float_vec2 pos,
-	ark_float_vec2 shape,
+	ark_float_vec2 size,
 	physics::body_type type,
+	physics::body_shape shape,
 	material::type mat
 )
 {
 	auto& reg = get_registry().get();
-	const physics::body_parameters phys_parameters(pos, shape, type, mat);
+	const physics::body_parameters phys_parameters(0.f, 0.f, vel, pos, size, type, shape, mat);
 	physics::physics_body* body = schedule_creation(phys_parameters);
 	
 	physics_component_storage[body] = physics_body_component(body);

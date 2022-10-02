@@ -92,7 +92,7 @@ bool operator!=(const ark_vec2<T>& a, const ark_vec2<T>& b)
 class ark_float_vec2 : public b2Vec2
 {
 public:
-	ark_float_vec2() : b2Vec2() {};
+	ark_float_vec2() : b2Vec2(0, 0) {};
 
 	ark_float_vec2(float fx, float fy)
 	{
@@ -112,6 +112,11 @@ public:
 		y = vec.y;
 	}
 
+	bool empty() const
+	{
+		return (x == 0.f && y == 0.f);
+	}
+	
 	operator b2Vec2() const
 	{
 		return { x, y };
@@ -199,6 +204,9 @@ namespace ark::stl
 	
 	template<typename K>
 	using vector = std::vector<K, ark_allocator<K>>;
+	
+	using byte_vector = vector<char>;
+	using stream_vector = std::pair<int64_t, byte_vector>;
 	//template<typename K, typename T>
 	//using hash_map = std::unordered_map<K, T, std::hash<K>, std::equal_to<K>, 
 }

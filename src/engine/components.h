@@ -2,11 +2,13 @@
 
 namespace ark::entities
 {
-	struct dont_free_after_reset {};	// created for engine/base game entities, which requirement is to be stable 
-	struct background_flag {};
-	struct drawable_flag {};
-	struct ground_flag {};
+	struct dont_free_after_reset {};	// non-serializable, created for engine/base game entities, which requirement is to be stable 
+	struct background_flag {};			// serializable, for background 
+	struct drawable_flag {};			// serializable, for drawing
+	struct ground_flag {};				// serializable, for ground specification
 
+	struct level_flag {};
+	
 	struct draw_color_component
 	{
 		ImColor color;

@@ -7,23 +7,80 @@ namespace ark
 	
 	namespace physics
 	{
-		enum class body_type
+		enum class body_shape : uint32_t
+		{
+			box_shape,
+			circle_shape
+		};
+		
+		enum class body_type : uint32_t
 		{
 			static_body,
-			around_body,
-			dynamic_body
+			dynamic_body,
+			kinematic_body
 		};
 		
 		struct body_parameters
 		{
+			float angle = 0.f;
+			float vel_angle = 0.f;
+			ark_float_vec2 vel;
 			ark_float_vec2 pos;
 			ark_float_vec2 size;
 			body_type type;
+			body_shape shape;
 			material::type mat;
-
+			float mass;
+			ark_float_vec2 mass_center;
+			
 			body_parameters() = delete;
-			body_parameters(ark_float_vec2 in_pos, ark_float_vec2 in_size, body_type in_type, material::type in_mat = material::type::solid)
-				: pos(in_pos), size(in_size), type(in_type), mat(in_mat) {}
+			body_parameters(
+				float in_angle,
+				float in_vel_angle,
+				ark_float_vec2 in_vel,
+				ark_float_vec2 in_pos,
+				ark_float_vec2 in_size,
+				body_type in_type,
+				body_shape in_shape,
+				material::type in_mat,
+				float in_mass = 0.f,
+				ark_float_vec2 in_mass_center = {}
+			) :
+			angle(in_angle),
+			vel_angle(in_vel_angle),
+			vel(in_vel),
+			pos(in_pos),
+			size(in_size),
+			type(in_type),
+			shape(in_shape),
+			mat(in_mat),
+			mass(in_mass)
+			{
+				if (in_mass_center.empty()) {
+					mass_center = { size.x / 2, size.y / 2 };
+				} else {
+					mass_center = in_mass_center;
+				}
+			}
+
+			operator b2BodyDef() const
+			{
+				b2BodyDef body_def = {};
+				body_def.angle = angle;
+				body_def.angularVelocity = vel_angle;
+				body_def.linearVelocity.Set(vel.x, vel.y);
+				body_def.position.Set(pos.x, pos.y);
+				body_def.type = (type == body_type::kinematic_body) ? b2_kinematicBody : (type == body_type::static_body) ? b2_staticBody : b2_dynamicBody;
+				return body_def;
+			}
+
+			operator b2MassData() const
+			{
+				b2MassData mass_data = {};
+				mass_data.center = mass_center;
+				mass_data.mass = mass;
+				return mass_data;
+			}
 		};
 		
 		class physics_body
@@ -36,11 +93,6 @@ namespace ark
 
 		private:
 			ark_float_vec2 proxy_position = {};
-
-		private:
-			void create_static();
-			void create_around();
-			void create_dynamic();
 			
 		public:
 			physics_body() = delete;
@@ -53,6 +105,8 @@ namespace ark
 			b2Body* get_body() const { return body; }
 			const body_parameters& get_parameters() const { return parameters; }
 			const ark_float_vec2& get_position();
+
+			body_parameters copy_parameters() const;
 
 			void create();
 			void destroy();
