@@ -5,62 +5,56 @@ namespace ark::entities
 	// non-serializable, created for scheduled entities destroying
 	struct garbage_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 0;
 	};
 	
 	// non-serializable
 	struct non_serializable_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 1;
 	};
 	
 	// non-serializable, created for engine/base game entities, which requirement is to be stable 
 	struct dont_free_after_reset_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 2;
 	};
 	
 	// serializable, for background 
 	struct background_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 3;
 	};
 	
 	// serializable, for drawing
 	struct drawable_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 4;
 	};
 	
 	// serializable, for ground specification
 	struct ground_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 5;
 	};
 	
 	// serializable, for level specification
 	struct level_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 6;
 	};					
 
 	// serializable, for networking and delta serialize
 	struct net_id_flag
 	{
-		static constexpr bool is_flag = true;
 		static constexpr uint16_t flag = 1 << 7;
-	};					
-	
+	};
+
+	template <typename T>
+	using detect_flag = decltype(T::flag);	
+
 	struct draw_color_component
 	{
-		static constexpr bool is_flag = false;
 		ImColor color;
 
 		bool can_serialize_now() const
@@ -84,7 +78,6 @@ namespace ark::entities
 
 	struct draw_gradient_component
 	{
-		static constexpr bool is_flag = false;
 		ImColor first_color;
 		ImColor second_color;
 
@@ -115,7 +108,6 @@ namespace ark::entities
 
 	struct draw_texture_component
 	{
-		static constexpr bool is_flag = false;
 		ImTextureID texture;
 
 		bool can_serialize_now() const
@@ -136,7 +128,6 @@ namespace ark::entities
 
 	struct scene_component
 	{
-		static constexpr bool is_flag = false;
 		ark_float_vec2 position;
 
 		bool can_serialize_now() const
@@ -159,7 +150,6 @@ namespace ark::entities
 	
 	struct physics_body_component
 	{
-		static constexpr bool is_flag = false;
 		physics::physics_body* body = nullptr;
 
 		bool can_serialize_now() const
@@ -184,7 +174,6 @@ namespace ark::entities
 	
 	struct visual_component
 	{
-		static constexpr bool is_flag = false;
 		stl::vector<ark_float_vec2> points;
 		
 		bool can_serialize_now() const

@@ -72,13 +72,13 @@ entities::serialize(stl::stream_vector& data)
 		}
 		
 		serialize_desc desc = {};
-		for (auto&& curr : reg.storage()) {
+		for (const auto&& curr : reg.storage()) {
 			entt::id_type id = curr.first;
-			auto& storage = curr.second;
+			const auto& storage = curr.second;
 			if (storage.contains(ent) && type_map.contains(id)) {
 				std::visit([&]<typename T>(T&& arg) {
-					using U = std::remove_cv_t<std::remove_reference_t<T>>;
-					if constexpr (U::is_flag) {
+					using U = stl::clear_type<T>;
+					if constexpr (stl::is_detected<detect_flag, U>::value) {
 						desc.flags |= U::flag;
 					} else {
 						const U* value_ptr = static_cast<const U*>(storage.get(ent));
@@ -100,13 +100,13 @@ entities::serialize(stl::stream_vector& data)
 			//return;
 		}
 		
-		for (auto&& curr : reg.storage()) {
+		for (const auto&& curr : reg.storage()) {
 			entt::id_type id = curr.first;
-			auto& storage = curr.second;
+			const auto& storage = curr.second;
 			if (storage.contains(ent) && type_map.contains(id)) {
 				std::visit([&]<typename T>(T&& arg) {
-					using U = std::remove_cv_t<std::remove_reference_t<T>>;
-					if constexpr (!U::is_flag) {
+					using U = stl::clear_type<T>;
+					if constexpr (!stl::is_detected<detect_flag, U>::value) {
 						const U* value_ptr = static_cast<const U*>(storage.get(ent));
 						if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
 							stl::write_memory(data, id);

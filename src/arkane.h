@@ -12,6 +12,7 @@
 #include <random>
 #include <variant>
 #include <type_traits>
+#include <concepts>
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
