@@ -27,11 +27,11 @@ namespace ark
 			ark_float_vec2 vel;
 			ark_float_vec2 pos;
 			ark_float_vec2 size;
+			ark_float_vec2 mass_center;
 			body_type type;
 			body_shape shape;
 			material::type mat;
 			float mass;
-			ark_float_vec2 mass_center;
 			
 			body_parameters() = delete;
 			body_parameters(
@@ -63,6 +63,11 @@ namespace ark
 				}
 			}
 
+			body_parameters(stl::stream_vector& data)
+			{
+				deserialize(data);
+			}
+
 			operator b2BodyDef() const
 			{
 				b2BodyDef body_def = {};
@@ -80,6 +85,34 @@ namespace ark
 				mass_data.center = mass_center;
 				mass_data.mass = mass;
 				return mass_data;
+			}
+
+			void serialize(stl::stream_vector& data) const
+			{
+				write_memory(data, angle);
+				write_memory(data, vel_angle);
+				write_memory(data, vel);
+				write_memory(data, pos);
+				write_memory(data, size);
+				write_memory(data, mass_center);
+				write_memory(data, type);
+				write_memory(data, shape);
+				write_memory(data, mat);
+				write_memory(data, mass);
+			}
+
+			void deserialize(stl::stream_vector& data)
+			{
+				read_memory(data, angle);
+				read_memory(data, vel_angle);
+				read_memory(data, vel);
+				read_memory(data, pos);
+				read_memory(data, size);
+				read_memory(data, mass_center);
+				read_memory(data, type);
+				read_memory(data, shape);
+				read_memory(data, mat);
+				read_memory(data, mass);
 			}
 		};
 		

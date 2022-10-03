@@ -27,6 +27,14 @@ namespace ark
 
 		const entt::entity& get() const { return ent; }
 	};
+
+	struct serialize_desc
+	{
+		uint16_t flags;
+		uint8_t components_count : 6;
+		uint8_t reserved1 : 2;
+		uint8_t reserved2;
+	};
 }
 
 namespace ark::entities
@@ -61,14 +69,15 @@ namespace ark::entities
 	void destroy();
 	void tick(float dt);
 
-	void serialize(entity_view ent, stl::stream_vector& data);
-	void deserialize(stl::byte_vector& data);
+	void serialize(stl::stream_vector& data);
+	void deserialize(stl::stream_vector& data);
 
 	bool is_valid(entity_view ent);
+	bool is_null(entity_view ent);
 	entity_view get_entity_from_body(const b2Body* body);
 	
 	entity_view create();
-	void mark_as_garbage(const entt::entity& ent);
+	void mark_as_garbage(entity_view ent);
 
 	ark_float_vec2 get_position(entity_view entity);
 

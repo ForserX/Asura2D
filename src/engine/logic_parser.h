@@ -18,8 +18,8 @@ namespace ark
         void load(const std::filesystem::path&);
         void save(const std::filesystem::path&) const;
 
-        [[nodiscard]] inline size_t get_count() const { return section_count; }
-        [[nodiscard]] inline data_type get_data() const { return data; }
+        [[nodiscard]] size_t get_count() const { return section_count; }
+        [[nodiscard]] data_type get_data() const { return data; }
         int set_value(stl::string_view section, stl::string_view key, stl::string_view value);
 
         int add_section(stl::string_view section);

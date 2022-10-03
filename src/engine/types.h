@@ -208,6 +208,21 @@ namespace ark::stl
 	using byte_vector = vector<char>;
 	using stream_vector = std::pair<int64_t, byte_vector>;
 
+	void
+	write_memory(stream_vector& data, auto& value)
+	{
+		const size_t idx = data.second.size();
+		data.second.resize(idx + sizeof(value));
+		std::memcpy(&data.second[idx], &value, sizeof(value));
+		data.first += sizeof(value);
+	}
+
+	void
+	read_memory(stream_vector& data, auto& value)
+	{
+		
+	}
+
 	using string = std::basic_string<char>;
 	using string_view = std::basic_string_view<char>;
 

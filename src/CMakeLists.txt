@@ -30,6 +30,7 @@ list(APPEND LIBRARIES_TO_LINK "marl")
 list(APPEND LIBRARIES_TO_LINK "box2d")
 list(APPEND LIBRARIES_TO_LINK "OptickCore")
 list(APPEND LIBRARIES_TO_LINK "SDL2-static")
+list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
 
 if (ARKANE_ASAN)
@@ -75,7 +76,12 @@ endif()
 # Define game executable
 #
 ################################################
-add_executable("arkgame" ${GAME_SRC} "main.cpp")
+if (WIN32)
+	add_executable("arkgame" WIN32 ${GAME_SRC} "main.cpp")
+else()
+	add_executable("arkgame" ${GAME_SRC} "main.cpp")
+endif()
+
 target_link_libraries("arkgame" PUBLIC "libarkane")
 
 ################################################

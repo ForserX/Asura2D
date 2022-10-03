@@ -203,6 +203,8 @@ physics::world::pre_tick()
 		if (bodies.contains(body)) {
 			bodies.erase(body);
 		}
+
+		delete body;
 	}
 
 	scheduled_to_delete_bodies.clear();
@@ -220,21 +222,20 @@ physics::world::joints_tick()
 			ContactPoint = mousePositionAbsolute;
 		}
 		else {
-			physics_body* TestBody = hit_test(mousePositionAbsolute);
-
-			if (TestBody != nullptr && TestBody != ContactBody)
+			const physics_body* test_body = hit_test(mousePositionAbsolute);
+			if (test_body != nullptr && test_body != ContactBody)
 			{
 				constexpr float frequency_hz = 5.0f;
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-				jointDef.Initialize(ContactBody->get_body(), TestBody->get_body(), ContactPoint, mousePositionAbsolute);
+				jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), ContactPoint, mousePositionAbsolute);
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
 
 				physics::get_world().CreateJoint(&jointDef);
-				TestBody->get_body()->SetAwake(true);
+				test_body->get_body()->SetAwake(true);
 			}
 
 			ContactBody = nullptr;

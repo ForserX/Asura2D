@@ -64,7 +64,7 @@ void ingame::init()
 				create(),
 				{},
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
-				{ 20, 20 },
+				{ 25, 25 },
 				physics::body_type::dynamic_body,
 				physics::body_shape::circle_shape,
 				material::type::rubber

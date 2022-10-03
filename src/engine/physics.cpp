@@ -62,20 +62,14 @@ public:
 
 	bool ReportFixture(b2Fixture* fixture) override
 	{
-		b2Body* body = fixture->GetBody();
-		if (body->GetType() == b2_dynamicBody)
-		{
-			bool inside = fixture->TestPoint(m_point);
-			if (inside)
-			{
+		const b2Body* body = fixture->GetBody();
+		if (body->GetType() == b2_dynamicBody) {
+			if (fixture->TestPoint(m_point)) {
 				m_fixture = fixture;
-
-				// We are done, terminate the query.
 				return false;
 			}
 		}
-
-		// Continue the query.
+		
 		return true;
 	}
 
@@ -99,13 +93,12 @@ physics::hit_test(ark_float_vec2 pos)
 
 	if (callback.m_fixture)
 	{
-		b2Body* PhysBody = callback.m_fixture->GetBody();
-		const auto& entity = entities::get_entity_from_body(PhysBody);
+		const b2Body* phys_body = callback.m_fixture->GetBody();
+		const auto& entity = entities::get_entity_from_body(phys_body);
 		const auto& reg = entities::get_registry().get();
-		const auto entt_object = reg.try_get<entities::physics_body_component>(entity.get());
-
-		if (entt_object != nullptr) {
-			return entt_object->body;
+		const auto phys_comp = reg.try_get<entities::physics_body_component>(entity.get());
+		if (phys_comp != nullptr) {
+			return phys_comp->body;
 		}
 	}
 
