@@ -30,12 +30,12 @@ debug::destroy()
 void
 debug::show_error(stl::string_view message)
 {
-	print_message(message);
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
-
 #ifdef _DEBUG
 	DebugBreak();
 #endif
+
+	print_message(message);
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
 }
 
 void
