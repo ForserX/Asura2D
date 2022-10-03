@@ -46,7 +46,7 @@ debug::print_message(stl::string_view message)
 
 #if defined(_DEBUG) & defined(_WIN32)
 	if (IsDebuggerPresent()) {
-		OutputDebugString("Arkane2D: ");
+		OutputDebugString("ark: ");
 		OutputDebugString(message.data());
 		OutputDebugString("\r\n");
 	}
