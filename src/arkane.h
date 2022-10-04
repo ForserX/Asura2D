@@ -89,3 +89,7 @@
 
 #include "engine/engine.h"
 #include "engine/game.h"
+
+extern bool is_phys_ticking;
+extern bool is_game_ticking;
+extern bool is_serializer_ticking;

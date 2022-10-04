@@ -36,8 +36,7 @@ class ark::CollisionLister final : public b2ContactListener
 	{
 		const b2Manifold* manifold = contact->GetManifold();
 
-		if (manifold->pointCount == 0)
-		{
+		if (manifold->pointCount == 0) {
 			return;
 		}
 
@@ -90,7 +89,6 @@ physics::world::init()
 
 	world_dbg_draw = std::make_unique<DebugDraw>();
 	world_dbg_draw->AppendFlags(b2Draw::e_jointBit | b2Draw::e_aabbBit);
-
 	world_holder->SetDebugDraw(world_dbg_draw.get());
 
 	b2BodyDef groundBodyDef;
@@ -116,10 +114,15 @@ physics::world::init()
 				if (use_parallel && !paused) {
 					auto temp_physics_time = begin_physics_time;
 					physics_event.clear();
+					
+					if (!is_serializer_ticking)
 					{
 						OPTICK_EVENT("physics tick")
+						is_phys_ticking = true;
 						internal_tick(1.f / target_physics_hertz);
+						is_phys_ticking = false;
 					}
+
 					physics_event.signal();
 
 					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / target_physics_tps) * 1000000000.f));
@@ -214,22 +217,21 @@ void
 physics::world::joints_tick()
 {
 	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1)) {
-		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
-		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
+		ark_float_vec2 mouse_position_absolute = ImGui::GetMousePos();
+		mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
 
 		if (ContactBody == nullptr) {
-			ContactBody = hit_test(mousePositionAbsolute);
-			ContactPoint = mousePositionAbsolute;
+			ContactBody = hit_test(mouse_position_absolute);
+			ContactPoint = mouse_position_absolute;
 		}
 		else {
-			const physics_body* test_body = hit_test(mousePositionAbsolute);
-			if (test_body != nullptr && test_body != ContactBody)
-			{
+			const physics_body* test_body = hit_test(mouse_position_absolute);
+			if (test_body != nullptr && test_body != ContactBody) {
 				constexpr float frequency_hz = 5.0f;
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-				jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), ContactPoint, mousePositionAbsolute);
+				jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), ContactPoint, mouse_position_absolute);
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
@@ -243,12 +245,11 @@ physics::world::joints_tick()
 	}
 
 	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
-		ark_float_vec2 mousePositionAbsolute = ImGui::GetMousePos();
-		mousePositionAbsolute = camera::screen_to_world(mousePositionAbsolute);
+		ark_float_vec2 mouse_position_absolute = ImGui::GetMousePos();
+		mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
 
 		if (TestMouseJoint == nullptr) {
-			MoveBody = hit_test(mousePositionAbsolute);
-
+			MoveBody = hit_test(mouse_position_absolute);
 			if (MoveBody != nullptr) {
 				constexpr float frequency_hz = 60.0f;
 				constexpr float damping_ratio = 1.f;
@@ -256,22 +257,19 @@ physics::world::joints_tick()
 				b2MouseJointDef jd;
 				jd.bodyA = ground;
 				jd.bodyB = MoveBody->get_body();
-				jd.target = mousePositionAbsolute;
+				jd.target = mouse_position_absolute;
 				jd.maxForce = 1000.0f * MoveBody->get_body()->GetMass();
 				b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
 				TestMouseJoint = dynamic_cast<b2MouseJoint*>(physics::get_world().CreateJoint(&jd));
 				MoveBody->get_body()->SetAwake(true);
-			}
-			else {
+			} else {
 				TestMouseJoint = nullptr;
 			}
-		}
-		else {
+		} else {
 			if (!MoveBody->is_destroyed()) {
-				TestMouseJoint->SetTarget(mousePositionAbsolute);
-			}
-			else {
+				TestMouseJoint->SetTarget(mouse_position_absolute);
+			} else {
 				TestMouseJoint = nullptr;
 			}
 		}
@@ -308,6 +306,11 @@ physics::world::internal_tick(float dt)
 	}
 
 	{
+		OPTICK_EVENT("physics substepping")
+		world_holder->ClearForces();
+	}
+
+	{
 		OPTICK_EVENT("physics systems tick")
 		systems::physics_tick(dt);
 	}
@@ -338,8 +341,7 @@ physics::world::get_real_body_position(b2Body* body)
 			shape->ComputeAABB(&shapeAABB, t, child);
 			aabb.Combine(shapeAABB);
 		}
-#endif
-		
+#endif		
 		fixture = fixture->GetNext();
 	}
 
@@ -362,11 +364,6 @@ physics::world::tick(float dt)
 			internal_tick(1.f / target_physics_tps);
 			phys_accum = 0.f;
 		}
-	}
-
-	{
-		OPTICK_EVENT("physics substepping")
-		world_holder->ClearForces();
 	}
 }
 

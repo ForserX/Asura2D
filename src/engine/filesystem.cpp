@@ -81,3 +81,27 @@ filesystem::create_dir(const std::filesystem::path& dir_name)
 	const bool can_create = std::filesystem::create_directories(dir_name);
 	ark_assert(can_create, "file creating error", std::terminate());
 }
+
+void 
+filesystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+{
+	const auto file_iter = file_list.find(file_name);
+	if (file_iter != file_list.end()) {
+		std::filesystem::remove(file_name);
+	} else {
+		file_list.emplace(file_name);
+	}
+
+	std::fstream out_stream(file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);
+	out_stream.write(stream_data.second.data(), stream_data.second.size());
+	out_stream.close();
+}
+
+void 
+filesystem::read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+{
+	std::fstream in_stream(file_name, std::fstream::binary | std::fstream::in);
+	stream_data.second.resize(std::filesystem::file_size(file_name));
+	in_stream.read(stream_data.second.data(), stream_data.second.size());
+	in_stream.close();
+}

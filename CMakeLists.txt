@@ -35,6 +35,10 @@ set(BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
 set(OPTICK_ENABLED ${ARKANE_OPTICK} CACHE BOOL "optick enabled" FORCE)
 set(MIMALLOC_ENABLED ${ARKANE_MIMALLOC} CACHE BOOL "mimalloc enabled" FORCE)
 
+if (ARKANE_SHIPPING)
+	add_compile_definitions("ARKANE_SHIPPING")
+endif()
+
 if (MIMALLOC_ENABLED)
 	add_compile_definitions("MIMALLOC_ENABLED")
 endif()

@@ -23,10 +23,10 @@ ui::init()
 
     if (SysLangID == 1049) {
         std::filesystem::path font_dir = filesystem::get_content_dir();
-        font_dir.append("fonts").append("RobotoCondensed.ttf");
+        font_dir.append("fonts").append("Roboto-Regular.ttf");
 
         ImGuiIO& io = ImGui::GetIO();
-        io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 14, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+        io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
     }
 #endif
 }
@@ -39,8 +39,8 @@ ui::tick(float dt)
 		OPTICK_EVENT("ui console draw")
         console.draw(dt, "Arkane console", &show_console);
     } else if (show_fps_counter) {
-        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
-        ImGui::SetNextWindowSize({300, 600});
+        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 5 });
+        ImGui::SetNextWindowSize({400, 600});
         if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
         {
             ImGui::End();
@@ -91,7 +91,10 @@ ui::tick(float dt)
         ImGui::End();
     }
 
-
+    auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
+    if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) {
+        ImGui::GetForegroundDrawList()->AddText(ImVec2(0, 0), ImColor(0.f, 0.f, 0.f), "Serialization/Deserialization complete");
+    }
 }
 
 int64_t 

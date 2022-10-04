@@ -232,7 +232,8 @@ namespace ark::entities
 	draw_gradient_component, \
 	draw_texture_component, \
 	scene_component, \
-	physics_body_component \
+	physics_body_component, \
+	dynamic_visual_component
 
 #define DECLASE_NON_SERIALIZABLE_TYPES \
 	garbage_flag, \

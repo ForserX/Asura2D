@@ -59,8 +59,10 @@ engine::tick()
 	}
 
 	input::tick(dt);
-	if (!paused) {
+	if (!is_serializer_ticking && !paused) {
+		is_game_ticking = true;
 		game::tick(dt);
+		is_game_ticking = false;
 	}
 	
 	render::tick(dt);

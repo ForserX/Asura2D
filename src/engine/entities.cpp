@@ -5,6 +5,12 @@ using namespace ark;
 registry global_registry;
 entity_view invalid_entity = {};
 
+std::chrono::nanoseconds entities_serilize_last_time;
+stl::stream_vector entities_data;
+marl::mutex entities_serialization_lock;
+
+input::on_key_change entities_key_change_event;
+
 void
 destroy_entity(const entt::entity& ent)
 {
@@ -22,14 +28,54 @@ entities::get_registry()
 	return global_registry;
 }
 
+auto try_to_serialize = []()
+{
+	std::filesystem::path path = filesystem::get_userdata_dir();
+	path.append("game_state");
+
+	entities_data.second.resize(0);
+	entities::serialize(entities_data);
+	filesystem::write_file(path, entities_data);
+};
+
+auto try_to_deserialize = []()
+{
+	std::filesystem::path path = filesystem::get_userdata_dir();
+	path.append("game_state");
+
+	entities_data.second.resize(0);
+	filesystem::read_file(path, entities_data);
+	entities::deserialize(entities_data);
+};
+
 void
 entities::init()
 {
+#ifndef ARKANE_SHIPPING
+	entities_key_change_event = input::subscribe_key_event([](int16_t scan_code, input::key_state state)  
+	{	
+		if (state == input::key_state::press) {
+			switch (scan_code) {
+				case SDL_SCANCODE_F6: {
+					try_to_serialize();
+					break;
+				}
+				case SDL_SCANCODE_F8: {
+					try_to_deserialize();
+					break;
+				}
+			}
+		}
+	});
+#endif
 }                                                           
 
 void
 entities::destroy()
 {
+#ifndef ARKANE_SHIPPING
+	input::unsubscribe_key_event(entities_key_change_event);
+#endif
 }
 
 void
@@ -79,10 +125,22 @@ void serialize_entity(stl::stream_vector& data, entt::entity ent)
 	std::memcpy(desc_ptr, &desc, sizeof(entity_desc));
 }
 
+std::chrono::nanoseconds&
+entities::get_last_serialize_time()
+{
+	return entities_serilize_last_time;
+}
+
 void
 entities::serialize(stl::stream_vector& data)
 {
-	OPTICK_EVENT("entities serialize")
+	marl::lock scope_lock(entities_serialization_lock);
+	while (is_phys_ticking != false && is_game_ticking != false) {
+		threads::switch_context();
+	}
+
+	is_serializer_ticking = true;
+	OPTICK_EVENT("entities serializer")
 	const auto& reg = global_registry.get();
 	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
 	const uint32_t entities_count = reg.size() - ent_view.size_hint();
@@ -96,11 +154,21 @@ entities::serialize(stl::stream_vector& data)
 			ent_ptr++;
 		}
 	}
+
+	entities_serilize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+	is_serializer_ticking = false;
 }
 
 void
 entities::deserialize(stl::stream_vector& data)
 {
+	marl::lock scope_lock(entities_serialization_lock);
+	while (is_phys_ticking != false && is_game_ticking != false) {
+		threads::switch_context();
+	}
+
+	is_serializer_ticking = true;
+	OPTICK_EVENT("entities deserializer")
 	data.first = 0;
 	data.second.clear();
 
@@ -109,6 +177,9 @@ entities::deserialize(stl::stream_vector& data)
 	for (uint32_t i = 0; i < entities_count; i++) {
 
 	}
+
+	entities_serilize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+	is_serializer_ticking = false;
 }
 
 bool

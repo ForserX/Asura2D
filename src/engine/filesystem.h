@@ -12,4 +12,7 @@ namespace ark::filesystem
 
 	void create_file(const std::filesystem::path& file_name);
 	void create_dir(const std::filesystem::path& dir_name);
+
+	void write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data);
+	void read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data);
 }

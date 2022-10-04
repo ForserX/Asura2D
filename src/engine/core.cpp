@@ -2,6 +2,10 @@
 
 using namespace ark;
 
+bool is_phys_ticking = false;
+bool is_game_ticking = false;
+bool is_serializer_ticking = false;
+
 void
 core::init()
 {
