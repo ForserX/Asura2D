@@ -63,11 +63,9 @@ public:
 	bool ReportFixture(b2Fixture* fixture) override
 	{
 		const b2Body* body = fixture->GetBody();
-		if (body->GetType() == b2_dynamicBody) {
-			if (fixture->TestPoint(m_point)) {
-				m_fixture = fixture;
-				return false;
-			}
+		if (fixture->TestPoint(m_point)) {
+			m_fixture = fixture;
+			return false;
 		}
 		
 		return true;

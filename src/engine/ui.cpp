@@ -40,6 +40,7 @@ void inspect_entity(entt::entity ent)
     stl::hash_map<stl::string, stl::string> kv_storage;
     (inspect_entity_component<Args>(kv_storage, ent), ...);
 
+    ImGui::Separator();
     for (auto& [key, value] : kv_storage) {
         ImGui::Text("%s: %s", key.data(), value.data());
     }
@@ -99,7 +100,6 @@ ui::tick(float dt)
         
         const auto& registry = entities::get_registry().get();
         ImGui::Text("Controls:");
-        ImGui::Checkbox("Debug draw", &physical_debug_draw);
         ImGui::Checkbox("Debug draw", &physical_debug_draw);
         ImGui::Checkbox("Paused", &paused);
         ImGui::Checkbox("Use parallel", &use_parallel);
@@ -162,20 +162,29 @@ ui::tick(float dt)
 #endif
 
     if (show_entity_inspector) {
-        ImGui::SetNextWindowPos({ 0, 30 });
-        ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 30) });
+        auto height_value = static_cast<float>(window_height - 600);
+        if (height_value < 600) {
+            ImGui::SetNextWindowPos({ 0, 30 });
+            ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 30) });
+        }  else {
+            ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 5 + 600 });
+            ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 600) });
+        }
         if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration)) {
-            static entity_view inspected_entity;
+            static entt::entity inspected_entity = entt::null;
             if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
                 auto phys_body = physics::hit_test(camera::screen_to_world(ImGui::GetMousePos()));
                 if (phys_body != nullptr) {
-                    inspected_entity = entities::get_entity_from_body(phys_body->get_body());
+                    inspected_entity = entities::get_entity_from_body(phys_body->get_body()).get();
+                } else {
+                    inspected_entity = entt::null;
                 }
             }
 
             if (entities::is_valid(inspected_entity)) {
-                ImGui::Text("Entity ID: %i", inspected_entity.get());
-                inspect_entity<DECLARE_SERIALIZABLE_TYPES>(inspected_entity.get());
+                ImGui::Text("Entity ID: %i", inspected_entity);
+                ImGui::Separator();
+                inspect_entity<DECLARE_SERIALIZABLE_TYPES>(inspected_entity);
             }
 
             ImGui::End();

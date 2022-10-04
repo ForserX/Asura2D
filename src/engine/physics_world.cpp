@@ -230,7 +230,7 @@ physics::world::debug_joints_tick()
 		}
 		else {
 			const physics_body* test_body = hit_test(mouse_position_absolute);
-			if (test_body != nullptr && test_body != ContactBody) {
+			if (test_body != nullptr && test_body != ContactBody && test_body->get_body_type() != body_type::static_body) {
 				constexpr float frequency_hz = 5.0f;
 				constexpr float damping_ratio = 0.7f;
 
@@ -254,7 +254,7 @@ physics::world::debug_joints_tick()
 
 		if (TestMouseJoint == nullptr) {
 			MoveBody = hit_test(mouse_position_absolute);
-			if (MoveBody != nullptr) {
+			if (MoveBody != nullptr && MoveBody->get_body_type() != body_type::static_body) {
 				constexpr float frequency_hz = 60.0f;
 				constexpr float damping_ratio = 1.f;
 
@@ -432,6 +432,16 @@ physics::physics_body::~physics_body()
 
 }
 
+physics::body_type
+physics::physics_body::get_body_type() const
+{
+	if (body != nullptr) {
+		return get_ark_body_type(body->GetType());
+	}
+	
+	return static_cast<physics::body_type>(parameters.packed_type.type);
+}
+
 float
 physics::physics_body::get_mass() const
 {
@@ -482,6 +492,16 @@ physics::physics_body::get_mass_center() const
 	}
 
 	return parameters.pos;
+}
+
+void 
+physics::physics_body::set_body_type(body_type new_type)
+{
+	if (body != nullptr) {
+		body->SetType(get_box2d_body_type(static_cast<uint8_t>(new_type)));
+	}
+
+	parameters.packed_type.type = static_cast<uint8_t>(new_type);
 }
 
 void

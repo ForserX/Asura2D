@@ -16,7 +16,48 @@ namespace ark
 			dynamic_body,
 			kinematic_body
 		};
-		
+
+		inline
+		b2BodyType 
+		get_box2d_body_type(uint8_t type)
+		{
+			switch (static_cast<body_type>(type)) {
+			case body_type::kinematic_body:
+				return b2_kinematicBody;
+				break;
+			case body_type::static_body:
+				return b2_staticBody;
+				break;
+			case body_type::dynamic_body:
+				return b2_dynamicBody;
+				break;
+			default:
+				ark_assert(false, "Invalid body type", {});
+				break;
+			}
+
+			return b2_dynamicBody;
+		}
+
+		inline
+		body_type 
+		get_ark_body_type(b2BodyType type)
+		{
+			switch (type) {
+			case b2_kinematicBody:
+				return body_type::kinematic_body;
+			case b2_staticBody:
+				return body_type::static_body;
+			case b2_dynamicBody:
+				return body_type::dynamic_body;
+			default:
+				ark_assert(false, "Invalid body type", {});
+				break;
+			}
+
+			return body_type::dynamic_body;
+		}
+
 		struct body_parameters
 		{
 			struct packed
@@ -80,22 +121,7 @@ namespace ark
 				body_def.angularVelocity = angular_vel;
 				body_def.linearVelocity.Set(vel.x, vel.y);
 				body_def.position.Set(pos.x, pos.y);
-
-				switch (static_cast<body_type>(packed_type.type)) {
-					case body_type::kinematic_body:
-						body_def.type = b2_kinematicBody;
-						break;
-					case body_type::static_body:
-						body_def.type = b2_staticBody;
-						break;
-					case body_type::dynamic_body:
-						body_def.type = b2_dynamicBody;
-						break;
-					default:
-						ark_assert(false, "Invalid body type", {});
-						break;
-				}
-
+				body_def.type = get_box2d_body_type(packed_type.type);
 				return body_def;
 			}
 
@@ -186,6 +212,7 @@ namespace ark
 			const body_parameters& get_parameters() const { return parameters; }
 
 		public:
+			body_type get_body_type() const;
 			float get_mass() const;
 			ark_float_vec2 get_mass_center() const;
 			float get_angle() const;
@@ -193,6 +220,7 @@ namespace ark
 			ark_float_vec2 get_position() const;
 
 		public:
+			void set_body_type(body_type new_type);
 			void set_mass(float new_mass);
 			void set_mass_center(ark_float_vec2& new_center);
 			void set_angle(float new_angle);
