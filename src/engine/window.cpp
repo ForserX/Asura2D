@@ -54,6 +54,8 @@ window::tick()
 	SDL_Event event = {};
 	while (SDL_PollEvent(&event))
 	{
+		int tx = 0;
+		int ty = 0;
 		ImGui_ImplSDL2_ProcessEvent(&event);
 		switch (event.type) {
 		case SDL_QUIT:
@@ -70,6 +72,12 @@ window::tick()
 					window_width = event.window.data1;
 					window_height = event.window.data2;
 					camera::reset_wh();
+#ifdef _WIN32
+					// Stupid bug on Windows
+					SDL_GetWindowPosition(window_handle, &tx, &ty);
+					SDL_SetWindowPosition(window_handle, tx + 1, ty + 1);
+					SDL_SetWindowPosition(window_handle, tx, ty);
+#endif
 					break;
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
 					window_width = event.window.data1;
