@@ -2,6 +2,8 @@
 
 using namespace ark;
 
+extern marl::mutex entities_destroy_lock;
+
 constexpr int32 k_maxContactPoints = 2048;
 int target_steps_count = 1;
 float target_physics_tps = 60.f;
@@ -295,6 +297,7 @@ physics::world::internal_tick(float dt)
 	}
 
 	{
+		marl::lock scope_lock(entities_destroy_lock);
 		OPTICK_EVENT("physics pre tick")
 		pre_tick();
 	}

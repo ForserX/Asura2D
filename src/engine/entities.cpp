@@ -7,12 +7,14 @@ entity_view invalid_entity = {};
 
 std::chrono::nanoseconds entities_serilize_last_time;
 stl::stream_vector entities_data;
+
 marl::mutex entities_serialization_lock;
+marl::mutex entities_destroy_lock;
 
 input::on_key_change entities_key_change_event;
 
 void
-destroy_entity(const entt::entity& ent)
+destroy_entity(entt::entity ent)
 {
 	auto &reg = global_registry.get();
 	if (auto phys_comp = reg.try_get<entities::physics_body_component>(ent)) {
@@ -81,6 +83,7 @@ entities::destroy()
 void
 entities::tick(float dt)
 {
+	marl::lock scope_lock(entities_destroy_lock);
 	const auto view = global_registry.get().view<garbage_flag>();
 	for (auto ent : view) {
 		destroy_entity(ent);
@@ -161,10 +164,14 @@ void string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 void
 entities::free()
 {
+	marl::lock scope_lock(entities_destroy_lock);
 	const auto& reg = global_registry.get();
 	const entt::entity* ent_ptr = reg.data();
 	while (ent_ptr != reg.data() + reg.size()) {
-		entities::mark_as_garbage(*ent_ptr);
+		if (entities::is_valid(*ent_ptr)) {
+			entities::mark_as_garbage(*ent_ptr);
+		}
+
 		ent_ptr++;
 	}
 }
