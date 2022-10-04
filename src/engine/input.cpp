@@ -4,6 +4,7 @@ using namespace ark;
 
 float keys_states[1024] = {};
 
+ark_int_vec2 previous_mouse_pos = {};
 ark_int_vec2 current_mouse_pos = {};
 ark_float_vec2 delta_mouse_pos = {};
 
@@ -53,6 +54,8 @@ input::tick(float dt)
 		}
 	}
 
+	delta_mouse_pos = ark_float_vec2(current_mouse_pos.x, current_mouse_pos.y) - ark_float_vec2(previous_mouse_pos.x, previous_mouse_pos.y);
+	previous_mouse_pos = current_mouse_pos;
 	changed_keys.erase(SDL_SCANCODE_MOUSEWHEEL);
 }
 
@@ -71,7 +74,7 @@ input::update_key(int16_t scan_code, float state)
 void
 input::update_mouse_pos(ark_int_vec2 pos)
 {
-	delta_mouse_pos = ark_float_vec2(pos.x, pos.y) - ark_float_vec2(current_mouse_pos.x, current_mouse_pos.y);
+	previous_mouse_pos = current_mouse_pos;
 	current_mouse_pos = pos;
 }
 
