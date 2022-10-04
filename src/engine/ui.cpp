@@ -73,12 +73,14 @@ ui::tick(float dt)
         show_entity_inspector = !show_entity_inspector;
     }
 
+    uint32_t fps_counter_size = 0;
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
         console.draw(dt, "Arkane console", &show_console);
     } else if (show_fps_counter) {
-        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 5 });
-        ImGui::SetNextWindowSize({400, 600});
+        fps_counter_size = 700;
+        ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 30 });
+        ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
         if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
         {
             ImGui::End();
@@ -99,7 +101,6 @@ ui::tick(float dt)
         const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
         
         const auto& registry = entities::get_registry().get();
-        ImGui::Text("Controls:");
         ImGui::Checkbox("Debug draw", &physical_debug_draw);
         ImGui::Checkbox("Paused", &paused);
         ImGui::Checkbox("Use parallel", &use_parallel);
@@ -107,20 +108,25 @@ ui::tick(float dt)
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
+        ImGui::Separator();
         ImGui::Text("UI:");
         ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
         ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
+        ImGui::Separator();
         ImGui::Text("Game:");
         ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
+        ImGui::Separator();
         ImGui::Text("Physics:");
         ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
         ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
         ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
         ImGui::ProgressBar(phys_load_percent);
         ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
+        ImGui::Separator();
         ImGui::Text("Entities");
         ImGui::Text("  Allocated: %d", registry.capacity());
         ImGui::Text("  Alive: %d", registry.alive());
+        ImGui::Separator();
         ImGui::Text("UI Info:");
         ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
         ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
@@ -162,13 +168,13 @@ ui::tick(float dt)
 #endif
 
     if (show_entity_inspector) {
-        auto height_value = static_cast<float>(window_height - 600);
-        if (height_value < 600) {
+        auto height_value = static_cast<float>(window_height - fps_counter_size);
+        if (height_value < fps_counter_size) {
             ImGui::SetNextWindowPos({ 0, 30 });
             ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 30) });
         }  else {
-            ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 5 + 600 });
-            ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 600) });
+            ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), static_cast<float>(5 + fps_counter_size) });
+            ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - fps_counter_size) });
         }
         if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration)) {
             static entt::entity inspected_entity = entt::null;
@@ -193,7 +199,7 @@ ui::tick(float dt)
 
     auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
     if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) {
-        ImGui::GetForegroundDrawList()->AddText(ImVec2(5, 35), ImColor(0.f, 0.f, 0.f), "Serialization/Deserialization complete");
+        ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 325, 8), ImColor(1.f, 1.f, 1.f), "Serialization/Deserialization complete");
     }
 }
 
