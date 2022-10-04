@@ -76,6 +76,8 @@
 #include "engine/physics_mouse_joint_system.h"
 #include "engine/draw_system.h"
 
+#include "engine/resource.h"
+
 #include "engine/camera.h"
 #include "engine/level.h"
 

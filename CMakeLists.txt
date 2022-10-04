@@ -70,6 +70,4 @@ else()
 	add_subdirectory("libs/box2d")
 endif()
 
-
 add_subdirectory("src")
-
