@@ -87,8 +87,6 @@ ui::tick(float dt)
             return;
         }
 
-        ImGui::SameLine();
-
         ark_float_vec2 cursor_pos = ImGui::GetMousePos();
         ark_float_vec2 wcursor_pos = camera::screen_to_world(cursor_pos);
 
