@@ -37,17 +37,22 @@ game::tick(float dt)
 	}
 
 	{
+		OPTICK_EVENT("scene tick")
+		scene::tick(dt);
+	}
+
+	{
 		OPTICK_EVENT("systems tick")
 		systems::tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("systems post tick")
-		systems::post_tick(dt);
-	}
-	
-	{
 		OPTICK_EVENT("entities tick")
 		entities::tick(dt);
+	}
+
+	{
+		OPTICK_EVENT("systems post tick")
+		systems::post_tick(dt);
 	}
 }

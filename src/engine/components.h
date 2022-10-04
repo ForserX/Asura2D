@@ -78,14 +78,17 @@ namespace ark::entities
 			return true;
 		}
 
-		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		bool string_deserialize(stl::string_map& kv_storage)
 		{
 			if (kv_storage.contains("color")) {
-				color = static_cast<uint32_t>(std::atoll(kv_storage.at("color").data()));
+				color = std::stoul(kv_storage.at("color").data());
+				return true;
 			}
+
+			return false;
 		}
 
-		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		void string_serialize(stl::string_map& kv_storage) const
 		{
 			kv_storage["color"] = std::to_string(static_cast<uint32_t>(color));
 		}
@@ -114,18 +117,23 @@ namespace ark::entities
 			return true;
 		}
 
-		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		bool string_deserialize(stl::string_map& kv_storage)
 		{
+			bool success = false;
 			if (kv_storage.contains("first_color")) {
-				first_color = static_cast<uint32_t>(std::atoll(kv_storage.at("first_color").data()));
+				first_color = std::stoul(kv_storage.at("first_color").data());
+				success = true;
 			}
 
 			if (kv_storage.contains("second_color")) {
-				second_color = static_cast<uint32_t>(std::atoll(kv_storage.at("second_color").data()));
+				second_color = std::stoul(kv_storage.at("second_color").data());
+				success = true;
 			}
+
+			return success;
 		}
 
-		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		void string_serialize(stl::string_map& kv_storage) const
 		{
 			kv_storage["first_color"] = std::to_string(static_cast<uint32_t>(first_color));
 			kv_storage["second_color"] = std::to_string(static_cast<uint32_t>(second_color));
@@ -160,12 +168,14 @@ namespace ark::entities
 			return false;
 		}
 
-		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		bool string_deserialize(stl::string_map& kv_storage)
 		{
+			return false;
 		}
 
-		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		void string_serialize(stl::string_map& kv_storage) const
 		{
+
 		}
 
 		void serialize(stl::stream_vector& data) const
@@ -188,18 +198,23 @@ namespace ark::entities
 			return true;
 		}
 
-		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		bool string_deserialize(stl::string_map& kv_storage)
 		{
+			bool success = false;
 			if (kv_storage.contains("scene_pos_x")) {
-				position.x = std::atof(kv_storage.at("scene_pos_x").data());
+				position.x = std::stod(kv_storage.at("scene_pos_x").data());
+				success = true;
 			}
 
 			if (kv_storage.contains("scene_pos_y")) {
-				position.y = std::atof(kv_storage.at("scene_pos_y").data());
+				position.y = std::stod(kv_storage.at("scene_pos_y").data());
+				success = true;
 			}
+
+			return success;
 		}
 
-		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		void string_serialize(stl::string_map& kv_storage) const
 		{
 			kv_storage["scene_pos_x"] = std::to_string(position.x);
 			kv_storage["scene_pos_y"] = std::to_string(position.y);
@@ -228,8 +243,9 @@ namespace ark::entities
 			return body != nullptr;
 		}
 
-		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		bool string_deserialize(stl::string_map& kv_storage)
 		{
+			bool success = false;
 			float angle = {};
 			float angular_vel = {};
 			ark_float_vec2 vel = {};
@@ -243,47 +259,52 @@ namespace ark::entities
 
 			ark_assert(body != nullptr, "Body is not freed yet. That means that you have a memory leak", {})
 			if (kv_storage.contains("angle")) {
-				angle = std::atof(kv_storage.at("angle").data());
+				angle = std::stod(kv_storage.at("angle").data());
+				success = true;
 			}
 
 			if (kv_storage.contains("angular_velocity")) {
-				angular_vel = std::atof(kv_storage.at("angular_velocity").data());
-			}
-
-			if (kv_storage.contains("velocity_x")) {
-				vel.x = std::atof(kv_storage.at("velocity_x").data());
-			}
-
-			if (kv_storage.contains("velocity_y")) {
-				vel.y = std::atof(kv_storage.at("velocity_y").data());
-			}
-
-			if (kv_storage.contains("position_x")) {
-				pos.x = std::atof(kv_storage.at("position_x").data());
-			}
-
-			if (kv_storage.contains("velocity_y")) {
-				pos.y = std::atof(kv_storage.at("velocity_y").data());
-			}
-
-			if (kv_storage.contains("size_x")) {
-				size.x = std::atof(kv_storage.at("size_x").data());
-			}
-
-			if (kv_storage.contains("size_y")) {
-				size.y = std::atof(kv_storage.at("size_y").data());
+				angular_vel = std::stod(kv_storage.at("angular_velocity").data());
+				success = true;
 			}
 
 			if (kv_storage.contains("mass")) {
-				mass = std::atof(kv_storage.at("mass").data());
+				mass = std::stod(kv_storage.at("mass").data());
+				success = true;
 			}
 
 			if (kv_storage.contains("mass_center_x")) {
-				mass_center.x = std::atof(kv_storage.at("mass_center_x").data());
+				mass_center.x = std::stod(kv_storage.at("mass_center_x").data());
+				success = true;
 			}
 
 			if (kv_storage.contains("mass_center_y")) {
-				mass_center.x = std::atof(kv_storage.at("mass_center_y").data());
+				mass_center.x = std::stod(kv_storage.at("mass_center_y").data());
+				success = true;
+			}
+
+			if (kv_storage.contains("velocity_x")) {
+				vel.x = std::stod(kv_storage.at("velocity_x").data());
+			}
+
+			if (kv_storage.contains("velocity_y")) {
+				vel.y = std::stod(kv_storage.at("velocity_y").data());
+			}
+
+			if (kv_storage.contains("position_x")) {
+				pos.x = std::stod(kv_storage.at("position_x").data());
+			}
+
+			if (kv_storage.contains("velocity_y")) {
+				pos.y = std::stod(kv_storage.at("velocity_y").data());
+			}
+
+			if (kv_storage.contains("size_x")) {
+				size.x = std::stod(kv_storage.at("size_x").data());
+			}
+
+			if (kv_storage.contains("size_y")) {
+				size.y = std::stod(kv_storage.at("size_y").data());
 			}
 
 			if (kv_storage.contains("body_type")) {
@@ -315,21 +336,26 @@ namespace ark::entities
 				}
 			}
 
-			const physics::body_parameters parameters(angle, angular_vel, vel, pos, size, type, shape, mat, mass, mass_center);
-			body = physics::schedule_creation(parameters);
+			if (success) {
+				const physics::body_parameters parameters(angle, angular_vel, vel, pos, size, type, shape, mat, mass, mass_center);
+				body = physics::schedule_creation(parameters);
+			}
+
+			return success;
 		}
 
-		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		void string_serialize(stl::string_map& kv_storage) const
 		{
 			const physics::body_parameters parameters = body->copy_parameters();
-			kv_storage["angle"] = std::to_string(parameters.angle);
-			kv_storage["angular_velocity"] = std::to_string(parameters.angular_vel);
 			kv_storage["velocity_x"] = std::to_string(parameters.vel.x);
 			kv_storage["velocity_y"] = std::to_string(parameters.vel.y);
 			kv_storage["position_x"] = std::to_string(parameters.pos.x);
 			kv_storage["position_y"] = std::to_string(parameters.pos.y);
 			kv_storage["size_x"] = std::to_string(parameters.size.x);
 			kv_storage["size_y"] = std::to_string(parameters.size.y);
+
+			kv_storage["angle"] = std::to_string(parameters.angle);
+			kv_storage["angular_velocity"] = std::to_string(parameters.angular_vel);
 			kv_storage["mass"] = std::to_string(parameters.mass);
 			kv_storage["mass_center_x"] = std::to_string(parameters.mass_center.x);
 			kv_storage["mass_center_y"] = std::to_string(parameters.mass_center.y);
@@ -395,11 +421,12 @@ namespace ark::entities
 			return !points.empty();
 		}
 
-		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		bool string_deserialize(stl::string_map& kv_storage)
 		{
+			return false;
 		}
 
-		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		void string_serialize(stl::string_map& kv_storage) const
 		{
 		}
 

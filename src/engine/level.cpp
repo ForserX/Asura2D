@@ -7,7 +7,7 @@ stl::vector<entity_view> ent_list;
 #undef min
 namespace ark::level
 {
-	logic_parser level_data;
+	config_parser level_data;
 
 	void load(const std::filesystem::path path)
 	{

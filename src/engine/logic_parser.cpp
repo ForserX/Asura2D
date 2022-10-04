@@ -1,9 +1,9 @@
 #include "pch.h"
 
-using ark::logic_parser;
+using namespace ark;
 
 void
-logic_parser::load(const std::filesystem::path& file_path)
+config_parser::load(const std::filesystem::path& file_path)
 {
     std::ifstream file(file_path);
 	ark_assert(file.is_open(), "File not found", return);
@@ -45,7 +45,7 @@ logic_parser::load(const std::filesystem::path& file_path)
     file.close();
 }
 void 
-logic_parser::save(const std::filesystem::path& file_path) const
+config_parser::save(const std::filesystem::path& file_path) const
 {
 	std::ofstream file(file_path, std::ios_base::out);
     
@@ -64,7 +64,7 @@ logic_parser::save(const std::filesystem::path& file_path) const
 }
 
 const ark::stl::string&
-logic_parser::get(stl::string_view section, stl::string_view key) const
+config_parser::get(stl::string_view section, stl::string_view key) const
 {
     static const stl::string empty_string;
     auto& current_data = data.at(section.data());
@@ -78,7 +78,7 @@ logic_parser::get(stl::string_view section, stl::string_view key) const
 }
 
 int
-logic_parser::set_value(stl::string_view section, stl::string_view key, stl::string_view value)
+config_parser::set_value(stl::string_view section, stl::string_view key, stl::string_view value)
 {
     ark_assert(section.empty(), "section can't be null", return -1);
     ark_assert(key.empty(), "key can't be null", return -2);
@@ -97,7 +97,7 @@ logic_parser::set_value(stl::string_view section, stl::string_view key, stl::str
 }
 
 int 
-logic_parser::add_section(stl::string_view section)
+config_parser::add_section(stl::string_view section)
 {
     for (auto& fIter : data) {       
         ark_assert(fIter.first != section, "section already created", return -1)
@@ -108,7 +108,7 @@ logic_parser::add_section(stl::string_view section)
 }
 
 int 
-logic_parser::add_key_in_section(stl::string_view section, stl::string_view key)
+config_parser::add_key_in_section(stl::string_view section, stl::string_view key)
 {
 	for (auto& fIter : data) {
 		for (auto & sIter : fIter.second) {

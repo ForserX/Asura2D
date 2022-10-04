@@ -125,6 +125,39 @@ void serialize_entity(stl::stream_vector& data, entt::entity ent)
 	std::memcpy(desc_ptr, &desc, sizeof(entity_desc));
 }
 
+template<typename Component>
+void string_serialize_entity_component(stl::string_map& data, entt::entity ent, entity_desc& desc)
+{
+	const auto& reg = global_registry.get();
+	if (reg.all_of<Component>(ent)) {
+		entt::id_type id = entt::type_id<Component>().hash();
+		auto& storage = (*reg.storage(id)).second;
+		if constexpr (entities::is_flag_v<Component>) {
+			desc.flags |= Component::flag;
+		} else {
+			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
+			if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
+				value_ptr->string_serialize(data);
+				desc.components_count++;
+			}
+		}
+	}
+}
+
+template<typename... Args>
+void string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
+{
+	const auto& reg = global_registry.get();
+	if (!entities::is_valid(ent) || !reg.any_of<Args...>(ent)) {
+		return;
+	}
+
+	entity_desc desc = {};
+	stl::string entity_key = std::to_string(static_cast<uint32_t>(ent));
+	(string_serialize_entity_component<Args>(data[entity_key], ent, desc), ...);
+	data[entity_key]["flags"] = std::to_string(desc.flags);
+}
+
 void
 entities::free()
 {
@@ -140,6 +173,38 @@ std::chrono::nanoseconds&
 entities::get_last_serialize_time()
 {
 	return entities_serilize_last_time;
+}
+
+void 
+entities::string_serialize(stl::tree_string_map& data)
+{
+	marl::lock scope_lock(entities_serialization_lock);
+	while (is_phys_ticking != false && is_game_ticking != false) {
+		threads::switch_context();
+	}
+
+	is_serializer_ticking = true;
+	OPTICK_EVENT("entities serializer")
+	const auto& reg = global_registry.get();
+	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
+	const uint32_t entities_count = reg.size() - ent_view.size_hint();
+
+	if (entities_count != 0) {
+		const entt::entity* ent_ptr = reg.data();
+		while (ent_ptr != reg.data() + reg.size()) {
+			string_serialize_entity<DECLARE_SERIALIZABLE_TYPES>(data, *ent_ptr);
+			ent_ptr++;
+		}
+	}
+
+	entities_serilize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+	is_serializer_ticking = false;
+}
+
+void 
+entities::string_deserialize(const stl::tree_string_map& data)
+{
+
 }
 
 void

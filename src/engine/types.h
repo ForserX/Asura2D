@@ -279,4 +279,7 @@ namespace ark::stl
 
 	template<class... Args>
 	using tuple = std::tuple<Args...>;
+
+	using string_map = stl::hash_map<stl::string, stl::string>;
+	using tree_string_map = stl::hash_map<stl::string, string_map>;
 }

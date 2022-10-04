@@ -2,9 +2,9 @@
 
 namespace ark
 {
-    class logic_parser
+    class config_parser
     {
-        using data_type = stl::hash_map<stl::string, stl::hash_map<stl::string, stl::string>>;
+        using data_type = stl::tree_string_map;
         data_type data;
         size_t section_count = 0;
 
@@ -12,14 +12,18 @@ namespace ark
         const stl::string& get(stl::string_view section, stl::string_view value) const;
 
     public:
-        logic_parser() noexcept = default;
-        ~logic_parser() = default;
+        config_parser(config_parser&&) = default;
+        config_parser(data_type&& in_data, size_t in_section_count) : data(in_data), section_count(in_section_count) {}
+        config_parser() noexcept = default;
+        ~config_parser() = default;
+
+        config_parser& operator=(config_parser&&) = default;
 
         void load(const std::filesystem::path&);
         void save(const std::filesystem::path&) const;
 
         [[nodiscard]] size_t get_count() const { return section_count; }
-        [[nodiscard]] data_type get_data() const { return data; }
+        [[nodiscard]] const data_type& get_data() const { return data; }
         int set_value(stl::string_view section, stl::string_view key, stl::string_view value);
 
         int add_section(stl::string_view section);

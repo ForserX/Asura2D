@@ -87,6 +87,7 @@
 #include "engine/render.h"
 #include "engine/application.h"
 
+#include "engine/scene.h"
 #include "engine/engine.h"
 #include "engine/game.h"
 
