@@ -51,9 +51,6 @@ draw_system::tick(registry& reg, float dt)
 	}
 	
 	for (auto& entity : draw_view) {
-		const bool can_draw = registry.any_of<physics_body_component, visual_component>(entity);
-		ark_assert(can_draw, "draw flag was setted, but entity can't be showed because doesn't have any of valiable component", continue)
-
 		// First of all, try to draw physics bodies
 		if (registry.all_of<physics_body_component>(entity)) {
 			const auto phys_body = registry.try_get<physics_body_component>(entity);

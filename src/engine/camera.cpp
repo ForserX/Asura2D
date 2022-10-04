@@ -11,72 +11,15 @@ static int64_t cam_height;
 static entity_view attached_entity;
 static bool attached = false;
 
-auto camera_mouse_key_change = [](int16_t scan_code, input::key_state state) {
-	switch (scan_code) {
-		case SDL_SCANCODE_MOUSE_RIGHT: {
-			if (state == input::key_state::press) {
-				const auto screen_cords = ark_float_vec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
-				const physics::physics_body* body = physics::hit_test(camera::screen_to_world(screen_cords));
-				if (body != nullptr) {
-					camera::attach(entities::get_entity_from_body(body->get_body()));
-				} else {
-					camera::detach();
-				}
-			}
-			break;
-		}
-		case SDL_SCANCODE_MOUSE_MIDDLE: {
-			if (state == input::key_state::hold) {
-				const auto& mouse_delta = input::get_mouse_delta();
-				cam_center.x -= (mouse_delta.x * 0.05f) * scaled_cam_zoom;
-				cam_center.y += (mouse_delta.y * 0.05f) * scaled_cam_zoom;
-			}
-			break;
-		}
-		case SDL_SCANCODE_LEFT:
-			move(camera::cam_move::left, 1.f);
-			break;
-		case SDL_SCANCODE_RIGHT:
-			move(camera::cam_move::right, 1.f);
-			break;
-		case SDL_SCANCODE_UP:
-			move(camera::cam_move::up, 1.f);
-			break;
-		case SDL_SCANCODE_DOWN:
-			move(camera::cam_move::down, 1.f);
-			break;
-		default:
-			break;
-	}
-};
-
-auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
-	switch (scan_code) {
-	case SDL_SCANCODE_MOUSEWHEEL:
-		cam_zoom += ((-1.f * state) *  2.f) * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
-		cam_zoom = std::clamp(cam_zoom, 1.f, 100.f);
-		break;
-	default:
-		break;
-	}
-};
-
-input::on_key_change camera_mouse_key_event;
-input::on_input_change camera_camera_mouse_wheel_event;
-
 void camera::init()
 {
 	reset_wh();
 	reset_view();
-
-	camera_mouse_key_event = input::subscribe_key_event(camera_mouse_key_change);
-	camera_camera_mouse_wheel_event = input::subscribe_input_event(camera_mouse_wheel_change);
 }
 
 void camera::destroy()
 {
-	input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
-	input::unsubscribe_key_event(camera_mouse_key_event);
+
 }
 
 void camera::tick(float dt)
@@ -110,6 +53,13 @@ void camera::move(cam_move move, float point)
 		cam_center.y -= scaled_cam_zoom * point;
 		break;
 	}
+}
+
+void 
+camera::zoom(float value)
+{
+	cam_zoom += value * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
+	cam_zoom = std::clamp(cam_zoom, 1.f, 100.f);
 }
 
 bool

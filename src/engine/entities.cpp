@@ -5,22 +5,15 @@ using namespace ark;
 registry global_registry;
 entity_view invalid_entity = {};
 
-stl::hash_map<entt::id_type, entities::variant_type> type_map;
-
-//stl::hash_map<physics::physics_body*, entities::physics_body_component> physics_component_storage;
-
 void
 destroy_entity(const entt::entity& ent)
 {
 	auto &reg = global_registry.get();
-	if (reg.any_of<entities::physics_body_component>(ent)) {
-		const auto& phys_body_component = reg.get<entities::physics_body_component>(ent);
-		const auto body_ptr = phys_body_component.body;
-		//physics_component_storage.erase(body_ptr);
-		schedule_free(body_ptr);
+	if (auto phys_comp = reg.try_get<entities::physics_body_component>(ent)) {
+		physics::schedule_free(phys_comp->body);
 	}
-	
-	global_registry.destroy(ent);
+
+	reg.destroy(ent);
 }
 
 registry&
@@ -32,19 +25,6 @@ entities::get_registry()
 void
 entities::init()
 {
-	type_map[entt::type_id<garbage_flag>().hash()] = garbage_flag();
-	type_map[entt::type_id<non_serializable_flag>().hash()] = non_serializable_flag();
-	type_map[entt::type_id<dont_free_after_reset_flag>().hash()] = dont_free_after_reset_flag();
-	type_map[entt::type_id<background_flag>().hash()] = background_flag();
-	type_map[entt::type_id<drawable_flag>().hash()] = drawable_flag();
-	type_map[entt::type_id<ground_flag>().hash()] = ground_flag();
-	type_map[entt::type_id<level_flag>().hash()] = level_flag();
-	type_map[entt::type_id<draw_color_component>().hash()] = draw_color_component();
-	type_map[entt::type_id<draw_gradient_component>().hash()] = draw_gradient_component();
-	type_map[entt::type_id<draw_texture_component>().hash()] = draw_texture_component();
-	type_map[entt::type_id<scene_component>().hash()] = scene_component();
-	type_map[entt::type_id<physics_body_component>().hash()] = physics_body_component();
-	type_map[entt::type_id<visual_component>().hash()] = visual_component();
 }                                                           
 
 void
@@ -56,78 +36,85 @@ void
 entities::tick(float dt)
 {
 	const auto view = global_registry.get().view<garbage_flag>();
-	for (const auto ent : view) {
+	for (auto ent : view) {
 		destroy_entity(ent);
 	}
+}
+
+template<typename Component>
+void serialize_entity_component(stl::stream_vector& data, entt::entity ent, entity_desc& desc)
+{
+	const auto& reg = global_registry.get();
+	if (reg.all_of<Component>(ent)) {
+		entt::id_type id = entt::type_id<Component>().hash();
+		auto& storage = (*reg.storage(id)).second;
+		if constexpr (entities::is_flag_v<Component>) {
+			desc.flags |= Component::flag;
+		} else {
+			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
+			if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
+				stl::push_memory(data, id);
+				value_ptr->serialize(data);
+				desc.components_count++;
+			}
+		}
+	}
+}
+
+template<typename... Args>
+void serialize_entity(stl::stream_vector& data, entt::entity ent)
+{
+	const auto& reg = global_registry.get();
+	if (!entities::is_valid(ent) || !reg.any_of<Args...>(ent)) {
+		return;
+	}
+
+	entity_desc desc = {};
+	const int64_t ent_pos = data.first;
+
+	stl::push_memory(data, desc);
+	(serialize_entity_component<Args>(data, ent, desc), ...);
+
+	auto* desc_ptr = reinterpret_cast<entity_desc*>(&data.second[ent_pos]);
+	std::memcpy(desc_ptr, &desc, sizeof(entity_desc));
 }
 
 void
 entities::serialize(stl::stream_vector& data)
 {
+	OPTICK_EVENT("entities serialize")
 	const auto& reg = global_registry.get();
-	reg.each([&reg, &data](entt::entity ent) {
-		// #TODO: optimize
-		if (reg.any_of<non_serializable_flag, garbage_flag>(ent)) {
-			return;
-		}
-		
-		serialize_desc desc = {};
-		for (const auto&& curr : reg.storage()) {
-			entt::id_type id = curr.first;
-			const auto& storage = curr.second;
-			if (storage.contains(ent) && type_map.contains(id)) {
-				std::visit([&]<typename T>(T&& arg) {
-					using U = stl::clear_type<T>;
-					if constexpr (stl::is_detected<detect_flag, U>::value) {
-						desc.flags |= U::flag;
-					} else {
-						const U* value_ptr = static_cast<const U*>(storage.get(ent));
-						if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
-							desc.components_count++;
-						}
-					}
-				}, type_map[id]);
-			}
-		}
+	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
+	const uint32_t entities_count = reg.size() - ent_view.size_hint();
 
-		if (desc.components_count == 0) {
-			return;
+	data.second.reserve(300 * 1024 * 1024);
+	if (entities_count != 0) {
+		stl::push_memory(data, entities_count);
+		const entt::entity* ent_ptr = reg.data();
+		while (ent_ptr != reg.data() + reg.size()) {
+			serialize_entity<DECLARE_SERIALIZABLE_TYPES>(data, *ent_ptr);
+			ent_ptr++;
 		}
-		
-		stl::write_memory(data, desc);
-		if (reg.all_of<net_id_flag>(ent)) {
-			// #TODO:
-			//return;
-		}
-		
-		for (const auto&& curr : reg.storage()) {
-			entt::id_type id = curr.first;
-			const auto& storage = curr.second;
-			if (storage.contains(ent) && type_map.contains(id)) {
-				std::visit([&]<typename T>(T&& arg) {
-					using U = stl::clear_type<T>;
-					if constexpr (!stl::is_detected<detect_flag, U>::value) {
-						const U* value_ptr = static_cast<const U*>(storage.get(ent));
-						if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
-							stl::write_memory(data, id);
-							value_ptr->serialize(data);
-						}
-					}
-				}, type_map[id]);
-			}
-		}
-	});
+	}
 }
 
 void
 entities::deserialize(stl::stream_vector& data)
 {
+	data.first = 0;
+	data.second.clear();
+
+	uint32_t entities_count = 0;
+	stl::read_memory(data, entities_count);
+	for (uint32_t i = 0; i < entities_count; i++) {
+
+	}
 }
 
 bool
 entities::is_valid(entity_view ent)
 {
-	return global_registry.get().valid(ent.get());
+	return !is_null(ent) && ent.get() != entt::tombstone && global_registry.get().valid(ent.get());
 }
 
 bool
@@ -177,13 +164,6 @@ entities::get_position(entity_view entity)
 		}
 	}
 	
-	if (registry.any_of<physics_body_component>(entity.get())) {
-		const auto phys_comp = registry.try_get<physics_body_component>(entity.get());
-		if (phys_comp != nullptr && phys_comp->body != nullptr) {
-			return phys_comp->body->get_position();
-		}
-	}
-	
 	return {};
 }
 
@@ -204,7 +184,7 @@ entities::add_phys_body(
 	ark_float_vec2 pos,
 	ark_float_vec2 size,
 	physics::body_type type,
-	physics::body_shape shape,
+	material::shape shape,
 	material::type mat
 )
 {
@@ -212,8 +192,10 @@ entities::add_phys_body(
 	const physics::body_parameters phys_parameters(0.f, 0.f, vel, pos, size, type, shape, mat);
 	physics::physics_body* body = schedule_creation(phys_parameters);
 	
-	//physics_component_storage[body] = physics_body_component(body);
 	add_field<physics_body_component>(ent, body);
+	if (!reg.all_of<scene_component>(ent.get())) {
+		add_field<scene_component>(ent);
+	}
 
 	return ent;
 }

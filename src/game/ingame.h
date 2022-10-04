@@ -6,4 +6,5 @@ namespace ingame
 {
 	void pre_init();
 	void init();
+	void destroy();
 }

@@ -38,9 +38,7 @@ ui::tick(float dt)
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
         console.draw(dt, "Arkane console", &show_console);
-    }
-    
-    if (!show_console && show_fps_counter) {
+    } else if (show_fps_counter) {
         ImGui::SetNextWindowPos({ static_cast<float>(window_width - 300), 5 });
         ImGui::SetNextWindowSize({300, 600});
         if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
@@ -92,6 +90,8 @@ ui::tick(float dt)
         ImGui::Text("   Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
         ImGui::End();
     }
+
+
 }
 
 int64_t 

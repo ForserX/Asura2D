@@ -38,6 +38,59 @@ void ingame::pre_init()
 	}
 }
 
+auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state) {
+	switch (scan_code) {
+	case SDL_SCANCODE_MOUSE_RIGHT: {
+		if (state == ark::input::key_state::press) {
+			const auto screen_cords = ark_float_vec2(ark::input::get_mouse_pos().x, ark::input::get_mouse_pos().y);
+			const ark::physics::physics_body* body = ark::physics::hit_test(ark::camera::screen_to_world(screen_cords));
+			if (body != nullptr) {
+				ark::camera::attach(ark::entities::get_entity_from_body(body->get_body()));
+			}
+			else {
+				ark::camera::detach();
+			}
+		}
+		break;
+	}
+	case SDL_SCANCODE_MOUSE_MIDDLE: {
+		if (state == ark::input::key_state::hold) {
+			const auto& mouse_delta = ark::input::get_mouse_delta();
+			ark::camera::move(ark::camera::cam_move::left, (mouse_delta.x * 0.05f));
+			ark::camera::move(ark::camera::cam_move::up, (mouse_delta.y * 0.05f));
+		}
+		break;
+	}
+	case SDL_SCANCODE_LEFT:
+		ark::camera::move(ark::camera::cam_move::left, 1.f);
+		break;
+	case SDL_SCANCODE_RIGHT:
+		ark::camera::move(ark::camera::cam_move::right, 1.f);
+		break;
+	case SDL_SCANCODE_UP:
+		ark::camera::move(ark::camera::cam_move::up, 1.f);
+		break;
+	case SDL_SCANCODE_DOWN:
+		ark::camera::move(ark::camera::cam_move::down, 1.f);
+		break;
+	default:
+		break;
+	}
+};
+
+auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
+	switch (scan_code) {
+	case SDL_SCANCODE_MOUSEWHEEL:
+		ark::camera::zoom((-1.f * state) * 2.f);
+		break;
+	default:
+		break;
+	}
+};
+
+ark::input::on_key_change camera_mouse_key_event;
+ark::input::on_input_change camera_camera_mouse_wheel_event;
+
 ark::entity_view TestObject;
 ark::entity_view TestObject2;
 
@@ -56,7 +109,7 @@ void ingame::init()
 	
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 400; i++) {
+	for (size_t i = 0; i < 1000; i++) {
 		std::uniform_real_distribution width_dist(260., 800.);
 		std::uniform_real_distribution height_dist(260., 800.);
 		auto& ent = circles.emplace_back(
@@ -66,11 +119,20 @@ void ingame::init()
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
 				{ 25, 25 },
 				physics::body_type::dynamic_body,
-				physics::body_shape::circle_shape,
+				material::shape::circle,
 				material::type::rubber
 			)
 		);
 
 		add_field<drawable_flag>(ent);
 	}
+
+	camera_mouse_key_event = ark::input::subscribe_key_event(camera_mouse_key_change);
+	camera_camera_mouse_wheel_event = ark::input::subscribe_input_event(camera_mouse_wheel_change);
+}
+
+void ingame::destroy()
+{
+	ark::input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
+	ark::input::unsubscribe_key_event(camera_mouse_key_event);
 }

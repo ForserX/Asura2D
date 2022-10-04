@@ -7,14 +7,11 @@ namespace ark
 	
 	namespace physics
 	{
-		enum class body_shape : int64_t
+		// 4 bits
+		enum class body_type : uint8_t
 		{
-			box_shape,
-			circle_shape
-		};
-		
-		enum class body_type : int64_t
-		{
+			invalid = 0,
+
 			static_body,
 			dynamic_body,
 			kinematic_body
@@ -22,17 +19,27 @@ namespace ark
 		
 		struct body_parameters
 		{
+			struct packed
+			{
+				packed(uint8_t in_type, uint8_t in_shape, uint8_t in_mat)
+					: type(in_type), shape(in_shape), mat(in_mat) {}
+
+				packed() 
+					: type(0), shape(0), mat(0) {}
+
+				uint8_t type : 4;
+				uint8_t shape : 4;
+				uint8_t mat;
+			} packed_type;
+			
+			float mass = 0.f;
 			float angle = 0.f;
-			float vel_angle = 0.f;
+			float angular_vel = 0.f;
 			ark_float_vec2 vel;
 			ark_float_vec2 pos;
 			ark_float_vec2 size;
 			ark_float_vec2 mass_center;
-			body_type type;
-			body_shape shape;
-			material::type mat;
-			float mass;
-			
+
 			body_parameters() = delete;
 			body_parameters(
 				float in_angle,
@@ -41,19 +48,17 @@ namespace ark
 				ark_float_vec2 in_pos,
 				ark_float_vec2 in_size,
 				body_type in_type,
-				body_shape in_shape,
+				material::shape in_shape,
 				material::type in_mat,
 				float in_mass = 0.f,
 				ark_float_vec2 in_mass_center = {}
 			) :
 			angle(in_angle),
-			vel_angle(in_vel_angle),
+			angular_vel(in_vel_angle),
 			vel(in_vel),
 			pos(in_pos),
 			size(in_size),
-			type(in_type),
-			shape(in_shape),
-			mat(in_mat),
+			packed_type(static_cast<uint8_t>(in_type), static_cast<uint8_t>(in_shape), static_cast<uint8_t>(in_mat)),
 			mass(in_mass)
 			{
 				if (in_mass_center.empty()) {
@@ -72,10 +77,25 @@ namespace ark
 			{
 				b2BodyDef body_def = {};
 				body_def.angle = angle;
-				body_def.angularVelocity = vel_angle;
+				body_def.angularVelocity = angular_vel;
 				body_def.linearVelocity.Set(vel.x, vel.y);
 				body_def.position.Set(pos.x, pos.y);
-				body_def.type = (type == body_type::kinematic_body) ? b2_kinematicBody : (type == body_type::static_body) ? b2_staticBody : b2_dynamicBody;
+
+				switch (static_cast<body_type>(packed_type.type)) {
+					case body_type::kinematic_body:
+						body_def.type = b2_kinematicBody;
+						break;
+					case body_type::static_body:
+						body_def.type = b2_staticBody;
+						break;
+					case body_type::dynamic_body:
+						body_def.type = b2_dynamicBody;
+						break;
+					default:
+						ark_assert(false, "Invalid body type", {});
+						break;
+				}
+
 				return body_def;
 			}
 
@@ -87,32 +107,62 @@ namespace ark
 				return mass_data;
 			}
 
+			template<bool full_serialization = false>
 			void serialize(stl::stream_vector& data) const
 			{
-				write_memory(data, angle);
-				write_memory(data, vel_angle);
-				write_memory(data, vel);
-				write_memory(data, pos);
-				write_memory(data, size);
-				write_memory(data, mass_center);
-				write_memory(data, type);
-				write_memory(data, shape);
-				write_memory(data, mat);
-				write_memory(data, mass);
+				if constexpr (full_serialization) {
+					stl::push_memory(data, angle);
+					stl::push_memory(data, angular_vel);
+					stl::push_memory(data, mass);
+					stl::push_memory(data, mass_center);
+					stl::push_memory(data, vel);
+					stl::push_memory(data, pos);
+					stl::push_memory(data, size);
+					stl::push_memory(data, packed_type);
+				} else {
+					ark_int_vec2 temp_size = { size.x, size.y };
+					ark_int_vec2 temp_mass_center = { mass_center.x, mass_center.y };
+
+					stl::push_memory(data, angle);
+					stl::push_memory(data, angular_vel);
+					stl::push_memory(data, mass);
+					stl::push_memory(data, temp_mass_center);
+					stl::push_memory(data, vel);
+					stl::push_memory(data, pos);
+					stl::push_memory(data, temp_size);
+					stl::push_memory(data, packed_type);
+				}
 			}
 
+			template<bool full_serialization = false>
 			void deserialize(stl::stream_vector& data)
 			{
-				read_memory(data, angle);
-				read_memory(data, vel_angle);
-				read_memory(data, vel);
-				read_memory(data, pos);
-				read_memory(data, size);
-				read_memory(data, mass_center);
-				read_memory(data, type);
-				read_memory(data, shape);
-				read_memory(data, mat);
-				read_memory(data, mass);
+				if constexpr (full_serialization) {
+					// if you want full precise - this is your choice 
+					stl::read_memory(data, angle);
+					stl::read_memory(data, angular_vel);
+					stl::read_memory(data, mass);
+					stl::read_memory(data, mass_center);
+					stl::read_memory(data, vel);
+					stl::read_memory(data, pos);
+					stl::read_memory(data, size);
+					stl::read_memory(data, packed_type);
+				} else {
+					ark_int_vec2 temp_size = {};
+					ark_int_vec2 temp_mass_center = {};
+
+					stl::read_memory(data, angle);
+					stl::read_memory(data, angular_vel);
+					stl::read_memory(data, mass);
+					stl::read_memory(data, temp_mass_center);
+					stl::read_memory(data, vel);
+					stl::read_memory(data, pos);
+					stl::read_memory(data, temp_size);
+					stl::read_memory(data, packed_type);
+
+					size = { temp_size.x, temp_size.y };
+					mass_center = { temp_mass_center.x, temp_mass_center.y };
+				}
 			}
 		};
 		
@@ -123,9 +173,6 @@ namespace ark
 			bool destroyed = false;
 			b2Body* body = nullptr;
 			body_parameters parameters;
-
-		private:
-			ark_float_vec2 proxy_position = {};
 			
 		public:
 			physics_body() = delete;
@@ -137,10 +184,25 @@ namespace ark
 			
 			b2Body* get_body() const { return body; }
 			const body_parameters& get_parameters() const { return parameters; }
-			const ark_float_vec2& get_position();
 
+		public:
+			float get_mass() const;
+			ark_float_vec2 get_mass_center() const;
+			float get_angle() const;
+			float get_angular_velocity() const;
+			ark_float_vec2 get_position() const;
+
+		public:
+			void set_mass(float new_mass);
+			void set_mass_center(ark_float_vec2& new_center);
+			void set_angle(float new_angle);
+			void set_angular_velocity(float new_angular_vel);
+			void set_position(const ark_float_vec2& new_pos);
+
+		public:
 			body_parameters copy_parameters() const;
 
+		public:
 			void create();
 			void destroy();
 		};

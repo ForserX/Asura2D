@@ -431,14 +431,112 @@ physics::physics_body::~physics_body()
 
 }
 
-const ark_float_vec2& 
-physics::physics_body::get_position()
+float
+physics::physics_body::get_mass() const
 {
 	if (body != nullptr) {
-		proxy_position = body->GetPosition();
+		return body->GetMass();
 	}
 
-	return proxy_position;
+	return parameters.mass;
+}
+
+float
+physics::physics_body::get_angle() const
+{
+	if (body != nullptr) {
+		return body->GetAngle();
+	}
+
+	return parameters.angle;
+}
+
+float 
+physics::physics_body::get_angular_velocity() const
+{
+	if (body != nullptr) {
+		return body->GetAngularVelocity();
+	}
+
+	return parameters.angular_vel;
+}
+
+ark_float_vec2
+physics::physics_body::get_position() const
+{
+	if (body != nullptr) {
+		return body->GetPosition();
+	}
+
+	return parameters.pos;
+}
+
+ark_float_vec2 
+physics::physics_body::get_mass_center() const
+{
+	if (body != nullptr) {
+		b2MassData mass_data = {};
+		body->GetMassData(&mass_data);
+		return mass_data.center;
+	}
+
+	return parameters.pos;
+}
+
+void
+physics::physics_body::set_mass(float new_mass)
+{
+	if (body != nullptr) {
+		b2MassData mass_data = {};
+		body->GetMassData(&mass_data);
+		mass_data.mass = new_mass;
+		body->SetMassData(&mass_data);
+	}
+
+	parameters.mass = new_mass;
+}
+
+void
+physics::physics_body::set_mass_center(ark_float_vec2& new_center)
+{
+	if (body != nullptr) {
+		b2MassData massData = {};
+		body->GetMassData(&massData);
+		massData.center = new_center;
+		body->SetMassData(&massData);
+	}
+
+	parameters.mass_center = new_center;
+}
+
+void
+physics::physics_body::set_angle(float new_angle)
+{
+	if (body != nullptr) {
+		body->SetTransform(body->GetPosition(), new_angle);
+	}
+
+	parameters.angle = new_angle;
+}
+
+void
+physics::physics_body::set_angular_velocity(float new_angular_vel)
+{
+	if (body != nullptr) {
+		body->SetAngularVelocity(new_angular_vel);
+	}
+
+	parameters.angular_vel = new_angular_vel;
+}
+
+void
+physics::physics_body::set_position(const ark_float_vec2& new_pos)
+{
+	if (body != nullptr) {
+		body->SetTransform(new_pos, body->GetAngle());
+	}
+
+	parameters.pos = new_pos;
 }
 
 physics::body_parameters
@@ -447,7 +545,7 @@ physics::physics_body::copy_parameters() const
 	body_parameters params = parameters;
 	if (body != nullptr) {
 		params.angle = body->GetAngle();
-		params.vel_angle = body->GetAngularVelocity();
+		params.angular_vel = body->GetAngularVelocity();
 		params.vel = body->GetLinearVelocity();
 		params.pos = body->GetPosition();
 	}
@@ -466,19 +564,19 @@ physics::physics_body::create()
 	b2PolygonShape poly_shape = {};
 	b2CircleShape circle_shape = {};
 
-	switch (parameters.shape) {
-	case body_shape::box_shape:
+	switch (static_cast<material::shape>(parameters.packed_type.shape)) {
+	case material::shape::box:
 		poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
 		fixtureDef.shape = &poly_shape;
 		break;
-	case body_shape::circle_shape:
+	case material::shape::circle:
 		circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
 		circle_shape.m_radius = parameters.size.x / 2;
 		fixtureDef.shape = &circle_shape;
 		break;
 	}
 
-	const auto& [friction, restitution, density, ignore_collision] = material::get(parameters.mat);
+	const auto& [friction, restitution, density, ignore_collision] = material::get(static_cast<material::type>(parameters.packed_type.mat));
 	fixtureDef.density = density;
 	fixtureDef.friction = friction;
 	fixtureDef.restitution = restitution;
@@ -497,12 +595,14 @@ void
 physics::physics_body::destroy()
 {
 	destroyed = true;
-	for (auto joint = body->GetJointList(); joint != nullptr; ) {
-		const auto next_joint = joint->next;
-		get_world().DestroyJoint(joint->joint);
-		joint = next_joint;
+	if (body != nullptr) {
+		for (auto joint = body->GetJointList(); joint != nullptr; ) {
+			const auto next_joint = joint->next;
+			get_world().DestroyJoint(joint->joint);
+			joint = next_joint;
+		}
+
+		get_world().DestroyBody(body);
+		body = nullptr;
 	}
-	
-	get_world().DestroyBody(body);
-	body = nullptr;
 }

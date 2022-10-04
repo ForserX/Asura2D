@@ -50,8 +50,24 @@ namespace ark::entities
 		static constexpr uint16_t flag = 1 << 7;
 	};
 
+	// serializable, for marking player as controlled by AI or player
+	struct net_controlled_flag
+	{
+		static constexpr uint16_t flag = 1 << 8;
+	};
+
 	template <typename T>
 	using detect_flag = decltype(T::flag);	
+
+	template <typename T>
+	constexpr bool is_flag_v = stl::is_detected<detect_flag, T>::value;
+
+	struct network_component
+	{
+		uint16_t network_id : 12;
+		uint16_t network_cluster : 4;
+		uint16_t reserved;
+	};
 
 	struct draw_color_component
 	{
@@ -62,16 +78,17 @@ namespace ark::entities
 			return true;
 		}
 		
+		template<bool direct = false>
 		void serialize(stl::stream_vector& data) const
 		{
 			uint32_t value = color;
-			write_memory(data, value);
+			stl::push_memory(data, value);
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
 			uint32_t value = 0;
-			read_memory(data, value);
+			stl::read_memory(data, value);
 			color = value;
 		}
 	};
@@ -85,23 +102,24 @@ namespace ark::entities
 		{
 			return true;
 		}
-		
+
+		template<bool direct = false>
 		void serialize(stl::stream_vector& data) const
 		{
 			uint32_t value = first_color;
-			write_memory(data, value);
+			stl::push_memory(data, value);
 			
 			value = second_color;
-			write_memory(data, value);
+			stl::push_memory(data, value);
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
 			uint32_t value = 0;
-			read_memory(data, value);
+			stl::read_memory(data, value);
 			first_color = value;
 			
-			read_memory(data, value);
+			stl::read_memory(data, value);
 			second_color = value;
 		}
 	};
@@ -114,7 +132,8 @@ namespace ark::entities
 		{
 			return false;
 		}
-		
+
+		template<bool direct = false>
 		void serialize(stl::stream_vector& data) const
 		{
 			
@@ -128,23 +147,23 @@ namespace ark::entities
 
 	struct scene_component
 	{
-		ark_float_vec2 position;
+		ark_float_vec2 position = {};
 
 		bool can_serialize_now() const
 		{
 			return true;
 		}
-		
+
 		void serialize(stl::stream_vector& data) const
 		{
-			write_memory(data, position.x);
-			write_memory(data, position.y);
+			stl::push_memory(data, position.x);
+			stl::push_memory(data, position.y);
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
-			read_memory(data, position.x);
-			read_memory(data, position.y);
+			stl::read_memory(data, position.x);
+			stl::read_memory(data, position.y);
 		}
 	};
 	
@@ -156,7 +175,7 @@ namespace ark::entities
 		{
 			return body != nullptr;
 		}
-		
+
 		void serialize(stl::stream_vector& data) const
 		{
 			const physics::body_parameters parameters = body->copy_parameters();
@@ -172,7 +191,7 @@ namespace ark::entities
 		}
 	};
 	
-	struct visual_component
+	struct dynamic_visual_component
 	{
 		stl::vector<ark_float_vec2> points;
 		
@@ -180,42 +199,43 @@ namespace ark::entities
 		{
 			return !points.empty();
 		}
-		
+
 		void serialize(stl::stream_vector& data) const
 		{
 			size_t size_to_write = points.size();
-			write_memory(data, size_to_write);
+			stl::push_memory(data, size_to_write);
 			for (const auto& point : points) {
-				write_memory(data, point);
+				stl::push_memory(data, point);
 			}
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
 			size_t size_to_read = 0;
-			read_memory(data, size_to_read);
+			stl::read_memory(data, size_to_read);
 			
 			points.resize(size_to_read);
 			for (size_t i = 0; i < size_to_read; i++) {
-				read_memory(data, points[i]);
+				stl::read_memory(data, points[i]);
 			}
 		}
 	};
 
-	using variant_type = stl::variant<
-		garbage_flag,
-		non_serializable_flag,
-		dont_free_after_reset_flag,
-		background_flag,
-		drawable_flag,
-		ground_flag,
-		level_flag,
-		net_id_flag,
-		draw_color_component,
-		draw_gradient_component,
-		draw_texture_component,
-		scene_component,
-		physics_body_component,
-		visual_component
-	>;
+#define DECLARE_SERIALIZABLE_TYPES \
+	background_flag, \
+	drawable_flag, \
+	ground_flag, \
+	level_flag, \
+	net_id_flag, \
+	net_controlled_flag, \
+	draw_color_component, \
+	draw_gradient_component, \
+	draw_texture_component, \
+	scene_component, \
+	physics_body_component \
+
+#define DECLASE_NON_SERIALIZABLE_TYPES \
+	garbage_flag, \
+	non_serializable_flag, \
+	dont_free_after_reset_flag 
 }

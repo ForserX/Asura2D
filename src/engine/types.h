@@ -15,7 +15,7 @@ struct ark_vec2
 	T y;
 
 	ark_vec2() = default;
-	ark_vec2(T dx, T dy) : x(dx), y(dy) {}
+	ark_vec2(auto dx, auto dy) : x(dx), y(dy) {}
 
 	float operator () (int32 i) const
 	{
@@ -52,7 +52,6 @@ struct ark_vec2
 	}
 };
 
-/// Add two vectors component-wise.
 template<typename T>
 ark_vec2<T> operator+(const ark_vec2<T>& a, const ark_vec2<T>& b)
 {
@@ -94,7 +93,7 @@ class ark_float_vec2 : public b2Vec2
 public:
 	ark_float_vec2() : b2Vec2(0, 0) {};
 
-	ark_float_vec2(float fx, float fy)
+	ark_float_vec2(auto fx, auto fy)
 	{
 		x = fx;
 		y = fy;
@@ -138,20 +137,22 @@ namespace ark::stl
 	template <class T>
 	using clear_type = std::remove_cv_t<std::remove_reference_t<T>>;
 	
-	namespace internal {
+	namespace internal 
+	{
 		template <class Default, class AlwaysVoid, template<class...> class Op, class... Args>
-		struct detector {
+		struct detector 
+		{
 			using value_t = std::false_type;
 			using type = Default;
 		};
  
 		template <class Default, template<class...> class Op, class... Args>
-		struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> {
+		struct detector<Default, std::void_t<Op<Args...>>, Op, Args...> 
+		{
 			using value_t = std::true_type;
 			using type = Op<Args...>;
 		};
- 
-	} // namespace detail
+	} 
 	
 	struct nonesuch{};
  
@@ -171,7 +172,8 @@ namespace ark::stl
 		template <class U>
 		constexpr ark_allocator(const ark_allocator <U>&) noexcept {}
 
-		[[nodiscard]] T* allocate(std::size_t n) {
+		[[nodiscard]] T* allocate(std::size_t n) 
+		{
 			if (n > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
 				return nullptr;
 			}
@@ -183,7 +185,8 @@ namespace ark::stl
 			return nullptr;
 		}
 
-		void deallocate(T* p, std::size_t n) noexcept {
+		void deallocate(T* p, std::size_t n) noexcept
+		{
 			ark_free(p);
 		}
 	};
@@ -234,19 +237,38 @@ namespace ark::stl
 	using byte_vector = vector<char>;
 	using stream_vector = std::pair<int64_t, byte_vector>;
 
+	template<typename T>
 	void
-	write_memory(stream_vector& data, auto& value)
+	write_memory(stream_vector& data, T& value)
 	{
-		const size_t idx = data.second.size();
-		data.second.resize(idx + sizeof(value));
-		std::memcpy(&data.second[idx], &value, sizeof(value));
+		std::memcpy(&data.second.at(data.first), reinterpret_cast<const char*>(&value), sizeof(value));
 		data.first += sizeof(value);
 	}
 
+	template<typename T>
 	void
-	read_memory(stream_vector& data, auto& value)
+	read_memory(stream_vector& data, T& value)
 	{
-		
+		std::memcpy(reinterpret_cast<char*>(&value), & data.second.at(data.first), sizeof(value));
+		data.first += sizeof(value);
+	}
+
+	inline
+	void
+	push_memory(stream_vector& data, auto& value)
+	{
+		const char* write_ptr = reinterpret_cast<const char*>(&value);
+		for (size_t i = 0; i < sizeof(value); i++) {
+			data.second.push_back(write_ptr[i]);
+		}
+	}
+
+	inline
+	void
+	prealloc_memory(stream_vector& data, size_t memory_count)
+	{
+		const size_t idx = data.second.size();
+		data.second.resize(idx + memory_count);
 	}
 
 	using string = std::basic_string<char>;
@@ -254,4 +276,7 @@ namespace ark::stl
 
 	template<class... Args>
 	using variant = std::variant<Args...>;
+
+	template<class... Args>
+	using tuple = std::tuple<Args...>;
 }

@@ -14,6 +14,7 @@ namespace ark::camera
 	void tick(float dt);
 
 	void move(cam_move move, float point);
+	void zoom(float value);
 
 	bool is_attached();
 	void attach(entity_view entity);

@@ -35,7 +35,7 @@ namespace ark::level
 			level_h = level_data.get<float>(section, "h");
 					
 			const auto body_type = level_data.get<physics::body_type>(section, "type");
-			const auto body_shape = level_data.get<physics::body_shape>(section, "shape");
+			const auto body_shape = level_data.get<material::shape>(section, "shape");
 			const auto material_type = level_data.get<material::type>(section, "material");
 			
 			level_w /= 2;

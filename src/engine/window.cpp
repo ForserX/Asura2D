@@ -69,7 +69,6 @@ window::tick()
 				case SDL_WINDOWEVENT_RESIZED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
-
 					camera::reset_wh();
 					break;
 				case SDL_WINDOWEVENT_SIZE_CHANGED:

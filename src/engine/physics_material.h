@@ -11,12 +11,23 @@ namespace ark::material
 		bool ignore_collision = false;
 	};
 
-	enum class type : int64_t
+	enum class type : uint8_t
 	{
+		invalid = 0,
+
 		solid,
 		rubber,
 
-		out_of
+		out_of = uint8_t(-1)
+	};
+
+	// 4 bits
+	enum class shape : uint8_t
+	{
+		invalid = 0,
+
+		box,
+		circle
 	};
 
 	void init();

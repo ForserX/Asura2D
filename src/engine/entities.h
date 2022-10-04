@@ -28,7 +28,7 @@ namespace ark
 		const entt::entity& get() const { return ent; }
 	};
 
-	struct serialize_desc
+	struct entity_desc
 	{
 		uint16_t flags;
 		uint8_t components_count : 6;
@@ -92,7 +92,7 @@ namespace ark::entities
 		ark_float_vec2 pos,
 		ark_float_vec2 size,
 		physics::body_type type = physics::body_type::dynamic_body,
-		physics::body_shape shape = physics::body_shape::box_shape,
+		material::shape shape = material::shape::box,
 		material::type mat = material::type::solid
 	);
 }
