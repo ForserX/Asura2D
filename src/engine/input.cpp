@@ -38,7 +38,7 @@ input::tick(float dt)
 {
 	for (const auto& [key, state] : changed_keys) {
 		for (const auto& callback : key_change_callbacks) {
-			const key_state new_state = get_enum_from_state(key);
+			key_state new_state = get_enum_from_state(key);
 			if (new_state != key_state::nothing) {
 				callback(key, new_state);
 			}
@@ -54,6 +54,12 @@ input::tick(float dt)
 	}
 
 	changed_keys.erase(SDL_SCANCODE_MOUSEWHEEL);
+}
+
+bool
+input::is_focused_on_ui()
+{
+	return ImGui::GetFocusID() != 0;
 }
 
 void

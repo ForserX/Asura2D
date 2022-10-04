@@ -77,8 +77,19 @@ namespace ark::entities
 		{
 			return true;
 		}
-		
-		template<bool direct = false>
+
+		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		{
+			if (kv_storage.contains("color")) {
+				color = static_cast<uint32_t>(std::atoll(kv_storage.at("color").data()));
+			}
+		}
+
+		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		{
+			kv_storage["color"] = std::to_string(static_cast<uint32_t>(color));
+		}
+
 		void serialize(stl::stream_vector& data) const
 		{
 			uint32_t value = color;
@@ -103,7 +114,23 @@ namespace ark::entities
 			return true;
 		}
 
-		template<bool direct = false>
+		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		{
+			if (kv_storage.contains("first_color")) {
+				first_color = static_cast<uint32_t>(std::atoll(kv_storage.at("first_color").data()));
+			}
+
+			if (kv_storage.contains("second_color")) {
+				second_color = static_cast<uint32_t>(std::atoll(kv_storage.at("second_color").data()));
+			}
+		}
+
+		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		{
+			kv_storage["first_color"] = std::to_string(static_cast<uint32_t>(first_color));
+			kv_storage["second_color"] = std::to_string(static_cast<uint32_t>(second_color));
+		}
+
 		void serialize(stl::stream_vector& data) const
 		{
 			uint32_t value = first_color;
@@ -133,7 +160,14 @@ namespace ark::entities
 			return false;
 		}
 
-		template<bool direct = false>
+		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		{
+		}
+
+		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		{
+		}
+
 		void serialize(stl::stream_vector& data) const
 		{
 			
@@ -153,6 +187,24 @@ namespace ark::entities
 		{
 			return true;
 		}
+
+		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		{
+			if (kv_storage.contains("scene_pos_x")) {
+				position.x = std::atof(kv_storage.at("scene_pos_x").data());
+			}
+
+			if (kv_storage.contains("scene_pos_y")) {
+				position.y = std::atof(kv_storage.at("scene_pos_y").data());
+			}
+		}
+
+		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		{
+			kv_storage["scene_pos_x"] = std::to_string(position.x);
+			kv_storage["scene_pos_y"] = std::to_string(position.y);
+		}
+
 
 		void serialize(stl::stream_vector& data) const
 		{
@@ -174,6 +226,149 @@ namespace ark::entities
 		bool can_serialize_now() const
 		{
 			return body != nullptr;
+		}
+
+		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		{
+			float angle = {};
+			float angular_vel = {};
+			ark_float_vec2 vel = {};
+			ark_float_vec2 pos = {};
+			ark_float_vec2 size = {};
+			physics::body_type type = {};
+			material::shape shape = {};
+			material::type mat = {};
+			float mass = {};
+			ark_float_vec2 mass_center = {};
+
+			ark_assert(body != nullptr, "Body is not freed yet. That means that you have a memory leak", {})
+			if (kv_storage.contains("angle")) {
+				angle = std::atof(kv_storage.at("angle").data());
+			}
+
+			if (kv_storage.contains("angular_velocity")) {
+				angular_vel = std::atof(kv_storage.at("angular_velocity").data());
+			}
+
+			if (kv_storage.contains("velocity_x")) {
+				vel.x = std::atof(kv_storage.at("velocity_x").data());
+			}
+
+			if (kv_storage.contains("velocity_y")) {
+				vel.y = std::atof(kv_storage.at("velocity_y").data());
+			}
+
+			if (kv_storage.contains("position_x")) {
+				pos.x = std::atof(kv_storage.at("position_x").data());
+			}
+
+			if (kv_storage.contains("velocity_y")) {
+				pos.y = std::atof(kv_storage.at("velocity_y").data());
+			}
+
+			if (kv_storage.contains("size_x")) {
+				size.x = std::atof(kv_storage.at("size_x").data());
+			}
+
+			if (kv_storage.contains("size_y")) {
+				size.y = std::atof(kv_storage.at("size_y").data());
+			}
+
+			if (kv_storage.contains("mass")) {
+				mass = std::atof(kv_storage.at("mass").data());
+			}
+
+			if (kv_storage.contains("mass_center_x")) {
+				mass_center.x = std::atof(kv_storage.at("mass_center_x").data());
+			}
+
+			if (kv_storage.contains("mass_center_y")) {
+				mass_center.x = std::atof(kv_storage.at("mass_center_y").data());
+			}
+
+			if (kv_storage.contains("body_type")) {
+				auto& body_type_string = kv_storage.at("body_type");
+				if (body_type_string == "static") {
+					type = physics::body_type::static_body;
+				} else if (body_type_string == "dynamic") {
+					type = physics::body_type::dynamic_body;
+				} else if (body_type_string == "kinematic") {
+					type = physics::body_type::kinematic_body;
+				}
+			}
+
+			if (kv_storage.contains("material_shape")) {
+				auto& body_type_string = kv_storage.at("material_shape");
+				if (body_type_string == "box") {
+					shape = material::shape::box;
+				} else if (body_type_string == "circle") {
+					shape = material::shape::circle;
+				}
+			}
+
+			if (kv_storage.contains("material_type")) {
+				auto& body_type_string = kv_storage.at("material_type");
+				if (body_type_string == "rubber") {
+					mat = material::type::rubber;
+				} else if (body_type_string == "solid") {
+					mat = material::type::solid;
+				}
+			}
+
+			const physics::body_parameters parameters(angle, angular_vel, vel, pos, size, type, shape, mat, mass, mass_center);
+			body = physics::schedule_creation(parameters);
+		}
+
+		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		{
+			const physics::body_parameters parameters = body->copy_parameters();
+			kv_storage["angle"] = std::to_string(parameters.angle);
+			kv_storage["angular_velocity"] = std::to_string(parameters.angular_vel);
+			kv_storage["velocity_x"] = std::to_string(parameters.vel.x);
+			kv_storage["velocity_y"] = std::to_string(parameters.vel.y);
+			kv_storage["position_x"] = std::to_string(parameters.pos.x);
+			kv_storage["position_y"] = std::to_string(parameters.pos.y);
+			kv_storage["size_x"] = std::to_string(parameters.size.x);
+			kv_storage["size_y"] = std::to_string(parameters.size.y);
+			kv_storage["mass"] = std::to_string(parameters.mass);
+			kv_storage["mass_center_x"] = std::to_string(parameters.mass_center.x);
+			kv_storage["mass_center_y"] = std::to_string(parameters.mass_center.y);
+
+			switch (static_cast<physics::body_type>(parameters.packed_type.type)) {
+				case physics::body_type::static_body:
+					kv_storage["body_type"] = "static";
+					break;
+				case physics::body_type::dynamic_body:
+					kv_storage["body_type"] = "dynamic";
+					break;
+				case physics::body_type::kinematic_body:
+					kv_storage["body_type"] = "kinematic";
+					break;
+				default:
+					break;
+			}
+
+			switch (static_cast<material::shape>(parameters.packed_type.shape)) {
+			case material::shape::box:
+				kv_storage["material_shape"] = "box";
+				break;
+			case material::shape::circle:
+				kv_storage["material_shape"] = "circle";
+				break;
+			default:
+				break;
+			}
+
+			switch (static_cast<material::type>(parameters.packed_type.type)) {
+			case material::type::rubber:
+				kv_storage["material_type"] = "rubber";
+				break;
+			case material::type::solid:
+				kv_storage["material_type"] = "solid";
+				break;
+			default:
+				break;
+			}
 		}
 
 		void serialize(stl::stream_vector& data) const
@@ -200,6 +395,14 @@ namespace ark::entities
 			return !points.empty();
 		}
 
+		void string_deserialize(stl::hash_map<stl::string, stl::string>& kv_storage)
+		{
+		}
+
+		void string_serialize(stl::hash_map<stl::string, stl::string>& kv_storage) const
+		{
+		}
+
 		void serialize(stl::stream_vector& data) const
 		{
 			size_t size_to_write = points.size();
@@ -222,21 +425,21 @@ namespace ark::entities
 	};
 
 #define DECLARE_SERIALIZABLE_TYPES \
-	background_flag, \
-	drawable_flag, \
-	ground_flag, \
-	level_flag, \
-	net_id_flag, \
-	net_controlled_flag, \
-	draw_color_component, \
-	draw_gradient_component, \
-	draw_texture_component, \
-	scene_component, \
-	physics_body_component, \
-	dynamic_visual_component
+	entities::background_flag, \
+	entities::drawable_flag, \
+	entities::ground_flag, \
+	entities::level_flag, \
+	entities::net_id_flag, \
+	entities::net_controlled_flag, \
+	entities::draw_color_component, \
+	entities::draw_gradient_component, \
+	entities::draw_texture_component, \
+	entities::scene_component, \
+	entities::physics_body_component, \
+	entities::dynamic_visual_component
 
 #define DECLASE_NON_SERIALIZABLE_TYPES \
-	garbage_flag, \
-	non_serializable_flag, \
-	dont_free_after_reset_flag 
+	entities::garbage_flag, \
+	entities::non_serializable_flag, \
+	entities::dont_free_after_reset_flag 
 }

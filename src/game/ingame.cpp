@@ -40,19 +40,6 @@ void ingame::pre_init()
 
 auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state) {
 	switch (scan_code) {
-	case SDL_SCANCODE_MOUSE_RIGHT: {
-		if (state == ark::input::key_state::press) {
-			const auto screen_cords = ark_float_vec2(ark::input::get_mouse_pos().x, ark::input::get_mouse_pos().y);
-			const ark::physics::physics_body* body = ark::physics::hit_test(ark::camera::screen_to_world(screen_cords));
-			if (body != nullptr) {
-				ark::camera::attach(ark::entities::get_entity_from_body(body->get_body()));
-			}
-			else {
-				ark::camera::detach();
-			}
-		}
-		break;
-	}
 	case SDL_SCANCODE_MOUSE_MIDDLE: {
 		if (state == ark::input::key_state::hold) {
 			const auto& mouse_delta = ark::input::get_mouse_delta();

@@ -28,6 +28,8 @@ namespace ark::input
 	void destroy();
 	void tick(float dt);
 
+	bool is_focused_on_ui();
+
 	// event window listeners
 	void update_key(int16_t scan_code, float state);
 	void update_mouse_pos(ark_int_vec2 pos);

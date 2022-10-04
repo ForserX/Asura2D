@@ -10,8 +10,40 @@ extern float target_physics_tps;
 extern float target_physics_hertz;
 extern float cam_zoom;
 extern ui::UIConsole console;
+
+bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;
+
+template<typename Component>
+void inspect_entity_component(stl::hash_map<stl::string, stl::string>& kv_storage, entt::entity ent)
+{
+    const auto& reg = entities::get_registry().get();
+    if (reg.all_of<Component>(ent)) {
+        entt::id_type id = entt::type_id<Component>().hash();
+        auto& storage = (*reg.storage(id)).second;
+        if constexpr (entities::is_flag_v<Component>) {
+            ImGui::Text("Flag: %s", typeid(Component).name());
+        } else {
+            ImGui::Text("Component: %s", typeid(Component).name());
+            const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
+            if (value_ptr != nullptr) {
+                value_ptr->string_serialize(kv_storage);
+            }
+        }
+    }
+}
+
+template<typename... Args>
+void inspect_entity(entt::entity ent)
+{
+    stl::hash_map<stl::string, stl::string> kv_storage;
+    (inspect_entity_component<Args>(kv_storage, ent), ...);
+
+    for (auto& [key, value] : kv_storage) {
+        ImGui::Text("%s: %s", key.data(), value.data());
+    }
+}
 
 void
 ui::init()
@@ -23,7 +55,7 @@ ui::init()
 
     if (SysLangID == 1049) {
         std::filesystem::path font_dir = filesystem::get_content_dir();
-        font_dir.append("fonts").append("Roboto-Regular.ttf");
+        font_dir.append("fonts").append("RobotoMono-Regular.ttf");
 
         ImGuiIO& io = ImGui::GetIO();
         io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
@@ -35,6 +67,11 @@ void
 ui::tick(float dt)
 {
     OPTICK_EVENT("ui draw")
+
+    if (ImGui::IsKeyPressed(ImGuiKey_F2)) {
+        show_entity_inspector = !show_entity_inspector;
+    }
+
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
         console.draw(dt, "Arkane console", &show_console);
@@ -49,13 +86,9 @@ ui::tick(float dt)
 
         ImGui::SameLine();
 
-        if (!ImGui::IsWindowFocused()) {
-            ImGui::SetWindowFocus();
-        }
-
         ark_float_vec2 cursor_pos = ImGui::GetMousePos();
         ark_float_vec2 wcursor_pos = camera::screen_to_world(cursor_pos);
-        
+
         const float draw_fps = 1.f / dt;
         const float draw_ms = dt * 1000.f;
         const float phys_tps = 1.f / physics_delta;
@@ -67,33 +100,91 @@ ui::tick(float dt)
         const auto& registry = entities::get_registry().get();
         ImGui::Text("Controls:");
         ImGui::Checkbox("Debug draw", &physical_debug_draw);
+        ImGui::Checkbox("Debug draw", &physical_debug_draw);
         ImGui::Checkbox("Paused", &paused);
         ImGui::Checkbox("Use parallel", &use_parallel);
         ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
         ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
         ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
         ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
+        ImGui::Text("UI:");
+        ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
+        ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
         ImGui::Text("Game:");
-        ImGui::Text("   TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
+        ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
         ImGui::Text("Physics:");
-        ImGui::Text("   TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
-        ImGui::Text("   Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
-        ImGui::Text("   Physics thread load: %3.0f%%", phys_load_percent * 100.f);
+        ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
+        ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
+        ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
         ImGui::ProgressBar(phys_load_percent);
-        ImGui::Text("   Bodies count: %i", physics::get_world().GetBodyCount());
+        ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
         ImGui::Text("Entities");
-        ImGui::Text("   Allocated: %d", registry.capacity());
-        ImGui::Text("   Alive: %d", registry.alive());
+        ImGui::Text("  Allocated: %d", registry.capacity());
+        ImGui::Text("  Alive: %d", registry.alive());
         ImGui::Text("UI Info:");
-        ImGui::Text("   Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
-        ImGui::Text("   Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
-        ImGui::Text("   Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
+        ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
+        ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
+        ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
         ImGui::End();
+    }
+
+#ifndef ARKANE_SHIPPING 
+    ImGui::SetNextWindowPos({ 0, 0 });
+    ImGui::SetNextWindowSize({ static_cast<float>(window_width), 30 });
+    if (ImGui::Begin("NavigationBar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+        ImGui::BeginChild("ChildR", ImVec2(0, 260), true, ImGuiWindowFlags_MenuBar);
+        if (ImGui::BeginMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                ImGui::MenuItem("Open level", "Ctrl + O");
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("View")) {
+                ImGui::MenuItem("Entity Inspector", "F2", &show_entity_inspector);
+                ImGui::EndMenu();
+            }
+
+
+            if (ImGui::BeginMenu("Entities")) {
+                if (ImGui::MenuItem("Destroy all entities")) {
+                    entities::free();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+        }
+
+        ImGui::EndChild();
+        ImGui::End();
+    }
+#endif
+
+    if (show_entity_inspector) {
+        ImGui::SetNextWindowPos({ 0, 30 });
+        ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 30) });
+        if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration)) {
+            static entity_view inspected_entity;
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                auto phys_body = physics::hit_test(camera::screen_to_world(ImGui::GetMousePos()));
+                if (phys_body != nullptr) {
+                    inspected_entity = entities::get_entity_from_body(phys_body->get_body());
+                }
+            }
+
+            if (entities::is_valid(inspected_entity)) {
+                ImGui::Text("Entity ID: %i", inspected_entity.get());
+                inspect_entity<DECLARE_SERIALIZABLE_TYPES>(inspected_entity.get());
+            }
+
+            ImGui::End();
+        }
     }
 
     auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
     if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) {
-        ImGui::GetForegroundDrawList()->AddText(ImVec2(0, 0), ImColor(0.f, 0.f, 0.f), "Serialization/Deserialization complete");
+        ImGui::GetForegroundDrawList()->AddText(ImVec2(5, 35), ImColor(0.f, 0.f, 0.f), "Serialization/Deserialization complete");
     }
 }
 

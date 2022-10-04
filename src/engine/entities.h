@@ -69,6 +69,8 @@ namespace ark::entities
 	void destroy();
 	void tick(float dt);
 
+	void free();
+
 	std::chrono::nanoseconds& get_last_serialize_time();
 	void serialize(stl::stream_vector& data);
 	void deserialize(stl::stream_vector& data);

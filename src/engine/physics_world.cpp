@@ -214,8 +214,12 @@ physics::world::pre_tick()
 }
 
 void
-physics::world::joints_tick()
+physics::world::debug_joints_tick()
 {
+	if (input::is_focused_on_ui()) {
+		return;
+	}
+
 	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1)) {
 		ark_float_vec2 mouse_position_absolute = ImGui::GetMousePos();
 		mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
@@ -296,8 +300,8 @@ physics::world::internal_tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("physics joints tick")
-		joints_tick();
+		OPTICK_EVENT("physics debug joints tick")
+		debug_joints_tick();
 	}
 
 	for (int i = 0; i < target_steps_count; i++) {

@@ -125,6 +125,17 @@ void serialize_entity(stl::stream_vector& data, entt::entity ent)
 	std::memcpy(desc_ptr, &desc, sizeof(entity_desc));
 }
 
+void
+entities::free()
+{
+	const auto& reg = global_registry.get();
+	const entt::entity* ent_ptr = reg.data();
+	while (ent_ptr != reg.data() + reg.size()) {
+		entities::mark_as_garbage(*ent_ptr);
+		ent_ptr++;
+	}
+}
+
 std::chrono::nanoseconds&
 entities::get_last_serialize_time()
 {

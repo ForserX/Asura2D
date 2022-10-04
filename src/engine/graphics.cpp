@@ -8,7 +8,7 @@ graphics::theme::style window_style;
 void
 graphics::init()
 {
-	window_style = theme::style::red;
+	window_style = theme::style::dark;
 	theme::change();
 	
 	ui::init();
@@ -297,10 +297,10 @@ void graphics::theme::dark()
 	style.PopupBorderSize = 1;
 	style.FrameBorderSize = 1;
 	style.TabBorderSize = 1;
-	style.WindowRounding = 7;
-	style.ChildRounding = 4;
-	style.FrameRounding = 3;
-	style.PopupRounding = 4;
+	style.WindowRounding = 0;
+	style.ChildRounding = 0;
+	style.FrameRounding = 0;
+	style.PopupRounding = 0;
 	style.ScrollbarRounding = 9;
 	style.GrabRounding = 3;
 	style.LogSliderDeadzone = 4;

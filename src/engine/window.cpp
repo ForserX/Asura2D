@@ -7,8 +7,8 @@ bool wants_to_exit = false;
 bool fullscreen_mode = false;
 extern bool show_console;
 
-int window_width = 1024;
-int window_height = 614;
+int window_width = 1600;
+int window_height = 900;
 bool window_maximized = false;
 
 using namespace ark;
