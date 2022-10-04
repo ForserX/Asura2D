@@ -113,7 +113,7 @@ void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
-    ImGui::SetNextWindowPos({ 0, 30 });
+    ImGui::SetNextWindowPos({ 0, 0 });
     ImGui::SetNextWindowSize(io.DisplaySize);
     if (!ImGui::Begin(title, p_open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
     {
