@@ -37,7 +37,7 @@ auto try_to_serialize = [](std::string_view state_name)
 	path.append(state_name);
 
 	entities_data.second.resize(0);
-	entities::serialize(entities_data);
+	entities::internal::serialize(entities_data);
 	filesystem::write_file(path, entities_data);
 };
 
@@ -54,34 +54,39 @@ auto try_to_deserialize = [](std::string_view state_name)
 auto shit_detector_tick = []() 
 {
 	auto& reg = global_registry.get();
-	if (free_on_next_tick) {
-		const entt::entity* ent_ptr = reg.data();
-		while (ent_ptr != reg.data() + reg.size()) {
-			if (entities::is_valid(*ent_ptr)) {
-				entities::mark_as_garbage(*ent_ptr);
-			}
-
-			ent_ptr++;
-		}
-
-		if (clear_on_next_tick) {
-			reg.clear();
-		}
-	} else {
-		const auto view = reg.view<entities::garbage_flag>();
-		view.each([](entt::entity ent) {
-			auto& reg = global_registry.get();
+	auto destroy_ent = [&reg](entt::entity ent)
+	{
+		if (entities::is_valid(ent)) {
 			if (auto phys_comp = reg.try_get<entities::physics_body_component>(ent)) {
 				physics::schedule_free(phys_comp->body);
 			}
 
 			reg.destroy(ent);
-		});
-
-		if (view.size() == reg.size() && clear_on_next_tick) {
-			reg.clear();
-			clear_on_next_tick = false;
 		}
+	};
+
+	if (free_on_next_tick) {
+		const entt::entity* ent_ptr = reg.data();
+		while (ent_ptr != reg.data() + reg.size()) {	
+			entt::entity ent = *ent_ptr;
+			if (entities::is_valid(ent) && !entities::contains<entities::garbage_flag>(ent)) {
+				entities::add_field<entities::garbage_flag>(ent);
+			}
+
+			ent_ptr++;
+		}
+
+		free_on_next_tick = false;
+	}
+	
+	const auto view = reg.view<entities::garbage_flag>();
+	view.each([&reg, &destroy_ent](entt::entity ent) {
+		destroy_ent(ent);
+	});
+
+	if (view.size() == reg.size() && clear_on_next_tick) {
+		reg.clear();
+		clear_on_next_tick = false;
 	}
 };
 
@@ -94,11 +99,11 @@ entities::init()
 		if (state == input::key_state::press) {
 			switch (scan_code) {
 				case SDL_SCANCODE_F6: {
-					try_to_serialize("game_state");
+					entities::serialize_state("game_state");
 					break;
 				}
 				case SDL_SCANCODE_F8: {
-					try_to_deserialize("game_state");
+					entities::deserialize_state("game_state");
 					break;
 				}
 			}
@@ -245,15 +250,29 @@ deserialize_entity(stl::stream_vector& data)
 }
 
 void 
-entities::deserialize_from_state(std::string_view state_name)
+entities::deserialize_state(std::string_view state_name)
 {
-	try_to_deserialize(state_name);
+	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
+		process_entities([state_name]() {
+			try_to_deserialize(state_name);
+			}, entities_state::reading);
+
+		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+		return false;
+	});
 }
 
 void 
-entities::serialize_to_state(std::string_view state_name)
+entities::serialize_state(std::string_view state_name)
 {
-	try_to_serialize(state_name);
+	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
+		process_entities([state_name]() {
+			try_to_serialize(state_name);
+		}, entities_state::reading);
+
+		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+		return false;
+	});
 }
 
 void 
@@ -274,28 +293,40 @@ entities::get_last_serialize_time()
 	return entities_serilaize_last_time;
 }
 
+void
+entities::internal::string_serialize(stl::tree_string_map& data)
+{
+	OPTICK_EVENT("entities serializer");
+	const auto& reg = global_registry.get();
+	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
+	const uint32_t entities_count = reg.size() - ent_view.size_hint();
+
+	if (entities_count != 0) {
+		const entt::entity* ent_ptr = reg.data();
+		while (ent_ptr != reg.data() + reg.size()) {
+			string_serialize_entity<DECLARE_ENTITIES_TYPES>(data, *ent_ptr);
+			ent_ptr++;
+		}
+	}
+}
+
 void 
 entities::string_serialize(stl::tree_string_map& data)
 {
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		process_entities([&data]() {
-			OPTICK_EVENT("entities serializer");
-			const auto& reg = global_registry.get();
-			const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
-			const uint32_t entities_count = reg.size() - ent_view.size_hint();
-
-			if (entities_count != 0) {
-				const entt::entity* ent_ptr = reg.data();
-				while (ent_ptr != reg.data() + reg.size()) {
-					string_serialize_entity<DECLARE_ENTITIES_TYPES>(data, *ent_ptr);
-					ent_ptr++;
-				}
-			}
+			internal::string_serialize(data);
 		}, entities_state::reading);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;
 	});
+}
+
+void
+entities::internal::string_deserialize(const stl::tree_string_map& data)
+{
+
 }
 
 void 
@@ -305,26 +336,32 @@ entities::string_deserialize(const stl::tree_string_map& data)
 }
 
 void
+entities::internal::serialize(stl::stream_vector& data)
+{
+	OPTICK_EVENT("entities serializer");
+	const auto& reg = global_registry.get();
+	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
+	volatile uint32_t entities_count = reg.size() - ent_view.size_hint();
+
+	data.first = 0;
+	data.second.clear();
+	data.second.reserve(1 * 1024 * 1024);
+	if (entities_count != 0) {
+		stl::push_memory(data, entities_count);
+		const entt::entity* ent_ptr = reg.data();
+		while (ent_ptr != reg.data() + reg.size()) {
+			serialize_entity<DECLARE_ENTITIES_TYPES>(data, *ent_ptr);
+			ent_ptr++;
+		}
+	}
+}
+
+void
 entities::serialize(stl::stream_vector& data)
 {
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		process_entities([&data]() {
-			OPTICK_EVENT("entities serializer");
-			const auto& reg = global_registry.get();
-			const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
-			volatile uint32_t entities_count = reg.size() - ent_view.size_hint();
-
-			data.first = 0;
-			data.second.clear();
-			data.second.reserve(1 * 1024 * 1024);
-			if (entities_count != 0) {
-				stl::push_memory(data, entities_count);
-				const entt::entity* ent_ptr = reg.data();
-				while (ent_ptr != reg.data() + reg.size()) {
-					serialize_entity<DECLARE_ENTITIES_TYPES>(data, *ent_ptr);
-					ent_ptr++;
-				}
-			}
+			internal::serialize(data);
 		}, entities_state::reading);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
@@ -333,22 +370,28 @@ entities::serialize(stl::stream_vector& data)
 }
 
 void
+entities::internal::deserialize(stl::stream_vector& data)
+{
+	OPTICK_EVENT("entities deserializer");
+
+	free();
+	clear();
+	shit_detector_tick();
+	data.first = 0;
+
+	uint32_t entities_count = 0;
+	stl::read_memory(data, entities_count);
+	for (uint32_t i = 0; i < entities_count; i++) {
+		deserialize_entity<DECLARE_ENTITIES_TYPES>(data);
+	}
+}
+
+void
 entities::deserialize(stl::stream_vector& data)
 {
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		process_entities([&data]() {
-			OPTICK_EVENT("entities deserializer");
-
-			free();
-			clear();
-			shit_detector_tick();
-			data.first = 0;
-
-			uint32_t entities_count = 0;
-			stl::read_memory(data, entities_count);
-			for (uint32_t i = 0; i < entities_count; i++) {
-				deserialize_entity<DECLARE_ENTITIES_TYPES>(data);
-			}
+			internal::deserialize(data);
 		}, entities_state::writing);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();

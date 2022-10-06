@@ -13,6 +13,8 @@ b2MouseJoint* TestMouseJoint = nullptr;
 physics::physics_body* ContactBody = nullptr;
 physics::physics_body* MoveBody = nullptr;
 ark_float_vec2 ContactPoint = {};
+
+marl::mutex physics_lock;
 // Test 
 
 class ark::CollisionLister final : public b2ContactListener
@@ -167,6 +169,7 @@ physics::world::destroy_all_bodies()
 void
 physics::world::pre_tick()
 {
+	marl::lock scope_lock(physics_lock);
 	for (const auto body : bodies) {
 		if (!body->is_created()) {
 			body->create();
@@ -201,6 +204,7 @@ physics::world::pre_tick()
 #endif
 	
 	for (const auto body : scheduled_to_delete_bodies) {
+		body->get_body()->ClearContacts();
 		body->destroy();
 		if (bodies.contains(body)) {
 			bodies.erase(body);
@@ -411,6 +415,7 @@ physics::world::get_body_position(const physics_body* body)
 physics::physics_body*
 physics::world::schedule_creation(body_parameters parameters)
 {
+	marl::lock scope_lock(physics_lock);
 	const auto& [key, value] = bodies.insert(new physics_body(parameters));
 	return *key;
 }
@@ -418,6 +423,7 @@ physics::world::schedule_creation(body_parameters parameters)
 void
 physics::world::schedule_free(physics_body* body)
 {
+	marl::lock scope_lock(physics_lock);
 	scheduled_to_delete_bodies.emplace(body);
 }
 

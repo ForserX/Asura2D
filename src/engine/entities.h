@@ -41,6 +41,12 @@ namespace ark::entities
 	namespace internal
 	{
 		registry& get_registry();
+
+		void string_serialize(stl::tree_string_map& data);
+		void string_deserialize(const stl::tree_string_map& data);
+
+		void serialize(stl::stream_vector& data);
+		void deserialize(stl::stream_vector& data);
 	}
 
 	template<typename... Args>
@@ -141,13 +147,15 @@ namespace ark::entities
 
 	std::chrono::nanoseconds& get_last_serialize_time();
 
-	void deserialize_from_state(std::string_view state_name);
-	void serialize_to_state(std::string_view state_name);
+	void deserialize_state(stl::string_view state_name);
+	void serialize_state(stl::string_view state_name);
 
 	void string_serialize(stl::tree_string_map& data);
 	void string_deserialize(const stl::tree_string_map& data);
+
 	void serialize(stl::stream_vector& data);
 	void deserialize(stl::stream_vector& data);
+
 	bool is_valid(entity_view ent);
 	bool is_null(entity_view ent);
 	

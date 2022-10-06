@@ -142,6 +142,7 @@ graphics::draw_rect(
 	bool filled
 )
 {
+	OPTICK_EVENT("graphics draw rect");
 	if (filled) {
 		ImGui::GetBackgroundDrawList()->AddRectFilled(p_min, p_max, color);
 	} else {
@@ -152,6 +153,7 @@ graphics::draw_rect(
 void
 graphics::draw_background(ImTextureID texture_id)
 {
+	OPTICK_EVENT("graphics draw background");
 	const int64_t width = ui::get_cmd_int("window_width");
 	const int64_t height = ui::get_cmd_int("window_height");
 	ImGui::GetBackgroundDrawList()->AddImage(texture_id, {0,0}, {static_cast<float>(width), static_cast<float>(height)});
@@ -160,6 +162,7 @@ graphics::draw_background(ImTextureID texture_id)
 void
 graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 {
+	OPTICK_EVENT("graphics draw phys object");
 	const auto poly = dynamic_cast<b2PolygonShape*>(object->GetFixtureList()->GetShape());
 	ark_assert(poly != nullptr, "Can't cast shape to polygon shape", return);
     
@@ -177,6 +180,7 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 void
 graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 {
+	OPTICK_EVENT("graphics draw phys circle");
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
 

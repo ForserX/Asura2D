@@ -177,11 +177,11 @@ ui::tick(float dt)
                     ImGui::Separator();
 
                     if (ImGui::MenuItem("Serialize game state")) {
-                        entities::serialize_to_state("debug_game_state");
+                        entities::serialize_state("debug_game_state");
                     }
 
                     if (ImGui::MenuItem("Deserialize game state")) {
-                        entities::deserialize_from_state("debug_game_state");
+                        entities::deserialize_state("debug_game_state");
                     }
 
                     ImGui::EndMenu();

@@ -207,6 +207,7 @@ namespace ark
 			
 			bool is_created() const { return created; }
 			bool is_destroyed() const { return destroyed; }
+			bool is_enabled() const { return (body ? body->IsEnabled() : false); }
 			
 			b2Body* get_body() const { return body; }
 			const body_parameters& get_parameters() const { return parameters; }

@@ -8,7 +8,7 @@ namespace ark::systems
 		std::random_device r_device;
 		std::default_random_engine r_engine;
 
-		stl::hash_map<ptrdiff_t, ImColor> color_map;
+		stl::vector<ImColor> color_map;
 		
 	public:
 		draw_system() : r_engine(r_device()) {}
