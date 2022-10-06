@@ -117,6 +117,19 @@ namespace ark::entities
 		return try_get<Type>(ent.get());
 	}
 
+
+	template<typename Type>
+	auto get(entt::entity ent)
+	{
+		return internal::get_registry().get().get<Type>(ent);
+	}
+
+	template<typename Type>
+	auto get(const entity_view& ent)
+	{
+		return get<Type>(ent.get());
+	}
+
 	template<typename... Args>
 	bool contains(const entt::entity ent)
 	{

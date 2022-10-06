@@ -201,13 +201,13 @@ namespace ark::entities
 		bool string_deserialize(stl::string_map& kv_storage)
 		{
 			bool success = false;
-			if (kv_storage.contains("scene_pos_x")) {
-				position.x = std::stod(kv_storage.at("scene_pos_x").data());
+			if (kv_storage.contains("position_x")) {
+				position.x = std::stod(kv_storage.at("position_x").data());
 				success = true;
 			}
 
-			if (kv_storage.contains("scene_pos_y")) {
-				position.y = std::stod(kv_storage.at("scene_pos_y").data());
+			if (kv_storage.contains("position_y")) {
+				position.y = std::stod(kv_storage.at("position_y").data());
 				success = true;
 			}
 
@@ -216,8 +216,8 @@ namespace ark::entities
 
 		void string_serialize(stl::string_map& kv_storage) const
 		{
-			kv_storage["scene_pos_x"] = std::to_string(position.x);
-			kv_storage["scene_pos_y"] = std::to_string(position.y);
+			kv_storage["position_x"] = std::to_string(position.x);
+			kv_storage["position_y"] = std::to_string(position.y);
 		}
 
 
@@ -295,8 +295,8 @@ namespace ark::entities
 				pos.x = std::stod(kv_storage.at("position_x").data());
 			}
 
-			if (kv_storage.contains("velocity_y")) {
-				pos.y = std::stod(kv_storage.at("velocity_y").data());
+			if (kv_storage.contains("position_y")) {
+				pos.y = std::stod(kv_storage.at("position_y").data());
 			}
 
 			if (kv_storage.contains("size_x")) {

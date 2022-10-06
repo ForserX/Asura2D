@@ -133,62 +133,30 @@ namespace ark
 				return mass_data;
 			}
 
-			template<bool full_serialization = false>
+			template<bool full_serialization = true>
 			void serialize(stl::stream_vector& data) const
 			{
-				if constexpr (full_serialization) {
-					stl::push_memory(data, angle);
-					stl::push_memory(data, angular_vel);
-					stl::push_memory(data, mass);
-					stl::push_memory(data, mass_center);
-					stl::push_memory(data, vel);
-					stl::push_memory(data, pos);
-					stl::push_memory(data, size);
-					stl::push_memory(data, packed_type);
-				} else {
-					ark_int_vec2 temp_size = { size.x, size.y };
-					ark_int_vec2 temp_mass_center = { mass_center.x, mass_center.y };
-
-					stl::push_memory(data, angle);
-					stl::push_memory(data, angular_vel);
-					stl::push_memory(data, mass);
-					stl::push_memory(data, temp_mass_center);
-					stl::push_memory(data, vel);
-					stl::push_memory(data, pos);
-					stl::push_memory(data, temp_size);
-					stl::push_memory(data, packed_type);
-				}
+				stl::push_memory(data, angle);
+				stl::push_memory(data, angular_vel);
+				stl::push_memory(data, mass);
+				stl::push_memory(data, mass_center);
+				stl::push_memory(data, vel);
+				stl::push_memory(data, pos);
+				stl::push_memory(data, size);
+				stl::push_memory(data, packed_type);
 			}
 
-			template<bool full_serialization = false>
+			template<bool full_serialization = true>
 			void deserialize(stl::stream_vector& data)
 			{
-				if constexpr (full_serialization) {
-					// if you want full precise - this is your choice 
-					stl::read_memory(data, angle);
-					stl::read_memory(data, angular_vel);
-					stl::read_memory(data, mass);
-					stl::read_memory(data, mass_center);
-					stl::read_memory(data, vel);
-					stl::read_memory(data, pos);
-					stl::read_memory(data, size);
-					stl::read_memory(data, packed_type);
-				} else {
-					ark_int_vec2 temp_size = {};
-					ark_int_vec2 temp_mass_center = {};
-
-					stl::read_memory(data, angle);
-					stl::read_memory(data, angular_vel);
-					stl::read_memory(data, mass);
-					stl::read_memory(data, temp_mass_center);
-					stl::read_memory(data, vel);
-					stl::read_memory(data, pos);
-					stl::read_memory(data, temp_size);
-					stl::read_memory(data, packed_type);
-
-					size = { temp_size.x, temp_size.y };
-					mass_center = { temp_mass_center.x, temp_mass_center.y };
-				}
+				stl::read_memory(data, angle);
+				stl::read_memory(data, angular_vel);
+				stl::read_memory(data, mass);
+				stl::read_memory(data, mass_center);
+				stl::read_memory(data, vel);
+				stl::read_memory(data, pos);
+				stl::read_memory(data, size);
+				stl::read_memory(data, packed_type);
 			}
 		};
 		

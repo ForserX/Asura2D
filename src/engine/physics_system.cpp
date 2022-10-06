@@ -20,10 +20,12 @@ physics_system::tick(float dt)
 	OPTICK_EVENT("engine physics system tick");
 
 	entities::access([]() {
-		const auto view = entities::get_view<entities::physics_body_component>();
-		view.each([](const entt::entity ent, entities::physics_body_component& phys_comp) {
-			if (phys_comp.body != nullptr) {
+		const auto view = entities::get_view<entities::physics_body_component, entities::scene_component>();
+		view.each([](const entt::entity ent, entities::physics_body_component& phys_comp, entities::scene_component& scene_comp) {
+			if (entities::is_valid(ent) && phys_comp.body != nullptr) {
 				const auto& pos = phys_comp.body->get_position();
+				scene_comp.position = pos;
+
 				if (pos.y < y_destroy_coord) {
 					entities::mark_as_garbage(ent);
 					return;

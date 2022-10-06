@@ -72,6 +72,10 @@ draw_system::tick(float dt)
 			OPTICK_EVENT("engine objects draw");
 			draw_view.each([this](entt::entity entity) {
 				OPTICK_EVENT("object draw");
+				if (!entities::is_valid(entity)) {
+					return;
+				}
+
 				// First of all, try to draw physics bodies
 				if (const auto phys_comp = entities::try_get<physics_body_component>(entity)) {
 					const auto physical_body = phys_comp->body;
