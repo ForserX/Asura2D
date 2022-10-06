@@ -52,10 +52,13 @@ namespace ark::entities
 	template<typename... Args>
 	void access(auto&& func, Args&&...args)
 	{
-		uint8_t state = serialization_state.load();
-		while (state != entities_state::idle && state != entities_state::viewing) {
-			state = serialization_state.load();
-			threads::switch_context();
+		{
+			OPTICK_EVENT("waiting for access")
+			uint8_t state = serialization_state.load();
+			while (state != entities_state::idle && state != entities_state::viewing) {
+				state = serialization_state.load();
+				threads::switch_context();
+			}
 		}
 
 		if (serialization_state == entities_state::idle) {
