@@ -15,6 +15,6 @@ namespace ark::systems
 		
 		void init() override;
 		void reset() override;
-		void tick(registry& reg, float dt) override;
+		void tick(float dt) override;
 	};
 }

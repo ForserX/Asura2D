@@ -13,7 +13,7 @@ physics_mouse_joint_system::reset()
 }
 
 void
-physics_mouse_joint_system::tick(registry& reg, float dt)
+physics_mouse_joint_system::tick(float dt)
 {
 
 }

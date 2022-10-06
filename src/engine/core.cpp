@@ -2,9 +2,11 @@
 
 using namespace ark;
 
-bool is_phys_ticking = false;
-bool is_game_ticking = false;
-bool is_serializer_ticking = false;
+std::atomic_bool is_phys_ticking = false;
+std::atomic_bool is_game_ticking = false;
+
+std::atomic_uint8_t serialization_ref_counter = 0;
+std::atomic_uint8_t serialization_state = 0;
 
 void
 core::init()

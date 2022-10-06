@@ -18,10 +18,9 @@ bool show_fps_counter = true;
 template<typename Component>
 void inspect_entity_component(stl::hash_map<stl::string, stl::string>& kv_storage, entt::entity ent)
 {
-    const auto& reg = entities::get_registry().get();
-    if (reg.all_of<Component>(ent)) {
+    if (entities::contains<Component>(ent)) {
         entt::id_type id = entt::type_id<Component>().hash();
-        auto& storage = (*reg.storage(id)).second;
+        auto& storage = (*entities::internal::get_registry().get().storage(id)).second;
         if constexpr (entities::is_flag_v<Component>) {
             ImGui::Text("Flag: %s", typeid(Component).name());
         } else {
@@ -69,6 +68,7 @@ ui::tick(float dt)
 {
     OPTICK_EVENT("ui draw")
 
+#ifndef ARKANE_SHIPPING 
     if (ImGui::IsKeyPressed(ImGuiKey_F2)) {
         show_entity_inspector = !show_entity_inspector;
     }
@@ -99,7 +99,7 @@ ui::tick(float dt)
             const float phys_real_dt = physics_real_delta * 1000.f;
             const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
             
-            const auto& registry = entities::get_registry().get();
+            const auto& registry = entities::internal::get_registry().get();
             ImGui::Checkbox("Debug draw", &physical_debug_draw);
             ImGui::Checkbox("Paused", &paused);
             ImGui::Checkbox("Use parallel", &use_parallel);
@@ -133,14 +133,30 @@ ui::tick(float dt)
             ImGui::End();
         }
 
-#ifndef ARKANE_SHIPPING 
         ImGui::SetNextWindowPos({ 0, 0 });
         ImGui::SetNextWindowSize({ static_cast<float>(window_width), 30 });
         if (ImGui::Begin("NavigationBar", nullptr, ImGuiWindowFlags_NoDecoration)) {
             ImGui::BeginChild("ChildR", ImVec2(0, 260), true, ImGuiWindowFlags_MenuBar);
             if (ImGui::BeginMenuBar()) {
                 if (ImGui::BeginMenu("File")) {
-                    ImGui::MenuItem("Open level", "Ctrl + O");
+                    if (ImGui::MenuItem("Import scene", "Ctrl + O")) {
+                        
+                    }
+
+                    if (ImGui::MenuItem("Export scene", "Ctrl + S")) {
+
+                    }
+
+                    if (ImGui::MenuItem("Close scene")) {
+                        scene::close_scene();
+                    }
+
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Edit")) {
+                    ImGui::MenuItem("Redo", "Ctrl + Shift + Z", nullptr, false);
+                    ImGui::MenuItem("Undo", "Ctrl + Z", nullptr, false);
                     ImGui::EndMenu();
                 }
 
@@ -149,10 +165,23 @@ ui::tick(float dt)
                     ImGui::EndMenu();
                 }
 
-
                 if (ImGui::BeginMenu("Entities")) {
                     if (ImGui::MenuItem("Destroy all entities")) {
                         entities::free();
+                    }
+
+                    if (ImGui::MenuItem("Clear all entities")) {
+                        entities::clear();
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Serialize game state")) {
+                        entities::serialize_to_state("debug_game_state");
+                    }
+
+                    if (ImGui::MenuItem("Deserialize game state")) {
+                        entities::deserialize_from_state("debug_game_state");
                     }
 
                     ImGui::EndMenu();
@@ -164,17 +193,17 @@ ui::tick(float dt)
             ImGui::EndChild();
             ImGui::End();
         }
-#endif
 
          if (show_entity_inspector) {
              auto height_value = static_cast<float>(window_height - fps_counter_size);
              if (height_value < fps_counter_size) {
                  ImGui::SetNextWindowPos({ 0, 30 });
                  ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 30) });
-             }  else {
+             } else {
                  ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), static_cast<float>(5 + fps_counter_size) });
                  ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - fps_counter_size) });
              }
+
              if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration)) {
                  static entt::entity inspected_entity = entt::null;
                  if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
@@ -189,17 +218,19 @@ ui::tick(float dt)
                  if (entities::is_valid(inspected_entity)) {
                      ImGui::Text("Entity ID: %i", inspected_entity);
                      ImGui::Separator();
-                     inspect_entity<DECLARE_SERIALIZABLE_TYPES>(inspected_entity);
+                     inspect_entity<DECLARE_ENTITIES_TYPES>(inspected_entity);
                  }
          
                  ImGui::End();
              }
          }
     }
+
     auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
     if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 325, 8), ImColor(1.f, 1.f, 1.f), "Serialization/Deserialization complete");
     }
+#endif
 }
 
 int64_t 

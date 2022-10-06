@@ -92,9 +92,8 @@ physics::hit_test(ark_float_vec2 pos)
 	if (callback.m_fixture)
 	{
 		const b2Body* phys_body = callback.m_fixture->GetBody();
-		const auto& entity = entities::get_entity_from_body(phys_body);
-		const auto& reg = entities::get_registry().get();
-		const auto phys_comp = reg.try_get<entities::physics_body_component>(entity.get());
+		const auto entity = entities::get_entity_from_body(phys_body);
+		const auto phys_comp = entities::try_get<entities::physics_body_component>(entity);
 		if (phys_comp != nullptr) {
 			return phys_comp->body;
 		}

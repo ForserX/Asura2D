@@ -257,7 +257,7 @@ namespace ark::entities
 			float mass = {};
 			ark_float_vec2 mass_center = {};
 
-			ark_assert(body != nullptr, "Body is not freed yet. That means that you have a memory leak", {})
+			ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {})
 			if (kv_storage.contains("angle")) {
 				angle = std::stod(kv_storage.at("angle").data());
 				success = true;
@@ -405,7 +405,7 @@ namespace ark::entities
 
 		void deserialize(stl::stream_vector& data)
 		{
-			ark_assert(body != nullptr, "Body is not freed yet. That means that you have a memory leak", {})
+			ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {})
 			
 			const physics::body_parameters parameters(data);
 			body = physics::schedule_creation(parameters);
@@ -451,13 +451,16 @@ namespace ark::entities
 		}
 	};
 
-#define DECLARE_SERIALIZABLE_TYPES \
+#define DECLARE_SERIALIZABLE_FLAGS \
 	entities::background_flag, \
 	entities::drawable_flag, \
 	entities::ground_flag, \
 	entities::level_flag, \
 	entities::net_id_flag, \
-	entities::net_controlled_flag, \
+	entities::net_controlled_flag 
+
+#define DECLARE_SERIALIZABLE_TYPES \
+	DECLARE_SERIALIZABLE_FLAGS, \
 	entities::draw_color_component, \
 	entities::draw_gradient_component, \
 	entities::draw_texture_component, \
@@ -465,8 +468,17 @@ namespace ark::entities
 	entities::physics_body_component, \
 	entities::dynamic_visual_component
 
-#define DECLASE_NON_SERIALIZABLE_TYPES \
+#define DECLARE_SERIALIZABLE_ENTITY_TYPES \
+	DECLARE_SERIALIZABLE_FLAGS, \
+	DECLARE_SERIALIZABLE_TYPES
+
+#define DECLARE_NON_SERIALIZABLE_TYPES \
 	entities::garbage_flag, \
 	entities::non_serializable_flag, \
 	entities::dont_free_after_reset_flag 
+
+#define DECLARE_ENTITIES_TYPES \
+	DECLARE_SERIALIZABLE_TYPES, \
+	DECLARE_NON_SERIALIZABLE_TYPES
+
 }

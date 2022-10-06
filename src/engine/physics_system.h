@@ -4,9 +4,12 @@ namespace ark::systems
 {
 	class physics_system final : public system
 	{
+	private:
+
+
 	public:
 		void init() override;
 		void reset() override;
-		void tick(registry& reg, float dt) override;
+		void tick(float dt) override;
 	};
 }

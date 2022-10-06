@@ -24,6 +24,15 @@ scene::tick(float dt)
 
 }
 
+void
+scene::close_scene()
+{
+	auto scene_entities = entities::get_view<entities::scene_component>();
+	for (auto ent : scene_entities) {
+		entities::mark_as_garbage(ent);
+	}
+}
+
 void 
 scene::import_scene(std::string_view scene_name)
 {

@@ -8,7 +8,7 @@ movement_system::init()
 }
 
 void
-movement_system::tick(ark::registry& reg, float dt)
+movement_system::tick(float dt)
 {
 }
 

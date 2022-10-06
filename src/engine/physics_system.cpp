@@ -15,26 +15,20 @@ physics_system::reset()
 }
 
 void
-physics_system::tick(registry& reg, float dt)
+physics_system::tick(float dt)
 {
-	OPTICK_EVENT("engine physics system tick")
-	entt::registry& registry = reg.get();
-	const auto view = registry.view<entities::physics_body_component>();
-	for (const auto entity : view) {
-		if (entities::is_valid(entity)) {
-			auto phys_body = registry.try_get<entities::physics_body_component>(entity);
-			auto scene_comp = registry.try_get<entities::scene_component>(entity);
-			if (phys_body != nullptr && phys_body->body != nullptr) {
-				const auto& pos = phys_body->body->get_position();
-				if (scene_comp != nullptr) {
-					scene_comp->position = pos;
-				}
+	OPTICK_EVENT("engine physics system tick");
 
+	entities::access([]() {
+		const auto view = entities::get_view<entities::physics_body_component>();
+		view.each([](const entt::entity ent, entities::physics_body_component& phys_comp) {
+			if (phys_comp.body != nullptr) {
+				const auto& pos = phys_comp.body->get_position();
 				if (pos.y < y_destroy_coord) {
-					entities::mark_as_garbage(entity);
-					continue;
+					entities::mark_as_garbage(ent);
+					return;
 				}
 			}
-		}
-	}
+		});
+	});
 }

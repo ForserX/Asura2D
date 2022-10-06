@@ -20,6 +20,7 @@ engine::init(int argc, char** argv)
 	engine_scheduler.bind();
 
 	threads::init();
+	scheduler::init();
 	event::init();
 	filesystem::init();
 	debug::init();
@@ -37,6 +38,7 @@ engine::destroy()
 	input::destroy();
 	filesystem::destroy();
 	event::destroy();
+	scheduler::destroy();
 	threads::destroy();
 
 	marl::Scheduler::unbind();
@@ -59,7 +61,7 @@ engine::tick()
 	}
 
 	input::tick(dt);
-	if (!is_serializer_ticking && !paused) {
+	if (!paused) {
 		is_game_ticking = true;
 		game::tick(dt);
 		is_game_ticking = false;

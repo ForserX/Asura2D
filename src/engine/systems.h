@@ -2,7 +2,7 @@
 
 namespace ark
 {
-	class system
+	class system : entt::process<system, float> 
 	{
 	public:
 		virtual ~system() = default;
@@ -10,7 +10,23 @@ namespace ark
 	public:
 		virtual void init() = 0;
 		virtual void reset() = 0;
-		virtual void tick(registry& reg, float dt) = 0;
+		virtual void tick(float dt) = 0;
+
+	};
+
+	class updater : entt::process<system, float>
+	{
+		void update(delta_type delta, void* ptr) 
+		{
+			system* sys = static_cast<system*>(ptr);
+			if (sys == nullptr) {
+				fail();
+				return;
+			}
+
+			sys->tick(delta);
+			succeed();
+		}
 	};
 }
 

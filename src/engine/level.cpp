@@ -21,10 +21,15 @@ namespace ark::level
 		// сука, это нужно будет переделать
 		for (const auto &[section, kv] : level_data.get_data()) {
 			if (section == "background") {
+				//auto background_ent = ent_list.emplace_back(entities::create());
+				//entities::add_field<entities::scene_component>(background_ent);
+#if 0
 				auto landscape_path = filesystem::get_content_dir();
 				landscape_path.append("textures").append(level_data.get<stl::string_view>(section, "path"));
-				auto& background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), landscape_path.generic_string().c_str()));
+				auto background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), landscape_path.generic_string().c_str()));
 				entities::add_field<entities::background_flag>(background_ent);
+				entities::add_field<entities::scene_component>(background_ent);
+#endif
 				continue;
 			}
 			

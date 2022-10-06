@@ -13,6 +13,8 @@
 #include <variant>
 #include <type_traits>
 #include <concepts>
+#include <algorithm>
+#include <execution>
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -77,6 +79,7 @@
 #include "engine/draw_system.h"
 
 #include "engine/resource.h"
+#include "engine/scheduler.h"
 
 #include "engine/camera.h"
 #include "engine/level.h"
@@ -92,7 +95,3 @@
 #include "engine/scene.h"
 #include "engine/engine.h"
 #include "engine/game.h"
-
-extern bool is_phys_ticking;
-extern bool is_game_ticking;
-extern bool is_serializer_ticking;

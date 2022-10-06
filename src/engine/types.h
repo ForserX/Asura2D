@@ -241,7 +241,8 @@ namespace ark::stl
 	void
 	write_memory(stream_vector& data, T& value)
 	{
-		std::memcpy(&data.second.at(data.first), reinterpret_cast<const char*>(&value), sizeof(value));
+		const char* ptr = data.second.data();
+		std::memcpy(&ptr[data.first], reinterpret_cast<const char*>(&value), sizeof(value));
 		data.first += sizeof(value);
 	}
 
@@ -249,26 +250,36 @@ namespace ark::stl
 	void
 	read_memory(stream_vector& data, T& value)
 	{
-		std::memcpy(reinterpret_cast<char*>(&value), & data.second.at(data.first), sizeof(value));
+		const char* ptr = data.second.data();
+		std::memcpy(reinterpret_cast<char*>(&value), &ptr[data.first], sizeof(T));
 		data.first += sizeof(value);
 	}
 
-	inline
+	template<typename T>
 	void
-	push_memory(stream_vector& data, auto& value)
+	push_memory(stream_vector& data, T& value)
 	{
-		const char* write_ptr = reinterpret_cast<const char*>(&value);
-		for (size_t i = 0; i < sizeof(value); i++) {
-			data.second.push_back(write_ptr[i]);
-		}
+		using U = stl::clear_type<T>;
+
+		const size_t idx = data.second.size();
+		data.second.resize(data.second.size() + sizeof(T));
+
+		char* ptr = data.second.data();
+		ptr = &ptr[idx];
+		U* data_ptr = reinterpret_cast<U*>(ptr);
+		*data_ptr = value;
+		//const char* write_ptr = reinterpret_cast<const char*>(&value);
+		//for (size_t i = 0; i < sizeof(value); i++) {
+		//	data.second.push_back(write_ptr[i]);
+		//}
 	}
 
 	inline
 	void
 	prealloc_memory(stream_vector& data, size_t memory_count)
 	{
-		const size_t idx = data.second.size();
-		data.second.resize(idx + memory_count);
+		const size_t idx = data.second.capacity();
+		data.second.reserve(idx + memory_count);
 	}
 
 	using string = std::basic_string<char>;

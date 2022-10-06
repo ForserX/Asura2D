@@ -31,22 +31,46 @@ namespace ark
 	struct entity_desc
 	{
 		uint16_t flags;
-		uint8_t components_count : 6;
-		uint8_t reserved1 : 2;
+		uint8_t components_count;
 		uint8_t reserved2;
 	};
 }
 
 namespace ark::entities
 {
-	registry& get_registry();
-	
+	namespace internal
+	{
+		registry& get_registry();
+	}
+
+	template<typename... Args>
+	void access(auto&& func, Args&&...args)
+	{
+		uint8_t state = serialization_state.load();
+		while (state != entities_state::idle && state != entities_state::viewing) {
+			state = serialization_state.load();
+			threads::switch_context();
+		}
+
+		if (serialization_state == entities_state::idle) {
+			serialization_state = entities_state::viewing;
+		}
+
+		serialization_ref_counter++;
+		func(std::forward<Args>(args)...);
+		serialization_ref_counter--;
+
+		if (serialization_ref_counter == 0) {
+			serialization_state = entities_state::idle;
+		}
+	}
+
 	template<typename Type, typename... Args>
 	void add_field(const entt::entity& entt, Args &&...args)
 	{
-		get_registry().get().emplace<Type>(entt, std::forward<Args>(args)...);
+		internal::get_registry().get().emplace<Type>(entt, std::forward<Args>(args)...);
 	}
-	
+
 	template<typename Type, typename... Args>
 	void add_field(const entity_view& entt, Args &&...args)
 	{
@@ -56,35 +80,81 @@ namespace ark::entities
 	template<typename Type>
 	void erase_field(const entt::entity& entt)
 	{
-		get_registry().get().remove<Type>(entt);
+		internal::get_registry().get().remove<Type>(entt);
 	}
-	
+
 	template<typename Type>
 	void erase_field(const entity_view& entt)
 	{
 		erase_field<Type>(entt.get());
 	}
 
+	template<typename... Args>
+	auto get_view()
+	{
+		auto view = internal::get_registry().get().view<Args...>(entt::exclude<garbage_flag>);
+		return view;
+	}
+
+	template<typename Type>
+	auto try_get(const entt::entity ent)
+	{
+		return internal::get_registry().get().try_get<Type>(ent);
+	}
+
+	template<typename Type>
+	auto try_get(const entity_view& ent)
+	{
+		return try_get<Type>(ent.get());
+	}
+
+	template<typename... Args>
+	bool contains(const entt::entity ent)
+	{
+		return internal::get_registry().get().all_of<Args...>(ent);
+	}
+
+	template<typename... Args>
+	bool contains(const entity_view& ent)
+	{
+		return contains<Args...>(ent.get());
+	}
+
+	template<typename... Args>
+	bool contains_any(const entt::entity ent)
+	{
+		return internal::get_registry().get().any_of<Args...>(ent);
+	}
+
+	template<typename... Args>
+	bool contains_any(const entity_view& ent)
+	{
+		return contains_any<Args...>(ent.get());
+	}
+
 	void init();
 	void destroy();
 	void tick(float dt);
 
+	void clear();
 	void free();
 
 	std::chrono::nanoseconds& get_last_serialize_time();
+
+	void deserialize_from_state(std::string_view state_name);
+	void serialize_to_state(std::string_view state_name);
 
 	void string_serialize(stl::tree_string_map& data);
 	void string_deserialize(const stl::tree_string_map& data);
 	void serialize(stl::stream_vector& data);
 	void deserialize(stl::stream_vector& data);
-
 	bool is_valid(entity_view ent);
 	bool is_null(entity_view ent);
-	entity_view get_entity_from_body(const b2Body* body);
 	
 	entity_view create();
 	void mark_as_garbage(entity_view ent);
 
+	entity_view get_entity_from_body(const b2Body* body);
 	ark_float_vec2 get_position(entity_view entity);
 
 	entity_view add_texture(
