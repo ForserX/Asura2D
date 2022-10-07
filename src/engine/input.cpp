@@ -64,7 +64,7 @@ input::tick(float dt)
 bool
 input::is_focused_on_ui()
 {
-    return false;//ImGui::GetFocusID() != 0;
+	return ImGui::GetFocusID() != 0;
 }
 
 void
