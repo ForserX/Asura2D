@@ -188,7 +188,7 @@ graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 
 	float radius = camera::scale_factor(circle->m_radius);
 
-	ImGui::GetBackgroundDrawList()->AddCircleFilled(center, radius , clr);
+	ImGui::GetBackgroundDrawList()->AddCircle(center, radius, clr, 0, 0.3 * radius);
 }
 
 void
