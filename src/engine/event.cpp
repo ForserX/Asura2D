@@ -1,8 +1,8 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
-event::internal::event_callback_storage events;
+event::internal::event_callback_storage events = {};
 
 void
 event::init()

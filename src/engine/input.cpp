@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
@@ -26,7 +26,9 @@ get_enum_from_state(int16_t scan_code)
 void
 input::init()
 {
-	
+    changed_keys = {};
+    key_change_callbacks = {};
+    input_change_callbacks = {};
 }
 
 void
@@ -62,7 +64,7 @@ input::tick(float dt)
 bool
 input::is_focused_on_ui()
 {
-	return ImGui::GetFocusID() != 0;
+    return false;//ImGui::GetFocusID() != 0;
 }
 
 void
@@ -99,7 +101,7 @@ input::get_mouse_delta()
 const input::on_key_change&
 input::subscribe_key_event(const on_key_change& input_callback)
 {
-	key_change_callbacks.emplace(input_callback);
+    key_change_callbacks.emplace(input_callback);
 	return input_callback;
 }
 

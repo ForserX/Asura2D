@@ -24,12 +24,12 @@ namespace ark::debug
 	template <typename... Args>
 	inline void msg(stl::string_view rt_fmt_str, Args&&... args)
 	{
-		print_message(std::vformat(rt_fmt_str.data(), std::make_format_args(args...)));
+		//print_message(std::vformat(rt_fmt_str.data(), std::make_format_args(args...)));
 	}
 
 	template<>
 	inline void msg(stl::string_view message)
 	{
-		print_message(message);
+		//print_message(message);
 	}
 }

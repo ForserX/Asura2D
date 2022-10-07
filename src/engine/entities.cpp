@@ -1,14 +1,14 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
-registry global_registry;
+registry global_registry = {};
 entity_view invalid_entity = {};
 
-std::chrono::nanoseconds entities_serilaize_last_time;
-stl::stream_vector entities_data;
+std::chrono::nanoseconds entities_serilaize_last_time = {};
+stl::stream_vector entities_data = {};
 
-input::on_key_change entities_key_change_event;
+input::on_key_change entities_key_change_event = {};
 bool clear_on_next_tick = false;
 bool free_on_next_tick = false;
 

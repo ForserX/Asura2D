@@ -414,11 +414,11 @@ namespace ark::entities
 	
 	struct dynamic_visual_component
 	{
-		stl::vector<ark_float_vec2> points;
+		//stl::vector<ark_float_vec2> points;
 		
 		bool can_serialize_now() const
 		{
-			return !points.empty();
+			return false;//return !points.empty();
 		}
 
 		bool string_deserialize(stl::string_map& kv_storage)
@@ -432,22 +432,22 @@ namespace ark::entities
 
 		void serialize(stl::stream_vector& data) const
 		{
-			size_t size_to_write = points.size();
-			stl::push_memory(data, size_to_write);
-			for (const auto& point : points) {
-				stl::push_memory(data, point);
-			}
+			//size_t size_to_write = points.size();
+			//stl::push_memory(data, size_to_write);
+			//for (const auto& point : points) {
+			//	stl::push_memory(data, point);
+			//}
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
-			size_t size_to_read = 0;
-			stl::read_memory(data, size_to_read);
+			//size_t size_to_read = 0;
+			//stl::read_memory(data, size_to_read);
 			
-			points.resize(size_to_read);
-			for (size_t i = 0; i < size_to_read; i++) {
-				stl::read_memory(data, points[i]);
-			}
+			//points.resize(size_to_read);
+			//for (size_t i = 0; i < size_to_read; i++) {
+			//	stl::read_memory(data, points[i]);
+			//}
 		}
 	};
 

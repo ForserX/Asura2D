@@ -1,11 +1,10 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
 bool paused = false;
 bool use_parallel = true;
-std::atomic_bool engine_ticking_now;
-marl::Scheduler engine_scheduler(marl::Scheduler::Config::allCores());
+std::atomic_bool engine_ticking_now = {};
 
 void
 engine::start()
@@ -17,7 +16,6 @@ void
 engine::init(int argc, char** argv)
 {
 	OPTICK_THREAD("Main thread");
-	engine_scheduler.bind();
 
 	threads::init();
 	scheduler::init();
@@ -40,8 +38,6 @@ engine::destroy()
 	event::destroy();
 	scheduler::destroy();
 	threads::destroy();
-
-	marl::Scheduler::unbind();
 }
 
 void

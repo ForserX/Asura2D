@@ -26,7 +26,7 @@ file(GLOB_RECURSE GAME_SRC
 set(LIBRARIES_TO_LINK)
 list(APPEND LIBRARIES_TO_LINK "imgui")
 list(APPEND LIBRARIES_TO_LINK "EnTT::EnTT")
-list(APPEND LIBRARIES_TO_LINK "marl")
+#list(APPEND LIBRARIES_TO_LINK "marl")
 list(APPEND LIBRARIES_TO_LINK "box2d")
 list(APPEND LIBRARIES_TO_LINK "OptickCore")
 list(APPEND LIBRARIES_TO_LINK "SDL2-static")
@@ -82,6 +82,11 @@ else()
 	add_executable("arkgame" ${GAME_SRC} "main.cpp")
 endif()
 
+if (APPLE)
+	set_target_properties("arkgame" PROPERTIES XCODE_GENERATE_SCHEME TRUE)
+	set_target_properties("arkgame" PROPERTIES XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
+endif()
+
 target_link_libraries("arkgame" PUBLIC "libarkane")
 
 ################################################
@@ -94,17 +99,17 @@ set_target_properties("SDL2-static" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2_image" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2_test" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2main" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
-set_target_properties("marl" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+#set_target_properties("marl" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("box2d" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("mimalloc-static" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("OptickCore" PROPERTIES ${ARKANE_FOLDER_PROFILR})
 
 set_target_properties("sdl_headers_copy" PROPERTIES ${ARKANE_FOLDER_PREGEN})
 set_target_properties("uninstall" PROPERTIES ${ARKANE_FOLDER_PREGEN})
-set_target_properties("unit_test" PROPERTIES ${ARKANE_FOLDER_PREGEN})
 
 set_target_properties("libarkane" PROPERTIES ${ARKANE_FOLDER_ENGINE})
 set_target_properties("arkgame" PROPERTIES ${ARKANE_FOLDER_GAME})
+
 set_target_properties("arkgame" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
 
 #set_property(DIRECTORY ${ARKANE_FOLDER_GAME} PROPERTY VS_STARTUP_PROJECT "arkgame")

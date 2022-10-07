@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark::engine
 {
@@ -12,4 +12,3 @@ namespace ark::engine
 
 extern bool paused;
 extern bool use_parallel;
-extern marl::Scheduler engine_scheduler;

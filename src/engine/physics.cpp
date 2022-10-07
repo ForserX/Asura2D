@@ -1,8 +1,8 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
-physics::world game_world;
+physics::world game_world = {};
 
 void
 physics::start()
@@ -106,12 +106,6 @@ void
 physics::destroy_world()
 {
 	game_world.destroy_world();
-}
-
-marl::Event&
-physics::get_physics_event()
-{
-	return game_world.physics_event;
 }
 
 b2World&

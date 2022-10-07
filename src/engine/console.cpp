@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
@@ -73,14 +73,14 @@ ui::UIConsole::UIConsole()
     AutoScroll = true;
     ScrollToBottom = false;
 
-    console_key_change = input::subscribe_key_event(
-        [](int16_t scan_code, input::key_state state)
-        {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
-                show_console = !show_console;
-            }
+    input::on_key_change key_change_event = [](int16_t scan_code, input::key_state state)
+    {
+        if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
+            show_console = !show_console;
         }
-    );
+    };
+    
+    console_key_change = input::subscribe_key_event(key_change_event);
 }
 
 ui::UIConsole::~UIConsole()
@@ -200,7 +200,7 @@ void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
         bool skip = false;
         const char** item_list = new const char* [15];
         size_t Iter = 0;
-        for (auto&[command, hint] : cmd_hint)
+        for (const auto&[command, hint] : cmd_hint)
         {
             if (strlen(InputBuf) == command.length()) {
                 skip = true;
@@ -276,7 +276,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     // This isn't trying to be smart or optimal.
     HistoryPos = -1;
     for (int i = History.Size - 1; i >= 0; i--)
-        if (stricmp(History[i], command_line) == 0)
+        if (std::strcmp(History[i], command_line) == 0)
         {
             free(History[i]);
             History.erase(History.begin() + i);
@@ -520,7 +520,7 @@ void ui::UIConsole::flush()
     std::ofstream cfg(cfg_path);
 
 
-    for (auto& [cmd, hint] : cmd_hint)
+    for (const auto& [cmd, hint] : cmd_hint)
     {
         if (hint.length() > 0)
         {
@@ -549,4 +549,4 @@ void ui::UIConsole::init()
 
 }
 
-ui::UIConsole console;
+std::unique_ptr<ui::UIConsole> console;

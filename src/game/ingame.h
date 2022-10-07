@@ -1,5 +1,5 @@
 #pragma once
-#include "arkane.h"
+#include "../arkane.h"
 #include "movement_system.h"
 
 namespace ingame

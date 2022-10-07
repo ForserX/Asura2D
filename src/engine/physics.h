@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark::physics
 {
@@ -9,7 +9,6 @@ namespace ark::physics
 
 	void destroy_world();
 
-	marl::Event& get_physics_event();
 	b2World& get_world();
 	b2Body* get_ground();
 	

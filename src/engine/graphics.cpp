@@ -1,9 +1,9 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <SDL_image/SDL_image.h>
 
 using namespace ark;
 
-graphics::theme::style window_style;
+graphics::theme::style window_style = {};
 
 void
 graphics::init()

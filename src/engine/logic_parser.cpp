@@ -30,7 +30,7 @@ config_parser::load(const std::filesystem::path& file_path)
             // Parse parent section
             const size_t parent_start = line.find(':');
             if (parent_start != stl::string::npos) {
-                for (auto &[data_key, data_value] : data[line.substr(parent_start + 1)]) {
+                for (const auto &[data_key, data_value] : data[line.substr(parent_start + 1)]) {
                     data[last_section_name][data_key] = data_value;
                 }
             }
@@ -51,10 +51,10 @@ config_parser::save(const std::filesystem::path& file_path) const
     
 	ark_assert(file.is_open(), "No access to file", return);
 
-    for (auto &fIter : data) {
+    for (const auto &fIter : data) {
         stl::string section_name = fIter.first;
         file << "[" + section_name + "]" << std::endl;
-        for (auto &sIter : fIter.second) {
+        for (const auto &sIter : fIter.second) {
             file << sIter.first + " = " + sIter.second << std::endl;
         }
     } 
@@ -68,7 +68,7 @@ config_parser::get(stl::string_view section, stl::string_view key) const
 {
     static const stl::string empty_string;
     auto& current_data = data.at(section.data());
-    for (auto& [data_key, data_value] : current_data) {
+    for (const auto& [data_key, data_value] : current_data) {
         if (data_key == key) {
             return data_value;
         }
@@ -83,9 +83,9 @@ config_parser::set_value(stl::string_view section, stl::string_view key, stl::st
     ark_assert(section.empty(), "section can't be null", return -1);
     ark_assert(key.empty(), "key can't be null", return -2);
 
-    for (auto& [data_key, data_value] : data) {
+    for (const auto& [data_key, data_value] : data) {
         if (data_key == section) {
-            for (auto& [section_key, section_value] : data_value) {
+            for (const auto& [section_key, section_value] : data_value) {
                 if (section_key == key) {
                     data_value[section_key] = value;
                 }
@@ -99,7 +99,7 @@ config_parser::set_value(stl::string_view section, stl::string_view key, stl::st
 int 
 config_parser::add_section(stl::string_view section)
 {
-    for (auto& fIter : data) {       
+    for (const auto& fIter : data) {
         ark_assert(fIter.first != section, "section already created", return -1)
     }
 
@@ -110,8 +110,8 @@ config_parser::add_section(stl::string_view section)
 int 
 config_parser::add_key_in_section(stl::string_view section, stl::string_view key)
 {
-	for (auto& fIter : data) {
-		for (auto & sIter : fIter.second) {
+	for (const auto& fIter : data) {
+		for (const auto & sIter : fIter.second) {
             ark_assert(sIter.first != key, "key in section already created", return -1)
 		}
 	}

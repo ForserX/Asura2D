@@ -2,13 +2,13 @@
 
 using namespace ark;
 
-static ark_float_vec2 cam_center;
-float cam_zoom;
-static float scaled_cam_zoom;
-static int64_t cam_width;
-static int64_t cam_height;
+static ark_float_vec2 cam_center = {};
+float cam_zoom = {};
+static float scaled_cam_zoom = {};
+static int64_t cam_width = {};
+static int64_t cam_height = {};
 
-static entity_view attached_entity;
+static entity_view attached_entity = {};
 static bool attached = false;
 
 void camera::init()

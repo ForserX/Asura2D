@@ -56,6 +56,6 @@ scene::export_scene(std::string_view scene_name)
 	stl::tree_string_map scene_map;
 	entities::string_serialize(scene_map);
 
-	section_parser = std::move(config_parser(std::move(scene_map), section_parser.get_count()));
-	section_parser.save(scene_path);
+	//section_parser = std::move(config_parser(std::move(scene_map), section_parser.get_count()));
+	//section_parser.save(scene_path);
 }

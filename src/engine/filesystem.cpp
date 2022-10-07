@@ -1,14 +1,14 @@
-﻿#include "arkane.h"
+#include "arkane.h"
 #include <fstream>
 #include <set>
 
 using namespace ark;
 
-static std::filesystem::path working_dir;
-static std::filesystem::path content_dir;
-static std::filesystem::path userdata_dir;
+static std::filesystem::path working_dir = {};
+static std::filesystem::path content_dir = {};
+static std::filesystem::path userdata_dir = {};
 
-static stl::hash_set<std::filesystem::path> file_list;
+static stl::hash_set<std::string> file_list = {};
 
 const std::filesystem::path& 
 filesystem::get_working_dir()
@@ -24,7 +24,7 @@ filesystem::init()
 	userdata_dir = std::filesystem::current_path().append("userdata");
 
 	for (const std::filesystem::directory_entry& dir : std::filesystem::recursive_directory_iterator{ working_dir }) {
-		file_list.emplace(dir.path());
+		file_list.emplace(dir.path().generic_string());
 	}
 
 	if (!std::filesystem::exists(userdata_dir)) {
@@ -57,11 +57,11 @@ filesystem::get_userdata_dir()
 void
 filesystem::create_file(const std::filesystem::path& file_name)
 {
-	const auto file_iter = file_list.find(file_name);
+	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
 		std::filesystem::remove(file_name);
 	} else {
-		file_list.emplace(file_name);
+		file_list.emplace(file_name.generic_string());
 	}
 
 	std::ofstream outfile(file_name);
@@ -71,12 +71,12 @@ filesystem::create_file(const std::filesystem::path& file_name)
 void
 filesystem::create_dir(const std::filesystem::path& dir_name)
 {
-	const auto file_iter = file_list.find(dir_name);
+	const auto file_iter = file_list.find(dir_name.generic_string());
 	if (file_iter != file_list.end()) {
 		return;
 	}
 
-	file_list.emplace(dir_name);
+	file_list.emplace(dir_name.generic_string());
 	
 	const bool can_create = std::filesystem::create_directories(dir_name);
 	ark_assert(can_create, "file creating error", std::terminate());
@@ -85,11 +85,11 @@ filesystem::create_dir(const std::filesystem::path& dir_name)
 void 
 filesystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
 {
-	const auto file_iter = file_list.find(file_name);
+	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
 		std::filesystem::remove(file_name);
 	} else {
-		file_list.emplace(file_name);
+		file_list.emplace(file_name.generic_string());
 	}
 
 	std::fstream out_stream(file_name, std::fstream::binary | std::fstream::trunc | std::fstream::out);

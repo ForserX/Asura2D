@@ -1,19 +1,19 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark;
 
 bool is_started = false;
 
-stl::hash_set<ark::system*> pre_update_systems;
-stl::hash_set<ark::system*> update_systems;
-stl::hash_set<ark::system*> post_update_systems;
+stl::hash_set<ark::system*> pre_update_systems = {};
+stl::hash_set<ark::system*> update_systems = {};
+stl::hash_set<ark::system*> post_update_systems = {};
 
-stl::hash_set<ark::system*> draw_systems;
-stl::hash_set<ark::system*> physics_systems;
+stl::hash_set<ark::system*> draw_systems = {};
+stl::hash_set<ark::system*> physics_systems = {};
 
-std::unique_ptr<ark::system> engine_draw_system;
-std::unique_ptr<ark::system> engine_physics_system;
-std::unique_ptr<ark::system> engine_physics_mouse_joint_system;
+std::unique_ptr<ark::system> engine_draw_system = {};
+std::unique_ptr<ark::system> engine_physics_system = {};
+std::unique_ptr<ark::system> engine_physics_mouse_joint_system = {};
 
 stl::hash_set<ark::system*>*
 get_system_by_type(systems::update_type type)

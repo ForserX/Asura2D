@@ -1,4 +1,4 @@
-﻿#include <SDL_syswm.h>
+#include <SDL_syswm.h>
 
 #include "pch.h"
 
@@ -16,7 +16,7 @@ using namespace ark;
 void
 window::init()
 {
-	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_VULKAN);
+	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE);
 
 	if (fullscreen_mode) {
 		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);

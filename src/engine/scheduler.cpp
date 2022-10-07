@@ -4,9 +4,9 @@ using namespace ark;
 
 constexpr auto scheduler_period = std::chrono::milliseconds(50);
 
-marl::mutex scheduler_mutex;
-std::unique_ptr<std::jthread> scheduler_thread;
-std::array<stl::function_set<scheduler::global_function>, scheduler::global_task_type::count_of_elems> global_func_map;
+std::mutex scheduler_mutex = {};
+std::unique_ptr<std::thread> scheduler_thread = {};
+std::array<stl::function_set<scheduler::global_function>, scheduler::global_task_type::count_of_elems> global_func_map = {};
 bool scheduler_destroyed = false;
 
 void 
@@ -14,7 +14,7 @@ scheduler::init()
 {
 	using namespace std::chrono_literals;
 
-	scheduler_thread = std::make_unique<std::jthread>([]() {
+	scheduler_thread = std::make_unique<std::thread>([]() {
 		OPTICK_THREAD("scheduler thread")
 		while (!scheduler_destroyed) {
 			OPTICK_EVENT("scheduler tick")
@@ -27,14 +27,12 @@ scheduler::init()
 				};
 
 				if (!global_func_map[task_type].empty()) {
-					if (parallel) {
-						std::for_each(std::execution::par_unseq, global_func_map[task_type].begin(), global_func_map[task_type].end(), trigger_all);
-					} else {
-						std::for_each(std::execution::unseq, global_func_map[task_type].begin(), global_func_map[task_type].end(), trigger_all);
+					for (auto& func : global_func_map[task_type]) {
+						trigger_all(func);
 					}
 
 					{
-						marl::lock scope_lock(scheduler_mutex);
+						std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
 						for (const auto& elem : funcs_to_delete) {
 							global_func_map[task_type].erase(elem);
 						}
@@ -75,13 +73,15 @@ scheduler::init()
 void 
 scheduler::destroy()
 {
-	scheduler_destroyed = true;
+    scheduler_destroyed = true;
+	scheduler_thread->join();
+	scheduler_thread.reset();
 }
 
 const scheduler::global_function&
 scheduler::internal::schedule(global_task_type task_type, const global_function& func)
 {
-	marl::lock scope_lock(scheduler_mutex);
+    std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
 	return *global_func_map[task_type].insert(func).first;
 }
 

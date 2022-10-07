@@ -14,7 +14,7 @@ physics::physics_body* ContactBody = nullptr;
 physics::physics_body* MoveBody = nullptr;
 ark_float_vec2 ContactPoint = {};
 
-marl::mutex physics_lock;
+std::mutex physics_lock = {};
 // Test 
 
 class ark::CollisionLister final : public b2ContactListener
@@ -98,7 +98,7 @@ physics::world::init()
 	ground = world_holder->CreateBody(&groundBodyDef);
 
 	if (use_parallel) {
-		physics_thread = std::make_unique<std::jthread>([this]() {
+		physics_thread = std::make_unique<std::thread>([this]() {
 			OPTICK_THREAD("Physics thread")
 
 			// Setup affinity to second thread
@@ -115,16 +115,13 @@ physics::world::init()
 				OPTICK_EVENT("physics loop")
 				if (use_parallel && !paused) {
 					auto temp_physics_time = begin_physics_time;
-					physics_event.clear();
-					
+                    
 					{
 						OPTICK_EVENT("physics tick")
 						is_phys_ticking = true;
 						internal_tick(1.f / target_physics_hertz);
 						is_phys_ticking = false;
 					}
-
-					physics_event.signal();
 
 					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / target_physics_tps) * 1000000000.f));
 					{
@@ -144,7 +141,7 @@ physics::world::init()
 				}
 			}
 
-			thread_destroyed_event.signal();
+            destroy_thread = false;
 		});
 	}
 }
@@ -169,7 +166,7 @@ physics::world::destroy_all_bodies()
 void
 physics::world::pre_tick()
 {
-	marl::lock scope_lock(physics_lock);
+	std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	for (const auto body : bodies) {
 		if (!body->is_created()) {
 			body->create();
@@ -391,10 +388,8 @@ physics::world::destroy_world()
 {
 	OPTICK_EVENT("physics destroy world")
 	destroy_thread = true;
-	thread_destroyed_event.wait();
-	thread_destroyed_event.clear();
-	destroy_thread = false;
 
+    physics_thread->join();
 	physics_thread.reset();
 
 	destroy_all_bodies();
@@ -415,7 +410,7 @@ physics::world::get_body_position(const physics_body* body)
 physics::physics_body*
 physics::world::schedule_creation(body_parameters parameters)
 {
-	marl::lock scope_lock(physics_lock);
+	std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	const auto& [key, value] = bodies.insert(new physics_body(parameters));
 	return *key;
 }
@@ -423,7 +418,7 @@ physics::world::schedule_creation(body_parameters parameters)
 void
 physics::world::schedule_free(physics_body* body)
 {
-	marl::lock scope_lock(physics_lock);
+    std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	scheduled_to_delete_bodies.emplace(body);
 }
 
@@ -600,6 +595,8 @@ physics::physics_body::create()
 		circle_shape.m_radius = parameters.size.x / 2;
 		fixtureDef.shape = &circle_shape;
 		break;
+    default:
+        break;
 	}
 
 	const auto& [friction, restitution, density, ignore_collision] = material::get(static_cast<material::type>(parameters.packed_type.mat));

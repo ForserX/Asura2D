@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
@@ -16,6 +16,8 @@ render::pre_init()
 	stl::string mode = "opengl";
 #elif defined(__ANDROID__)
 	stl::string mode = "opengles2";
+#elif defined(__APPLE__)
+    stl::string mode = "metal";
 #else
 	stl::string mode = "opengl";
 #endif
@@ -35,15 +37,14 @@ render::pre_init()
 
 	debug::msg("SDL Render mode support: {}", render_list);
 
+    SDL_setenv("METAL_DEVICE_WRAPPER_TYPE", "1", 0);
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
 }
 
 void
 render::init()
 {
-	pre_init();
-
-	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC);
 
 	ark_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
 	

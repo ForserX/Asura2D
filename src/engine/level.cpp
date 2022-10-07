@@ -1,13 +1,12 @@
 #include "pch.h"
 
 using namespace ark;
-std::filesystem::path path_level;
-stl::vector<entity_view> ent_list;
-#undef max
-#undef min
+std::filesystem::path path_level = {};
+stl::vector<entity_view> ent_list = {};
+
 namespace ark::level
 {
-	config_parser level_data;
+    config_parser level_data = {};
 
 	void load(const std::filesystem::path path)
 	{

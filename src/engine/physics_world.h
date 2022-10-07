@@ -209,9 +209,8 @@ namespace ark
 		private:
 			bool enable_thread = false;
 
-			marl::Event thread_destroyed_event;
 			std::atomic_bool destroy_thread;
-			std::unique_ptr<std::jthread> physics_thread;
+			std::unique_ptr<std::thread> physics_thread;
 			
 			std::unique_ptr<b2World> world_holder;
 			std::unique_ptr<DebugDraw> world_dbg_draw;
@@ -228,9 +227,6 @@ namespace ark
 			void debug_joints_tick();
 			void internal_tick(float dt);
 			ark_matrix get_real_body_position(b2Body* body);
-
-		public:
-			marl::Event physics_event;
 			
 		public:
 			world();

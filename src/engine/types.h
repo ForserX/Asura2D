@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 struct ark_matrix
 {
@@ -162,6 +162,7 @@ namespace ark::stl
 	template <template<class...> class Op, class... Args>
 	using detected_t = typename internal::detector<nonesuch, void, Op, Args...>::type;
 
+#if 0
 	template <class T>
 	struct ark_allocator
 	{
@@ -190,6 +191,10 @@ namespace ark::stl
 			ark_free(p);
 		}
 	};
+#else
+    template <class T>
+    using ark_allocator = std::allocator<T>;
+#endif
 	
 	template <class T>
 	void hash_combine(std::int64_t& s, const T& v)
@@ -222,11 +227,19 @@ namespace ark::stl
 		}
 	};
 	
+#if 0
 	template<typename K, typename T, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
 	using hash_map = std::unordered_map<K, T, Hash, Equal, ark_allocator<std::pair<const K, T>>>;
 	
 	template<typename K, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
 	using hash_set = std::unordered_set<K, Hash, Equal, ark_allocator<K>>;
+#else
+    template<typename K, typename T, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
+    using hash_map = entt::dense_map<K, T, Hash, Equal, ark_allocator<std::pair<const K, T>>>;
+
+    template<typename K, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
+    using hash_set = entt::dense_set<K, Hash, Equal, ark_allocator<K>>;
+#endif
 
 	template<typename T>
 	using function_set = hash_set<T, function_hasher<T>, function_equal<T>>;
@@ -241,8 +254,8 @@ namespace ark::stl
 	void
 	write_memory(stream_vector& data, T& value)
 	{
-		const char* ptr = data.second.data();
-		std::memcpy(&ptr[data.first], reinterpret_cast<const char*>(&value), sizeof(value));
+		char* ptr = data.second.data();
+		std::memcpy(reinterpret_cast<void*>(&ptr[data.first]), reinterpret_cast<const void*>(&value), sizeof(value));
 		data.first += sizeof(value);
 	}
 
@@ -268,10 +281,6 @@ namespace ark::stl
 		ptr = &ptr[idx];
 		U* data_ptr = reinterpret_cast<U*>(ptr);
 		*data_ptr = value;
-		//const char* write_ptr = reinterpret_cast<const char*>(&value);
-		//for (size_t i = 0; i < sizeof(value); i++) {
-		//	data.second.push_back(write_ptr[i]);
-		//}
 	}
 
 	inline
