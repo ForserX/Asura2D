@@ -19,6 +19,7 @@ engine::init(int argc, char** argv)
 
 	threads::init();
 	scheduler::init();
+    resources::init();
 	event::init();
 	filesystem::init();
 	debug::init();
@@ -36,6 +37,7 @@ engine::destroy()
 	input::destroy();
 	filesystem::destroy();
 	event::destroy();
+    resources::destroy();
 	scheduler::destroy();
 	threads::destroy();
 }

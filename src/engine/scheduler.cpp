@@ -41,6 +41,7 @@ scheduler::init()
 			};
 
 			auto schedule_time = std::chrono::steady_clock::now() + 50ms;
+            
 			{
 				OPTICK_EVENT("scheduler work")
 
