@@ -48,8 +48,7 @@ void inspect_entity(entt::entity ent)
 void
 ui::init()
 {
-    console = std::make_unique<ui::UIConsole>();
-    console->init();
+
 
 #ifdef _WIN32
     int SysLangID = GetSystemDefaultLangID();
@@ -283,5 +282,4 @@ ui::destroy()
 {
     console->flush();
     console->clear_log();
-    console.reset();
 }

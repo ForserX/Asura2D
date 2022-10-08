@@ -5,6 +5,7 @@ using namespace ark;
 bool paused = false;
 bool use_parallel = true;
 std::atomic_bool engine_ticking_now = {};
+extern std::unique_ptr<ui::UIConsole> console;
 
 void
 engine::start()
@@ -16,16 +17,35 @@ void
 engine::init(int argc, char** argv)
 {
 	OPTICK_THREAD("Main thread");
-
+    
+    console = std::make_unique<ui::UIConsole>();
+    console->init();
+    
+    filesystem::init();
+    debug::init();
+    
+    debug::msg("base systems inited. intializing other systems");
+    
 	threads::init();
+    debug::msg("initializing threads system");
+    
 	scheduler::init();
+    debug::msg("initializing scheduler system");
+    
     resources::init();
+    debug::msg("initializing resource system");
+    
 	event::init();
-	filesystem::init();
-	debug::init();
+    debug::msg("initializing event system");
+    
 	input::init();
+    debug::msg("initializing input system");
+    
 	render::init();
+    debug::msg("initializing render system");
+    
 	game::init();
+    debug::msg("initializing game system");
 }
 
 void
@@ -33,13 +53,16 @@ engine::destroy()
 {
 	game::destroy();
 	render::destroy();
-	debug::destroy();
 	input::destroy();
-	filesystem::destroy();
 	event::destroy();
     resources::destroy();
 	scheduler::destroy();
 	threads::destroy();
+    
+    debug::destroy();
+    filesystem::destroy();
+    
+    console.reset();
 }
 
 void

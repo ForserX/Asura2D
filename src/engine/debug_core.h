@@ -30,6 +30,6 @@ namespace ark::debug
 	template<>
 	inline void msg(stl::string_view message)
 	{
-		//print_message(message);
+		print_message(message);
 	}
 }
