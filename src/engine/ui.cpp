@@ -80,6 +80,7 @@ ui::tick(float dt)
     }
 
     uint32_t fps_counter_size = 0;
+    float navigation_bar_size = 30.f;
     static bool stat_enable = false;
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
@@ -87,7 +88,7 @@ ui::tick(float dt)
     } else { 
         if (show_fps_counter) {
             fps_counter_size = stat_enable ? 700 : 240;
-            ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 30 });
+            ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), navigation_bar_size });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
             if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
             {
@@ -145,7 +146,7 @@ ui::tick(float dt)
         }
 
         ImGui::SetNextWindowPos({ 0, 0 });
-        ImGui::SetNextWindowSize({ static_cast<float>(window_width), 30 });
+        ImGui::SetNextWindowSize({ static_cast<float>(window_width), navigation_bar_size });
         if (ImGui::Begin("NavigationBar", nullptr, ImGuiWindowFlags_NoDecoration)) {
             ImGui::BeginChild("ChildR", ImVec2(0, 260), true, ImGuiWindowFlags_MenuBar);
             if (ImGui::BeginMenuBar()) {
@@ -208,10 +209,10 @@ ui::tick(float dt)
          if (show_entity_inspector) {
              auto height_value = static_cast<float>(window_height - fps_counter_size);
              if (height_value < fps_counter_size) {
-                 ImGui::SetNextWindowPos({ 0, 30 });
-                 ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - 30) });
+                 ImGui::SetNextWindowPos({ 0, navigation_bar_size });
+                 ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - navigation_bar_size) });
              } else {
-                 ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), static_cast<float>(5 + fps_counter_size) });
+                 ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), static_cast<float>(navigation_bar_size + fps_counter_size) });
                  ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - fps_counter_size) });
              }
 

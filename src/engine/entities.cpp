@@ -493,7 +493,7 @@ entities::add_phys_body(
 	physics::physics_body* body = schedule_creation(phys_parameters);
 	
 	add_field<physics_body_component>(ent, body);
-	if (!contains<scene_component>(ent.get())) {
+	if (!contains<scene_component>(ent)) {
 		add_field<scene_component>(ent);
 	}
 

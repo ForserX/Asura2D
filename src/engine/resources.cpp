@@ -49,11 +49,11 @@ auto resources_scheduled_worker = []()
 void
 load_content_context()
 {
-    auto path = filesystem::get_content_dir();
-    for (auto it : std::filesystem::recursive_directory_iterator(path)) {
+    auto content_dir = filesystem::get_content_dir();
+    for (auto it : std::filesystem::recursive_directory_iterator(content_dir)) {
         if (it.is_regular_file()) {
             std::error_code error;
-            auto base_path = std::filesystem::relative(it.path(), path, error).generic_string();
+            auto base_path = std::filesystem::relative(it.path(), content_dir, error).generic_string();
             if (error) {
                 ark_assert(false, "Can't setup relative path for file", continue;)
                 continue;
@@ -91,7 +91,7 @@ resources::load(stl::string_view file_name)
 {
     id_type resource_id = get_id(file_name);
     if (exists(resource_id)) {
-        return -1;
+        return resource_id;
     }
     
     auto path = filesystem::get_content_dir();
