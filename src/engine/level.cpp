@@ -25,7 +25,6 @@ namespace ark::level
 				landscape_path.append("textures").append(level_data.get<stl::string_view>(section, "path"));
 				auto background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), landscape_path.generic_string().c_str()));
 				entities::add_field<entities::background_flag>(background_ent);
-				entities::add_field<entities::scene_component>(background_ent);
 #endif
 				continue;
 			}
