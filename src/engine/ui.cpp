@@ -78,6 +78,10 @@ ui::tick(float dt)
     if (ImGui::IsKeyPressed(ImGuiKey_F2)) {
         show_entity_inspector = !show_entity_inspector;
     }
+    
+    if (ImGui::IsKeyPressed(ImGuiKey_F3)) {
+        show_fps_counter = !show_fps_counter;
+    }
 
     uint32_t fps_counter_size = 0;
     float navigation_bar_size = 30.f;
@@ -101,11 +105,17 @@ ui::tick(float dt)
 
             const float draw_fps = 1.f / dt;
             const float draw_ms = dt * 1000.f;
+            
             const float phys_tps = 1.f / physics_delta;
             const float phys_ms = physics_delta * 1000.f;
             const float phys_real_tps =  1.f / physics_real_delta;
             const float phys_real_dt = physics_real_delta * 1000.f;
             const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
+            
+            const float scheduler_tps = 1.f / scheduler_delta;
+            const float scheduler_ms = scheduler_delta * 1000.f;
+            const float real_scheduler_tps = 1.f / scheduler_real_delta;
+            const float real_scheduler_ms = scheduler_real_delta * 1000.f;
             
             const auto& registry = entities::internal::get_registry().get();
             ImGui::Checkbox("Engine statistics", &stat_enable);
@@ -124,6 +134,10 @@ ui::tick(float dt)
                 ImGui::Separator();
                 ImGui::Text("Game:");
                 ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
+                ImGui::Separator();
+                ImGui::Text("Scheduler:");
+                ImGui::Text("  TPS/dt: %.4f/%3.3fms", scheduler_tps, scheduler_ms);
+                ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", real_scheduler_tps, real_scheduler_ms);
                 ImGui::Separator();
                 ImGui::Text("Physics:");
                 ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
@@ -174,6 +188,7 @@ ui::tick(float dt)
 
                 if (ImGui::BeginMenu("View")) {
                     ImGui::MenuItem("Entity Inspector", "F2", &show_entity_inspector);
+                    ImGui::MenuItem("FPS Counter", "F3", &show_fps_counter);
                     ImGui::EndMenu();
                 }
 
@@ -229,7 +244,6 @@ ui::tick(float dt)
          
                  ImGui::InputInt("Entity ID", reinterpret_cast<int*>(&inspected_entity));
                  if (entities::is_valid(inspected_entity)) {
-                     ImGui::Text("Entity ID: %i", inspected_entity);
                      ImGui::Separator();
                      inspect_entity<DECLARE_ENTITIES_TYPES>(inspected_entity);
                  }

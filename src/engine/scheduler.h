@@ -28,3 +28,7 @@ namespace ark::scheduler
 
 	void unschedule(global_task_type task_type, const global_function& func);
 }
+
+constexpr float target_scheduler_tps = 50.f;
+extern float scheduler_delta;
+extern float scheduler_real_delta;
