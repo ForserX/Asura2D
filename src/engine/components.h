@@ -170,12 +170,12 @@ namespace ark::entities
         
         void string_deserialize(stl::string_map& kv_storage)
         {
-            texture_resource = std::stoi(kv_storage.at("texture_resource").data());
+            texture_resource = std::stoll(kv_storage.at("texture_resource").data());
         }
         
 		void string_serialize(stl::string_map& kv_storage) const
 		{
-            kv_storage["texture_resource"] = texture_resource;
+            kv_storage["texture_resource"] = std::to_string(texture_resource);
 		}
 
 		void serialize(stl::stream_vector& data) const

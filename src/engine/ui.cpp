@@ -227,6 +227,7 @@ ui::tick(float dt)
                      }
                  }
          
+                 ImGui::InputInt("Entity ID", reinterpret_cast<int*>(&inspected_entity));
                  if (entities::is_valid(inspected_entity)) {
                      ImGui::Text("Entity ID: %i", inspected_entity);
                      ImGui::Separator();
