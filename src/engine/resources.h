@@ -8,6 +8,9 @@ namespace ark::resources
     void destroy();
     bool is_loading();
 
+    void update_directories();
+    const std::chrono::nanoseconds& get_last_update_time();
+
     id_type load(stl::string_view file_path);
 	void unload(id_type resource_id);
 

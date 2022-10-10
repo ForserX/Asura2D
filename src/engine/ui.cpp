@@ -165,16 +165,8 @@ ui::tick(float dt)
             ImGui::BeginChild("ChildR", ImVec2(0, 260), true, ImGuiWindowFlags_MenuBar);
             if (ImGui::BeginMenuBar()) {
                 if (ImGui::BeginMenu("File")) {
-                    if (ImGui::MenuItem("Import scene", "Ctrl + O")) {
-                        
-                    }
-
-                    if (ImGui::MenuItem("Export scene", "Ctrl + S")) {
-
-                    }
-
-                    if (ImGui::MenuItem("Close scene")) {
-                        scene::close_scene();
+                    if (ImGui::MenuItem("Update directories")) {
+                        resources::update_directories();
                     }
 
                     ImGui::EndMenu();
@@ -189,6 +181,22 @@ ui::tick(float dt)
                 if (ImGui::BeginMenu("View")) {
                     ImGui::MenuItem("Entity Inspector", "F2", &show_entity_inspector);
                     ImGui::MenuItem("FPS Counter", "F3", &show_fps_counter);
+                    ImGui::EndMenu();
+                }
+                
+                if (ImGui::BeginMenu("Scene")) {
+                    if (ImGui::MenuItem("Import scene", "Ctrl + O")) {
+                        
+                    }
+
+                    if (ImGui::MenuItem("Export scene", "Ctrl + S")) {
+
+                    }
+
+                    if (ImGui::MenuItem("Close scene")) {
+                        scene::close_scene();
+                    }
+                    
                     ImGui::EndMenu();
                 }
 
@@ -256,6 +264,8 @@ ui::tick(float dt)
     auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
     if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 325, 8), ImColor(1.f, 1.f, 1.f), "Serialization/Deserialization complete");
+    } else if (current_ms_time < (resources::get_last_update_time().count() / 1000000) + 2000) {
+        ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 220, 8), ImColor(1.f, 1.f, 1.f), "Engine directories update");
     }
 #endif
 }

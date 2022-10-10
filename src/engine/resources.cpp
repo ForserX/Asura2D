@@ -16,38 +16,21 @@ struct resource_scheduled_task
     int64_t end_offset;
 };
 
+enum resource_task_enum
+{
+    lock_task,
+    unlock_task,
+    update_dirs_task
+};
+
+bool resources_inited = false;
 bool resources_destroyed = false;
 stl::hash_map<resources::id_type, resource_state> resources_map;
 stl::hash_map<resources::id_type, resource_scheduled_task> resource_scheduled_tasks;
+std::chrono::nanoseconds last_update_time = {};
 std::mutex resource_manager_lock;
 
-auto resources_scheduled_worker = []()
-{
-    while (resources_destroyed) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-    
-    for (const auto& [resource_id, scheduled_task] : resource_scheduled_tasks) {
-        bool processed = false;
-        if (scheduled_task.task_id == 0) {
-            processed = resources::lock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
-        } else if (scheduled_task.task_id == 1) {
-            processed = resources::unlock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
-        }
-        
-        ark_assert(processed, "Can't process resource scheduled work", continue;)
-    }
-
-    {
-        std::scoped_lock<std::mutex> scope_lock(resource_manager_lock);
-        resource_scheduled_tasks.clear();
-    }
-        
-    return !resources_destroyed;
-};
-
-void
-load_content_context()
+auto load_content_context = []()
 {
     auto content_dir = filesystem::get_content_dir();
     for (auto it : std::filesystem::recursive_directory_iterator(content_dir)) {
@@ -62,28 +45,77 @@ load_content_context()
             resources::load(base_path.data());
         }
     }
-}
+    
+    last_update_time = std::chrono::steady_clock::now().time_since_epoch();
+};
+
+auto resources_scheduled_worker = []()
+{
+    while (!resources_inited) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    
+    for (const auto& [resource_id, scheduled_task] : resource_scheduled_tasks) {
+        bool processed = false;
+        if (scheduled_task.task_id == lock_task) {
+            processed = resources::lock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
+        } else if (scheduled_task.task_id == unlock_task) {
+            processed = resources::unlock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
+        } else if (scheduled_task.task_id == update_dirs_task) {
+            load_content_context();
+        }
+        
+        ark_assert(processed, "Can't process resource scheduled work", continue;)
+    }
+
+    {
+        std::scoped_lock<std::mutex> scope_lock(resource_manager_lock);
+        resource_scheduled_tasks.clear();
+    }
+        
+    return !resources_destroyed;
+};
 
 void 
 resources::init()
 {
-    resources_destroyed = true;
+    resources_destroyed = false;
     scheduler::schedule(scheduler::global_task_type::resource_manager, resources_scheduled_worker);
     
     load_content_context();
-    resources_destroyed = false;
+    resources_inited = true;
 }
 
 void 
 resources::destroy()
 {
     resources_destroyed = true;
+    resources_inited = false;
 }
 
 bool
 resources::is_loading()
 {
     return !resource_scheduled_tasks.empty();
+}
+
+void
+resources::update_directories()
+{
+    resource_scheduled_task resource_task = {};
+    resource_task.task_id = update_dirs_task;
+    
+    if (resource_scheduled_tasks.contains(-1)) {
+        return;
+    }
+    
+    resource_scheduled_tasks.emplace(-1, resource_task);
+}
+
+const std::chrono::nanoseconds&
+resources::get_last_update_time()
+{
+    return last_update_time;
 }
 
 resources::id_type
@@ -128,10 +160,10 @@ bool
 resources::schedule_lock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
 {
     std::scoped_lock<std::mutex> scope_lock(resource_manager_lock);
-    resource_scheduled_task resource_task;
+    resource_scheduled_task resource_task = {};
     resource_task.begin_offset = begin_offset;
     resource_task.end_offset = end_offset;
-    resource_task.task_id = 0;
+    resource_task.task_id = lock_task;
     
     if (resource_scheduled_tasks.contains(resource_id)) {
         return false;
@@ -145,10 +177,10 @@ bool
 resources::schedule_unlock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
 {
     std::scoped_lock<std::mutex> scope_lock(resource_manager_lock);
-    resource_scheduled_task resource_task;
+    resource_scheduled_task resource_task = {};
     resource_task.begin_offset = begin_offset;
     resource_task.end_offset = end_offset;
-    resource_task.task_id = 1;
+    resource_task.task_id = unlock_task;
     
     if (resource_scheduled_tasks.contains(resource_id)) {
         return false;

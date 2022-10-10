@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark
 {
@@ -161,7 +161,7 @@ namespace ark::entities
 	void clear();
 	void free();
 
-	std::chrono::nanoseconds& get_last_serialize_time();
+    const std::chrono::nanoseconds& get_last_serialize_time();
 
 	void deserialize_state(stl::string_view state_name);
 	void serialize_state(stl::string_view state_name);

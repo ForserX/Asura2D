@@ -301,7 +301,7 @@ entities::free()
 	free_on_next_tick = true;
 }
 
-std::chrono::nanoseconds&
+const std::chrono::nanoseconds&
 entities::get_last_serialize_time()
 {
 	return entities_serilaize_last_time;
