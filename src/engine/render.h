@@ -2,6 +2,8 @@
 
 namespace ark::render
 {
+    using texture_id = ImTextureID;
+
 	void init_vulkan();
 	
 	void pre_init();
@@ -10,6 +12,6 @@ namespace ark::render
 	void destroy();
 	void tick(float dt);
 
-    ImTextureID get_texture(int32_t resource_id);
-	ImTextureID load_texture(int32_t resource_id);
+    texture_id get_texture(resources::id_type resource_id);
+    texture_id load_texture(resources::id_type resource_id);
 }

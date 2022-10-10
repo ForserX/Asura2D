@@ -470,7 +470,7 @@ entities::mark_as_garbage(entity_view ent)
 entity_view
 entities::add_texture(entity_view ent, stl::string_view path)
 {
-    const int32_t texture_resource = resources::load(path);
+    const resources::id_type texture_resource = resources::load(path);
 	const ImTextureID texture_id = render::load_texture(texture_resource);
 	ark_assert(texture_id != nullptr, "can't load texture", return ent)
 

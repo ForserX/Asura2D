@@ -6,8 +6,7 @@ extern int window_height;
 
 using namespace ark;
 
-using texture_id = ImTextureID;
-stl::hash_map<int32_t, texture_id> textures_list;
+stl::hash_map<resources::id_type, render::texture_id> textures_list;
 
 void 
 render::pre_init()
@@ -139,8 +138,8 @@ render::tick(float dt)
 	}
 }
 
-ImTextureID
-render::get_texture(int32_t resource_id)
+render::texture_id
+render::get_texture(resources::id_type resource_id)
 {
     if (!textures_list.contains(resource_id)) {
         return nullptr;
@@ -149,14 +148,14 @@ render::get_texture(int32_t resource_id)
     return textures_list.at(resource_id);
 }
 
-ImTextureID
-render::load_texture(int32_t resource_id)
+render::texture_id
+render::load_texture(resources::id_type resource_id)
 {
     if (textures_list.contains(resource_id)) {
         return textures_list.at(resource_id);
     }
     
-    SDL_RWops* rw = SDL_RWFromConstMem(resources::ptr(resource_id), resources::size(resource_id));
+    SDL_RWops* rw = SDL_RWFromConstMem(resources::get_ptr(resource_id), resources::get_size(resource_id));
     if (rw == nullptr) {
         return nullptr;
     }

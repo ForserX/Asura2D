@@ -78,14 +78,14 @@ namespace ark::entities
 			return true;
 		}
 
-		bool string_deserialize(stl::string_map& kv_storage)
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return kv_storage.contains("color");
+        }
+        
+		void string_deserialize(stl::string_map& kv_storage)
 		{
-			if (kv_storage.contains("color")) {
-				color = std::stoul(kv_storage.at("color").data());
-				return true;
-			}
-
-			return false;
+            color = std::stoul(kv_storage.at("color").data());
 		}
 
 		void string_serialize(stl::string_map& kv_storage) const
@@ -117,21 +117,16 @@ namespace ark::entities
 			return true;
 		}
 
-		bool string_deserialize(stl::string_map& kv_storage)
-		{
-			bool success = false;
-			if (kv_storage.contains("first_color")) {
-				first_color = std::stoul(kv_storage.at("first_color").data());
-				success = true;
-			}
-
-			if (kv_storage.contains("second_color")) {
-				second_color = std::stoul(kv_storage.at("second_color").data());
-				success = true;
-			}
-
-			return success;
-		}
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return kv_storage.contains("first_color") && kv_storage.contains("second_color");
+        }
+        
+        void string_deserialize(stl::string_map& kv_storage)
+        {
+            first_color = std::stoul(kv_storage.at("first_color").data());
+            second_color = std::stoul(kv_storage.at("second_color").data());
+        }
 
 		void string_serialize(stl::string_map& kv_storage) const
 		{
@@ -161,20 +156,23 @@ namespace ark::entities
 
 	struct draw_texture_component
 	{
-		int32_t texture_resource;
+        resources::id_type texture_resource;
 
 		bool can_serialize_now() const
 		{
 			return true;
 		}
 
-		bool string_deserialize(stl::string_map& kv_storage)
-		{
-            if (kv_storage.contains("texture_resource")) {
-                texture_resource = std::stoi(kv_storage.at("texture_resource").data());
-            }
-		}
-
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return kv_storage.contains("texture_resource");
+        }
+        
+        void string_deserialize(stl::string_map& kv_storage)
+        {
+            texture_resource = std::stoi(kv_storage.at("texture_resource").data());
+        }
+        
 		void string_serialize(stl::string_map& kv_storage) const
 		{
             kv_storage["texture_resource"] = texture_resource;
@@ -199,29 +197,23 @@ namespace ark::entities
 		{
 			return true;
 		}
-
-		bool string_deserialize(stl::string_map& kv_storage)
-		{
-			bool success = false;
-			if (kv_storage.contains("position_x")) {
-				position.x = std::stod(kv_storage.at("position_x").data());
-				success = true;
-			}
-
-			if (kv_storage.contains("position_y")) {
-				position.y = std::stod(kv_storage.at("position_y").data());
-				success = true;
-			}
-
-			return success;
-		}
+        
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return kv_storage.contains("position_x") && kv_storage.contains("position_y");
+        }
+        
+        void string_deserialize(stl::string_map& kv_storage)
+        {
+            position.x = std::stod(kv_storage.at("position_x").data());
+            position.y = std::stod(kv_storage.at("position_y").data());
+        }
 
 		void string_serialize(stl::string_map& kv_storage) const
 		{
 			kv_storage["position_x"] = std::to_string(position.x);
 			kv_storage["position_y"] = std::to_string(position.y);
 		}
-
 
 		void serialize(stl::stream_vector& data) const
 		{
@@ -245,9 +237,27 @@ namespace ark::entities
 			return body != nullptr;
 		}
 
-		bool string_deserialize(stl::string_map& kv_storage)
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return (kv_storage.contains("angle") &&
+                    kv_storage.contains("angular_velocity") &&
+                    kv_storage.contains("mass") &&
+                    kv_storage.contains("mass_center_x") &&
+                    kv_storage.contains("mass_center_y") &&
+                    kv_storage.contains("velocity_x") &&
+                    kv_storage.contains("velocity_y") &&
+                    kv_storage.contains("position_x") &&
+                    kv_storage.contains("position_y") &&
+                    kv_storage.contains("size_x") &&
+                    kv_storage.contains("size_y") &&
+                    kv_storage.contains("body_type") &&
+                    kv_storage.contains("material_shape") &&
+                    kv_storage.contains("material_type")
+            );
+        }
+        
+		void string_deserialize(stl::string_map& kv_storage)
 		{
-			bool success = false;
 			float angle = {};
 			float angular_vel = {};
 			ark_float_vec2 vel = {};
@@ -259,91 +269,44 @@ namespace ark::entities
 			float mass = {};
 			ark_float_vec2 mass_center = {};
 
-			ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {})
-			if (kv_storage.contains("angle")) {
-				angle = std::stod(kv_storage.at("angle").data());
-				success = true;
-			}
+            ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {});
+            
+            angle = std::stod(kv_storage.at("angle").data());
+            angular_vel = std::stod(kv_storage.at("angular_velocity").data());
+            mass = std::stod(kv_storage.at("mass").data());
+            mass_center.x = std::stod(kv_storage.at("mass_center_x").data());
+            mass_center.x = std::stod(kv_storage.at("mass_center_y").data());
+            vel.x = std::stod(kv_storage.at("velocity_x").data());
+            vel.y = std::stod(kv_storage.at("velocity_y").data());
+            pos.x = std::stod(kv_storage.at("position_x").data());
+            pos.y = std::stod(kv_storage.at("position_y").data());
+            size.x = std::stod(kv_storage.at("size_x").data());
+            size.y = std::stod(kv_storage.at("size_y").data());
+            
+            auto& body_type_string = kv_storage.at("body_type");
+            if (body_type_string == "static") {
+                type = physics::body_type::static_body;
+            } else if (body_type_string == "dynamic") {
+                type = physics::body_type::dynamic_body;
+            } else if (body_type_string == "kinematic") {
+                type = physics::body_type::kinematic_body;
+            }
 
-			if (kv_storage.contains("angular_velocity")) {
-				angular_vel = std::stod(kv_storage.at("angular_velocity").data());
-				success = true;
-			}
-
-			if (kv_storage.contains("mass")) {
-				mass = std::stod(kv_storage.at("mass").data());
-				success = true;
-			}
-
-			if (kv_storage.contains("mass_center_x")) {
-				mass_center.x = std::stod(kv_storage.at("mass_center_x").data());
-				success = true;
-			}
-
-			if (kv_storage.contains("mass_center_y")) {
-				mass_center.x = std::stod(kv_storage.at("mass_center_y").data());
-				success = true;
-			}
-
-			if (kv_storage.contains("velocity_x")) {
-				vel.x = std::stod(kv_storage.at("velocity_x").data());
-			}
-
-			if (kv_storage.contains("velocity_y")) {
-				vel.y = std::stod(kv_storage.at("velocity_y").data());
-			}
-
-			if (kv_storage.contains("position_x")) {
-				pos.x = std::stod(kv_storage.at("position_x").data());
-			}
-
-			if (kv_storage.contains("position_y")) {
-				pos.y = std::stod(kv_storage.at("position_y").data());
-			}
-
-			if (kv_storage.contains("size_x")) {
-				size.x = std::stod(kv_storage.at("size_x").data());
-			}
-
-			if (kv_storage.contains("size_y")) {
-				size.y = std::stod(kv_storage.at("size_y").data());
-			}
-
-			if (kv_storage.contains("body_type")) {
-				auto& body_type_string = kv_storage.at("body_type");
-				if (body_type_string == "static") {
-					type = physics::body_type::static_body;
-				} else if (body_type_string == "dynamic") {
-					type = physics::body_type::dynamic_body;
-				} else if (body_type_string == "kinematic") {
-					type = physics::body_type::kinematic_body;
-				}
-			}
-
-			if (kv_storage.contains("material_shape")) {
-				auto& body_type_string = kv_storage.at("material_shape");
-				if (body_type_string == "box") {
-					shape = material::shape::box;
-				} else if (body_type_string == "circle") {
-					shape = material::shape::circle;
-				}
-			}
-
-			if (kv_storage.contains("material_type")) {
-				auto& body_type_string = kv_storage.at("material_type");
-				if (body_type_string == "rubber") {
-					mat = material::type::rubber;
-				} else if (body_type_string == "solid") {
-					mat = material::type::solid;
-				}
-			}
-
-			if (success) {
-				const physics::body_parameters parameters(angle, angular_vel, vel, pos, size, type, shape, mat, mass, mass_center);
-				body = physics::schedule_creation(parameters);
-			}
-
-			return success;
+            auto& material_shape_string = kv_storage.at("material_shape");
+            if (material_shape_string == "box") {
+                shape = material::shape::box;
+            } else if (material_shape_string == "circle") {
+                shape = material::shape::circle;
+            }
+            
+            auto& material_type_string = kv_storage.at("material_type");
+            if (material_type_string == "rubber") {
+                mat = material::type::rubber;
+            } else if (material_type_string == "solid") {
+                mat = material::type::solid;
+            }
+            const physics::body_parameters parameters(angle, angular_vel, vel, pos, size, type, shape, mat, mass, mass_center);
+            body = physics::schedule_creation(parameters);
 		}
 
 		void string_serialize(stl::string_map& kv_storage) const

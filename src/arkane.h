@@ -65,6 +65,9 @@
 #include "engine/filesystem.h"
 #include "engine/console.h"
 
+#include "engine/resources.h"
+#include "engine/scheduler.h"
+
 #include "engine/physics_debug_draw.h"
 #include "engine/physics_material.h"
 #include "engine/physics_world.h"
@@ -77,9 +80,6 @@
 #include "engine/physics_system.h"
 #include "engine/physics_mouse_joint_system.h"
 #include "engine/draw_system.h"
-
-#include "engine/resources.h"
-#include "engine/scheduler.h"
 
 #include "engine/camera.h"
 #include "engine/level.h"

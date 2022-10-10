@@ -24,14 +24,18 @@ void inspect_entity_component(stl::hash_map<stl::string, stl::string>& kv_storag
         if constexpr (entities::is_flag_v<Component>) {
 #ifdef __GNUC__
             int status = 0;
-            ImGui::Text("Flag: %s", abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status));
+            char* string_ptr = abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status);
+            ImGui::Text("Flag: %s", string_ptr);
+            free(string_ptr);
 #else
             ImGui::Text("Flag: %s", typeid(Component).name());
 #endif
         } else {
 #ifdef __GNUC__
             int status = 0;
-            ImGui::Text("Component: %s", abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status));
+            char* string_ptr = abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status);
+            ImGui::Text("Component: %s", string_ptr);
+            free(string_ptr);
 #else
             ImGui::Text("Component: %s", typeid(Component).name());
 #endif
@@ -76,12 +80,13 @@ ui::tick(float dt)
     }
 
     uint32_t fps_counter_size = 0;
+    static bool stat_enable = false;
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
         console->draw(dt, "Arkane console", &show_console);
     } else { 
         if (show_fps_counter) {
-            fps_counter_size = 700;
+            fps_counter_size = stat_enable ? 700 : 240;
             ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 30 });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
             if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
@@ -102,6 +107,7 @@ ui::tick(float dt)
             const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
             
             const auto& registry = entities::internal::get_registry().get();
+            ImGui::Checkbox("Engine statistics", &stat_enable);
             ImGui::Checkbox("Debug draw", &physical_debug_draw);
             ImGui::Checkbox("Paused", &paused);
             ImGui::Checkbox("Use parallel", &use_parallel);
@@ -109,29 +115,32 @@ ui::tick(float dt)
             ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
             ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
             ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
-            ImGui::Separator();
-            ImGui::Text("UI:");
-            ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
-            ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
-            ImGui::Separator();
-            ImGui::Text("Game:");
-            ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
-            ImGui::Separator();
-            ImGui::Text("Physics:");
-            ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
-            ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
-            ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
-            ImGui::ProgressBar(phys_load_percent);
-            ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
-            ImGui::Separator();
-            ImGui::Text("Entities");
-            ImGui::Text("  Allocated: %d", registry.capacity());
-            ImGui::Text("  Alive: %d", registry.alive());
-            ImGui::Separator();
-            ImGui::Text("UI Info:");
-            ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
-            ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
-            ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
+            if (stat_enable) {
+                ImGui::Separator();
+                ImGui::Text("UI:");
+                ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
+                ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
+                ImGui::Separator();
+                ImGui::Text("Game:");
+                ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
+                ImGui::Separator();
+                ImGui::Text("Physics:");
+                ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
+                ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
+                ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
+                ImGui::ProgressBar(phys_load_percent);
+                ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
+                ImGui::Separator();
+                ImGui::Text("Entities");
+                ImGui::Text("  Allocated: %d", registry.capacity());
+                ImGui::Text("  Alive: %d", registry.alive());
+                ImGui::Separator();
+                ImGui::Text("UI Info:");
+                ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
+                ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
+                ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
+            }
+            
             ImGui::End();
         }
 
