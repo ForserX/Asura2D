@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark::render
 {
@@ -10,5 +10,6 @@ namespace ark::render
 	void destroy();
 	void tick(float dt);
 
-	ImTextureID load_texture(stl::string_view path);
+    ImTextureID get_texture(int32_t resource_id);
+	ImTextureID load_texture(int32_t resource_id);
 }

@@ -151,12 +151,15 @@ graphics::draw_rect(
 }
 
 void
-graphics::draw_background(ImTextureID texture_id)
+graphics::draw_background(int32_t resource_id)
 {
 	OPTICK_EVENT("graphics draw background");
 	const int64_t width = ui::get_cmd_int("window_width");
 	const int64_t height = ui::get_cmd_int("window_height");
-	ImGui::GetBackgroundDrawList()->AddImage(texture_id, {0,0}, {static_cast<float>(width), static_cast<float>(height)});
+    const ImTextureID texture_id = render::get_texture(resource_id);
+    if (texture_id != nullptr) {
+        ImGui::GetBackgroundDrawList()->AddImage(texture_id, {0,0}, {static_cast<float>(width), static_cast<float>(height)});
+    }
 }
 
 void

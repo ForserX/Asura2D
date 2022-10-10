@@ -48,19 +48,11 @@ void inspect_entity(entt::entity ent)
 void
 ui::init()
 {
+    std::filesystem::path font_dir = filesystem::get_content_dir();
+    font_dir.append("fonts").append("RobotoMono-Regular.ttf");
 
-
-#ifdef _WIN32
-    int SysLangID = GetSystemDefaultLangID();
-
-    if (SysLangID == 1049) {
-        std::filesystem::path font_dir = filesystem::get_content_dir();
-        font_dir.append("fonts").append("RobotoMono-Regular.ttf");
-
-        ImGuiIO& io = ImGui::GetIO();
-        io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
-    }
-#endif
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 }
 
 void

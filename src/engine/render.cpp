@@ -6,6 +6,9 @@ extern int window_height;
 
 using namespace ark;
 
+using texture_id = ImTextureID;
+stl::hash_map<int32_t, texture_id> textures_list;
+
 void 
 render::pre_init()
 {
@@ -82,6 +85,10 @@ void
 render::destroy()
 {
 	graphics::destroy();
+    
+    for (auto [resource, texture] : textures_list) {
+        SDL_DestroyTexture(static_cast<SDL_Texture*>(texture));
+    }
 	
 	ImGui_ImplSDLRenderer_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -132,15 +139,36 @@ render::tick(float dt)
 	}
 }
 
-ImTextureID render::load_texture(stl::string_view path)
+ImTextureID
+render::get_texture(int32_t resource_id)
 {
-	if (std::filesystem::exists(path)) {
-		return IMG_LoadTexture(renderer, path.data());
-	}
+    if (!textures_list.contains(resource_id)) {
+        return nullptr;
+    }
+    
+    return textures_list.at(resource_id);
+}
 
-	stl::string error_msg = "Texture not found: ";
-	error_msg += path;
-
-	ark_assert(std::filesystem::exists(path), error_msg, {});
-	return nullptr;
+ImTextureID
+render::load_texture(int32_t resource_id)
+{
+    SDL_RWops* rw = SDL_RWFromConstMem(resources::ptr(resource_id), resources::size(resource_id));
+    if (rw == nullptr) {
+        return nullptr;
+    }
+    
+    resources::lock(resource_id);
+    ImTextureID texture_handle = IMG_LoadTexture_RW(renderer, rw, 0);
+    resources::unlock(resource_id);
+    
+    if (texture_handle == nullptr) {
+        return nullptr;
+    }
+    
+    if (textures_list.contains(resource_id)) {
+        SDL_DestroyTexture(static_cast<SDL_Texture*>(textures_list.at(resource_id)));
+    }
+    
+    textures_list[resource_id] = texture_handle;
+    return texture_handle;
 }

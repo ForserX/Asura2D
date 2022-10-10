@@ -6,7 +6,7 @@ struct resource_state
 {
     bool load_state;
     mio::mmap_source handle;
-    std::string_view file_name;
+    std::filesystem::path file_path;
 };
 
 struct resource_scheduled_task
@@ -23,12 +23,19 @@ std::mutex resource_manager_lock;
 
 auto resources_scheduled_worker = []()
 {
+    while (resources_destroyed) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    
     for (const auto& [resource_id, scheduled_task] : resource_scheduled_tasks) {
+        bool processed = false;
         if (scheduled_task.task_id == 0) {
-            resources::lock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
+            processed = resources::lock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
         } else if (scheduled_task.task_id == 1) {
-            resources::unlock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
+            processed = resources::unlock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
         }
+        
+        ark_assert(processed, "Can't process resource scheduled work", continue;)
     }
 
     {
@@ -39,11 +46,32 @@ auto resources_scheduled_worker = []()
     return !resources_destroyed;
 };
 
+void
+load_content_context()
+{
+    auto path = filesystem::get_content_dir();
+    for (auto it : std::filesystem::recursive_directory_iterator(path)) {
+        if (it.is_regular_file()) {
+            std::error_code error;
+            auto base_path = std::filesystem::relative(it.path(), path, error).generic_string();
+            if (error) {
+                ark_assert(false, "Can't setup relative path for file", continue;)
+                continue;
+            }
+            
+            resources::load(base_path.data());
+        }
+    }
+}
+
 void 
 resources::init()
 {
-    resources_destroyed = false;
+    resources_destroyed = true;
     scheduler::schedule(scheduler::global_task_type::resource_manager, resources_scheduled_worker);
+    
+    load_content_context();
+    resources_destroyed = false;
 }
 
 void 
@@ -53,7 +81,7 @@ resources::destroy()
 }
 	
 int32_t 
-resources::load(std::string_view file_name)
+resources::load(stl::string_view file_name)
 {
     int32_t resource_id = id(file_name);
     if (exists(resource_id)) {
@@ -64,9 +92,13 @@ resources::load(std::string_view file_name)
     path.append(file_name);
     
     resource_state state = {};
-    state.file_name = file_name;
     
     std::error_code error;
+    state.file_path = std::filesystem::relative(path, filesystem::get_content_dir(), error);
+    if (error) {
+        return -1;
+    }
+    
     state.handle = mio::make_mmap_source(path.c_str(), 0, mio::map_entire_file, error);
     if (error) {
         return -1;
@@ -120,38 +152,58 @@ resources::schedule_unlock(int32_t resource_id, int64_t begin_offset, int64_t en
     return true;
 }
 
-void 
+bool
 resources::lock(int32_t resource_id, int64_t begin_offset, int64_t end_offset)
 {
     if (!exists(resource_id)) {
-        return "";
+        return false;
     }
     
     const auto& resource = resources_map.at(resource_id);
     const char* mapping_handle = resource.handle.data() + begin_offset;
     
+    if (begin_offset == -1) {
+        begin_offset = 0;
+    }
+    
+    if (end_offset == -1) {
+        end_offset = resource.handle.size();
+    }
+    
 #ifdef _WIN32
-    VirtualLock(mapping_handle, end_offset - begin_offset);
+    bool locked = !!VirtualLock(mapping_handle, end_offset - begin_offset);
 #else
-    mlock(mapping_handle, end_offset - begin_offset);
+    bool locked = (mlock(mapping_handle, end_offset - begin_offset) == 0);
 #endif
+    
+    return locked;
 }
 	
-void 
+bool
 resources::unlock(int32_t resource_id, int64_t begin_offset, int64_t end_offset)
 {
     if (!exists(resource_id)) {
-        return "";
+        return false;
     }
     
     const auto& resource = resources_map.at(resource_id);
     const char* mapping_handle = resource.handle.data() + begin_offset;
     
+    if (begin_offset == -1) {
+        begin_offset = 0;
+    }
+    
+    if (end_offset == -1) {
+        end_offset = resource.handle.size();
+    }
+    
 #ifdef _WIN32
-    VirtualUnlock(mapping_handle, end_offset - begin_offset);
+    bool unlocked = !!VirtualUnlock(mapping_handle, end_offset - begin_offset);
 #else
-    munlock(mapping_handle, end_offset - begin_offset);
+    bool unlocked = (munlock(mapping_handle, end_offset - begin_offset));
 #endif
+    
+    return unlocked;
 }
 
 const char*
@@ -172,7 +224,18 @@ resources::id(std::string_view file_path)
     return hasher(file_path);
 }
 
-std::string_view
+uint64_t
+resources::size(int32_t resource_id)
+{
+    if (!exists(resource_id)) {
+        return 0;
+    }
+    
+    const auto& resource = resources_map.at(resource_id);
+    return resource.handle.size();
+}
+
+stl::string
 resources::name(int32_t resource_id)
 {
     if (!exists(resource_id)) {
@@ -180,7 +243,7 @@ resources::name(int32_t resource_id)
     }
     
     const auto& resource = resources_map.at(resource_id);
-    return resource.file_name;
+    return resource.file_path.generic_string();
 }
 
 bool

@@ -19,10 +19,11 @@ engine::init(int argc, char** argv)
 	OPTICK_THREAD("Main thread");
     
     console = std::make_unique<ui::UIConsole>();
-    console->init();
     
     filesystem::init();
     debug::init();
+    
+    console->init();
     
     debug::msg("base systems inited. intializing other systems");
     

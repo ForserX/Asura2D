@@ -115,11 +115,6 @@ public:
 	{
 		return (x == 0.f && y == 0.f);
 	}
-	
-	operator b2Vec2() const
-	{
-		return { x, y };
-	}
 
 	operator ImVec2() const
 	{

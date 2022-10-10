@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark::graphics
 {
@@ -13,7 +13,7 @@ namespace ark::graphics
 	void draw_convex_poly_filled(ImDrawList* draw_list, const ark_float_vec2* points, const int points_count, ImU32 col);
 
 	void draw_rect(ImColor color, ark_float_vec2 p_min, ark_float_vec2 p_max, bool filled = true);
-	void draw_background(ImTextureID texture_id);
+	void draw_background(int32_t resource_id);
 
 	namespace theme
 	{

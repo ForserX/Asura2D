@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark::entities
 {
@@ -161,31 +161,33 @@ namespace ark::entities
 
 	struct draw_texture_component
 	{
-		ImTextureID texture;
+		int32_t texture_resource;
 
 		bool can_serialize_now() const
 		{
-			return false;
+			return true;
 		}
 
 		bool string_deserialize(stl::string_map& kv_storage)
 		{
-			return false;
+            if (kv_storage.contains("texture_resource")) {
+                texture_resource = std::stoi(kv_storage.at("texture_resource").data());
+            }
 		}
 
 		void string_serialize(stl::string_map& kv_storage) const
 		{
-
+            kv_storage["texture_resource"] = texture_resource;
 		}
 
 		void serialize(stl::stream_vector& data) const
 		{
-			
+            stl::push_memory(data, texture_resource);
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
-			
+            stl::read_memory(data, texture_resource);
 		}
 	};
 

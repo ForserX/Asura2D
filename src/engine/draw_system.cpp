@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 
 using namespace ark::systems;
 using namespace ark::entities;
@@ -61,11 +61,11 @@ draw_system::tick(float dt)
 				if (entities::contains<draw_texture_component>(entity)) {
 					const auto draw_texture_comp = entities::try_get<draw_texture_component>(entity);
 					if (draw_texture_comp != nullptr) {
-						graphics::draw_background(draw_texture_comp->texture);
+						graphics::draw_background(draw_texture_comp->texture_resource);
 						return;
 					}
 				}
-				});
+			});
 		}
 
 		{
