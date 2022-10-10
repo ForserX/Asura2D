@@ -22,9 +22,19 @@ void inspect_entity_component(stl::hash_map<stl::string, stl::string>& kv_storag
         entt::id_type id = entt::type_id<Component>().hash();
         auto& storage = (*entities::internal::get_registry().get().storage(id)).second;
         if constexpr (entities::is_flag_v<Component>) {
+#ifdef __GNUC__
+            int status = 0;
+            ImGui::Text("Flag: %s", abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status));
+#else
             ImGui::Text("Flag: %s", typeid(Component).name());
+#endif
         } else {
+#ifdef __GNUC__
+            int status = 0;
+            ImGui::Text("Component: %s", abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status));
+#else
             ImGui::Text("Component: %s", typeid(Component).name());
+#endif
             const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
             if (value_ptr != nullptr) {
                 value_ptr->string_serialize(kv_storage);

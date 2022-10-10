@@ -41,7 +41,7 @@ draw_system::tick(float dt)
 					return;
 				}
 
-				//ark_assert(!entities::contains<drawable_flag>(entity), "background entity can't contain draw flag!", return)
+                ark_assert(!entities::contains<drawable_flag>(entity), "background entity can't contain draw flag!", return);
 
 				const int64_t width = ui::get_cmd_int("window_width");
 				const int64_t height = ui::get_cmd_int("window_height");

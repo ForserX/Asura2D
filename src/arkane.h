@@ -23,6 +23,9 @@
 #include <windows.h>
 #include <timeapi.h>
 #else
+#ifdef __GNUC__
+#include <cxxabi.h>
+#endif
 #include <pthread.h>
 #endif
 
