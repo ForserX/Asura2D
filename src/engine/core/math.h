@@ -16,138 +16,157 @@ namespace ark::math
     template<typename T>
     struct vec2
     {
-        T x;
-        T y;
+        T data[2] = {};
 
         vec2() = default;
-        vec2(auto dx, auto dy) : x(dx), y(dy) {}
+        vec2(auto dx, auto dy)
+        {
+            data[0] = dx;
+            data[1] = dy;
+        }
+        
         vec2(const b2Vec2& vec)
         {
-            x = static_cast<T>(vec.x);
-            y = static_cast<T>(vec.y);
+            data[0] = static_cast<T>(vec.x);
+            data[1] = static_cast<T>(vec.y);
         }
         
         vec2(const ImVec2& vec)
         {
-            x = static_cast<T>(vec.x);
-            y = static_cast<T>(vec.y);
+            data[0] = static_cast<T>(vec.x);
+            data[1] = static_cast<T>(vec.y);
         }
 
-        float operator () (int32 i) const
+        const T& x() const
         {
-            return (&x)[i];
+            return data[0];
         }
         
-        void operator -= (const vec2<T>& v)
+        const T& y() const
         {
-            x -= v.x;
-            y -= v.y;
-        }
-
-        void operator += (const vec2<T>& v)
-        {
-            x += v.x;
-            y += v.y;
-        }
-
-        void operator *= (const vec2<T>& v)
-        {
-            x *= v.x;
-            y *= v.y;
-        }
-
-        void operator /= (const vec2<T>& v)
-        {
-            x /= v.x;
-            y /= v.y;
+            return data[1];
         }
         
-        void operator -= (const T v)
+        const T& operator()(int32 i) const
         {
-            x -= v;
-            y -= v;
+            return data[i];
+        }
+        
+        T& operator[](int32 i)
+        {
+            return data[i];
+        }
+        
+        void operator-=(const vec2<T>& v)
+        {
+            data[0] -= v.x;
+            data[1] -= v.y;
         }
 
-        void operator += (const T v)
+        void operator+=(const vec2<T>& v)
         {
-            x += v;
-            y += v;
+            data[0] += v.x;
+            data[1] += v.y;
         }
 
-        void operator *= (const T v)
+        void operator*=(const vec2<T>& v)
         {
-            x *= v;
-            y *= v;
+            data[0] *= v.x;
+            data[1] *= v.y;
         }
 
-        void operator /= (const T v)
+        void operator/=(const vec2<T>& v)
         {
-            x /= v;
-            y /= v;
+            data[0] /= v.x;
+            data[1] /= v.y;
+        }
+        
+        void operator-=(const T v)
+        {
+            data[0] -= v;
+            data[1] -= v;
+        }
+
+        void operator+=(const T v)
+        {
+            data[0] += v;
+            data[1] += v;
+        }
+
+        void operator*=(const T v)
+        {
+            data[0] *= v;
+            data[1] *= v;
+        }
+
+        void operator/=(const T v)
+        {
+            data[0] /= v;
+            data[1] /= v;
         }
         
         vec2<T> operator<=>(const vec2<T>&) const = default;
         
-        operator ImVec2()
+        operator ImVec2() const
         {
-            return ImVec2(static_cast<float>(x), static_cast<float>(y));
+            return ImVec2(static_cast<float>(data[0]), static_cast<float>(data[1]));
         }
         
-        operator b2Vec2()
+        operator b2Vec2() const
         {
-            return b2Vec2(static_cast<float>(x), static_cast<float>(y));
+            return b2Vec2(static_cast<float>(data[0]), static_cast<float>(data[1]));
         }
 
         bool empty() const
         {
-            return (x == static_cast<T>(0) && y == static_cast<T>(0));
+            return (data[0] == static_cast<T>(0) && data[1] == static_cast<T>(0));
         }
         
         static vec2<T> min(const vec2<T>& first, const vec2<T>& second)
         {
-            return vec2<T>(std::min(first.x, second.x), std::min(first.y, second.y));
+            return vec2<T>(std::min(first.x(), second.x()), std::min(first.y(), second.y()));
         }
         
         static vec2<T> max(const vec2<T>& first, const vec2<T>& second)
         {
-            return vec2<T>(std::max(first.x, second.x), std::max(first.y, second.y));
+            return vec2<T>(std::max(first.x(), second.x()), std::max(first.y(), second.y()));
         }
     };
 
     template<typename T>
     vec2<T> operator+(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x + b.x, a.y + b.y);
+        return vec2<T>(a.x() + b.x(), a.y() + b.y());
     }
 
     template<typename T>
     vec2<T> operator-(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x - b.x, a.y - b.y);
+        return vec2<T>(a.x() - b.x(), a.y() - b.y());
     }
 
     template<typename T>
     vec2<T> operator*(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x * b.x, a.y * b.y);
+        return vec2<T>(a.x() * b.x(), a.y() * b.y());
     }
 
     template<typename T>
     vec2<T> operator/(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x / b.x, a.y / b.y);
+        return vec2<T>(a.x() / b.x(), a.y() / b.y());
     }
 
     template<typename T>
     bool operator==(const vec2<T>& a, const vec2<T>& b)
     {
-        return a.x == b.x && a.y == b.y;
+        return a.x() == b.x() && a.y() == b.y();
     }
 
     template<typename T>
     bool operator!=(const vec2<T>& a, const vec2<T>& b)
     {
-        return a.x != b.x || a.y != b.y;
+        return a.x() != b.x() || a.y() != b.y();
     }
 
     using ivec2 = vec2<int16_t>;
@@ -161,10 +180,10 @@ namespace ark::math
         rect() = default;
         rect(vec2<T> in_min, vec2<T> in_max)
         {
-            values[0] = in_min.x;
-            values[1] = in_min.y;
-            values[2] = in_max.x;
-            values[3] = in_max.y;
+            values[0] = in_min.x();
+            values[1] = in_min.y();
+            values[2] = in_max.x();
+            values[3] = in_max.y();
         }
         
         rect(auto x, auto y, auto w, auto h)
@@ -175,22 +194,22 @@ namespace ark::math
             values[3] = static_cast<T>(y + h);
         }
         
-        T min_x() const
+        const T& min_x() const
         {
             return values[0];
         }
         
-        T min_y() const
+        const T& min_y() const
         {
             return values[1];
         }
         
-        T max_x() const
+        const T& max_x() const
         {
             return values[2];
         }
         
-        T max_y() const
+        const T& max_y() const
         {
             return values[3];
         }
@@ -214,10 +233,12 @@ namespace ark::math
         {
             return max_y() - min_y();
         }
+        
+        
     };
 
+    using irect = rect<int16_t>;
     using frect = rect<float>;
-    using irect = rect<int32_t>;
 
     class transform
     {
@@ -235,8 +256,8 @@ namespace ark::math
 
         float angle() const
         {
-            float acos = std::acosf(rot.y);
-            float angle = (rot.x >= 0) ? acos : -acos;
+            float acos = std::acosf(rot.y());
+            float angle = (rot.x() >= 0) ? acos : -acos;
             return angle;
         }
         
@@ -252,8 +273,8 @@ namespace ark::math
         
         void set_angle(float angle)
         {
-            rot.x = std::sinf(angle);
-            rot.y = std::cosf(angle);
+            rot.data[0] = std::sinf(angle);
+            rot.data[1] = std::cosf(angle);
         }
         
         void set_rotation(const fvec2& new_rot)

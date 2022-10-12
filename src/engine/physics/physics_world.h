@@ -103,7 +103,7 @@ namespace ark
 			mass(in_mass)
 			{
 				if (in_mass_center.empty()) {
-					mass_center = { size.x / 2, size.y / 2 };
+					mass_center = { size.x() / 2, size.y() / 2 };
 				} else {
 					mass_center = in_mass_center;
 				}
@@ -119,8 +119,8 @@ namespace ark
 				b2BodyDef body_def = {};
 				body_def.angle = angle;
 				body_def.angularVelocity = angular_vel;
-				body_def.linearVelocity.Set(vel.x, vel.y);
-				body_def.position.Set(pos.x, pos.y);
+                body_def.linearVelocity = b2Vec2(vel);
+				body_def.position = b2Vec2(pos);
 				body_def.type = get_box2d_body_type(packed_type.type);
 				return body_def;
 			}
@@ -128,8 +128,7 @@ namespace ark
 			operator b2MassData() const
 			{
 				b2MassData mass_data = {};
-				mass_data.center.x = mass_center.x;
-                mass_data.center.y = mass_center.y;
+				mass_data.center = b2Vec2(mass_center);
 				mass_data.mass = mass;
 				return mass_data;
 			}

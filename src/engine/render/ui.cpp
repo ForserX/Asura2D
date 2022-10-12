@@ -146,9 +146,9 @@ ui::tick(float dt)
                     ImGui::Text("  Alive: %d", static_cast<int>(registry.alive()));
                     ImGui::Separator();
                     ImGui::Text("UI Info:");
-                    ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
-                    ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
-                    ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
+                    ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x(), camera::camera_position().y());
+                    ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x(), cursor_pos.y());
+                    ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x(), wcursor_pos.y());
                 }
             }
                 

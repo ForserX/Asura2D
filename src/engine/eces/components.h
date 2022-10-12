@@ -308,14 +308,14 @@ namespace ark::entities
             angle = std::stod(kv_storage.at("angle").data());
             angular_vel = std::stod(kv_storage.at("angular_velocity").data());
             mass = std::stod(kv_storage.at("mass").data());
-            mass_center.x = std::stod(kv_storage.at("mass_center_x").data());
-            mass_center.x = std::stod(kv_storage.at("mass_center_y").data());
-            vel.x = std::stod(kv_storage.at("velocity_x").data());
-            vel.y = std::stod(kv_storage.at("velocity_y").data());
-            pos.x = std::stod(kv_storage.at("position_x").data());
-            pos.y = std::stod(kv_storage.at("position_y").data());
-            size.x = std::stod(kv_storage.at("size_x").data());
-            size.y = std::stod(kv_storage.at("size_y").data());
+            mass_center.data[0] = std::stod(kv_storage.at("mass_center_x").data());
+            mass_center.data[1] = std::stod(kv_storage.at("mass_center_y").data());
+            vel.data[0] = std::stod(kv_storage.at("velocity_x").data());
+            vel.data[1] = std::stod(kv_storage.at("velocity_y").data());
+            pos.data[0] = std::stod(kv_storage.at("position_x").data());
+            pos.data[1] = std::stod(kv_storage.at("position_y").data());
+            size.data[0] = std::stod(kv_storage.at("size_x").data());
+            size.data[1] = std::stod(kv_storage.at("size_y").data());
             
             auto& body_type_string = kv_storage.at("body_type");
             if (body_type_string == "static") {
@@ -346,18 +346,18 @@ namespace ark::entities
 		void string_serialize(stl::string_map& kv_storage) const
 		{
 			const physics::body_parameters parameters = body->copy_parameters();
-			kv_storage["velocity_x"] = std::to_string(parameters.vel.x);
-			kv_storage["velocity_y"] = std::to_string(parameters.vel.y);
-			kv_storage["position_x"] = std::to_string(parameters.pos.x);
-			kv_storage["position_y"] = std::to_string(parameters.pos.y);
-			kv_storage["size_x"] = std::to_string(parameters.size.x);
-			kv_storage["size_y"] = std::to_string(parameters.size.y);
+			kv_storage["velocity_x"] = std::to_string(parameters.vel.x());
+			kv_storage["velocity_y"] = std::to_string(parameters.vel.y());
+			kv_storage["position_x"] = std::to_string(parameters.pos.x());
+			kv_storage["position_y"] = std::to_string(parameters.pos.y());
+			kv_storage["size_x"] = std::to_string(parameters.size.x());
+			kv_storage["size_y"] = std::to_string(parameters.size.y());
 
 			kv_storage["angle"] = std::to_string(parameters.angle);
 			kv_storage["angular_velocity"] = std::to_string(parameters.angular_vel);
 			kv_storage["mass"] = std::to_string(parameters.mass);
-			kv_storage["mass_center_x"] = std::to_string(parameters.mass_center.x);
-			kv_storage["mass_center_y"] = std::to_string(parameters.mass_center.y);
+			kv_storage["mass_center_x"] = std::to_string(parameters.mass_center.x());
+			kv_storage["mass_center_y"] = std::to_string(parameters.mass_center.y());
 
 			switch (static_cast<physics::body_type>(parameters.packed_type.type)) {
 				case physics::body_type::static_body:

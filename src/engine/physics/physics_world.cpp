@@ -56,10 +56,10 @@ class ark::CollisionLister final : public b2ContactListener
 			ContactPoint* cp = m_points + m_pointCount;
 			cp->fixtureA = fixtureA;
 			cp->fixtureB = fixtureB;
-			cp->position.x = worldManifold.points[i].x;
-            cp->position.y = worldManifold.points[i].y;
-			cp->normal.x = worldManifold.normal.x;
-            cp->normal.y = worldManifold.normal.y;
+			cp->position[0] = worldManifold.points[i].x;
+            cp->position[1] = worldManifold.points[i].y;
+			cp->normal[0] = worldManifold.normal.x;
+            cp->normal[1] = worldManifold.normal.y;
 			cp->state = state2[i];
 			cp->normalImpulse = manifold->points[i].normalImpulse;
 			cp->tangentImpulse = manifold->points[i].tangentImpulse;
@@ -233,7 +233,7 @@ physics::world::debug_joints_tick()
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-                jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), {ContactPoint.x, ContactPoint.y}, {new_pos.x, new_pos.y});
+                jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), {ContactPoint.x(), ContactPoint.y()}, {new_pos.x(), new_pos.y()});
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
@@ -259,8 +259,7 @@ physics::world::debug_joints_tick()
 				b2MouseJointDef jd;
 				jd.bodyA = ground;
 				jd.bodyB = MoveBody->get_body();
-				jd.target.x = new_pos.x;
-                jd.target.y = new_pos.y;
+                jd.target = b2Vec2(new_pos);
 				jd.maxForce = 1000.0f * MoveBody->get_body()->GetMass();
 				b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
@@ -271,7 +270,7 @@ physics::world::debug_joints_tick()
 			}
 		} else {
 			if (!MoveBody->is_destroyed()) {
-                TestMouseJoint->SetTarget({new_pos.x, new_pos.y});
+                TestMouseJoint->SetTarget({new_pos.x(), new_pos.y()});
 			} else {
 				TestMouseJoint = nullptr;
 			}
@@ -517,8 +516,7 @@ physics::physics_body::set_mass_center(math::fvec2& new_center)
 	if (body != nullptr) {
 		b2MassData massData = {};
 		body->GetMassData(&massData);
-		massData.center.x = new_center.x;
-        massData.center.y = new_center.y;
+        massData.center = b2Vec2(new_center);
 		body->SetMassData(&massData);
 	}
 
@@ -549,7 +547,7 @@ void
 physics::physics_body::set_position(const math::fvec2& new_pos)
 {
 	if (body != nullptr) {
-        body->SetTransform({new_pos.x, new_pos.y}, body->GetAngle());
+        body->SetTransform({new_pos.x(), new_pos.y()}, body->GetAngle());
 	}
 
 	parameters.pos = new_pos;
@@ -562,10 +560,8 @@ physics::physics_body::copy_parameters() const
 	if (body != nullptr) {
 		params.angle = body->GetAngle();
 		params.angular_vel = body->GetAngularVelocity();
-		params.vel.x = body->GetLinearVelocity().x;
-        params.vel.y = body->GetLinearVelocity().y;
-		params.pos.x = body->GetPosition().x;
-        params.pos.y = body->GetPosition().y;
+		params.vel = body->GetLinearVelocity();
+		params.pos = body->GetPosition();
 	}
 
 	return params;
@@ -584,12 +580,12 @@ physics::physics_body::create()
 
 	switch (static_cast<material::shape>(parameters.packed_type.shape)) {
 	case material::shape::box:
-		poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
+		poly_shape.SetAsBox(parameters.size.x(), parameters.size.y());
 		fixtureDef.shape = &poly_shape;
 		break;
 	case material::shape::circle:
-		circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
-		circle_shape.m_radius = parameters.size.x / 2;
+		circle_shape.m_p.Set(parameters.size.x(), parameters.size.y());
+		circle_shape.m_radius = parameters.size.x() / 2;
 		fixtureDef.shape = &circle_shape;
 		break;
     default:

@@ -55,8 +55,8 @@ graphics::draw_convex_poly_filled(
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
             const math::fvec2& p0 = points[i0];
             const math::fvec2& p1 = points[i1];
-            float dx = p1.x - p0.x;
-            float dy = p1.y - p0.y;
+            float dx = p1.x() - p0.x();
+            float dy = p1.y() - p0.y();
             {
                 float d2 = dx * dx + dy * dy;
                 if (d2 > 0.0f) {
@@ -66,8 +66,7 @@ graphics::draw_convex_poly_filled(
                 }
             }
 
-            temp_normals[i0].x = dy;
-            temp_normals[i0].y = -dx;
+            temp_normals[i0] = {dy, -dx};
         }
 
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
@@ -76,8 +75,8 @@ graphics::draw_convex_poly_filled(
             // Average normals
             const math::fvec2& n0 = temp_normals[i0];
             const math::fvec2& n1 = temp_normals[i1];
-            float dm_x = (n0.x + n1.x) * 0.5f;
-            float dm_y = (n0.y + n1.y) * 0.5f;
+            float dm_x = (n0.x() + n1.x()) * 0.5f;
+            float dm_y = (n0.y() + n1.y()) * 0.5f;
             {
                 float d2 = dm_x * dm_x + dm_y * dm_y;
                 if (d2 < 0.5f) d2 = 0.5f;
@@ -89,12 +88,12 @@ graphics::draw_convex_poly_filled(
             dm_y *= AA_SIZE * 0.5f;
 
             // Add vertices
-            draw_list->_VtxWritePtr[0].pos.x = (points[i1].x - dm_x);
-            draw_list->_VtxWritePtr[0].pos.y = (points[i1].y - dm_y);
+            draw_list->_VtxWritePtr[0].pos.x = (points[i1].x() - dm_x);
+            draw_list->_VtxWritePtr[0].pos.y = (points[i1].y() - dm_y);
             draw_list->_VtxWritePtr[0].uv = uv;
             draw_list->_VtxWritePtr[0].col = col;        // Inner
-            draw_list->_VtxWritePtr[1].pos.x = (points[i1].x + dm_x);
-            draw_list->_VtxWritePtr[1].pos.y = (points[i1].y + dm_y);
+            draw_list->_VtxWritePtr[1].pos.x = (points[i1].x() + dm_x);
+            draw_list->_VtxWritePtr[1].pos.y = (points[i1].y() + dm_y);
             draw_list->_VtxWritePtr[1].uv = uv;
             draw_list->_VtxWritePtr[1].col = col_trans;  // Outer
             draw_list->_VtxWritePtr += 2;
@@ -117,8 +116,8 @@ graphics::draw_convex_poly_filled(
         draw_list->PrimReserve(idx_count, vtx_count);
         
         for (int i = 0; i < vtx_count; i++) {
-            draw_list->_VtxWritePtr[0].pos.x = points[i].x;
-            draw_list->_VtxWritePtr[0].pos.y = points[i].y;
+            draw_list->_VtxWritePtr[0].pos.x = points[i].x();
+            draw_list->_VtxWritePtr[0].pos.y = points[i].y();
             draw_list->_VtxWritePtr[0].uv = uv;
             draw_list->_VtxWritePtr[0].col = col;
             draw_list->_VtxWritePtr++;

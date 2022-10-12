@@ -44,8 +44,8 @@ auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state
         if (ark::input::is_key_pressed(SDL_SCANCODE_LCTRL)) {
             if (state == ark::input::key_state::hold) {
                 const auto& mouse_delta = ark::input::get_mouse_delta();
-                ark::camera::move(ark::camera::cam_move::left, (mouse_delta.x * 0.05f));
-                ark::camera::move(ark::camera::cam_move::up, (mouse_delta.y * 0.05f));
+                ark::camera::move(ark::camera::cam_move::left, (mouse_delta.x() * 0.05f));
+                ark::camera::move(ark::camera::cam_move::up, (mouse_delta.y() * 0.05f));
             }
         }
 		break;

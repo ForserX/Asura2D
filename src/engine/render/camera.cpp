@@ -42,16 +42,16 @@ void camera::move(cam_move move, float point)
 	detach();
 	switch (move) {
 	case cam_move::left:
-		cam_center.x -= scaled_cam_zoom * point;
+		cam_center[0] -= scaled_cam_zoom * point;
 		break;
 	case cam_move::right:
-		cam_center.x += scaled_cam_zoom * point;
+		cam_center[0] += scaled_cam_zoom * point;
 		break;
 	case cam_move::up:
-		cam_center.y += scaled_cam_zoom * point;
+		cam_center[1] += scaled_cam_zoom * point;
 		break;
 	case cam_move::down:
-		cam_center.y -= scaled_cam_zoom * point;
+		cam_center[1] -= scaled_cam_zoom * point;
 		break;
 	}
 }
@@ -114,8 +114,8 @@ camera::screen_to_world(const math::fvec2& screenPoint)
 {
 	const float w = static_cast<float>(cam_width);
 	const float h = static_cast<float>(cam_height);
-	const float u = screenPoint.x / w;
-	const float v = (h - screenPoint.y) / h;
+	const float u = screenPoint.x() / w;
+	const float v = (h - screenPoint.y()) / h;
 	const float ratio = w / h;
 	math::fvec2 extents(ratio * 25.0f, 25.0f);
 	extents *= scaled_cam_zoom;
@@ -123,7 +123,7 @@ camera::screen_to_world(const math::fvec2& screenPoint)
 	const auto lower = cam_center - extents;
 	const auto upper = cam_center + extents;
     
-	return math::fvec2((1.0f - u) * lower.x + u * upper.x, (1.0f - v) * lower.y + v * upper.y);
+	return math::fvec2((1.0f - u) * lower.x() + u * upper.x(), (1.0f - v) * lower.y() + v * upper.y());
 }
 
 math::fvec2
@@ -137,8 +137,8 @@ camera::world_to_screen(const math::fvec2& worldPoint)
 
 	const auto lower = cam_center - extents;
 	const auto upper = cam_center + extents;
-	const float u = (worldPoint.x - lower.x) / (upper.x - lower.x);
-	const float v = (worldPoint.y - lower.y) / (upper.y - lower.y);
+	const float u = (worldPoint.x() - lower.x()) / (upper.x() - lower.x());
+	const float v = (worldPoint.y() - lower.y()) / (upper.y() - lower.y());
     
     return math::fvec2(u * w, (1.0f - v) * h);
 }
