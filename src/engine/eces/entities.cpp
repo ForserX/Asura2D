@@ -8,7 +8,7 @@ entity_view invalid_entity = {};
 std::chrono::nanoseconds entities_serilaize_last_time = {};
 stl::stream_vector entities_data = {};
 
-math::fvec2 no_pos = {};
+math::fvec2 no_pos = { MAXFLOAT, MAXFLOAT };
 
 input::on_key_change entities_key_change_event = {};
 bool clear_on_next_tick = false;
@@ -141,11 +141,11 @@ string_serialize_entity_component(stl::string_map& data, entt::entity ent, entit
 {
 	const auto& reg = global_registry.get();
 	if (reg.all_of<Component>(ent)) {
-		entt::id_type id = entt::type_id<Component>().hash();
-		auto& storage = (*reg.storage(id)).second;
 		if constexpr (entities::is_flag_v<Component>) {
 			desc.flags |= Component::flag;
 		} else {
+            entt::id_type id = entt::type_id<Component>().hash();
+            auto& storage = (*reg.storage(id)).second;
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
 			if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
 				value_ptr->string_serialize(data);

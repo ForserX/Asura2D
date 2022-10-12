@@ -138,7 +138,6 @@ namespace ark::entities
 		return try_get<Type>(ent.get());
 	}
 
-
 	template<typename Type>
 	auto get(entt::entity ent)
 	{

@@ -60,10 +60,10 @@ engine::destroy()
 	scheduler::destroy();
 	threads::destroy();
     
+    console.reset();
+    
     debug::destroy();
     filesystem::destroy();
-    
-    console.reset();
 }
 
 void

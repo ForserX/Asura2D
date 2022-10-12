@@ -23,8 +23,8 @@ namespace ark::math
         vec2() = default;
         vec2(auto dx, auto dy)
         {
-            data[0] = dx;
-            data[1] = dy;
+            data[0] = static_cast<T>(dx);
+            data[1] = static_cast<T>(dy);
         }
         
         vec2(const b2Vec2& vec)
@@ -121,7 +121,11 @@ namespace ark::math
 
         bool empty() const
         {
-            return (data[0] == static_cast<T>(0) && data[1] == static_cast<T>(0));
+            if constexpr (std::is_floating_point_v<T>) {
+                return (x() == MAXFLOAT && y() == MAXFLOAT) || (x() == static_cast<T>(0) && y() == static_cast<T>(0));
+            }
+            
+            return (x() == static_cast<T>(0) && y() == static_cast<T>(0));
         }
         
         static vec2<T> min(const vec2<T>& first, const vec2<T>& second)
