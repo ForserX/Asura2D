@@ -23,11 +23,9 @@ namespace ark::camera
 	void reset_view();
 	void reset_wh();
 
-	ark_float_vec2 camera_position();
-	ark_float_vec2 screen_to_world(const ark_float_vec2& screenPoint);
-	ark_float_vec2 world_to_screen(const ark_float_vec2& worldPoint);
+	const math::fvec2& camera_position();
+    math::fvec2 screen_to_world(const math::fvec2& screenPoint);
+    math::fvec2 world_to_screen(const math::fvec2& worldPoint);
 	float scale_factor(float in);
-
-	void build_projection_matrix(float* m, float zBias);
 
 }

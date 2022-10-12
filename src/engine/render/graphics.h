@@ -10,9 +10,9 @@ namespace ark::graphics
 	
 	void draw_physical_object(b2Body* object, const ImColor& clr);
 	void draw_physical_circle_object(b2Body* object, const ImColor& clr);
-	void draw_convex_poly_filled(ImDrawList* draw_list, const ark_float_vec2* points, const int points_count, ImU32 col);
+	void draw_convex_poly_filled(ImDrawList* draw_list, const math::fvec2* points, const int points_count, ImU32 col);
 
-	void draw_rect(ImColor color, ark_float_vec2 p_min, ark_float_vec2 p_max, bool filled = true);
+	void draw_rect(ImColor color, const math::frect& rect, bool filled = true);
 	void draw_background(resources::id_type resource_id);
 
 	namespace theme

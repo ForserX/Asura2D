@@ -76,23 +76,23 @@ namespace ark
 			float mass = 0.f;
 			float angle = 0.f;
 			float angular_vel = 0.f;
-			ark_float_vec2 vel;
-			ark_float_vec2 pos;
-			ark_float_vec2 size;
-			ark_float_vec2 mass_center;
+			math::fvec2 vel;
+            math::fvec2 pos;
+            math::fvec2 size;
+            math::fvec2 mass_center;
 
 			body_parameters() = delete;
 			body_parameters(
 				float in_angle,
 				float in_vel_angle,
-				ark_float_vec2 in_vel,
-				ark_float_vec2 in_pos,
-				ark_float_vec2 in_size,
+				math::fvec2 in_vel,
+				math::fvec2 in_pos,
+				math::fvec2 in_size,
 				body_type in_type,
 				material::shape in_shape,
 				material::type in_mat,
 				float in_mass = 0.f,
-				ark_float_vec2 in_mass_center = {}
+				math::fvec2 in_mass_center = {}
 			) :
 			angle(in_angle),
 			angular_vel(in_vel_angle),
@@ -128,7 +128,8 @@ namespace ark
 			operator b2MassData() const
 			{
 				b2MassData mass_data = {};
-				mass_data.center = mass_center;
+				mass_data.center.x = mass_center.x;
+                mass_data.center.y = mass_center.y;
 				mass_data.mass = mass;
 				return mass_data;
 			}
@@ -183,18 +184,18 @@ namespace ark
 		public:
 			body_type get_body_type() const;
 			float get_mass() const;
-			ark_float_vec2 get_mass_center() const;
+            math::fvec2 get_mass_center() const;
 			float get_angle() const;
 			float get_angular_velocity() const;
-			ark_float_vec2 get_position() const;
+			math::fvec2 get_position() const;
 
 		public:
 			void set_body_type(body_type new_type);
 			void set_mass(float new_mass);
-			void set_mass_center(ark_float_vec2& new_center);
+			void set_mass_center(math::fvec2& new_center);
 			void set_angle(float new_angle);
 			void set_angular_velocity(float new_angular_vel);
-			void set_position(const ark_float_vec2& new_pos);
+			void set_position(const math::fvec2& new_pos);
 
 		public:
 			body_parameters copy_parameters() const;
@@ -213,7 +214,6 @@ namespace ark
 			std::unique_ptr<std::thread> physics_thread;
 			
 			std::unique_ptr<b2World> world_holder;
-			std::unique_ptr<DebugDraw> world_dbg_draw;
 			b2Body* ground = nullptr;
 
 			std::unique_ptr<CollisionLister> cl;
@@ -226,7 +226,7 @@ namespace ark
 			void pre_tick();
 			void debug_joints_tick();
 			void internal_tick(float dt);
-			ark_matrix get_real_body_position(b2Body* body);
+            math::frect get_real_body_position(b2Body* body);
 			
 		public:
 			world();
@@ -243,7 +243,7 @@ namespace ark
 			void destroy_world();
 		
 		public:
-			ark_matrix get_body_position(const physics_body* body);
+			math::frect get_body_position(const physics_body* body);
 			
 		public:
 			physics_body* schedule_creation(body_parameters parameters);

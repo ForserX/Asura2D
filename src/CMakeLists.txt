@@ -3,20 +3,76 @@
 # Define engine source files
 #
 ################################################
-file(GLOB_RECURSE ENGINE_SRC
-	"engine/*.cpp"
-	"engine/*.h"
+file(GLOB ARK_ENGINE_CORE_SRC
+	"engine/core/*.cpp"
+	"engine/core/*.h"
 )
 
-file(GLOB_RECURSE EDITOR_SRC
+file(GLOB ARK_ENGINE_ECES_SRC
+	"engine/eces/*.cpp"
+	"engine/eces/*.h"
+)
+
+file(GLOB ARK_ENGINE_ENGINE_SRC
+	"engine/engine/*.cpp"
+	"engine/engine/*.h"
+)
+
+file(GLOB ARK_ENGINE_NET_SRC
+	"engine/net/*.cpp"
+	"engine/net/*.h"
+)
+
+file(GLOB ARK_ENGINE_PHYSICS_SRC
+	"engine/physics/*.cpp"
+	"engine/physics/*.h"
+)
+
+file(GLOB ARK_ENGINE_RENDER_SRC
+	"engine/render/*.cpp"
+	"engine/render/*.h"
+)
+
+file(GLOB ARK_ENGINE_SYSTEMS_SRC
+	"engine/systems/*.cpp"
+	"engine/systems/*.h"
+)
+
+file(GLOB_RECURSE ARK_EDITOR_SRC
 	"editor/*.cpp"
 	"editor/*.h"
 )
 
-file(GLOB_RECURSE GAME_SRC
+file(GLOB_RECURSE ARK_GAME_SRC
 	"game/*.cpp"
 	"game/*.h"
 )
+
+################################################
+#
+# Define engine source files directories
+#
+################################################
+source_group("engine" FILES ${ARK_ENGINE_ENGINE_SRC})
+source_group("engine\\core" FILES ${ARK_ENGINE_CORE_SRC})
+source_group("engine\\eces" FILES ${ARK_ENGINE_ECES_SRC})
+source_group("engine\\network" FILES ${ARK_ENGINE_NET_SRC})
+source_group("engine\\physics" FILES ${ARK_ENGINE_PHYSICS_SRC})
+source_group("engine\\render" FILES ${ARK_ENGINE_RENDER_SRC})
+source_group("engine\\systems" FILES ${ARK_ENGINE_SYSTEMS_SRC})
+
+set(ENGINE_SRC_FILES)
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ENGINE_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_CORE_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ECES_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_NET_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_PHYSICS_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_RENDER_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_SYSTEMS_SRC})
+list(APPEND ENGINE_SRC_FILES ${EDITOR_SRC})
+list(APPEND ENGINE_SRC_FILES "pch.h")
+list(APPEND ENGINE_SRC_FILES "arkane.h")
+list(APPEND ENGINE_SRC_FILES "arkane_engine.h")
 
 ################################################
 #
@@ -39,7 +95,9 @@ if (ARKANE_ASAN)
 	target_compile_options("box2d" PUBLIC "-fsanitize=address")
     target_link_libraries("box2d" PUBLIC "-fsanitize=address")
 
-	list(APPEND LIBRARIES_TO_LINK "libsancov.lib")
+    if (WIN32)
+		list(APPEND LIBRARIES_TO_LINK "libsancov.lib")
+	endif()
 endif()
 
 if (MIMALLOC_ENABLED)
@@ -51,7 +109,7 @@ endif()
 # Define engine and link libraries to it
 #
 ################################################
-add_library("libarkane" STATIC ${ENGINE_SRC} ${EDITOR_SRC} "pch.h")
+add_library("libarkane" STATIC ${ENGINE_SRC_FILES})
 target_link_libraries("libarkane" PUBLIC ${LIBRARIES_TO_LINK})
 
 ################################################
@@ -77,9 +135,9 @@ endif()
 #
 ################################################
 if (WIN32)
-	add_executable("arkgame" WIN32 ${GAME_SRC} "main.cpp")
+	add_executable("arkgame" WIN32 ${ARK_GAME_SRC} "main.cpp")
 else()
-	add_executable("arkgame" ${GAME_SRC} "main.cpp")
+	add_executable("arkgame" ${ARK_GAME_SRC} "main.cpp")
 endif()
 
 if (APPLE)

@@ -5,56 +5,58 @@ namespace ark::entities
 	// non-serializable, created for scheduled entities destroying
 	struct garbage_flag
 	{
-		static constexpr uint16_t flag = 1 << 0;
+		static constexpr net::flag_type flag = 1 << 0;
 	};
 	
 	// non-serializable
 	struct non_serializable_flag
 	{
-		static constexpr uint16_t flag = 1 << 1;
+		static constexpr net::flag_type flag = 1 << 1;
 	};
 	
 	// non-serializable, created for engine/base game entities, which requirement is to be stable 
 	struct dont_free_after_reset_flag
 	{
-		static constexpr uint16_t flag = 1 << 2;
+		static constexpr net::flag_type flag = 1 << 2;
 	};
 	
 	// serializable, for background 
 	struct background_flag
 	{
-		static constexpr uint16_t flag = 1 << 3;
+		static constexpr net::flag_type flag = 1 << 3;
 	};
 	
 	// serializable, for drawing
 	struct drawable_flag
 	{
-		static constexpr uint16_t flag = 1 << 4;
+		static constexpr net::flag_type flag = 1 << 4;
 	};
 	
 	// serializable, for ground specification
 	struct ground_flag
 	{
-		static constexpr uint16_t flag = 1 << 5;
+		static constexpr net::flag_type flag = 1 << 5;
 	};
 	
 	// serializable, for level specification
 	struct level_flag
 	{
-		static constexpr uint16_t flag = 1 << 6;
+		static constexpr net::flag_type flag = 1 << 6;
 	};					
 
 	// serializable, for networking and delta serialize
 	struct net_id_flag
 	{
-		static constexpr uint16_t flag = 1 << 7;
+		static constexpr net::flag_type flag = 1 << 7;
 	};
 
 	// serializable, for marking player as controlled by AI or player
 	struct net_controlled_flag
 	{
-		static constexpr uint16_t flag = 1 << 8;
+		static constexpr net::flag_type flag = 1 << 8;
 	};
+
+    constexpr uint32_t last_flag_index = 8;
 
 	template <typename T>
 	using detect_flag = decltype(T::flag);	
@@ -62,12 +64,45 @@ namespace ark::entities
 	template <typename T>
 	constexpr bool is_flag_v = stl::is_detected<detect_flag, T>::value;
 
-	struct network_component
+	struct network_data
 	{
-		uint16_t network_id : 12;
-		uint16_t network_cluster : 4;
-		uint16_t reserved;
+        net::id_type net_id;
 	};
+
+    struct network_component
+    {
+        network_data net_data;
+        
+        bool can_serialize_now() const
+        {
+            return true;
+        }
+
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return (kv_storage.contains("net_id"));
+        }
+        
+        void string_deserialize(stl::string_map& kv_storage)
+        {
+            net_data.net_id = std::stoul(kv_storage.at("net_id").data());
+        }
+
+        void string_serialize(stl::string_map& kv_storage) const
+        {
+            kv_storage["net_id"] = std::to_string(static_cast<uint32_t>(net_data.net_id));
+        }
+
+        void serialize(stl::stream_vector& data) const
+        {
+            stl::push_memory(data, net_data);
+        }
+
+        void deserialize(stl::stream_vector& data)
+        {
+            stl::read_memory(data, net_data);
+        }
+    };
 
 	struct draw_color_component
 	{
@@ -191,7 +226,8 @@ namespace ark::entities
 
 	struct scene_component
 	{
-		ark_float_vec2 position = {};
+        math::fvec2 scale = {};
+        math::transform transform = {};
 
 		bool can_serialize_now() const
 		{
@@ -200,31 +236,29 @@ namespace ark::entities
         
         bool can_string_deserialize(stl::string_map& kv_storage) const
         {
-            return kv_storage.contains("position_x") && kv_storage.contains("position_y");
+            return false;
         }
         
         void string_deserialize(stl::string_map& kv_storage)
         {
-            position.x = std::stod(kv_storage.at("position_x").data());
-            position.y = std::stod(kv_storage.at("position_y").data());
+            
         }
 
 		void string_serialize(stl::string_map& kv_storage) const
 		{
-			kv_storage["position_x"] = std::to_string(position.x);
-			kv_storage["position_y"] = std::to_string(position.y);
+            
 		}
 
 		void serialize(stl::stream_vector& data) const
 		{
-			stl::push_memory(data, position.x);
-			stl::push_memory(data, position.y);
+			stl::push_memory(data, scale);
+			stl::push_memory(data, transform);
 		}
 
 		void deserialize(stl::stream_vector& data)
 		{
-			stl::read_memory(data, position.x);
-			stl::read_memory(data, position.y);
+            stl::read_memory(data, scale);
+            stl::read_memory(data, transform);
 		}
 	};
 	
@@ -260,14 +294,14 @@ namespace ark::entities
 		{
 			float angle = {};
 			float angular_vel = {};
-			ark_float_vec2 vel = {};
-			ark_float_vec2 pos = {};
-			ark_float_vec2 size = {};
+			math::fvec2 vel = {};
+            math::fvec2 pos = {};
+            math::fvec2 size = {};
 			physics::body_type type = {};
 			material::shape shape = {};
 			material::type mat = {};
 			float mass = {};
-			ark_float_vec2 mass_center = {};
+            math::fvec2 mass_center = {};
 
             ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {});
             
@@ -377,73 +411,77 @@ namespace ark::entities
 		}
 	};
 	
-	struct dynamic_visual_component
-	{
-		//stl::vector<ark_float_vec2> points;
-		
-		bool can_serialize_now() const
-		{
-			return false;//return !points.empty();
-		}
+    struct camera_component
+    {
+        float zoom = 0.f;
+        float rotation = 0.f;
+        math::transform transform;
+        
+        bool can_serialize_now() const
+        {
+            return true;
+        }
 
-		bool string_deserialize(stl::string_map& kv_storage)
-		{
-			return false;
-		}
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return false;
+        }
 
-		void string_serialize(stl::string_map& kv_storage) const
-		{
-		}
+        void string_deserialize(stl::string_map& kv_storage)
+        {
+            return false;
+        }
 
-		void serialize(stl::stream_vector& data) const
-		{
-			//size_t size_to_write = points.size();
-			//stl::push_memory(data, size_to_write);
-			//for (const auto& point : points) {
-			//	stl::push_memory(data, point);
-			//}
-		}
+        void string_serialize(stl::string_map& kv_storage) const
+        {
+        }
 
-		void deserialize(stl::stream_vector& data)
-		{
-			//size_t size_to_read = 0;
-			//stl::read_memory(data, size_to_read);
-			
-			//points.resize(size_to_read);
-			//for (size_t i = 0; i < size_to_read; i++) {
-			//	stl::read_memory(data, points[i]);
-			//}
-		}
-	};
+        void serialize(stl::stream_vector& data) const
+        {
+            stl::push_memory(data, zoom);
+            stl::push_memory(data, rotation);
+            stl::push_memory(data, transform);
+        }
 
-#define DECLARE_SERIALIZABLE_FLAGS \
-	entities::background_flag, \
-	entities::drawable_flag, \
-	entities::ground_flag, \
-	entities::level_flag, \
-	entities::net_id_flag, \
-	entities::net_controlled_flag 
+        void deserialize(stl::stream_vector& data)
+        {
+            stl::read_memory(data, zoom);
+            stl::read_memory(data, rotation);
+            stl::read_memory(data, transform);
+        }
+    };
 
-#define DECLARE_SERIALIZABLE_TYPES \
-	DECLARE_SERIALIZABLE_FLAGS, \
-	entities::draw_color_component, \
-	entities::draw_gradient_component, \
-	entities::draw_texture_component, \
-	entities::scene_component, \
-	entities::physics_body_component, \
-	entities::dynamic_visual_component
+    struct net_linker_component
+    {
+        net::link_type link_id;
 
-#define DECLARE_SERIALIZABLE_ENTITY_TYPES \
-	DECLARE_SERIALIZABLE_FLAGS, \
-	DECLARE_SERIALIZABLE_TYPES
+        bool can_serialize_now() const
+        {
+            return true;
+        }
 
-#define DECLARE_NON_SERIALIZABLE_TYPES \
-	entities::garbage_flag, \
-	entities::non_serializable_flag, \
-	entities::dont_free_after_reset_flag 
+        bool can_string_deserialize(stl::string_map& kv_storage) const
+        {
+            return false;
+        }
 
-#define DECLARE_ENTITIES_TYPES \
-	DECLARE_SERIALIZABLE_TYPES, \
-	DECLARE_NON_SERIALIZABLE_TYPES
+        void string_deserialize(stl::string_map& kv_storage)
+        {
+            return false;
+        }
 
+        void string_serialize(stl::string_map& kv_storage) const
+        {
+        }
+
+        void serialize(stl::stream_vector& data) const
+        {
+            stl::push_memory(data, link_id);
+        }
+
+        void deserialize(stl::stream_vector& data)
+        {
+            stl::read_memory(data, link_id);
+        }
+    };
 }

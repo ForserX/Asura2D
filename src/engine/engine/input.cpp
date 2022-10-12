@@ -4,9 +4,9 @@ using namespace ark;
 
 float keys_states[1024] = {};
 
-ark_int_vec2 previous_mouse_pos = {};
-ark_int_vec2 current_mouse_pos = {};
-ark_float_vec2 delta_mouse_pos = {};
+math::ivec2 previous_mouse_pos = {};
+math::ivec2 current_mouse_pos = {};
+math::fvec2 delta_mouse_pos = {};
 
 stl::hash_map<int16_t, float> changed_keys;
 stl::function_set<input::on_key_change> key_change_callbacks;
@@ -56,7 +56,7 @@ input::tick(float dt)
 		}
 	}
 
-	delta_mouse_pos = ark_float_vec2(current_mouse_pos.x, current_mouse_pos.y) - ark_float_vec2(previous_mouse_pos.x, previous_mouse_pos.y);
+	delta_mouse_pos = math::fvec2(current_mouse_pos.x, current_mouse_pos.y) - math::fvec2(previous_mouse_pos.x, previous_mouse_pos.y);
 	previous_mouse_pos = current_mouse_pos;
 	changed_keys.erase(SDL_SCANCODE_MOUSEWHEEL);
 }
@@ -74,7 +74,7 @@ input::update_key(int16_t scan_code, float state)
 }
 
 void
-input::update_mouse_pos(ark_int_vec2 pos)
+input::update_mouse_pos(math::ivec2 pos)
 {
 	previous_mouse_pos = current_mouse_pos;
 	current_mouse_pos = pos;
@@ -86,13 +86,13 @@ input::is_key_pressed(int16_t scan_code)
 	return static_cast<bool>(keys_states[scan_code]);
 }
 
-ark_int_vec2&
+math::ivec2&
 input::get_mouse_pos()
 {
 	return current_mouse_pos;
 }
 
-ark_float_vec2&
+math::fvec2&
 input::get_mouse_delta()
 {
 	return delta_mouse_pos;

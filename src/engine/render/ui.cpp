@@ -86,6 +86,7 @@ ui::tick(float dt)
     uint32_t fps_counter_size = 0;
     float navigation_bar_size = 30.f;
     static bool stat_enable = false;
+    math::fvec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
         console->draw(dt, "Arkane console", &show_console);
@@ -94,68 +95,63 @@ ui::tick(float dt)
             fps_counter_size = stat_enable ? 700 : 240;
             ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), navigation_bar_size });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
-            if (!ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration))
-            {
-                ImGui::End();
-                return;
-            }
+            if (ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration)) {
+                math::fvec2 wcursor_pos = camera::screen_to_world(cursor_pos);
 
-            ark_float_vec2 cursor_pos = ImGui::GetMousePos();
-            ark_float_vec2 wcursor_pos = camera::screen_to_world(cursor_pos);
-
-            const float draw_fps = 1.f / dt;
-            const float draw_ms = dt * 1000.f;
-            
-            const float phys_tps = 1.f / physics_delta;
-            const float phys_ms = physics_delta * 1000.f;
-            const float phys_real_tps =  1.f / physics_real_delta;
-            const float phys_real_dt = physics_real_delta * 1000.f;
-            const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
-            
-            const float scheduler_tps = 1.f / scheduler_delta;
-            const float scheduler_ms = scheduler_delta * 1000.f;
-            const float real_scheduler_tps = 1.f / scheduler_real_delta;
-            const float real_scheduler_ms = scheduler_real_delta * 1000.f;
-            
-            const auto& registry = entities::internal::get_registry().get();
-            ImGui::Checkbox("Engine statistics", &stat_enable);
-            ImGui::Checkbox("Debug draw", &physical_debug_draw);
-            ImGui::Checkbox("Paused", &paused);
-            ImGui::Checkbox("Use parallel", &use_parallel);
-            ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
-            ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
-            ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
-            ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
-            if (stat_enable) {
-                ImGui::Separator();
-                ImGui::Text("UI:");
-                ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
-                ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
-                ImGui::Separator();
-                ImGui::Text("Game:");
-                ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
-                ImGui::Separator();
-                ImGui::Text("Scheduler:");
-                ImGui::Text("  TPS/dt: %.4f/%3.3fms", scheduler_tps, scheduler_ms);
-                ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", real_scheduler_tps, real_scheduler_ms);
-                ImGui::Separator();
-                ImGui::Text("Physics:");
-                ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
-                ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
-                ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
-                ImGui::ProgressBar(phys_load_percent);
-                ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
-                ImGui::Separator();
-                ImGui::Text("Entities");
-                ImGui::Text("  Allocated: %d", registry.capacity());
-                ImGui::Text("  Alive: %d", registry.alive());
-                ImGui::Separator();
-                ImGui::Text("UI Info:");
-                ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
-                ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
-                ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
+                const float draw_fps = 1.f / dt;
+                const float draw_ms = dt * 1000.f;
+                
+                const float phys_tps = 1.f / physics_delta;
+                const float phys_ms = physics_delta * 1000.f;
+                const float phys_real_tps =  1.f / physics_real_delta;
+                const float phys_real_dt = physics_real_delta * 1000.f;
+                const float phys_load_percent = (physics_real_delta / (1.f / target_physics_tps));
+                
+                const float scheduler_tps = 1.f / scheduler_delta;
+                const float scheduler_ms = scheduler_delta * 1000.f;
+                const float real_scheduler_tps = 1.f / scheduler_real_delta;
+                const float real_scheduler_ms = scheduler_real_delta * 1000.f;
+                
+                const auto& registry = entities::internal::get_registry().get();
+                ImGui::Checkbox("Engine statistics", &stat_enable);
+                ImGui::Checkbox("Debug draw", &physical_debug_draw);
+                ImGui::Checkbox("Paused", &paused);
+                ImGui::Checkbox("Use parallel", &use_parallel);
+                ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
+                ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
+                ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
+                ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
+                if (stat_enable) {
+                    ImGui::Separator();
+                    ImGui::Text("UI:");
+                    ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
+                    ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
+                    ImGui::Separator();
+                    ImGui::Text("Game:");
+                    ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
+                    ImGui::Separator();
+                    ImGui::Text("Scheduler:");
+                    ImGui::Text("  TPS/dt: %.4f/%3.3fms", scheduler_tps, scheduler_ms);
+                    ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", real_scheduler_tps, real_scheduler_ms);
+                    ImGui::Separator();
+                    ImGui::Text("Physics:");
+                    ImGui::Text("  TPS/dt: %.4f/%3.3fms", phys_tps, phys_ms);
+                    ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
+                    ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
+                    ImGui::ProgressBar(phys_load_percent);
+                    ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
+                    ImGui::Separator();
+                    ImGui::Text("Entities");
+                    ImGui::Text("  Allocated: %d", static_cast<int>(registry.capacity()));
+                    ImGui::Text("  Alive: %d", static_cast<int>(registry.alive()));
+                    ImGui::Separator();
+                    ImGui::Text("UI Info:");
+                    ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
+                    ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
+                    ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
+                }
             }
-            
+                
             ImGui::End();
         }
 
@@ -242,7 +238,7 @@ ui::tick(float dt)
              if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration)) {
                  static entt::entity inspected_entity = entt::null;
                  if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-                     auto phys_body = physics::hit_test(camera::screen_to_world(ImGui::GetMousePos()));
+                     auto phys_body = physics::hit_test(camera::screen_to_world(cursor_pos));
                      if (phys_body != nullptr) {
                          inspected_entity = entities::get_entity_from_body(phys_body->get_body()).get();
                      } else {

@@ -24,14 +24,14 @@ graphics::destroy()
 void
 graphics::draw_convex_poly_filled(
     ImDrawList* draw_list,
-    const ark_float_vec2* points,
+    const math::fvec2* points,
     const int points_count,
     ImU32 col
 )
 {
     if (points_count < 3) return;
 
-    const ark_float_vec2 uv = draw_list->_Data->TexUvWhitePixel;
+    const ImVec2 uv = draw_list->_Data->TexUvWhitePixel;
 
     if (draw_list->Flags & ImDrawListFlags_AntiAliasedFill) {
         // Anti-aliased Fill
@@ -51,10 +51,10 @@ graphics::draw_convex_poly_filled(
         }
 
         // Compute normals
-        auto* temp_normals = static_cast<ark_float_vec2*>(alloca(points_count * sizeof(ark_float_vec2))); //-V630
+        auto* temp_normals = static_cast<math::fvec2*>(alloca(points_count * sizeof(math::fvec2))); //-V630
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
-            const ark_float_vec2& p0 = points[i0];
-            const ark_float_vec2& p1 = points[i1];
+            const math::fvec2& p0 = points[i0];
+            const math::fvec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             {
@@ -74,8 +74,8 @@ graphics::draw_convex_poly_filled(
             constexpr float AA_SIZE = 1.0f;
             
             // Average normals
-            const ark_float_vec2& n0 = temp_normals[i0];
-            const ark_float_vec2& n1 = temp_normals[i1];
+            const math::fvec2& n0 = temp_normals[i0];
+            const math::fvec2& n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
             {
@@ -117,7 +117,8 @@ graphics::draw_convex_poly_filled(
         draw_list->PrimReserve(idx_count, vtx_count);
         
         for (int i = 0; i < vtx_count; i++) {
-            draw_list->_VtxWritePtr[0].pos = points[i];
+            draw_list->_VtxWritePtr[0].pos.x = points[i].x;
+            draw_list->_VtxWritePtr[0].pos.y = points[i].y;
             draw_list->_VtxWritePtr[0].uv = uv;
             draw_list->_VtxWritePtr[0].col = col;
             draw_list->_VtxWritePtr++;
@@ -137,16 +138,15 @@ graphics::draw_convex_poly_filled(
 void
 graphics::draw_rect(
 	ImColor color,
-	ark_float_vec2 p_min,
-	ark_float_vec2 p_max,
+    const math::frect& rect,
 	bool filled
 )
 {
 	OPTICK_EVENT("graphics draw rect");
 	if (filled) {
-		ImGui::GetBackgroundDrawList()->AddRectFilled(p_min, p_max, color);
+		ImGui::GetBackgroundDrawList()->AddRectFilled(rect.min(), rect.max(), color);
 	} else {
-		ImGui::GetBackgroundDrawList()->AddRect(p_min, p_max, color);
+		ImGui::GetBackgroundDrawList()->AddRect(rect.min(), rect.max(), color);
 	}
 }
 
@@ -171,7 +171,7 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
     
 	const int32 vertexCount = poly->m_count;
 	ark_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
-	ark_float_vec2 vertices[b2_maxPolygonVertices];
+	math::fvec2 vertices[b2_maxPolygonVertices];
 
 	for (int32 i = 0; i < vertexCount; ++i) {
 		vertices[i] = camera::world_to_screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
@@ -187,8 +187,7 @@ graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
 
-	ark_float_vec2 center = camera::world_to_screen(b2Mul(xf, circle->m_p));
-
+	auto center = camera::world_to_screen(b2Mul(xf, circle->m_p));
 	float radius = camera::scale_factor(circle->m_radius);
 
 	ImGui::GetBackgroundDrawList()->AddCircle(center, radius, clr, 0, 0.3 * radius);
@@ -290,12 +289,12 @@ void graphics::theme::dark()
 	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(1.00f, 0.00f, 0.00f, 0.35f);
 
 	ImGuiStyle& style = ImGui::GetStyle();
-	style.WindowPadding = ark_float_vec2(8.00f, 8.00f);
-	style.FramePadding = ark_float_vec2(5.00f, 2.00f);
-	style.CellPadding = ark_float_vec2(6.00f, 6.00f);
-	style.ItemSpacing = ark_float_vec2(6.00f, 6.00f);
-	style.ItemInnerSpacing = ark_float_vec2(6.00f, 6.00f);
-	style.TouchExtraPadding = ark_float_vec2(0.00f, 0.00f);
+	style.WindowPadding = ImVec2(8.00f, 8.00f);
+	style.FramePadding = ImVec2(5.00f, 2.00f);
+	style.CellPadding = ImVec2(6.00f, 6.00f);
+	style.ItemSpacing = ImVec2(6.00f, 6.00f);
+	style.ItemInnerSpacing = ImVec2(6.00f, 6.00f);
+	style.TouchExtraPadding = ImVec2(0.00f, 0.00f);
 	style.IndentSpacing = 25;
 	style.ScrollbarSize = 15;
 	style.GrabMinSize = 10;

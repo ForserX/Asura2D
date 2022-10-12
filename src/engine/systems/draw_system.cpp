@@ -29,7 +29,7 @@ draw_system::tick(float dt)
 {
 	OPTICK_EVENT("engine draw system tick");
 
-	entities::access([this]() {
+	entities::access_view([this]() {
 		const auto draw_view = entities::get_view<drawable_flag>();
 		const auto background_view = entities::get_view<background_flag>();
 
@@ -48,12 +48,7 @@ draw_system::tick(float dt)
 				if (entities::contains<draw_color_component>(entity)) {
 					const auto draw_color_comp = entities::try_get<draw_color_component>(entity);
 					if (draw_color_comp != nullptr) {
-						graphics::draw_rect(
-							draw_color_comp->color,
-							{ 0,0 },
-							{ static_cast<float>(width), static_cast<float>(height) }
-						);
-
+						graphics::draw_rect(draw_color_comp->color, math::frect(0, 0, width, height));
 						return;
 					}
 				}

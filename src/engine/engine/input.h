@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #define SDL_SCANCODE_MOUSE_LEFT SDL_SCANCODE_ENDCALL + SDL_BUTTON_LEFT
 #define SDL_SCANCODE_MOUSE_MIDDLE SDL_SCANCODE_ENDCALL + SDL_BUTTON_MIDDLE
@@ -32,12 +32,12 @@ namespace ark::input
 
 	// event window listeners
 	void update_key(int16_t scan_code, float state);
-	void update_mouse_pos(ark_int_vec2 pos);
+	void update_mouse_pos(math::ivec2 pos);
 
 	// state checkers
 	bool is_key_pressed(int16_t scan_code);
-	ark_int_vec2& get_mouse_pos();
-	ark_float_vec2& get_mouse_delta();
+	math::ivec2& get_mouse_pos();
+	math::fvec2& get_mouse_delta();
 
 	using on_key_change = fu2::function<void(int16_t scan_code, key_state state) const>;
 	using on_input_change = fu2::function<void(int16_t scan_code, float new_state) const>;

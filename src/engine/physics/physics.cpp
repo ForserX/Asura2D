@@ -30,7 +30,7 @@ physics::tick(float dt)
 	game_world.tick(dt);
 }
 
-ark_matrix
+math::frect
 physics::get_body_position(physics_body* body)
 {
 	return game_world.get_body_position(body);
@@ -57,13 +57,13 @@ physics::schedule_free(physics_body* body)
 class QueryCallback : public b2QueryCallback
 {
 public:
-	QueryCallback(const ark_float_vec2& point)
+	QueryCallback(const math::fvec2& point)
 		: m_point(point) {}
 
 	bool ReportFixture(b2Fixture* fixture) override
 	{
 		const b2Body* body = fixture->GetBody();
-		if (fixture->TestPoint(m_point)) {
+        if (fixture->TestPoint({m_point.x, m_point.y})) {
 			m_fixture = fixture;
 			return false;
 		}
@@ -71,19 +71,20 @@ public:
 		return true;
 	}
 
-	ark_float_vec2 m_point = {};
+    math::fvec2 m_point = {};
 	b2Fixture* m_fixture = nullptr;
 };
 
 physics::physics_body*
-physics::hit_test(ark_float_vec2 pos)
+physics::hit_test(math::fvec2 pos)
 {	
 	// Make a small box.
 	b2AABB aabb = {};
-	ark_float_vec2 d = {};
+	b2Vec2 d = {};
+    b2Vec2 phys_pos = {pos.x, pos.y};
 	d.Set(0.001f, 0.001f);
-	aabb.lowerBound = pos - d;
-	aabb.upperBound = pos + d;
+	aabb.lowerBound = phys_pos - d;
+	aabb.upperBound = phys_pos + d;
 
 	// Query the world for overlapping shapes.
 	QueryCallback callback(pos);

@@ -8,6 +8,8 @@ entity_view invalid_entity = {};
 std::chrono::nanoseconds entities_serilaize_last_time = {};
 stl::stream_vector entities_data = {};
 
+math::fvec2 no_pos = {};
+
 input::on_key_change entities_key_change_event = {};
 bool clear_on_next_tick = false;
 bool free_on_next_tick = false;
@@ -17,7 +19,6 @@ void process_entities(auto&& func, uint8_t state)
 	using namespace std::chrono_literals;
 	while (serialization_state != entities_state::idle) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		//threads::switch_context();
 	}
 
 	serialization_state = state;
@@ -36,7 +37,7 @@ auto try_to_serialize = [](std::string_view state_name)
 	std::filesystem::path path = filesystem::get_userdata_dir();
 	path.append(state_name);
 
-	entities_data.second.resize(0);
+    entities_data.second.clear();
 	entities::internal::serialize(entities_data);
 	filesystem::write_file(path, entities_data);
 };
@@ -46,7 +47,7 @@ auto try_to_deserialize = [](std::string_view state_name)
 	std::filesystem::path path = filesystem::get_userdata_dir();
 	path.append(state_name);
 
-	entities_data.second.resize(0);
+    entities_data.second.clear();
 	filesystem::read_file(path, entities_data);
 	entities::deserialize(entities_data);
 };
@@ -203,7 +204,7 @@ deserialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt
 
 template<typename Component>
 void
-serialize_entity_flag(stl::stream_vector& data, entt::registry& reg, entt::entity ent, entity_desc& desc)
+serialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::registry& reg, entt::entity ent)
 {
 	if constexpr (entities::is_flag_v<Component>) {
 		if (reg.all_of<Component>(ent)) {
@@ -239,7 +240,7 @@ serialize_entity(stl::stream_vector& data, entt::entity ent)
 	stl::push_memory(data, desc);
 
 	(serialize_entity_component<Args>(data, reg, ent, desc), ...);
-	(serialize_entity_flag<Args>(data, reg, ent, desc), ...);
+	(serialize_entity_flag<Args>(data, desc, reg, ent), ...);
 
 	auto* desc_ptr = reinterpret_cast<entity_desc*>(&data.second[ent_pos]);
 	std::memcpy(desc_ptr, &desc, sizeof(entity_desc));
@@ -425,17 +426,17 @@ entities::is_null(entity_view ent)
 	return ent.get() == entt::null;
 }
 
-ark_float_vec2
+const math::fvec2&
 entities::get_position(entity_view entity)
 {
 	if (contains<scene_component>(entity)) {
 		const auto scene_comp = try_get<scene_component>(entity.get());
 		if (scene_comp != nullptr) {
-			return scene_comp->position;
+			return scene_comp->transform.position();
 		}
 	}
 
-	return {};
+	return no_pos;
 }
 
 entity_view
@@ -481,9 +482,9 @@ entities::add_texture(entity_view ent, stl::string_view path)
 entity_view
 entities::add_phys_body(
 	entity_view ent,
-	ark_float_vec2 vel,
-	ark_float_vec2 pos,
-	ark_float_vec2 size,
+	math::fvec2 vel,
+	math::fvec2 pos,
+	math::fvec2 size,
 	physics::body_type type,
 	material::shape shape,
 	material::type mat

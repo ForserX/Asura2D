@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace ark::event
 {
@@ -7,8 +7,8 @@ namespace ark::event
  		stl::string_view,
  		entity_view,
  		int64_t,
- 		ark_int_vec2,
- 		ark_float_vec2,
+ 		math::ivec2,
+ 		math::fvec2,
  		double,
  		bool
 	>;

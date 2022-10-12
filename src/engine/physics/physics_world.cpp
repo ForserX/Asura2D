@@ -12,7 +12,7 @@ float physics_real_delta = 0.f;
 b2MouseJoint* TestMouseJoint = nullptr;
 physics::physics_body* ContactBody = nullptr;
 physics::physics_body* MoveBody = nullptr;
-ark_float_vec2 ContactPoint = {};
+math::fvec2 ContactPoint = {};
 
 std::mutex physics_lock = {};
 // Test 
@@ -23,8 +23,8 @@ class ark::CollisionLister final : public b2ContactListener
 	{
 		b2Fixture* fixtureA;
 		b2Fixture* fixtureB;
-		ark_float_vec2 normal;
-		ark_float_vec2 position;
+		math::fvec2 normal;
+		math::fvec2 position;
 		b2PointState state;
 		float normalImpulse;
 		float tangentImpulse;
@@ -56,8 +56,10 @@ class ark::CollisionLister final : public b2ContactListener
 			ContactPoint* cp = m_points + m_pointCount;
 			cp->fixtureA = fixtureA;
 			cp->fixtureB = fixtureB;
-			cp->position = worldManifold.points[i];
-			cp->normal = worldManifold.normal;
+			cp->position.x = worldManifold.points[i].x;
+            cp->position.y = worldManifold.points[i].y;
+			cp->normal.x = worldManifold.normal.x;
+            cp->normal.y = worldManifold.normal.y;
 			cp->state = state2[i];
 			cp->normalImpulse = manifold->points[i].normalImpulse;
 			cp->tangentImpulse = manifold->points[i].tangentImpulse;
@@ -84,14 +86,10 @@ physics::world::start()
 void
 physics::world::init()
 {
-	ark_float_vec2 gravity(0.0f, -9.8f);
+	b2Vec2 gravity(0.0f, -9.8f);
 	world_holder = std::make_unique<b2World>(gravity);
 	cl = std::make_unique<CollisionLister>();
 	world_holder->SetContactListener(cl.get());
-
-	world_dbg_draw = std::make_unique<DebugDraw>();
-	world_dbg_draw->AppendFlags(b2Draw::e_jointBit | b2Draw::e_aabbBit);
-	world_holder->SetDebugDraw(world_dbg_draw.get());
 
 	b2BodyDef groundBodyDef;
 	groundBodyDef.position.Set(0.0f, -10.0f);
@@ -221,21 +219,21 @@ physics::world::debug_joints_tick()
 	}
 
 	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1)) {
-		ark_float_vec2 mouse_position_absolute = ImGui::GetMousePos();
-		mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
+		auto mouse_position_absolute = ImGui::GetMousePos();
+        auto new_pos = camera::screen_to_world({mouse_position_absolute.x, mouse_position_absolute.y});
 
 		if (ContactBody == nullptr) {
-			ContactBody = hit_test(mouse_position_absolute);
-			ContactPoint = mouse_position_absolute;
+			ContactBody = hit_test(new_pos);
+			ContactPoint = new_pos;
 		}
 		else {
-			const physics_body* test_body = hit_test(mouse_position_absolute);
+			const physics_body* test_body = hit_test(new_pos);
 			if (test_body != nullptr && test_body != ContactBody && test_body->get_body_type() != body_type::static_body) {
 				constexpr float frequency_hz = 5.0f;
 				constexpr float damping_ratio = 0.7f;
 
 				b2DistanceJointDef jointDef;
-				jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), ContactPoint, mouse_position_absolute);
+                jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), {ContactPoint.x, ContactPoint.y}, {new_pos.x, new_pos.y});
 
 				jointDef.collideConnected = true;
 				b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
@@ -249,11 +247,11 @@ physics::world::debug_joints_tick()
 	}
 
 	if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
-		ark_float_vec2 mouse_position_absolute = ImGui::GetMousePos();
-		mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
+		auto mouse_position_absolute = ImGui::GetMousePos();
+        auto new_pos = camera::screen_to_world({mouse_position_absolute.y, mouse_position_absolute.y });
 
 		if (TestMouseJoint == nullptr) {
-			MoveBody = hit_test(mouse_position_absolute);
+			MoveBody = hit_test(new_pos);
 			if (MoveBody != nullptr && MoveBody->get_body_type() != body_type::static_body) {
 				constexpr float frequency_hz = 60.0f;
 				constexpr float damping_ratio = 1.f;
@@ -261,7 +259,8 @@ physics::world::debug_joints_tick()
 				b2MouseJointDef jd;
 				jd.bodyA = ground;
 				jd.bodyB = MoveBody->get_body();
-				jd.target = mouse_position_absolute;
+				jd.target.x = new_pos.x;
+                jd.target.y = new_pos.y;
 				jd.maxForce = 1000.0f * MoveBody->get_body()->GetMass();
 				b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
@@ -272,7 +271,7 @@ physics::world::debug_joints_tick()
 			}
 		} else {
 			if (!MoveBody->is_destroyed()) {
-				TestMouseJoint->SetTarget(mouse_position_absolute);
+                TestMouseJoint->SetTarget({new_pos.x, new_pos.y});
 			} else {
 				TestMouseJoint = nullptr;
 			}
@@ -323,10 +322,9 @@ physics::world::internal_tick(float dt)
 	physics_real_delta = static_cast<float>((end_real_time - begin_real_time).count()) / 1000000000.f;
 }
 
-ark_matrix
+math::frect
 physics::world::get_real_body_position(b2Body* body)
 {
-	ark_matrix pos = {};
 	b2AABB aabb = {};
 	b2Transform t = {};
 	
@@ -349,12 +347,7 @@ physics::world::get_real_body_position(b2Body* body)
 		fixture = fixture->GetNext();
 	}
 
-	pos.x = body->GetPosition().x;
-	pos.y = body->GetPosition().y;
-	pos.w = aabb.upperBound.x;
-	pos.h = aabb.upperBound.y;
-
-	return pos;
+	return math::frect(aabb.lowerBound, aabb.upperBound);
 }
 
 void
@@ -396,7 +389,7 @@ physics::world::destroy_world()
 	world_holder.reset();
 }
 
-ark_matrix
+math::frect
 physics::world::get_body_position(const physics_body* body)
 {
 	if (body != nullptr) {
@@ -472,23 +465,24 @@ physics::physics_body::get_angular_velocity() const
 	return parameters.angular_vel;
 }
 
-ark_float_vec2
+math::fvec2
 physics::physics_body::get_position() const
 {
 	if (body != nullptr) {
-		return body->GetPosition();
+		auto temp_pos = body->GetPosition();
+        return { temp_pos.x, temp_pos.y };
 	}
 
 	return parameters.pos;
 }
 
-ark_float_vec2 
+math::fvec2
 physics::physics_body::get_mass_center() const
 {
 	if (body != nullptr) {
 		b2MassData mass_data = {};
 		body->GetMassData(&mass_data);
-		return mass_data.center;
+        return { mass_data.center.x, mass_data.center.y};
 	}
 
 	return parameters.pos;
@@ -518,12 +512,13 @@ physics::physics_body::set_mass(float new_mass)
 }
 
 void
-physics::physics_body::set_mass_center(ark_float_vec2& new_center)
+physics::physics_body::set_mass_center(math::fvec2& new_center)
 {
 	if (body != nullptr) {
 		b2MassData massData = {};
 		body->GetMassData(&massData);
-		massData.center = new_center;
+		massData.center.x = new_center.x;
+        massData.center.y = new_center.y;
 		body->SetMassData(&massData);
 	}
 
@@ -551,10 +546,10 @@ physics::physics_body::set_angular_velocity(float new_angular_vel)
 }
 
 void
-physics::physics_body::set_position(const ark_float_vec2& new_pos)
+physics::physics_body::set_position(const math::fvec2& new_pos)
 {
 	if (body != nullptr) {
-		body->SetTransform(new_pos, body->GetAngle());
+        body->SetTransform({new_pos.x, new_pos.y}, body->GetAngle());
 	}
 
 	parameters.pos = new_pos;
@@ -567,8 +562,10 @@ physics::physics_body::copy_parameters() const
 	if (body != nullptr) {
 		params.angle = body->GetAngle();
 		params.angular_vel = body->GetAngularVelocity();
-		params.vel = body->GetLinearVelocity();
-		params.pos = body->GetPosition();
+		params.vel.x = body->GetLinearVelocity().x;
+        params.vel.y = body->GetLinearVelocity().y;
+		params.pos.x = body->GetPosition().x;
+        params.pos.y = body->GetPosition().y;
 	}
 
 	return params;

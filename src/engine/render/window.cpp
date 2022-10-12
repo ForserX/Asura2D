@@ -96,7 +96,7 @@ window::tick()
 			}
 			break;
 		case SDL_MOUSEMOTION: {
-			const ark_float_vec2 pos = ImGui::GetMousePos();
+			const auto pos = ImGui::GetMousePos();
 			input::update_mouse_pos({static_cast<short>(pos.x), static_cast<short>(pos.y)});
 		}
 		break;
