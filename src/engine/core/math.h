@@ -16,8 +16,10 @@ namespace ark::math
     template<typename T>
     struct vec2
     {
+    private:
         T data[2] = {};
 
+    public:
         vec2() = default;
         vec2(auto dx, auto dy)
         {
@@ -273,8 +275,8 @@ namespace ark::math
         
         void set_angle(float angle)
         {
-            rot.data[0] = std::sinf(angle);
-            rot.data[1] = std::cosf(angle);
+            rot[0] = std::sinf(angle);
+            rot[1] = std::cosf(angle);
         }
         
         void set_rotation(const fvec2& new_rot)

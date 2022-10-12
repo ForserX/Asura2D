@@ -308,14 +308,14 @@ namespace ark::entities
             angle = std::stod(kv_storage.at("angle").data());
             angular_vel = std::stod(kv_storage.at("angular_velocity").data());
             mass = std::stod(kv_storage.at("mass").data());
-            mass_center.data[0] = std::stod(kv_storage.at("mass_center_x").data());
-            mass_center.data[1] = std::stod(kv_storage.at("mass_center_y").data());
-            vel.data[0] = std::stod(kv_storage.at("velocity_x").data());
-            vel.data[1] = std::stod(kv_storage.at("velocity_y").data());
-            pos.data[0] = std::stod(kv_storage.at("position_x").data());
-            pos.data[1] = std::stod(kv_storage.at("position_y").data());
-            size.data[0] = std::stod(kv_storage.at("size_x").data());
-            size.data[1] = std::stod(kv_storage.at("size_y").data());
+            mass_center[0] = std::stod(kv_storage.at("mass_center_x").data());
+            mass_center[1] = std::stod(kv_storage.at("mass_center_y").data());
+            vel[0] = std::stod(kv_storage.at("velocity_x").data());
+            vel[1] = std::stod(kv_storage.at("velocity_y").data());
+            pos[0] = std::stod(kv_storage.at("position_x").data());
+            pos[1] = std::stod(kv_storage.at("position_y").data());
+            size[0] = std::stod(kv_storage.at("size_x").data());
+            size[1] = std::stod(kv_storage.at("size_y").data());
             
             auto& body_type_string = kv_storage.at("body_type");
             if (body_type_string == "static") {
