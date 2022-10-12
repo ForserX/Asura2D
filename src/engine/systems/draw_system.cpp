@@ -95,9 +95,5 @@ draw_system::tick(float dt)
 				}
 			});
 		}
-
-		if (physical_debug_draw) {
-			physics::get_world().DebugDraw();
-		}
 	});
 }

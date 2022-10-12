@@ -53,7 +53,7 @@ namespace ark::entities
 	void access(auto&& func, Args&&...args)
 	{
 		{
-			OPTICK_EVENT("waiting for access")
+			OPTICK_EVENT("waiting for write access")
 			while (serialization_state != entities_state::idle) {
 				threads::switch_context();
 			}
@@ -76,7 +76,7 @@ namespace ark::entities
     void access_view(auto&& func, Args&&...args)
     {
         {
-            OPTICK_EVENT("waiting for access")
+            OPTICK_EVENT("waiting for view access")
             while (serialization_state != entities_state::idle && serialization_state != entities_state::viewing) {
                 threads::switch_context();
             }

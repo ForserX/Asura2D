@@ -174,18 +174,19 @@ namespace ark::math
     using ivec2 = vec2<int16_t>;
     using fvec2 = vec2<float>;
     
+    // quad or rect class, for rotations and min/max calculations
     template<typename T>
     struct rect
     {
         T values[4] = {};
         
         rect() = default;
-        rect(vec2<T> in_min, vec2<T> in_max)
+        rect(vec2<T> first, vec2<T> second)
         {
-            values[0] = in_min.x();
-            values[1] = in_min.y();
-            values[2] = in_max.x();
-            values[3] = in_max.y();
+            values[0] = std::min(first.x(), second.x());
+            values[1] = std::min(first.y(), second.y());
+            values[2] = std::max(first.x(), second.x());
+            values[3] = std::max(first.y(), second.y());
         }
         
         rect(auto x, auto y, auto w, auto h)
@@ -236,7 +237,15 @@ namespace ark::math
             return max_y() - min_y();
         }
         
+        void rotate(float angle)
+        {
+            
+        }
         
+        void rotate_centered(float angle, float center)
+        {
+            
+        }
     };
 
     using irect = rect<int16_t>;
