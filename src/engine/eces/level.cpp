@@ -22,6 +22,7 @@ namespace ark::level
 			if (section == "background") {
 				auto background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), level_data.get<stl::string_view>(section, "path")));
 				entities::add_field<entities::background_flag>(background_ent);
+                entities::add_field<entities::scene_component>(background_ent);
 				continue;
 			}
 			
