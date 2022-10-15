@@ -30,7 +30,6 @@
 
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
-#include <mio/mio.hpp>
 
 #include <imgui.h>
 #include <imgui_impl_sdl.h>

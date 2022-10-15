@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <mio/mio.hpp>
 
 using namespace ark;
 
@@ -32,8 +33,8 @@ std::mutex resource_manager_lock;
 
 auto load_content_context = []()
 {
-    auto content_dir = filesystem::get_content_dir();
-    for (auto it : std::filesystem::recursive_directory_iterator(content_dir)) {
+    const auto& content_dir = filesystem::get_content_dir();
+    for (const auto& it : std::filesystem::recursive_directory_iterator(content_dir)) {
         if (it.is_regular_file()) {
             std::error_code error;
             auto base_path = std::filesystem::relative(it.path(), content_dir, error).generic_string();
@@ -169,14 +170,14 @@ resources::schedule_lock(id_type resource_id, int64_t begin_offset, int64_t end_
         return false;
     }
     
-    resource_scheduled_tasks.emplace(resource_id, std::move(resource_task));
+    resource_scheduled_tasks.emplace(resource_id, resource_task);
     return true;
 }
 	
 bool
 resources::schedule_unlock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
 {
-    std::scoped_lock<std::mutex> scope_lock(resource_manager_lock);
+    std::scoped_lock scope_lock(resource_manager_lock);
     resource_scheduled_task resource_task = {};
     resource_task.begin_offset = begin_offset;
     resource_task.end_offset = end_offset;
@@ -186,7 +187,7 @@ resources::schedule_unlock(id_type resource_id, int64_t begin_offset, int64_t en
         return false;
     }
     
-    resource_scheduled_tasks.emplace(resource_id, std::move(resource_task));
+    resource_scheduled_tasks.emplace(resource_id, resource_task);
     return true;
 }
 
@@ -209,7 +210,7 @@ resources::lock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
     }
     
 #ifdef _WIN32
-    bool locked = !!VirtualLock(mapping_handle, end_offset - begin_offset);
+    bool locked = !!VirtualLock(const_cast<char*>(mapping_handle), end_offset - begin_offset);
 #else
     bool locked = (mlock(mapping_handle, end_offset - begin_offset) == 0);
 #endif
@@ -236,7 +237,7 @@ resources::unlock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
     }
     
 #ifdef _WIN32
-    bool unlocked = !!VirtualUnlock(mapping_handle, end_offset - begin_offset);
+    bool unlocked = !!VirtualUnlock(const_cast<char*>(mapping_handle), end_offset - begin_offset);
 #else
     bool unlocked = (munlock(mapping_handle, end_offset - begin_offset));
 #endif

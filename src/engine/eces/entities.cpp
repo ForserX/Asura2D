@@ -8,7 +8,7 @@ entity_view invalid_entity = {};
 std::chrono::nanoseconds entities_serilaize_last_time = {};
 stl::stream_vector entities_data = {};
 
-math::fvec2 no_pos = { MAXFLOAT, MAXFLOAT };
+math::fvec2 no_pos = { FLT_MAX, FLT_MAX };
 
 input::on_key_change entities_key_change_event = {};
 bool clear_on_next_tick = false;
@@ -58,7 +58,7 @@ auto shit_detector_tick = []()
 	auto destroy_ent = [&reg](entt::entity ent)
 	{
 		if (entities::is_valid(ent)) {
-			if (auto phys_comp = reg.try_get<entities::physics_body_component>(ent)) {
+			if (const auto phys_comp = reg.try_get<entities::physics_body_component>(ent)) {
 				physics::schedule_free(phys_comp->body);
 			}
 

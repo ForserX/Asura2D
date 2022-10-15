@@ -429,7 +429,6 @@ namespace ark::entities
 
         void string_deserialize(stl::string_map& kv_storage)
         {
-            return false;
         }
 
         void string_serialize(stl::string_map& kv_storage) const
@@ -467,7 +466,7 @@ namespace ark::entities
 
         void string_deserialize(stl::string_map& kv_storage)
         {
-            return false;
+        	
         }
 
         void string_serialize(stl::string_map& kv_storage) const

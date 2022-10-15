@@ -107,8 +107,6 @@ namespace ark::math
             data[1] /= v;
         }
         
-        vec2<T> operator<=>(const vec2<T>&) const = default;
-        
         operator ImVec2() const
         {
             return ImVec2(static_cast<float>(data[0]), static_cast<float>(data[1]));
@@ -122,7 +120,7 @@ namespace ark::math
         bool empty() const
         {
             if constexpr (std::is_floating_point_v<T>) {
-                return (x() == MAXFLOAT && y() == MAXFLOAT) || (x() == static_cast<T>(0) && y() == static_cast<T>(0));
+                return (x() == FLT_MAX && y() == FLT_MAX) || (x() == static_cast<T>(0) && y() == static_cast<T>(0));
             }
             
             return (x() == static_cast<T>(0) && y() == static_cast<T>(0));
