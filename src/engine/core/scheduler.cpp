@@ -31,15 +31,16 @@ scheduler::init()
 					}
 				};
 
-				if (!global_func_map[task_type].empty()) {
-					for (auto& func : global_func_map[task_type]) {
+				auto& current_map = global_func_map[task_type];
+				if (!current_map.empty()) {
+					for (const auto& func : current_map) {
 						trigger_all(func);
 					}
 
 					{
 						std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
 						for (const auto& elem : funcs_to_delete) {
-							global_func_map[task_type].erase(elem);
+							current_map.erase(elem);
 						}
 					}
 				}

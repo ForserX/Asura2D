@@ -23,15 +23,16 @@ namespace ark::stl
 			using value_t = std::true_type;
 			using type = Op<Args...>;
 		};
+
+		struct nonesuch{};
 	} 
 	
-	struct nonesuch{};
  
 	template <template<class...> class Op, class... Args>
-	using is_detected = typename internal::detector<nonesuch, void, Op, Args...>::value_t;
+	using is_detected = typename internal::detector<internal::nonesuch, void, Op, Args...>::value_t;
  
 	template <template<class...> class Op, class... Args>
-	using detected_t = typename internal::detector<nonesuch, void, Op, Args...>::type;
+	using detected_t = typename internal::detector<internal::nonesuch, void, Op, Args...>::type;
 
 #if 0
 	template <class T>

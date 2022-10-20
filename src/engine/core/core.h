@@ -21,5 +21,5 @@ enum entities_state : uint8_t
 	reading,			// entity system reading entities state
 	writing,			// entity system writing entities state
 	cleaning_up,		// entity system cleaning up all this shit
-	viewing		// entity system waiting until other thread is doing his job
+	viewing				// entity system waiting until other thread is doing his job
 };

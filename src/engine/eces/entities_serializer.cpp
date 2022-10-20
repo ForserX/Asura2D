@@ -24,7 +24,7 @@ auto try_to_deserialize = [](std::string_view state_name)
 
 	entities_data.second.clear();
 	filesystem::read_file(path, entities_data);
-	entities::deserialize(entities_data);
+	entities::internal::deserialize(entities_data);
 };
 
 template<typename Component>
@@ -163,11 +163,11 @@ entities::deserialize_state(std::string_view state_name)
 	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
 		internal::process_entities([state_name]() {
 			try_to_deserialize(state_name);
-			}, entities_state::reading);
+		}, entities_state::writing);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;
-		});
+	});
 }
 
 void
@@ -176,11 +176,11 @@ entities::serialize_state(std::string_view state_name)
 	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
 		internal::process_entities([state_name]() {
 			try_to_serialize(state_name);
-			}, entities_state::reading);
+		}, entities_state::reading);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;
-		});
+	});
 }
 
 const std::chrono::nanoseconds&
@@ -194,7 +194,7 @@ entities::internal::string_serialize(stl::tree_string_map& data)
 {
 	OPTICK_EVENT("entities serializer");
 	const auto& reg = get_registry().get();
-	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
+	const auto ent_view = reg.view<DECLARE_NON_SERIALIZABLE_TYPES>();
 	const uint32_t entities_count = reg.size() - ent_view.size_hint();
 
 	if (entities_count != 0) {
@@ -212,11 +212,11 @@ entities::string_serialize(stl::tree_string_map& data)
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		internal::process_entities([&data]() {
 			internal::string_serialize(data);
-			}, entities_state::reading);
+		}, entities_state::reading);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;
-		});
+	});
 }
 
 void
@@ -262,7 +262,7 @@ entities::serialize(stl::stream_vector& data)
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;
-		});
+	});
 }
 
 void
@@ -288,9 +288,9 @@ entities::deserialize(stl::stream_vector& data)
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		internal::process_entities([&data]() {
 			internal::deserialize(data);
-			}, entities_state::writing);
+		}, entities_state::writing);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;
-		});
+	});
 }
