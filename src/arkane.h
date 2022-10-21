@@ -28,6 +28,7 @@
 #include <pthread.h>
 #endif
 
+#include <boost/pfr/pfr.hpp>
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
 

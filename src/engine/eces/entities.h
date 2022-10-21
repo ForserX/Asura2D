@@ -30,7 +30,7 @@ namespace ark
 
 	struct entity_desc
 	{
-        net::flag_type flags;
+        net::flag_t flags;
 		uint8_t components_count;
 		uint8_t reserved2;
 	};

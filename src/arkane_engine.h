@@ -1,6 +1,9 @@
 #pragma once
 
+#include "engine/core/tmagic.h"
 #include "engine/core/types.h"
+#include "engine/core/treflect.h"
+
 #include "engine/core/math.h"
 #include "engine/core/debug_core.h"
 #include "engine/core/core.h"
@@ -21,6 +24,7 @@
 #include "engine/eces/components.h"
 #include "game_components.h"
 
+#include "engine/eces/reflection.h"
 #include "engine/eces/entities.h"
 #include "engine/eces/entities_helpers.h"
 #include "engine/eces/entities_serializer.h"
