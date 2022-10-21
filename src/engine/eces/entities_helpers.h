@@ -4,15 +4,6 @@ namespace ark::entities
 {
 	namespace internal
 	{
-		void string_serialize(stl::tree_string_map& data);
-		void string_deserialize(const stl::tree_string_map& data);
-
-		void serialize(stl::stream_vector& data);
-		void deserialize(stl::stream_vector& data);
-	}
-
-	namespace internal
-	{
 		registry& get_registry();
 
 		void process_entities(auto&& func, uint8_t state)

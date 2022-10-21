@@ -15,6 +15,7 @@ bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;
 
+/*
 template<typename Component>
 void inspect_entity_component(stl::hash_map<stl::string, stl::string>& kv_storage, entt::entity ent)
 {
@@ -58,6 +59,7 @@ void inspect_entity(entt::entity ent)
         ImGui::Text("%s: %s", key.data(), value.data());
     }
 }
+*/
 
 void
 ui::init()
@@ -244,12 +246,6 @@ ui::tick(float dt)
                      } else {
                          inspected_entity = entt::null;
                      }
-                 }
-         
-                 ImGui::InputInt("Entity ID", reinterpret_cast<int*>(&inspected_entity));
-                 if (entities::is_valid(inspected_entity)) {
-                     ImGui::Separator();
-                     inspect_entity<DECLARE_ENTITIES_TYPES>(inspected_entity);
                  }
          
                  ImGui::End();

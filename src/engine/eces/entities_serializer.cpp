@@ -42,7 +42,11 @@ deserialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt
 		entt::id_type id = entt::type_id<Component>().hash();
 		if (id == cmp_id) {
 			Component component = {};
-			component.deserialize(data);
+			if constexpr (entities::is_custom_serialize_v<Component>) {
+				component.deserialize(data);
+			} else {
+				stl::read_memory(data, component);
+			}
 			reg.emplace<Component>(ent, std::move(component));
 		}
 	}
@@ -88,10 +92,19 @@ serialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt::
 		if (reg.all_of<Component>(ent)) {
 			entt::id_type id = entt::type_id<Component>().hash();
 			auto& storage = (*reg.storage(id)).second;
+
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
-			if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
-				stl::push_memory(data, id);
-				value_ptr->serialize(data);
+			if (value_ptr != nullptr) {
+				if constexpr (entities::is_custom_serialize_v<Component>) {
+					if (value_ptr->can_serialize_now()) {
+						stl::push_memory(data, id);
+						value_ptr->serialize(data);
+					}
+				} else {
+					stl::push_memory(data, id);
+					stl::push_memory(data, *value_ptr);
+				}
+
 				desc.components_count++;
 			}
 		}
@@ -104,8 +117,6 @@ serialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::registr
 {
 	if constexpr (entities::is_flag_v<Component>) {
 		if (reg.all_of<Component>(ent)) {
-			entt::id_type id = entt::type_id<Component>().hash();
-			auto& storage = (*reg.storage(id)).second;
 			desc.flags |= Component::flag;
 		}
 	}
@@ -205,48 +216,6 @@ entities::get_last_serialize_time()
 }
 
 void
-entities::internal::string_serialize(stl::tree_string_map& data)
-{
-	OPTICK_EVENT("entities string serializer");
-	const auto& reg = get_registry().get();
-	const auto ent_view = reg.view<DECLARE_NON_SERIALIZABLE_TYPES>();
-	const uint32_t entities_count = reg.size() - ent_view.size_hint();
-
-	if (entities_count != 0) {
-		const entt::entity* ent_ptr = reg.data();
-		while (ent_ptr != reg.data() + reg.size()) {
-			string_serialize_entity<DECLARE_ENTITIES_TYPES>(data, *ent_ptr);
-			ent_ptr++;
-		}
-	}
-}
-
-void
-entities::string_serialize(stl::tree_string_map& data)
-{
-	scheduler::schedule(scheduler::entity_serializator, [&data]() {
-		internal::process_entities([&data]() {
-			internal::string_serialize(data);
-		}, entities_state::reading);
-
-		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
-		return false;
-	});
-}
-
-void
-entities::internal::string_deserialize(const stl::tree_string_map& data)
-{
-	OPTICK_EVENT("entities string deserializer");
-}
-
-void
-entities::string_deserialize(const stl::tree_string_map& data)
-{
-
-}
-
-void
 entities::internal::serialize(stl::stream_vector& data)
 {
 	OPTICK_EVENT("entities serializer");
@@ -273,7 +242,7 @@ entities::serialize(stl::stream_vector& data)
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		internal::process_entities([&data]() {
 			internal::serialize(data);
-			}, entities_state::reading);
+		}, entities_state::reading);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
 		return false;

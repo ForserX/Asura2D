@@ -43,7 +43,7 @@ scene::import_scene(std::string_view scene_name)
 	ark_assert(std::filesystem::exists(scene_path), "Can't find scene", return);
 	section_parser.load(scene_path);
 
-	entities::string_deserialize(section_parser.get_data());
+	//entities::string_deserialize(section_parser.get_data());
 }
 
 void
@@ -54,7 +54,7 @@ scene::export_scene(std::string_view scene_name)
 	scene_path.append(scene_name);
 
 	stl::tree_string_map scene_map;
-	entities::string_serialize(scene_map);
+	//entities::string_serialize(scene_map);
 
 	//section_parser = std::move(config_parser(std::move(scene_map), section_parser.get_count()));
 	//section_parser.save(scene_path);
