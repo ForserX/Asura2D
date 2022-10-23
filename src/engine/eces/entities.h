@@ -49,18 +49,18 @@ namespace ark::entities
 	bool is_null(entity_view ent);
 	
 	entity_view create();
-	void mark_as_garbage(entity_view ent);
+	void mark_as_garbage(const entity_view& ent);
 
 	entity_view get_entity_from_body(const b2Body* body);
-    const math::fvec2& get_position(entity_view entity);
+    const math::fvec2& get_position(const entity_view& ent);
 
-	entity_view add_texture(
-		entity_view ent,
+	const entity_view& add_texture(
+		const entity_view& ent,
 		stl::string_view path
 	);
 	
-	entity_view add_phys_body(
-		entity_view ent,
+	const entity_view& add_phys_body(
+		const entity_view& ent,
 		math::fvec2 vel,
         math::fvec2 pos,
         math::fvec2 size,

@@ -150,7 +150,7 @@ graphics::draw_rect(
 }
 
 void
-graphics::draw_background(resources::id_type resource_id)
+graphics::draw_background(resources::id_t resource_id)
 {
 	OPTICK_EVENT("graphics draw background");
 	const int64_t width = ui::get_cmd_int("window_width");

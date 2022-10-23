@@ -33,6 +33,24 @@ namespace ark::stl
 		using detected_t = typename internal::detector<internal::nonesuch, void, Op, Args...>::type;
 	}
 
+	template <typename T>
+	using detect_flag = decltype(T::flag);
+
+	template <typename T>
+	using detect_custom_serialize = decltype(T::custom_serialize);
+
+	template <typename T>
+	using detect_string_serialize = decltype(T::string_serialize);
+
+	template <typename T>
+	constexpr bool is_flag_v = stl::meta::is_detected<detect_flag, T>::value;
+
+	template <typename T>
+	constexpr bool is_custom_serialize_v = stl::meta::is_detected<detect_custom_serialize, T>::value;
+
+	template <typename T>
+	constexpr bool is_string_serialize_v = stl::meta::is_detected<detect_string_serialize, T>::value;
+
 	template<typename T>
 	void hash_combine(std::int64_t& s, const T& v)
 	{
@@ -59,5 +77,4 @@ namespace ark::stl
 			return res;
 		}
 	};
-
 }

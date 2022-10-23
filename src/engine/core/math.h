@@ -16,6 +16,9 @@ namespace ark::math
     template<typename T>
     struct vec2
     {
+    public:
+        static constexpr bool string_serialize = true;
+
     private:
         T data[2] = {};
 
@@ -124,6 +127,33 @@ namespace ark::math
             }
             
             return (x() == static_cast<T>(0) && y() == static_cast<T>(0));
+        }
+
+        stl::string to_string()
+        {
+            return std::to_string(x()) + " " + std::to_string(y());
+        }
+
+        void from_string(const stl::string& sval)
+        {
+            size_t offset = 0;
+            auto get_string = [&sval, &offset]() {
+                const size_t begin_offset = sval.find_first_not_of(' ', offset);
+                const size_t end_offset = sval.find_first_of(' ', begin_offset);
+                offset = end_offset;
+
+                return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
+            };
+
+            data[0] = std::stod(get_string());
+            data[1] = std::stod(get_string());
+        }
+
+        static vec2<T> unstrigify(const stl::string& sval)
+        {
+            vec2<T> vec;
+            vec.from_string(sval);
+            return vec;
         }
         
         static vec2<T> min(const vec2<T>& first, const vec2<T>& second)
@@ -238,7 +268,7 @@ namespace ark::math
         {
             return max_y() - min_y();
         }
-        
+
         void rotate(float angle)
         {
             
@@ -255,6 +285,9 @@ namespace ark::math
 
     class transform
     {
+    public:
+        static constexpr bool string_serialize = true;
+
     private:
         fvec2 pos = {};
         fvec2 rot = {};        // sin - x, cos - y
@@ -298,6 +331,35 @@ namespace ark::math
         void set_position(const fvec2& new_pos)
         {
             pos = new_pos;
+        }
+
+        stl::string to_string()
+        {
+            return std::to_string(pos.x()) + " " + std::to_string(pos.y()) + " " + std::to_string(rot.x()) + " " + std::to_string(rot.y());
+        }
+
+        void from_string(const stl::string& sval)
+        {
+            size_t offset = 0;
+            auto get_string = [&sval, &offset]() {
+                const size_t begin_offset = sval.find_first_not_of(' ', offset);
+                const size_t end_offset = sval.find_first_of(' ', begin_offset);
+                offset = end_offset;
+
+                return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
+            };
+
+            pos[0] = std::stod(get_string());
+            pos[1] = std::stod(get_string());
+            rot[0] = std::stod(get_string());
+            rot[1] = std::stod(get_string());
+        }
+
+        static transform unstrigify(const stl::string& sval)
+        {
+            transform trans;
+            trans.from_string(sval);
+            return trans;
         }
     };
 

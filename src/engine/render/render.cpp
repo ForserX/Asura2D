@@ -6,7 +6,7 @@ extern int window_height;
 
 using namespace ark;
 
-stl::hash_map<resources::id_type, render::texture_id> textures_list;
+stl::hash_map<resources::id_t, render::texture_id> textures_list;
 
 void 
 render::pre_init()
@@ -139,7 +139,7 @@ render::tick(float dt)
 }
 
 render::texture_id
-render::get_texture(resources::id_type resource_id)
+render::get_texture(resources::id_t resource_id)
 {
     if (!textures_list.contains(resource_id)) {
         return nullptr;
@@ -149,7 +149,7 @@ render::get_texture(resources::id_type resource_id)
 }
 
 render::texture_id
-render::load_texture(resources::id_type resource_id)
+render::load_texture(resources::id_t resource_id)
 {
     if (textures_list.contains(resource_id)) {
         return textures_list.at(resource_id);

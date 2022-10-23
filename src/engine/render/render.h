@@ -12,6 +12,6 @@ namespace ark::render
 	void destroy();
 	void tick(float dt);
 
-    texture_id get_texture(resources::id_type resource_id);
-    texture_id load_texture(resources::id_type resource_id);
+    texture_id get_texture(resources::id_t resource_id);
+    texture_id load_texture(resources::id_t resource_id);
 }

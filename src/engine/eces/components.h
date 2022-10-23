@@ -58,21 +58,32 @@ namespace ark::entities
 
     constexpr uint32_t last_flag_index = 8;
 
-	template <typename T>
-	using detect_flag = decltype(T::flag);	
+	#define PUSH_MEMBER(val) \
+		{ \
+			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
+			string_map[val_string] = stl::stringify(val); \
+		} \
 
-	template <typename T>
-	using detect_custom_serialize = decltype(T::custom_serialize);
-
-	template <typename T>
-	constexpr bool is_flag_v = stl::meta::is_detected<detect_flag, T>::value;
-
-	template <typename T>
-	constexpr bool is_custom_serialize_v = stl::meta::is_detected<detect_custom_serialize, T>::value;
+	#define POP_MEMBER(val) \
+		{ \
+			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
+			if (string_map.contains(val_string)) \
+				val = stl::unstringify<decltype(val)>(string_map.at(val_string)); \
+		} \
 
 	struct draw_color_component
 	{
 		ImColor color;
+
+		void string_serialize(stl::string_map& string_map)
+		{
+			PUSH_MEMBER(color);
+		}
+
+		void string_deserialize(stl::string_map& string_map)
+		{
+			POP_MEMBER(color);
+		}
 	};
 
 	struct draw_gradient_component
@@ -83,7 +94,7 @@ namespace ark::entities
 
 	struct draw_texture_component
 	{
-        resources::id_type texture_resource;
+        resources::id_t texture_resource;
 	};
 
 	struct scene_component
@@ -94,9 +105,8 @@ namespace ark::entities
 	
     struct camera_component
     {
-        float zoom = 0.f;
-        float rotation = 0.f;
-        math::transform transform;
+        float cam_zoom = 0.f;
+        math::transform cam_transform;
     };
 
 	struct physics_body_component

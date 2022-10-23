@@ -63,7 +63,7 @@ config_parser::save(const std::filesystem::path& file_path) const
 	file.close();
 }
 
-const ark::stl::string&
+const stl::string&
 config_parser::get(stl::string_view section, stl::string_view key) const
 {
     static const stl::string empty_string;

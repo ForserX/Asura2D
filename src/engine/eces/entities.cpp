@@ -124,10 +124,10 @@ entities::is_null(entity_view ent)
 }
 
 const math::fvec2&
-entities::get_position(entity_view entity)
+entities::get_position(const entity_view& ent)
 {
-	if (contains<scene_component>(entity)) {
-		const auto scene_comp = try_get<scene_component>(entity.get());
+	if (contains<scene_component>(ent)) {
+		const auto scene_comp = try_get<scene_component>(ent.get());
 		if (scene_comp != nullptr) {
 			return scene_comp->transform.position();
 		}
@@ -141,8 +141,8 @@ entities::get_entity_from_body(const b2Body* body)
 {
 	const auto view = get_view<physics_body_component>();
 	for (const auto entity : view) {
-		const auto phys_component = try_get<physics_body_component>(entity);
-		if (phys_component != nullptr && phys_component->body != nullptr && phys_component->body->get_body() == body) {
+		const auto phys_comp = try_get<physics_body_component>(entity);
+		if (phys_comp != nullptr && phys_comp->body != nullptr && phys_comp->body->get_body() == body) {
 			return entity;
 		}	
 	}
@@ -157,7 +157,7 @@ entities::create()
 }
 
 void
-entities::mark_as_garbage(entity_view ent)
+entities::mark_as_garbage(const entity_view& ent)
 {
 	const auto& registry = global_registry.get();
 	if (!registry.all_of<dont_free_after_reset_flag>(ent.get()) && !registry.all_of<garbage_flag>(ent.get())) {
@@ -165,10 +165,10 @@ entities::mark_as_garbage(entity_view ent)
 	}
 }
 
-entity_view
-entities::add_texture(entity_view ent, stl::string_view path)
+const entity_view&
+entities::add_texture(const entity_view& ent, stl::string_view path)
 {
-    const resources::id_type texture_resource = resources::load(path);
+    const resources::id_t texture_resource = resources::load(path);
 	const ImTextureID texture_id = render::load_texture(texture_resource);
 	ark_assert(texture_id != nullptr, "can't load texture", return ent)
 
@@ -176,9 +176,9 @@ entities::add_texture(entity_view ent, stl::string_view path)
 	return ent;
 }
 
-entity_view
+const entity_view&
 entities::add_phys_body(
-	entity_view ent,
+	const entity_view& ent,
 	math::fvec2 vel,
 	math::fvec2 pos,
 	math::fvec2 size,

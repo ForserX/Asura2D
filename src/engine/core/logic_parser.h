@@ -29,22 +29,7 @@ namespace ark
         template<typename T>
         T get(stl::string_view section, stl::string_view value)
         {
-            const auto& value_string = get(section, value);
-            if constexpr (std::is_floating_point_v<T>) {
-                return static_cast<T>(std::stod(value_string));
-            } else if constexpr (std::is_same_v<T, bool>) {
-                return value_string == "true";
-            } else if constexpr (std::is_integral_v<T>) {
-                if constexpr (std::is_unsigned_v<T>) {
-                    return static_cast<T>(std::stoull(value_string));
-                } else {
-                    return static_cast<T>(std::stoll(value_string));
-                }
-            } else if constexpr (std::is_enum_v<T>) {
-                return static_cast<T>(std::stoll(value_string));
-            } else {
-                return value_string.data();
-            }
+            return stl::unstringify<T>(get(section, value));
         }
     };
 }

@@ -38,11 +38,11 @@ template<typename Component>
 void
 deserialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt::entity ent, entt::id_type cmp_id)
 {
-	if constexpr (!entities::is_flag_v<Component>) {
+	if constexpr (!stl::is_flag_v<Component>) {
 		entt::id_type id = entt::type_id<Component>().hash();
 		if (id == cmp_id) {
 			Component component = {};
-			if constexpr (entities::is_custom_serialize_v<Component>) {
+			if constexpr (stl::is_custom_serialize_v<Component>) {
 				component.deserialize(data);
 			} else {
 				stl::read_memory(data, component);
@@ -56,7 +56,7 @@ template<typename Component>
 void
 deserialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::registry& reg, entt::entity ent)
 {
-	if constexpr (entities::is_flag_v<Component>) {
+	if constexpr (stl::is_flag_v<Component>) {
 		if (desc.flags & Component::flag) {
 			entities::add_field<Component>(ent);
 		}
@@ -88,14 +88,14 @@ template<typename Component>
 void
 serialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt::entity ent, entity_desc& desc)
 {
-	if constexpr (!entities::is_flag_v<Component>) {
+	if constexpr (!stl::is_flag_v<Component>) {
 		if (reg.all_of<Component>(ent)) {
 			entt::id_type id = entt::type_id<Component>().hash();
 			auto& storage = (*reg.storage(id)).second;
 
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
 			if (value_ptr != nullptr) {
-				if constexpr (entities::is_custom_serialize_v<Component>) {
+				if constexpr (stl::is_custom_serialize_v<Component>) {
 					if (value_ptr->can_serialize_now()) {
 						stl::push_memory(data, id);
 						value_ptr->serialize(data);
@@ -115,7 +115,7 @@ template<typename Component>
 void
 serialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::registry& reg, entt::entity ent)
 {
-	if constexpr (entities::is_flag_v<Component>) {
+	if constexpr (stl::is_flag_v<Component>) {
 		if (reg.all_of<Component>(ent)) {
 			desc.flags |= Component::flag;
 		}
@@ -151,7 +151,7 @@ string_serialize_entity_component(stl::string_map& data, entt::entity ent, entit
 {
 	const auto& reg = entities::internal::get_registry().get();
 	if (reg.all_of<Component>(ent)) {
-		if constexpr (entities::is_flag_v<Component>) {
+		if constexpr (stl::is_flag_v<Component>) {
 			desc.flags |= Component::flag;
 		} else {
 			entt::id_type id = entt::type_id<Component>().hash();
@@ -221,7 +221,7 @@ entities::internal::serialize(stl::stream_vector& data)
 	OPTICK_EVENT("entities serializer");
 	const auto& reg = get_registry().get();
 	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
-	volatile uint32_t entities_count = reg.size() - ent_view.size_hint();
+	uint32_t entities_count = reg.size() - ent_view.size_hint();
 
 	data.first = 0;
 	data.second.clear();

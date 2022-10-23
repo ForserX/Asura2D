@@ -26,8 +26,8 @@ enum resource_task_enum
 
 bool resources_inited = false;
 bool resources_destroyed = false;
-stl::hash_map<resources::id_type, resource_state> resources_map;
-stl::hash_map<resources::id_type, resource_scheduled_task> resource_scheduled_tasks;
+stl::hash_map<resources::id_t, resource_state> resources_map;
+stl::hash_map<resources::id_t, resource_scheduled_task> resource_scheduled_tasks;
 std::chrono::nanoseconds last_update_time = {};
 std::mutex resource_manager_lock;
 
@@ -119,10 +119,10 @@ resources::get_last_update_time()
     return last_update_time;
 }
 
-resources::id_type
+resources::id_t
 resources::load(stl::string_view file_name)
 {
-    id_type resource_id = get_id(file_name);
+    id_t resource_id = get_id(file_name);
     if (exists(resource_id)) {
         return resource_id;
     }
@@ -148,7 +148,7 @@ resources::load(stl::string_view file_name)
 }
 	
 void 
-resources::unload(id_type resource_id)
+resources::unload(id_t resource_id)
 {
     if (!exists(resource_id)) {
         return;
@@ -158,7 +158,7 @@ resources::unload(id_type resource_id)
 }
 	
 bool
-resources::schedule_lock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
+resources::schedule_lock(id_t resource_id, int64_t begin_offset, int64_t end_offset)
 {
     std::scoped_lock<std::mutex> scope_lock(resource_manager_lock);
     resource_scheduled_task resource_task = {};
@@ -175,7 +175,7 @@ resources::schedule_lock(id_type resource_id, int64_t begin_offset, int64_t end_
 }
 	
 bool
-resources::schedule_unlock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
+resources::schedule_unlock(id_t resource_id, int64_t begin_offset, int64_t end_offset)
 {
     std::scoped_lock scope_lock(resource_manager_lock);
     resource_scheduled_task resource_task = {};
@@ -192,7 +192,7 @@ resources::schedule_unlock(id_type resource_id, int64_t begin_offset, int64_t en
 }
 
 bool
-resources::lock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
+resources::lock(id_t resource_id, int64_t begin_offset, int64_t end_offset)
 {
     if (!exists(resource_id)) {
         return false;
@@ -219,7 +219,7 @@ resources::lock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
 }
 	
 bool
-resources::unlock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
+resources::unlock(id_t resource_id, int64_t begin_offset, int64_t end_offset)
 {
     if (!exists(resource_id)) {
         return false;
@@ -246,7 +246,7 @@ resources::unlock(id_type resource_id, int64_t begin_offset, int64_t end_offset)
 }
 
 const char*
-resources::get_ptr(id_type resource_id)
+resources::get_ptr(id_t resource_id)
 {
     if (!exists(resource_id)) {
         return nullptr;
@@ -256,7 +256,7 @@ resources::get_ptr(id_type resource_id)
     return resource.handle.data();
 }
 
-resources::id_type
+resources::id_t
 resources::get_id(std::string_view file_path)
 {
     std::hash<std::string_view> hasher;
@@ -264,7 +264,7 @@ resources::get_id(std::string_view file_path)
 }
 
 uint64_t
-resources::get_size(id_type resource_id)
+resources::get_size(id_t resource_id)
 {
     if (!exists(resource_id)) {
         return 0;
@@ -275,7 +275,7 @@ resources::get_size(id_type resource_id)
 }
 
 stl::string
-resources::get_name(id_type resource_id)
+resources::get_name(id_t resource_id)
 {
     if (!exists(resource_id)) {
         return "";
@@ -286,13 +286,13 @@ resources::get_name(id_type resource_id)
 }
 
 bool
-resources::exists(id_type resource_id)
+resources::exists(id_t resource_id)
 {
     return resources_map.contains(resource_id);
 }
 
 bool
-resources::loaded(id_type resource_id)
+resources::loaded(id_t resource_id)
 {
     if (!exists(resource_id)) {
         return false;
