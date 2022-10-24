@@ -75,8 +75,9 @@ draw_system::tick(float dt)
 				if (entities::contains_any<draw_color_component, draw_gradient_component, draw_texture_component>(entity)) {
 					if (const auto scene_comp = entities::try_get<scene_component>(entity)) {
 						if (const auto texture_comp = entities::try_get<draw_texture_component>(entity)) {
-							auto begin_pos = scene_comp->transform.position() - scene_comp->size;
-							auto end_pos = scene_comp->transform.position() + scene_comp->size;
+							const auto half_size = math::fvec2(scene_comp->size.x() / 2.f, scene_comp->size.y() / 2.f);
+							const auto begin_pos = scene_comp->transform.position() - half_size;
+							const auto end_pos = scene_comp->transform.position() + half_size;
 							graphics::draw_textured_rect(texture_comp->texture_resource, { begin_pos, end_pos });
 						}
 					}
