@@ -461,6 +461,15 @@ physics::physics_body::get_angular_velocity() const
 	return parameters.angular_vel;
 }
 
+math::fvec2 ark::physics::physics_body::get_velocity() const
+{
+	if (body != nullptr) {
+		return body->GetLinearVelocity();
+	}
+
+	return parameters.vel;
+}
+
 math::fvec2
 physics::physics_body::get_position() const
 {
@@ -508,7 +517,7 @@ physics::physics_body::set_mass(float new_mass)
 }
 
 void
-physics::physics_body::set_mass_center(math::fvec2& new_center)
+physics::physics_body::set_mass_center(const math::fvec2& new_center)
 {
 	if (body != nullptr) {
 		b2MassData massData = {};
@@ -540,6 +549,16 @@ physics::physics_body::set_angular_velocity(float new_angular_vel)
 	parameters.angular_vel = new_angular_vel;
 }
 
+void 
+physics::physics_body::set_velocity(const math::fvec2& new_vel)
+{
+	if (body != nullptr) {
+		body->SetLinearVelocity(new_vel);
+	}
+
+	parameters.vel = new_vel;
+}
+
 void
 physics::physics_body::set_position(const math::fvec2& new_pos)
 {
@@ -548,6 +567,22 @@ physics::physics_body::set_position(const math::fvec2& new_pos)
 	}
 
 	parameters.pos = new_pos;
+}
+
+void 
+physics::physics_body::apply_impulse(const math::fvec2& impulse)
+{
+	if (body != nullptr) {
+		body->ApplyLinearImpulseToCenter(impulse);
+	}
+}
+
+void 
+physics::physics_body::apply_angular_impulse(float impulse)
+{
+	if (body != nullptr) {
+		body->ApplyAngularImpulse(impulse);
+	}
 }
 
 physics::body_parameters

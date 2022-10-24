@@ -186,15 +186,20 @@ namespace ark
             math::fvec2 get_mass_center() const;
 			float get_angle() const;
 			float get_angular_velocity() const;
+			math::fvec2 get_velocity() const;
 			math::fvec2 get_position() const;
 
 		public:
 			void set_body_type(body_type new_type);
 			void set_mass(float new_mass);
-			void set_mass_center(math::fvec2& new_center);
+			void set_mass_center(const math::fvec2& new_center);
 			void set_angle(float new_angle);
 			void set_angular_velocity(float new_angular_vel);
+			void set_velocity(const math::fvec2& new_vel);
 			void set_position(const math::fvec2& new_pos);
+
+			void apply_impulse(const math::fvec2& impulse);
+			void apply_angular_impulse(float impulse);
 
 		public:
 			body_parameters copy_parameters() const;
