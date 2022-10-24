@@ -392,7 +392,7 @@ physics::world::get_body_position(const physics_body* body)
 		return get_real_body_position(body->get_body());
 	}
 
-	// return proxy position, until our project hasn't created
+	// return proxy position, until our object hasn't created
 	return {};
 }
 
