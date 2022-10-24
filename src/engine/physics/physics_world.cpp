@@ -392,7 +392,7 @@ physics::world::get_body_position(const physics_body* body)
 		return get_real_body_position(body->get_body());
 	}
 
-	// return proxy position, until our object hasn't created
+	// return proxy position, until our object doesn't created
 	return {};
 }
 
@@ -479,6 +479,13 @@ physics::physics_body::get_position() const
 	}
 
 	return parameters.pos;
+}
+
+math::frect 
+physics::physics_body::get_rect() const
+{
+	// #TODO: OPTIMIZE
+	return physics::get_body_position(this);
 }
 
 math::fvec2

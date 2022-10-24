@@ -99,7 +99,7 @@ namespace ark::entities
 
 	struct scene_component
 	{
-        math::fvec2 scale = {};
+        math::fvec2 size = {};
         math::transform transform = {};
 	};
 	

@@ -188,6 +188,7 @@ namespace ark
 			float get_angular_velocity() const;
 			math::fvec2 get_velocity() const;
 			math::fvec2 get_position() const;
+			math::frect get_rect() const;
 
 		public:
 			void set_body_type(body_type new_type);
