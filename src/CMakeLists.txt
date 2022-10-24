@@ -88,6 +88,17 @@ list(APPEND LIBRARIES_TO_LINK "OptickCore")
 list(APPEND LIBRARIES_TO_LINK "SDL2-static")
 list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
+if (MIMALLOC_ENABLED)
+	list(APPEND LIBRARIES_TO_LINK "mimalloc-static")
+endif()
+
+################################################
+#
+# Define engine and link libraries to it
+#
+################################################
+add_library("libarkane" STATIC ${ENGINE_SRC_FILES})
+target_link_libraries("libarkane" PUBLIC ${LIBRARIES_TO_LINK})
 
 if (ARKANE_ASAN)
 	target_compile_options("libarkane" PUBLIC "-fsanitize=address")
@@ -100,17 +111,8 @@ if (ARKANE_ASAN)
 	endif()
 endif()
 
-if (MIMALLOC_ENABLED)
-	list(APPEND LIBRARIES_TO_LINK "mimalloc-static")
-endif()
-
-################################################
-#
-# Define engine and link libraries to it
-#
-################################################
-add_library("libarkane" STATIC ${ENGINE_SRC_FILES})
-target_link_libraries("libarkane" PUBLIC ${LIBRARIES_TO_LINK})
+target_compile_features("libarkane" PUBLIC cxx_std_20)
+target_compile_options("libarkane" PUBLIC "/Zc:__cplusplus")
 
 ################################################
 #

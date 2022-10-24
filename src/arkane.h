@@ -30,7 +30,23 @@
 #include <pthread.h>
 #endif
 
-#include <boost/pfr/pfr.hpp>
+#include <boost/pfr.hpp>
+#include <boost/hana.hpp>
+#include <boost/hana/accessors.hpp>
+#include <boost/hana/adapt_struct.hpp>
+#include <boost/hana/assert.hpp>
+#include <boost/hana/core/to.hpp>
+#include <boost/hana/equal.hpp>
+#include <boost/hana/find.hpp>
+#include <boost/hana/first.hpp>
+#include <boost/hana/map.hpp>
+#include <boost/hana/not_equal.hpp>
+#include <boost/hana/optional.hpp>
+#include <boost/hana/pair.hpp>
+#include <boost/hana/string.hpp>
+#include <boost/hana/transform.hpp>
+#include <boost/hana/tuple.hpp>
+
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
 

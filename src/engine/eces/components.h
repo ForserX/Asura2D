@@ -58,6 +58,13 @@ namespace ark::entities
 
     constexpr uint32_t last_flag_index = 8;
 
+	/*
+	#define DECLARE_COMPONENT(name, ...) \
+		struct name \
+		{ \
+			BOOST_HANA_DEFINE_STRUCT(name, __VA_ARGS__); \
+		};
+
 	#define PUSH_MEMBER(val) \
 		{ \
 			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
@@ -71,10 +78,6 @@ namespace ark::entities
 				val = stl::unstringify<decltype(val)>(string_map.at(val_string)); \
 		} \
 
-	struct draw_color_component
-	{
-		ImColor color;
-
 		void string_serialize(stl::string_map& string_map)
 		{
 			PUSH_MEMBER(color);
@@ -84,6 +87,11 @@ namespace ark::entities
 		{
 			POP_MEMBER(color);
 		}
+	*/
+
+	struct draw_color_component
+	{
+		ImColor color;
 	};
 
 	struct draw_gradient_component
@@ -99,13 +107,13 @@ namespace ark::entities
 
 	struct scene_component
 	{
-        math::fvec2 size = {};
-        math::transform transform = {};
+        math::fvec2 size;
+        math::transform transform;
 	};
 	
     struct camera_component
     {
-        float cam_zoom = 0.f;
+        float cam_zoom;
         math::transform cam_transform;
     };
 
@@ -127,10 +135,18 @@ namespace ark::entities
 
 		void deserialize(stl::stream_vector& data)
 		{
-			ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {})
+			body = physics::schedule_creation(physics::body_parameters(data));
+		}
 
-			const physics::body_parameters parameters(data);
-			body = physics::schedule_creation(parameters);
+		void string_serialize(stl::string_map& data)
+		{
+			const physics::body_parameters parameters = body->copy_parameters();
+			parameters.string_serialize(data);
+		}
+
+		void string_deserialize(stl::string_map& data)
+		{
+			body = physics::schedule_creation(physics::body_parameters(data));
 		}
 	};
 }

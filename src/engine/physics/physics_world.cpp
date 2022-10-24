@@ -321,6 +321,10 @@ physics::world::internal_tick(float dt)
 math::frect
 physics::world::get_real_body_position(b2Body* body)
 {
+	if (body == nullptr) {
+		return {};
+	}
+
 	b2AABB aabb = {};
 	b2Transform t = {};
 	

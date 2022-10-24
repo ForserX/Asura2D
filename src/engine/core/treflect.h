@@ -33,12 +33,14 @@ namespace ark::stl
 	stl::string stringify(T value)
 	{
 		using U = stl::clear_type<T>;
-		if constexpr (std::is_same_v<U, math::transform>) {
+		if constexpr (stl::is_string_serialize_v<U>) {
 			return value.to_string();
 		} else if constexpr (std::is_same_v<U, ImColor>) {
 			return std::to_string(static_cast<uint32_t>(value));
 		} else if constexpr (std::is_same_v<U, bool>) {
 			return stl::string(value == true ? "true" : "false");
+		} else if constexpr (std::is_integral_v<U>) {
+			return std::to_string(value);
 		} else if constexpr (std::is_enum_v<U>) {
 			return std::to_string(static_cast<int64_t>(value));
 		} else {
@@ -55,7 +57,7 @@ namespace ark::stl
 		} else if constexpr (std::is_same_v<U, ImColor>) {
 			return T(std::stoul(value));
 		} else if constexpr (stl::is_string_serialize_v<U>) {
-			return U::from_string(value);
+			return U::unstrigify(value);
 		} else if constexpr (std::is_same_v<U, bool>) {
 			return value == "true";
 		} else if constexpr (std::is_integral_v<U>) {

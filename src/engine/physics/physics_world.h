@@ -114,6 +114,11 @@ namespace ark
 				deserialize(data);
 			}
 
+			body_parameters(stl::string_map& data)
+			{
+				string_deserialize(data);
+			}
+
 			operator b2BodyDef() const
 			{
 				b2BodyDef body_def = {};
@@ -133,7 +138,6 @@ namespace ark
 				return mass_data;
 			}
 
-			template<bool full_serialization = true>
 			void serialize(stl::stream_vector& data) const
 			{
 				stl::push_memory(data, angle);
@@ -146,7 +150,6 @@ namespace ark
 				stl::push_memory(data, packed_type);
 			}
 
-			template<bool full_serialization = true>
 			void deserialize(stl::stream_vector& data)
 			{
 				stl::read_memory(data, angle);
@@ -157,6 +160,54 @@ namespace ark
 				stl::read_memory(data, pos);
 				stl::read_memory(data, size);
 				stl::read_memory(data, packed_type);
+			}
+
+			void string_serialize(stl::string_map& data) const
+			{
+				data["f_angle"] = stl::stringify(angle);
+				data["f_angular_vel"] = stl::stringify(angular_vel);
+				data["f_mass"] = stl::stringify(mass);
+				data["v_mass_center"] = stl::stringify(mass_center);
+
+				data["v_vel"] = stl::stringify(vel);
+				data["v_pos"] = stl::stringify(pos);
+				data["v_size"] = stl::stringify(size);
+
+				data["i_mat"] = stl::stringify(packed_type.mat);
+				data["i_shape"] = stl::stringify(packed_type.shape);
+				data["i_type"] = stl::stringify(packed_type.type);
+			}
+
+			void string_deserialize(stl::string_map& data)
+			{
+				auto read_on_existing = [&data]<typename T>(const char* name, T& out_value)
+				{
+					if (data.contains(name)) {
+						out_value = stl::unstringify<T>(data[name]);
+					}
+				};
+
+				read_on_existing("f_angle", angle);
+				read_on_existing("f_angular_vel", angular_vel);
+				read_on_existing("f_mass", mass);
+				read_on_existing("v_mass_center", mass_center);
+
+				read_on_existing("v_vel", vel);
+				read_on_existing("v_pos", pos);
+				read_on_existing("v_size", size);
+
+				if (data.contains("i_mat")) {
+					packed_type.mat = stl::unstringify<uint8_t>(data["i_mat"]);
+				}
+
+				if (data.contains("i_shape")) {
+					packed_type.mat = stl::unstringify<uint8_t>(data["i_shape"]);
+				}
+
+				if (data.contains("i_type")) {
+					packed_type.mat = stl::unstringify<uint8_t>(data["i_type"]);
+				}
+
 			}
 		};
 		
