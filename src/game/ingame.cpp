@@ -98,9 +98,9 @@ void ingame::init()
 	
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 1000; i++) {
-		std::uniform_real_distribution width_dist(260., 800.);
-		std::uniform_real_distribution height_dist(260., 800.);
+	for (size_t i = 0; i < 2000; i++) {
+		std::uniform_real_distribution width_dist(260., 1300.);
+		std::uniform_real_distribution height_dist(260., 1300.);
 		auto& ent = circles.emplace_back(
 			add_phys_body(
 				create(),
