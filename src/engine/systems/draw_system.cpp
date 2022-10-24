@@ -71,27 +71,32 @@ draw_system::tick(float dt)
 					return;
 				}
 
-				// First of all, try to draw physics bodies
-				if (const auto phys_comp = entities::try_get<physics_body_component>(entity)) {
+				// If we don't have any of draw components - try to draw physics body with debug view
+				if (entities::contains_any<draw_color_component, draw_gradient_component, draw_texture_component>(entity)) {
+					if (const auto scene_comp = entities::try_get<scene_component>(entity)) {
+						if (const auto texture_comp = entities::try_get<draw_texture_component>(entity)) {
+							auto begin_pos = scene_comp->transform.position() - math::fvec2(5.f, 5.f);
+							auto end_pos = scene_comp->transform.position() + math::fvec2(5.f, 5.f);
+							graphics::draw_textured_rect(texture_comp->texture_resource, { begin_pos, end_pos });
+						}
+					}
+				} else if (const auto phys_comp = entities::try_get<physics_body_component>(entity)) {
 					const auto physical_body = phys_comp->body;
 					if (!physical_body->is_enabled()) {
 						return;
 					}
 
-					// If we don't have any of draw components - try to draw physics body with debug view
-					if (!entities::contains_any<draw_color_component, draw_gradient_component, draw_texture_component>(entity)) {
-						const auto phys_body_id = reinterpret_cast<ptrdiff_t>(physical_body);
-						switch (static_cast<material::shape>(physical_body->get_parameters().packed_type.shape)) {
-						case material::shape::circle:
-							graphics::draw_physical_circle_object(physical_body->get_body(), color_map[phys_body_id % 4096]);
-							break;
-						default:
-							graphics::draw_physical_object(physical_body->get_body(), color_map[phys_body_id % 4096]);
-							break;
-						}
-
-						return;
+					const auto phys_body_id = reinterpret_cast<ptrdiff_t>(physical_body);
+					switch (static_cast<material::shape>(physical_body->get_parameters().packed_type.shape)) {
+					case material::shape::circle:
+						graphics::draw_physical_circle_object(physical_body->get_body(), color_map[phys_body_id % 4096]);
+						break;
+					default:
+						graphics::draw_physical_object(physical_body->get_body(), color_map[phys_body_id % 4096]);
+						break;
 					}
+
+					return;
 				}
 			});
 		}

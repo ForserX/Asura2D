@@ -161,6 +161,15 @@ graphics::draw_background(resources::id_t resource_id)
     }
 }
 
+void 
+graphics::draw_textured_rect(resources::id_t resource_id, const math::frect& rect)
+{
+	const ImTextureID texture_id = render::get_texture(resource_id);
+	if (texture_id != nullptr) {
+		ImGui::GetBackgroundDrawList()->AddImage(texture_id, rect.min(), rect.max());
+	}
+}
+
 void
 graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 {

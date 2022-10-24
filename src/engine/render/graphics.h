@@ -13,6 +13,7 @@ namespace ark::graphics
 	void draw_convex_poly_filled(ImDrawList* draw_list, const math::fvec2* points, const int points_count, ImU32 col);
 
 	void draw_rect(ImColor color, const math::frect& rect, bool filled = true);
+	void draw_textured_rect(resources::id_t resource_id, const math::frect& rect);
 	void draw_background(resources::id_t resource_id);
 
 	namespace theme
