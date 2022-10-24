@@ -111,9 +111,6 @@ if (ARKANE_ASAN)
 	endif()
 endif()
 
-target_compile_features("libarkane" PUBLIC cxx_std_20)
-target_compile_options("libarkane" PUBLIC "/Zc:__cplusplus")
-
 ################################################
 #
 # Public include pathes for engine library
