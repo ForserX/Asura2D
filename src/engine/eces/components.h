@@ -58,37 +58,6 @@ namespace ark::entities
 
     constexpr uint32_t last_flag_index = 8;
 
-	/*
-	#define DECLARE_COMPONENT(name, ...) \
-		struct name \
-		{ \
-			BOOST_HANA_DEFINE_STRUCT(name, __VA_ARGS__); \
-		};
-
-	#define PUSH_MEMBER(val) \
-		{ \
-			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
-			string_map[val_string] = stl::stringify(val); \
-		} \
-
-	#define POP_MEMBER(val) \
-		{ \
-			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
-			if (string_map.contains(val_string)) \
-				val = stl::unstringify<decltype(val)>(string_map.at(val_string)); \
-		} \
-
-		void string_serialize(stl::string_map& string_map)
-		{
-			PUSH_MEMBER(color);
-		}
-
-		void string_deserialize(stl::string_map& string_map)
-		{
-			POP_MEMBER(color);
-		}
-	*/
-
 	struct draw_color_component
 	{
 		ImColor color;
@@ -150,3 +119,10 @@ namespace ark::entities
 		}
 	};
 }
+
+// Don't forget to add this defines in game code
+VISITABLE_STRUCT(ark::entities::draw_color_component, color);
+VISITABLE_STRUCT(ark::entities::draw_gradient_component, first_color, second_color);
+VISITABLE_STRUCT(ark::entities::draw_texture_component, texture_resource);
+VISITABLE_STRUCT(ark::entities::scene_component, size, transform);
+VISITABLE_STRUCT(ark::entities::camera_component, cam_zoom, cam_transform);

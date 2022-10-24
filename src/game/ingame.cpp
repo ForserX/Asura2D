@@ -101,7 +101,7 @@ void ingame::init()
 	for (size_t i = 0; i < 2000; i++) {
 		std::uniform_real_distribution width_dist(260., 1300.);
 		std::uniform_real_distribution height_dist(260., 1300.);
-		auto& ent = circles.emplace_back(
+		const auto& ent = circles.emplace_back(
 			add_phys_body(
 				create(),
 				{},
