@@ -31,6 +31,12 @@ namespace ark::stl
 
 		template <template<class...> class Op, class... Args>
 		using detected_t = typename internal::detector<internal::nonesuch, void, Op, Args...>::type;
+
+		template<typename T, template<typename...> class Ref>
+		struct is_specialization : std::false_type {};
+
+		template<template<typename...> class Ref, typename... Args>
+		struct is_specialization<Ref<Args...>, Ref> : std::true_type {};
 	}
 
 	template <typename T>
@@ -43,7 +49,7 @@ namespace ark::stl
 	using detect_string_serialize = decltype(T::string_serialize);
 
 	template <typename T>
-	constexpr bool is_flag_v = stl::meta::is_detected<detect_flag, T>::value;
+	constexpr bool contains_flag_v = stl::meta::is_detected<detect_flag, T>::value;
 
 	template <typename T>
 	constexpr bool is_custom_serialize_v = stl::meta::is_detected<detect_custom_serialize, T>::value;

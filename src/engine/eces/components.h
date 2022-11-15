@@ -90,35 +90,9 @@ namespace ark::entities
 	{
 		static constexpr bool custom_serialize = true;
 		physics::physics_body* body = nullptr;
-
-		bool can_serialize_now() const
-		{
-			return body != nullptr;
-		}
-
-		void serialize(stl::stream_vector& data) const
-		{
-			const physics::body_parameters parameters = body->copy_parameters();
-			parameters.serialize(data);
-		}
-
-		void deserialize(stl::stream_vector& data)
-		{
-			body = physics::schedule_creation(physics::body_parameters(data));
-		}
-
-		void string_serialize(stl::string_map& data)
-		{
-			const physics::body_parameters parameters = body->copy_parameters();
-			parameters.string_serialize(data);
-		}
-
-		void string_deserialize(stl::string_map& data)
-		{
-			body = physics::schedule_creation(physics::body_parameters(data));
-		}
 	};
 }
+
 
 // Don't forget to add this defines in game code
 VISITABLE_STRUCT(ark::entities::draw_color_component, color);

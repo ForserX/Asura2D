@@ -15,6 +15,42 @@ namespace ark::entities
 
 	void serialize(stl::stream_vector& data);
 	void deserialize(stl::stream_vector& data);
+
+	template<typename T>
+	struct custom_serializer;
+
+	template<>
+	struct custom_serializer<physics_body_component>
+	{
+		static_assert(stl::is_custom_serialize_v<physics_body_component>, "trying to serialize via custom serializer without required flag");
+
+		static bool can_serialize_now(const physics_body_component& comp)
+		{
+			return comp.body != nullptr;
+		}
+
+		static void serialize(const physics_body_component& comp, stl::stream_vector& data)
+		{
+			const physics::body_parameters parameters = comp.body->copy_parameters();
+			parameters.serialize(data);
+		}
+
+		static void deserialize(physics_body_component& comp, stl::stream_vector& data)
+		{
+			comp.body = physics::schedule_creation(physics::body_parameters(data));
+		}
+
+		static void string_serialize(const physics_body_component& comp, stl::string_map& data)
+		{
+			const physics::body_parameters parameters = comp.body->copy_parameters();
+			parameters.string_serialize(data);
+		}
+
+		static void string_deserialize(physics_body_component& comp, stl::string_map& data)
+		{
+			comp.body = physics::schedule_creation(physics::body_parameters(data));
+		}
+	};
 }
 
 #define DECLARE_SERIALIZABLE_FLAGS \
