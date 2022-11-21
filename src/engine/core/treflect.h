@@ -111,9 +111,9 @@ namespace ark::stl
 				const size_t end_offset = value.find_first_of(' ', begin_offset);
 				offset = end_offset;
 
-				//ClearType::value_type out_value;
-				//unstrigify_type(out_value, stl::string(value.begin() + begin_offset, value.begin() + end_offset));
-				//OutValue.push_back(unstrigify_type(stl::string(value.begin() + begin_offset, value.begin() + end_offset)));
+				ClearType::value_type out_value;
+				unstrigify_type(out_value, stl::string(value.begin() + begin_offset, value.begin() + end_offset));
+				OutValue.push_back(unstrigify_type(stl::string(value.begin() + begin_offset, value.begin() + end_offset)));
 			}
 
 			return OutValue;
