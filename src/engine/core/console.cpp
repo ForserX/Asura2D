@@ -310,20 +310,20 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     }
     else if (strstr(command_line, "window_height")) {
         cmd = cmd.substr(13);
-        window_height = std::stoi(cmd);
+        window_height = stl::stof(cmd);
         window::change_resolution();
     }
     else if (strstr(command_line, "physics_tps")) {
         cmd = cmd.substr(11);
-        target_physics_tps = std::stoi(cmd);
+        target_physics_tps = stl::stof(cmd);
     }
     else if (strstr(command_line, "physics_hertz")) {
         cmd = cmd.substr(13);
-        target_physics_hertz = std::stoi(cmd);
+        target_physics_hertz = stl::stof(cmd);
     }
     else if (strstr(command_line, "window_width")) {
         cmd = cmd.substr(12);
-        window_width = std::stoi(cmd);
+        window_width = (int)stl::stof(cmd);
         window::change_resolution();
     }
     else if (strstr(command_line, "window_style")) {
@@ -344,7 +344,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "draw_fps")) {
         cmd = cmd.substr(8);
         if (!cmd.empty()) {
-            show_fps_counter = !!std::stoi(cmd);
+            show_fps_counter = !!(int)stl::stof(cmd);
         }
         else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
@@ -353,7 +353,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "physical_debug_draw")) {
         cmd = cmd.substr(19);
         if (!cmd.empty()) {
-            physical_debug_draw = !!std::stoi(cmd);
+            physical_debug_draw = !!(int)stl::stof(cmd);
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }
@@ -361,7 +361,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "window_maximized")) {
         cmd = cmd.substr(16);
         if (!cmd.empty()) {
-            window_maximized = !!std::stoi(cmd);
+            window_maximized = !!(int)stl::stof(cmd);
             window::change_window_mode();
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
@@ -370,7 +370,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "window_fullscreen")) {
         cmd = cmd.substr(17);
         if (!cmd.empty()) {
-            fullscreen_mode = !!std::stoi(cmd);
+            fullscreen_mode = !!(int)stl::stof(cmd);
             window::change_fullscreen();
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
@@ -379,7 +379,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "use_parallel")) {
         cmd = cmd.substr(12);
         if (!cmd.empty()) {
-            use_parallel = !!std::stoi(cmd);
+            use_parallel = !!(int)stl::stof(cmd);
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }
@@ -387,7 +387,7 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     else if (strstr(command_line, "pause")) {
         cmd = cmd.substr(4);
         if (!cmd.empty()) {
-            paused = !!std::stoi(cmd);
+            paused = !!(int)stl::stof(cmd);
         } else {
             debug::msg("Invalid parameter: '{}'\n", command_line);
         }

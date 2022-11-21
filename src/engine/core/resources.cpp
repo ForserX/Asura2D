@@ -282,7 +282,7 @@ resources::get_name(id_t resource_id)
     }
     
     const auto& resource = resources_map.at(resource_id);
-    return resource.file_path.generic_string();
+    return (stl::string)resource.file_path.generic_string();
 }
 
 bool

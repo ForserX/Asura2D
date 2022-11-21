@@ -36,13 +36,13 @@ namespace ark::stl
 		if constexpr (std::is_same_v<U, math::transform>) {
 			return value.to_string();
 		} else if constexpr (std::is_same_v<U, ImColor>) {
-			return std::to_string(static_cast<uint32_t>(value));
+			return stl::to_string(static_cast<uint32_t>(value));
 		} else if constexpr (std::is_same_v<U, bool>) {
 			return stl::string(value == true ? "true" : "false");
 		} else if constexpr (std::is_enum_v<U>) {
-			return std::to_string(static_cast<int64_t>(value));
+			return stl::to_string(static_cast<int64_t>(value));
 		} else {
-			return std::to_string(value);
+			return stl::to_string(value);
 		}
 	}
 
@@ -51,21 +51,21 @@ namespace ark::stl
 	{
 		using U = stl::clear_type<T>;
 		if constexpr (std::is_floating_point_v<U>) {
-			return static_cast<U>(std::stod(value));
+			return static_cast<U>(stl::stod(value));
 		} else if constexpr (std::is_same_v<U, ImColor>) {
-			return T(std::stoul(value));
+			return T(stl::stoul(value));
 		} else if constexpr (stl::is_string_serialize_v<U>) {
 			return U::from_string(value);
 		} else if constexpr (std::is_same_v<U, bool>) {
 			return value == "true";
 		} else if constexpr (std::is_integral_v<U>) {
 			if constexpr (std::is_unsigned_v<U>) {
-				return static_cast<U>(std::stoull(value));
+				return static_cast<U>(stl::stoull(value));
 			} else {
 				return static_cast<U>(std::stoll(value));
 			}
 		} else if constexpr (std::is_enum_v<U>) {
-			return static_cast<U>(std::stoll(value));
+			return static_cast<U>(stl::stoll(value));
 		} else {
 			return value.data();
 		}
@@ -115,8 +115,8 @@ namespace ark::stl
 	}
 
 	template<typename T>
-	std::string combine_string(const char* var_name)
+	stl::string combine_string(const char* var_name)
 	{
-		return std::string(get_type_string<T>().data()).append(var_name);
+		return stl::string(get_type_string<T>().data()).append(var_name);
 	}
 }

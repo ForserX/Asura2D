@@ -335,7 +335,7 @@ namespace ark::math
 
         stl::string to_string()
         {
-            return std::to_string(pos.x()) + " " + std::to_string(pos.y()) + " " + std::to_string(rot.x()) + " " + std::to_string(rot.y());
+            return stl::to_string(pos.x()) + " " + stl::to_string(pos.y()) + " " + stl::to_string(rot.x()) + " " + stl::to_string(rot.y());
         }
 
         void from_string(const stl::string& sval)
@@ -349,10 +349,10 @@ namespace ark::math
                 return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
             };
 
-            pos[0] = std::stod(get_string());
-            pos[1] = std::stod(get_string());
-            rot[0] = std::stod(get_string());
-            rot[1] = std::stod(get_string());
+            pos[0] = stl::stof(get_string());
+            pos[1] = stl::stof(get_string());
+            rot[0] = stl::stof(get_string());
+            rot[1] = stl::stof(get_string());
         }
 
         static transform unstrigify(const stl::string& sval)
