@@ -2,7 +2,7 @@
 
 namespace ark::ui
 {
-    struct UIConsole
+    struct console
     {
         char InputBuf[256] = {};
         ImVector<char*> Items;
@@ -15,9 +15,9 @@ namespace ark::ui
         bool AutoScroll;
         bool ScrollToBottom;
 
-        UIConsole();
+        console();
 
-        ~UIConsole();
+        ~console();
 
         void clear_log();
 

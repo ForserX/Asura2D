@@ -9,7 +9,7 @@ extern bool physical_debug_draw;
 extern float target_physics_tps;
 extern float target_physics_hertz;
 extern float cam_zoom;
-extern std::unique_ptr<ui::UIConsole> console;
+extern std::unique_ptr<ui::console> console;
 
 bool show_entity_inspector = false;
 bool show_console = false;
@@ -91,7 +91,7 @@ ui::tick(float dt)
     math::fvec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
-        console->draw(dt, "Arkane console", &show_console);
+        ::console->draw(dt, "Arkane console", &show_console);
     } else { 
         if (show_fps_counter) {
             fps_counter_size = stat_enable ? 700 : 240;
@@ -303,12 +303,12 @@ ui::get_cmd_int(stl::string_view str)
 void 
 ui::push_console_string(stl::string_view str)
 {
-    console->push_log_item(str);
+    ::console->push_log_item(str);
 }
 
 void
 ui::destroy()
 {
-    console->flush();
-    console->clear_log();
+    ::console->flush();
+    ::console->clear_log();
 }

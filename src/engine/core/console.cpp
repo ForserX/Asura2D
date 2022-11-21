@@ -18,7 +18,9 @@ extern float target_physics_hertz;
 
 input::on_key_change console_key_change;
 
-ui::UIConsole::UIConsole()
+using ui::console;
+
+console::console()
 {
     clear_log();
     memset(InputBuf, 0, sizeof(InputBuf));
@@ -72,18 +74,9 @@ ui::UIConsole::UIConsole()
 
     AutoScroll = true;
     ScrollToBottom = false;
-
-    input::on_key_change key_change_event = [](int16_t scan_code, input::key_state state)
-    {
-        if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
-            show_console = !show_console;
-        }
-    };
-    
-    console_key_change = input::subscribe_key_event(key_change_event);
 }
 
-ui::UIConsole::~UIConsole()
+console::~console()
 {
     clear_log();
     for (int i = 0; i < History.Size; i++) {
@@ -97,19 +90,19 @@ ui::UIConsole::~UIConsole()
 int  strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
 void strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
-void ui::UIConsole::clear_log()
+void console::clear_log()
 {
     for (int i = 0; i < Items.Size; i++)
         free(Items[i]);
     Items.clear();
 }
 
-void ui::UIConsole::push_log_item(stl::string_view str)
+void console::push_log_item(stl::string_view str)
 {
     Items.push_back(strdup(str.data()));
 }
 
-void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
+void console::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
@@ -268,7 +261,28 @@ void ui::UIConsole::draw(float dt, const char* title, bool* p_open)
     ImGui::End();
 }
 
-void ui::UIConsole::ExecCommand(const char* command_line)
+#define CHECK_FROM_CMD(command, output) \
+    if (strstr(command_line, command)) { \
+        cmd = cmd.substr(stl::string(command).length()); \
+        if (!cmd.empty()) { \
+            output = (decltype(output))stl::stof(cmd); \
+        } else { \
+            debug::msg("Invalid parameter: '{}'\n", command_line); \
+        } \
+    }
+
+#define CHECK_FROM_CMD_EX(command, output, callback) \
+    if (strstr(command_line, command)) { \
+        cmd = cmd.substr(stl::string(command).length()); \
+        if (!cmd.empty()) { \
+            output = (decltype(output))stl::stof(cmd); \
+            callback(); \
+        } else { \
+            debug::msg("Invalid parameter: '{}'\n", command_line); \
+        } \
+    }
+
+void console::ExecCommand(const char* command_line)
 {
     debug::msg("# {} \n", command_line);
 
@@ -287,7 +301,19 @@ void ui::UIConsole::ExecCommand(const char* command_line)
     stl::string cmd = command_line;
     std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
 
-    // Process command
+    CHECK_FROM_CMD("physics_hertz",         target_physics_hertz);
+    CHECK_FROM_CMD("physics_tps",           target_physics_tps);
+    CHECK_FROM_CMD("draw_fps",              show_fps_counter);
+    CHECK_FROM_CMD("physical_debug_draw",   physical_debug_draw);
+    CHECK_FROM_CMD("use_parallel",          use_parallel);
+    CHECK_FROM_CMD("pause",                 paused);
+
+    CHECK_FROM_CMD_EX("window_height",      window_height,      window::change_resolution);
+    CHECK_FROM_CMD_EX("window_width",       window_width,       window::change_resolution);
+    CHECK_FROM_CMD_EX("window_maximized",   window_maximized,   window::change_window_mode);
+    CHECK_FROM_CMD_EX("window_fullscreen",  fullscreen_mode,    window::change_fullscreen);
+    
+    // Process  other command
     if (cmd == "clear")
     {
         clear_log();
@@ -308,30 +334,12 @@ void ui::UIConsole::ExecCommand(const char* command_line)
         for (int i = first > 0 ? first : 0; i < History.Size; i++)
             debug::msg("{}: {}\n", i, History[i]);
     }
-    else if (strstr(command_line, "window_height")) {
-        cmd = cmd.substr(13);
-        window_height = stl::stof(cmd);
-        window::change_resolution();
-    }
-    else if (strstr(command_line, "physics_tps")) {
-        cmd = cmd.substr(11);
-        target_physics_tps = stl::stof(cmd);
-    }
-    else if (strstr(command_line, "physics_hertz")) {
-        cmd = cmd.substr(13);
-        target_physics_hertz = stl::stof(cmd);
-    }
-    else if (strstr(command_line, "window_width")) {
-        cmd = cmd.substr(12);
-        window_width = (int)stl::stof(cmd);
-        window::change_resolution();
-    }
     else if (strstr(command_line, "window_style")) {
         cmd = cmd.substr(12);
 
         if (cmd == "red") {
             window_style = graphics::theme::style::red;
-        } 
+        }
         else if (cmd == "dark") {
             window_style = graphics::theme::style::dark;
         }
@@ -341,73 +349,17 @@ void ui::UIConsole::ExecCommand(const char* command_line)
 
         graphics::theme::change();
     }
-    else if (strstr(command_line, "draw_fps")) {
-        cmd = cmd.substr(8);
-        if (!cmd.empty()) {
-            show_fps_counter = !!(int)stl::stof(cmd);
-        }
-        else {
-            debug::msg("Invalid parameter: '{}'\n", command_line);
-        }
-    }
-    else if (strstr(command_line, "physical_debug_draw")) {
-        cmd = cmd.substr(19);
-        if (!cmd.empty()) {
-            physical_debug_draw = !!(int)stl::stof(cmd);
-        } else {
-            debug::msg("Invalid parameter: '{}'\n", command_line);
-        }
-    }
-    else if (strstr(command_line, "window_maximized")) {
-        cmd = cmd.substr(16);
-        if (!cmd.empty()) {
-            window_maximized = !!(int)stl::stof(cmd);
-            window::change_window_mode();
-        } else {
-            debug::msg("Invalid parameter: '{}'\n", command_line);
-        }
-    }
-    else if (strstr(command_line, "window_fullscreen")) {
-        cmd = cmd.substr(17);
-        if (!cmd.empty()) {
-            fullscreen_mode = !!(int)stl::stof(cmd);
-            window::change_fullscreen();
-        } else {
-            debug::msg("Invalid parameter: '{}'\n", command_line);
-        }
-    }
-    else if (strstr(command_line, "use_parallel")) {
-        cmd = cmd.substr(12);
-        if (!cmd.empty()) {
-            use_parallel = !!(int)stl::stof(cmd);
-        } else {
-            debug::msg("Invalid parameter: '{}'\n", command_line);
-        }
-    }
-    else if (strstr(command_line, "pause")) {
-        cmd = cmd.substr(4);
-        if (!cmd.empty()) {
-            paused = !!(int)stl::stof(cmd);
-        } else {
-            debug::msg("Invalid parameter: '{}'\n", command_line);
-        }
-    }
-    else
-    {
-        debug::msg("Unknown command: '{}'\n", command_line);
-    }
-
     // On command input, we scroll to bottom even if AutoScroll==false
     ScrollToBottom = true;
 }
 
-int ui::UIConsole::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
+int console::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 {
-    auto* console = static_cast<UIConsole*>(data->UserData);
+    auto* console = static_cast<ui::console*>(data->UserData);
     return console->TextEditCallback(data);
 }
 
-int ui::UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
+int console::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
@@ -422,7 +374,9 @@ int ui::UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
         {
             const char c = word_start[-1];
             if (c == ' ' || c == '\t' || c == ',' || c == ';')
+            {
                 break;
+            }
             word_start--;
         }
 
@@ -510,9 +464,7 @@ int ui::UIConsole::TextEditCallback(ImGuiInputTextCallbackData* data)
     return 0;
 }
 
-
-
-void ui::UIConsole::flush()
+void console::flush()
 {
 	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
 	cfg_path = cfg_path.append("user.cfg");
@@ -529,7 +481,7 @@ void ui::UIConsole::flush()
     }
 }
 
-void ui::UIConsole::init()
+void console::init()
 {
 	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
     cfg_path = cfg_path.append("user.cfg");
@@ -547,6 +499,14 @@ void ui::UIConsole::init()
         ExecCommand(line.c_str());
     }
 
+    console_key_change = input::subscribe_key_event(
+        [](int16_t scan_code, input::key_state state)
+        {
+            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
+                show_console = !show_console;
+            }
+        }
+    );
 }
 
-std::unique_ptr<ui::UIConsole> console;
+std::unique_ptr<ui::console> console;
