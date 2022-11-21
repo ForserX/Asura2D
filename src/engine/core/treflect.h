@@ -62,7 +62,7 @@ namespace ark::stl
 			if constexpr (std::is_unsigned_v<U>) {
 				return static_cast<U>(stl::stoull(value));
 			} else {
-				return static_cast<U>(std::stoll(value));
+				return static_cast<U>(stl::stoll(value));
 			}
 		} else if constexpr (std::is_enum_v<U>) {
 			return static_cast<U>(stl::stoll(value));
