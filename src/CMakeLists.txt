@@ -84,11 +84,14 @@ list(APPEND LIBRARIES_TO_LINK "imgui")
 list(APPEND LIBRARIES_TO_LINK "EnTT::EnTT")
 #list(APPEND LIBRARIES_TO_LINK "marl")
 list(APPEND LIBRARIES_TO_LINK "box2d")
-list(APPEND LIBRARIES_TO_LINK "fmt")
 list(APPEND LIBRARIES_TO_LINK "OptickCore")
 list(APPEND LIBRARIES_TO_LINK "SDL2-static")
 list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
+
+if (LINUX) 
+	list(APPEND LIBRARIES_TO_LINK "fmt")
+endif()
 
 if (ARKANE_ASAN)
 	target_compile_options("libarkane" PUBLIC "-fsanitize=address")
@@ -160,7 +163,11 @@ set_target_properties("SDL2_test" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2main" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 #set_target_properties("marl" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("box2d" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
-set_target_properties("fmt" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+
+if (LINUX) 
+	set_target_properties("fmt" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+endif()
+
 set_target_properties("mimalloc-static" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("OptickCore" PROPERTIES ${ARKANE_FOLDER_PROFILR})
 
