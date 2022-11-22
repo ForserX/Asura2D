@@ -13,9 +13,6 @@
 [submodule "libs/optick"]
 	path = libs/optick
 	url = https://github.com/bombomby/optick
-[submodule "libs/box2d-optimized"]
-	path = libs/box2d-optimized
-	url = https://github.com/Vertver/box2d-optimized
 [submodule "libs/mimalloc"]
 	path = libs/mimalloc
 	url = https://github.com/microsoft/mimalloc
@@ -25,3 +22,6 @@
 [submodule "libs/SDL_image"]
 	path = libs/SDL_image
 	url = https://github.com/libsdl-org/SDL_image
+[submodule "libs/box2d-opt"]
+	path = libs/box2d-opt
+	url = https://github.com/ForserX/box2d-opt
