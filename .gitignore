@@ -49,3 +49,6 @@ out/
 deps/
 deps/desktop.ini
 imgui.ini
+
+CMakeFiles/
+CMakeCache.txt
