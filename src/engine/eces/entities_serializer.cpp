@@ -11,7 +11,7 @@ std::chrono::nanoseconds entities_serilaize_last_time = {};
 // Helpers for serialize
 ///////////////////////////////////////////////////////////
 
-auto try_to_serialize = [](std::string_view state_name)
+auto try_to_serialize = [](stl::string_view state_name)
 {
 	std::filesystem::path path = filesystem::get_userdata_dir();
 	path.append(state_name);
@@ -21,7 +21,7 @@ auto try_to_serialize = [](std::string_view state_name)
 	filesystem::write_file(path, entities_data);
 };
 
-auto try_to_deserialize = [](std::string_view state_name)
+auto try_to_deserialize = [](stl::string_view state_name)
 {
 	std::filesystem::path path = filesystem::get_userdata_dir();
 	path.append(state_name);
@@ -175,16 +175,16 @@ string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 	}
 
 	entity_desc desc = {};
-	std::string entity_key = std::to_string(static_cast<uint32_t>(ent));
+	stl::string entity_key = stl::to_string(static_cast<uint32_t>(ent));
 	(string_serialize_entity_component<Args>(data[entity_key], ent, desc), ...);
-	data[entity_key]["flags"] = std::to_string(desc.flags);
+	data[entity_key]["flags"] = stl::to_string(desc.flags);
 }
 
 ///////////////////////////////////////////////////////////
 // Namespace members
 ///////////////////////////////////////////////////////////
 void
-entities::deserialize_state(std::string_view state_name)
+entities::deserialize_state(stl::string_view state_name)
 {
 	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
 		internal::process_entities([state_name]() {
@@ -197,7 +197,7 @@ entities::deserialize_state(std::string_view state_name)
 }
 
 void
-entities::serialize_state(std::string_view state_name)
+entities::serialize_state(stl::string_view state_name)
 {
 	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
 		internal::process_entities([state_name]() {
