@@ -5,7 +5,7 @@ void ark_free(void* ptr);
 
 namespace ark::stl
 {
-#if 1
+#ifdef ARK_ALLOCATOR_USE
 	template <typename T>
 	struct ark_allocator
 	{
@@ -18,6 +18,11 @@ namespace ark::stl
 
 		template <class Other>
 		ark_allocator& operator=(const ark_allocator<Other>&) {
+			return *this;
+		}
+
+		template <class Other>
+		ark_allocator& operator=(const ark_allocator<Other>&&) {
 			return *this;
 		}
 
