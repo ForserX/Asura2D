@@ -61,10 +61,10 @@ jobs:
       matrix:
         Configuration: [Release]
         Platform: [x64]
-        CC: [clang-9]
+        CC: [clang-13]
         include:
-          - CC: clang-9
-            CXX: clang++-9
+          - CC: clang-13
+            CXX: clang++-13
 
     steps:
     - uses: actions/checkout@v3
@@ -74,7 +74,7 @@ jobs:
     - name: Install Clang x64
       uses: egor-tensin/setup-clang@v1
       with:
-        version: 9
+        version: 13
         platform: x64
 
     - name: Configure CMake
