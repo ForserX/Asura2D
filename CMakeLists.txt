@@ -75,6 +75,10 @@ add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
 #add_subdirectory("libs/marl")
 
+if (LINUX) 
+	add_subdirectory("libs/fmt")
+endif()
+
 if (ARKANE_BOX2D_OPTIMIZED)
 	add_subdirectory("libs/box2d-opt")
 else()

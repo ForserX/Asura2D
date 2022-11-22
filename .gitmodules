@@ -25,3 +25,6 @@
 [submodule "libs/box2d-opt"]
 	path = libs/box2d-opt
 	url = https://github.com/ForserX/box2d-opt
+[submodule "libs/fmt"]
+	path = libs/fmt
+	url = https://github.com/fmtlib/fmt

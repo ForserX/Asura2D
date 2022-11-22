@@ -16,7 +16,11 @@
 #include <thread>
 #include <execution>
 
+#ifdef __linux__
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
