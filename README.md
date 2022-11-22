@@ -1,9 +1,10 @@
 # Build
 Ark Engine using CMake build system. 
+![example workflow](https://github.com/ForserX/ark_engine/actions/workflows/cmake.yml/badge.svg)
 
 |Windows|MacOS|Linux|
 |---|---|---|
-|![example workflow](https://github.com/ForserX/ark_engine/actions/workflows/cmake.yml/badge.svg)| non-ga | not support |
+| Yes | Yes | No |
 # Ark Engine 
 Ark Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives.
 
