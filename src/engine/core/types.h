@@ -26,6 +26,12 @@ namespace ark::stl
 			return *this;
 		}
 
+		template <class Other>
+		bool operator==(const Other& Al) const
+		{
+			return std::is_same_v<ark_allocator<T>, Other>;
+		}
+
 		T* allocate(std::size_t n, const void* hint = nullptr)
 		{
 			
