@@ -89,7 +89,7 @@ list(APPEND LIBRARIES_TO_LINK "SDL2-static")
 list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
 
-if (LINUX) 
+if (UNIX) 
 	list(APPEND LIBRARIES_TO_LINK "fmt")
 endif()
 
@@ -164,7 +164,7 @@ set_target_properties("SDL2main" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 #set_target_properties("marl" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("box2d" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 
-if (LINUX) 
+if (UNIX) 
 	set_target_properties("fmt" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 endif()
 

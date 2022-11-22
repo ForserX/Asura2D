@@ -4,10 +4,6 @@ if(APPLE)
     enable_language(OBJC)
 endif()
 
-if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
-endif()
-
 set(CMAKE_CXX_STANDARD 20)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "no tests for box2d" FORCE)
 
@@ -79,7 +75,7 @@ add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
 #add_subdirectory("libs/marl")
 
-if (LINUX) 
+if (UNIX) 
 	add_subdirectory("libs/fmt")
 endif()
 

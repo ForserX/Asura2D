@@ -16,10 +16,10 @@
 #include <thread>
 #include <execution>
 
-#ifdef __linux__
-#include <fmt/format.h>
-#else
+#ifdef _WIN32
 #include <format>
+#else
+#include <fmt/format.h>
 #endif
 
 #ifdef WIN32
