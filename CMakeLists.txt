@@ -5,6 +5,7 @@ if(APPLE)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "no tests for box2d" FORCE)
 
 set(ARKANE_PROJECT_NAME "arkgame")
@@ -75,8 +76,12 @@ add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
 #add_subdirectory("libs/marl")
 
+if (UNIX) 
+	add_subdirectory("libs/fmt")
+endif()
+
 if (ARKANE_BOX2D_OPTIMIZED)
-	add_subdirectory("libs/box2d-optimized")
+	add_subdirectory("libs/box2d-opt")
 else()
 	add_subdirectory("libs/box2d")
 endif()
