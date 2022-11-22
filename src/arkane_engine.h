@@ -5,6 +5,7 @@
 #include "engine/core/math.h"
 #include "engine/core/treflect.h"
 
+#include "engine/audio/audio.h"
 #include "engine/core/debug_core.h"
 #include "engine/core/core.h"
 #include "engine/core/logic_parser.h"

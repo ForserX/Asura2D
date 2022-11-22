@@ -38,6 +38,11 @@ file(GLOB ARK_ENGINE_SYSTEMS_SRC
 	"engine/systems/*.h"
 )
 
+file(GLOB ARK_ENGINE_AUDIO_SRC
+	"engine/audio/*.cpp"
+	"engine/audio/*.h"
+)
+
 file(GLOB_RECURSE ARK_EDITOR_SRC
 	"editor/*.cpp"
 	"editor/*.h"
@@ -55,6 +60,7 @@ file(GLOB_RECURSE ARK_GAME_SRC
 ################################################
 source_group("engine" FILES ${ARK_ENGINE_ENGINE_SRC})
 source_group("engine\\core" FILES ${ARK_ENGINE_CORE_SRC})
+source_group("engine\\audio" FILES ${ARK_ENGINE_AUDIO_SRC})
 source_group("engine\\eces" FILES ${ARK_ENGINE_ECES_SRC})
 source_group("engine\\network" FILES ${ARK_ENGINE_NET_SRC})
 source_group("engine\\physics" FILES ${ARK_ENGINE_PHYSICS_SRC})
@@ -65,6 +71,7 @@ set(ENGINE_SRC_FILES)
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ENGINE_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_CORE_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ECES_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_AUDIO_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_NET_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_PHYSICS_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_RENDER_SRC})
@@ -88,6 +95,15 @@ list(APPEND LIBRARIES_TO_LINK "OptickCore")
 list(APPEND LIBRARIES_TO_LINK "SDL2-static")
 list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
+list(APPEND LIBRARIES_TO_LINK "OpenAL")
+list(APPEND LIBRARIES_TO_LINK "vorbis")
+list(APPEND LIBRARIES_TO_LINK "vorbisfile")
+list(APPEND LIBRARIES_TO_LINK "ogg")
+
+target_include_directories("vorbis" PUBLIC  
+    $<BUILD_INTERFACE:${ARKANE_ROOT}/libs/ogg/include>  
+    $<INSTALL_INTERFACE:/libs/ogg/include>  # <prefix>/include/mylib
+)
 
 if (UNIX) 
 	list(APPEND LIBRARIES_TO_LINK "fmt")
@@ -163,6 +179,13 @@ set_target_properties("SDL2_test" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("SDL2main" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 #set_target_properties("marl" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 set_target_properties("box2d" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("ogg" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("vorbis" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("vorbisenc" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("vorbisfile" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("OpenAL" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("common" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
+set_target_properties("ex-common" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})
 
 if (UNIX) 
 	set_target_properties("fmt" PROPERTIES ${ARKANE_FOLDER_THIRD_PARTY})

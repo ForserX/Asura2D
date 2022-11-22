@@ -245,7 +245,18 @@ physics::world::debug_joints_tick()
         }
     }
 
+	static bool sound_started = false;
+
     if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
+		if (!sound_started)
+		{
+			std::filesystem::path snd_path = filesystem::get_content_dir();
+			snd_path.append("sound").append("click.ogg");
+			audio::start((stl::string)snd_path.generic_string());
+
+			sound_started = true;
+		}
+
         math::fvec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
         if (TestMouseJoint == nullptr) {
@@ -273,6 +284,10 @@ physics::world::debug_joints_tick()
             }
         }
     }
+	else
+	{
+		sound_started = false;
+	}
     
     if (TestMouseJoint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
         physics::get_world().DestroyJoint(TestMouseJoint);
