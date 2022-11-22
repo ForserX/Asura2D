@@ -483,6 +483,15 @@ void console::flush()
 
 void console::init()
 {
+    console_key_change = input::subscribe_key_event(
+        [](int16_t scan_code, input::key_state state)
+        {
+            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
+                show_console = !show_console;
+            }
+        }
+    );
+
 	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
     cfg_path = cfg_path.append("user.cfg");
     if (!std::filesystem::exists(cfg_path))
@@ -498,15 +507,6 @@ void console::init()
     {
         ExecCommand(line.c_str());
     }
-
-    console_key_change = input::subscribe_key_event(
-        [](int16_t scan_code, input::key_state state)
-        {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
-                show_console = !show_console;
-            }
-        }
-    );
 }
 
 std::unique_ptr<ui::console> console;

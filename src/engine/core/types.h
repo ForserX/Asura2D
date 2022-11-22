@@ -105,8 +105,12 @@ namespace ark::stl
 	inline string to_string(int Value)
 	{
 		char buf[64] = {0};
-		_itoa(Value, &buf[0], 10);
 
+#ifdef _WIN32
+		_itoa(Value, &buf[0], 10);
+#else
+		itoa(Value, &buf[0], 10);
+#endif
 		return string(buf);
 	}
 
