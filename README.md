@@ -14,8 +14,10 @@ Ark Engine is a 2D game engine that focuses on physical objects, rendering with 
 ![image](https://user-images.githubusercontent.com/13867290/192002206-b3128a99-0a99-49b0-96b6-ebf198f1d349.png)
 
 # 3rd Party
-* SDL
-* ImGui
-* entt
-* Box2D
-* fu2
+* [SDL2](https://www.libsdl.org) + [SDL Image](https://github.com/libsdl-org/SDL_image)
+* [ImGui](https://github.com/ocornut/imgui)
+* [entt](https://github.com/skypjack/entt)
+* [Box2D](https://box2d.org) (extended)
+* [Function2](https://github.com/Naios/function2) (extended)
+* [MiMalloc](https://github.com/microsoft/mimalloc)
+* [Marl](https://github.com/google/marl)
