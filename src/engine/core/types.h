@@ -101,39 +101,40 @@ namespace ark::stl
 	using string = std::basic_string<char, std::char_traits<char>, ark_allocator<char>>;
 	using string_view = std::basic_string_view<char>;
 
-
-	inline string to_string(int Value)
+	template<typename T>
+	inline string to_string(T Value)
 	{
-		char buf[64] = {0};
+		char buf[64] = { 0 };
+
+		if constexpr (std::is_same_v<T, int>)
+		{
 
 #ifdef _WIN32
-		_itoa(Value, &buf[0], 10);
+			_itoa(Value, &buf[0], 10);
 #else
-		itoa(Value, &buf[0], 10);
+			sprintf(buf, "%d", Value);
 #endif
-		return string(buf);
-	}
-
-	inline string to_string(unsigned int Value)
-	{
-		char buf[64] = { 0 };
-		sprintf(buf, "%u", Value);
-
-		return string(buf);
-	}
-
-	inline string to_string(float Value)
-	{
-		char buf[64] = { 0 };
-		sprintf(buf, "%f", Value);
-
-		return string(buf);
-	}
-
-	inline string to_string(double Value)
-	{
-		char buf[64] = { 0 };
-		sprintf(buf, "%f", Value);
+		}
+		else if constexpr (std::is_same_v<T, uint32>)
+		{
+#ifdef _WIN32
+			_ultoa(Value, &buf[0], 10);
+#else
+			sprintf(buf, "%u", Value);
+#endif
+		}
+		else if constexpr (std::is_same_v<T, float> || std::is_same_v<T, double>)
+		{
+			sprintf(buf, "%f", Value);
+		}
+		else if constexpr (std::is_same_v<T, uint64>)
+		{
+			sprintf(buf, "%llu", Value);
+		}
+		else
+		{
+			sprintf(buf, "%ll", Value);
+		}
 
 		return string(buf);
 	}
