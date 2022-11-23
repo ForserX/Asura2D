@@ -56,7 +56,7 @@ namespace ark::stl
 			} else if constexpr (std::is_floating_point_v<CT>) {
 				val = static_cast<CT>(stl::stod(string_value));
 			} else if constexpr (std::is_same_v<CT, ImColor>) {
-				val = CT(std::stoul(string_value));
+				val = CT(stl::stoul(string_value));
 			} else if constexpr (stl::is_string_serialize_v<CT>) {
 				val = CT::unstrigify(string_value);
 			} else if constexpr (std::is_same_v<CT, bool>) {
@@ -97,7 +97,7 @@ namespace ark::stl
 				offset = end_offset;
 
 				vec_elem_type temp_value;
-				unstrigify_type(temp_value, stl::string_view(value.data() + begin_offset, value.data() + end_offset));
+				unstrigify_type(temp_value, stl::string(value.data() + begin_offset, value.data() + end_offset));
 				values_vector.emplace_back(std::move(temp_value));
 			}
 
@@ -113,7 +113,7 @@ namespace ark::stl
 	constexpr stl::string_view get_type_string()
 	{
 		if constexpr (stl::meta::is_specialization<T, stl::vector>::value) {
-			const static stl::string type_string = stl::string("vec_") + stl::get_type_string<T::value_type>();
+			constexpr stl::string type_string = stl::string("vec_") + stl::get_type_string<T::value_type>();
 			return type_string.data();
 		} else if constexpr (std::is_floating_point_v<T>) {
 			return "f_";

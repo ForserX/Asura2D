@@ -142,7 +142,7 @@ namespace ark::math
                 const size_t end_offset = sval.find_first_of(' ', begin_offset);
                 offset = end_offset;
 
-                return stl::string_view(sval.begin() + begin_offset, sval.begin() + end_offset);
+                return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
             };
 
             data[0] = stl::stod(get_string());
