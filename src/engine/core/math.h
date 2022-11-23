@@ -1,5 +1,8 @@
 #pragma once
 
+#undef M_PI
+#define M_PI 3.14159265358979323846
+
 namespace ark::math
 {
     template<typename T>
@@ -313,7 +316,7 @@ namespace ark::math
 
         float angle() const
         {
-            float acos = std::acosf(rot.y());
+            float acos = ::acosf(rot.y());
             float angle = (rot.x() >= 0) ? acos : -acos;
             return angle;
         }
@@ -330,8 +333,8 @@ namespace ark::math
         
         void set_angle(float angle)
         {
-            rot[0] = std::sinf(angle);
-            rot[1] = std::cosf(angle);
+            rot[0] = ::sinf(angle);
+            rot[1] = ::cosf(angle);
         }
         
         void set_rotation(const fvec2& new_rot)

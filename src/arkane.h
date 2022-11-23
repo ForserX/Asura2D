@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <thread>
 #include <execution>
+#include <filesystem>
 
 #ifdef _WIN32
 #include <format>

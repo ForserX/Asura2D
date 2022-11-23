@@ -16,8 +16,8 @@ namespace ark
         config_parser() noexcept = default;
         ~config_parser() = default;
 
-        void load(const std::filesystem::path&);
-        void save(const std::filesystem::path&) const;
+        void load(const std::filesystem::path& file);
+        void save(const std::filesystem::path& file) const;
 
         [[nodiscard]] size_t get_count() const { return section_count; }
         [[nodiscard]] const data_type& get_data() const { return data; }
