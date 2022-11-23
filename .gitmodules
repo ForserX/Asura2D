@@ -1,9 +1,6 @@
 [submodule "libs/SDL"]
 	path = libs/SDL
 	url = https://github.com/libsdl-org/SDL
-[submodule "libs/imgui"]
-	path = libs/imgui
-	url = https://github.com/Vertver/imgui/
 [submodule "libs/entt"]
 	path = libs/entt
 	url = https://github.com/skypjack/entt
@@ -37,3 +34,6 @@
 [submodule "libs/ogg"]
 	path = libs/ogg
 	url = https://github.com/xiph/ogg
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/ocornut/imgui
