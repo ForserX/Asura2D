@@ -17,6 +17,7 @@
 
 #include "engine/physics/physics_debug_draw.h"
 #include "engine/physics/physics_material.h"
+#include "engine/physics/physics_body.h"
 #include "engine/physics/physics_world.h"
 #include "engine/physics/physics.h"
 
