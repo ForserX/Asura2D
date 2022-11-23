@@ -63,7 +63,7 @@ namespace ark::stl
 			using vec_elem_type = typename U::value_type;
 
 			stl::string vector_string;
-			vector_string += "{";
+			vector_string += "{ ";
 			for (const vec_elem_type& elem : value) {
 				vector_string += stringify_type(elem);
 				vector_string += " ";
@@ -142,14 +142,16 @@ namespace ark::stl
 	template<typename T>
 	constexpr stl::string_view get_type_string()
 	{
-		if constexpr (std::is_same_v<T, math::vec2<float>>) {
-			return "vec_f_";
+		if constexpr (is_stl_vector<T>::value) {
+			return "arr_";
+		} else if constexpr (std::is_same_v<T, math::vec2<float>>) {
+			return "vecf_";
 		} else if constexpr (std::is_floating_point_v<T>) {
 			return "f_";
 		} else if constexpr (std::is_same_v<T, ImColor>) {
 			return "c_";
 		} else if constexpr (std::is_same_v<T, math::transform>) {
-			return "f_"; 
+			return "t_"; 
 		} else if constexpr (std::is_same_v<T, math::fvec2>) {
 			return "v_";
 		} else if constexpr (std::is_same_v<T, bool>) {

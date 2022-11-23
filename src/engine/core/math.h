@@ -131,7 +131,7 @@ namespace ark::math
 
         stl::string to_string()
         {
-            return stl::to_string(x()) + " " + stl::to_string(y());
+            return "[ " + stl::to_string(x()) + " " + stl::to_string(y()) + " ]";
         }
 
         void from_string(const stl::string_view& sval)
@@ -145,8 +145,11 @@ namespace ark::math
                 return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
             };
 
-            data[0] = stl::stod(get_string());
-            data[1] = stl::stod(get_string());
+            offset = sval.find_first_not_of('[');
+            if (offset != static_cast<size_t>(-1)) {
+                data[0] = stl::stod(get_string());
+                data[1] = stl::stod(get_string());
+            }
         }
 
         static vec2<T> unstrigify(const stl::string& sval)
@@ -335,7 +338,7 @@ namespace ark::math
 
         stl::string to_string()
         {
-            return stl::to_string(pos.x()) + " " + stl::to_string(pos.y()) + " " + stl::to_string(rot.x()) + " " + stl::to_string(rot.y());
+            return "[ " + stl::to_string(pos.x()) + " " + stl::to_string(pos.y()) + " " + stl::to_string(rot.x()) + " " + stl::to_string(rot.y()) + " ]";
         }
 
         void from_string(const stl::string& sval)
@@ -349,10 +352,13 @@ namespace ark::math
                 return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
             };
 
-            pos[0] = stl::stof(get_string());
-            pos[1] = stl::stof(get_string());
-            rot[0] = stl::stof(get_string());
-            rot[1] = stl::stof(get_string());
+            offset = sval.find_first_not_of('[');
+            if (offset != -1) {
+                pos[0] = stl::stof(get_string());
+                pos[1] = stl::stof(get_string());
+                rot[0] = stl::stof(get_string());
+                rot[1] = stl::stof(get_string());
+            }
         }
 
         static transform unstrigify(const stl::string& sval)

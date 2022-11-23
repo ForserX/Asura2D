@@ -167,11 +167,11 @@ namespace ark
 				data["f_angle"] = stl::stringify(angle);
 				data["f_angular_vel"] = stl::stringify(angular_vel);
 				data["f_mass"] = stl::stringify(mass);
-				data["v_mass_center"] = stl::stringify(mass_center);
 
-				data["v_vel"] = stl::stringify(vel);
-				data["v_pos"] = stl::stringify(pos);
-				data["v_size"] = stl::stringify(size);
+				data["vecf_mass_center"] = stl::stringify(mass_center);
+				data["vecf_vel"] = stl::stringify(vel);
+				data["vecf_pos"] = stl::stringify(pos);
+				data["vecf_size"] = stl::stringify(size);
 
 				uint32_t temp_value = packed_type.mat;
 				data["i_mat"] = stl::stringify(temp_value);
@@ -195,11 +195,11 @@ namespace ark
 				read_on_existing("f_angle", angle);
 				read_on_existing("f_angular_vel", angular_vel);
 				read_on_existing("f_mass", mass);
-				read_on_existing("v_mass_center", mass_center);
 
-				read_on_existing("v_vel", vel);
-				read_on_existing("v_pos", pos);
-				read_on_existing("v_size", size);
+				read_on_existing("vecf_mass_center", mass_center);
+				read_on_existing("vecf_vel", vel);
+				read_on_existing("vecf_pos", pos);
+				read_on_existing("vecf_size", size);
 
 				if (data.contains("i_mat")) {
 					packed_type.mat = stl::unstringify<uint8_t>(data["i_mat"]);

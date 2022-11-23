@@ -175,7 +175,7 @@ serialize_entity(stl::stream_vector& data, entt::entity ent)
 ///////////////////////////////////////////////////////////
 template<typename Component>
 void
-string_serialize_entity_component(stl::string_map& data, entity_desc& desc, stl::vector<entt::id_type> components, entt::entity ent)
+string_serialize_entity_component(stl::string_map& data, entity_desc& desc, stl::vector<entt::id_type>& components, entt::entity ent)
 {
 	const auto& reg = entities::internal::get_registry().get();
 	if (reg.all_of<Component>(ent)) {
@@ -187,7 +187,7 @@ string_serialize_entity_component(stl::string_map& data, entity_desc& desc, stl:
 
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
 			if (value_ptr != nullptr) {
-				components.emplace_back(id);
+				components.push_back(id);
 				if constexpr (stl::is_custom_serialize_v<Component>) {
 					if (entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) {
 						entities::custom_serializer<Component>::string_serialize(*value_ptr, data);
@@ -222,11 +222,11 @@ string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 
 	(string_serialize_entity_component<Args>(ent_data, desc, components, ent), ...);
 	if (desc.flags != 0) {
-		ent_data["flags"] = stl::to_string(desc.flags);
+		ent_data["i_flags"] = stl::to_string(desc.flags);
 	}
 
 	if (!components.empty()) {
-		ent_data["components"] = stl::stringify(components);
+		ent_data["arr_components"] = stl::stringify(components);
 	}
 
 }
