@@ -45,6 +45,8 @@ void audio::openal::destroy()
 	}
 
 	data.clear();
+
+	al_trash::CloseAL();
 }
 
 void audio::openal::start(stl::string_view sound_src)

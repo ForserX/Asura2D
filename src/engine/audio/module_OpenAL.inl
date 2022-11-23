@@ -56,6 +56,22 @@ int init_al()
     return 0;
 }
 
+void CloseAL(void)
+{
+    ALCdevice* device;
+    ALCcontext* ctx;
+
+    ctx = alcGetCurrentContext();
+    if (ctx == NULL)
+        return;
+
+    device = alcGetContextsDevice(ctx);
+
+    alcMakeContextCurrent(NULL);
+    alcDestroyContext(ctx);
+    alcCloseDevice(device);
+}
+
 #define alCall(function, ...) alCallImpl(__FILE__, __LINE__, function, __VA_ARGS__)
 #define alcCall(function, device, ...) alcCallImpl(__FILE__, __LINE__, function, device, __VA_ARGS__)
 
