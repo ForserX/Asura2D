@@ -248,20 +248,19 @@ physics::world::debug_joints_tick()
 	static bool sound_started = false;
 
     if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
-		if (!sound_started)
-		{
-			std::filesystem::path snd_path = filesystem::get_content_dir();
-			snd_path.append("sound").append("click.ogg");
-			audio::start((stl::string)snd_path.generic_string());
-
-			sound_started = true;
-		}
-
         math::fvec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
         if (TestMouseJoint == nullptr) {
             MoveBody = hit_test(mouse_position_absolute);
             if (MoveBody != nullptr && MoveBody->get_body_type() != body_type::static_body) {
+				if (!sound_started)
+				{
+					std::filesystem::path snd_path = filesystem::get_content_dir();
+					snd_path.append("sound").append("click.ogg");
+					audio::start((stl::string)snd_path.generic_string());
+
+					sound_started = true;
+				}
                 constexpr float frequency_hz = 60.0f;
                 constexpr float damping_ratio = 1.f;
                 b2MouseJointDef jd;
