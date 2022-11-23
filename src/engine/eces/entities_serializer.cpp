@@ -40,7 +40,8 @@ auto try_to_string_serialize = [](stl::string_view state_name)
 	entities_string_data.clear();
 	entities::internal::string_serialize(entities_string_data);
 
-	config_parser parser(entities_string_data);
+	config_parser parser;
+	parser.swap(entities_string_data);
 	parser.save(path);
 };
 

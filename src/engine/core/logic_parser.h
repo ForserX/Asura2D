@@ -12,7 +12,6 @@ namespace ark
         const stl::string& get(stl::string_view section, stl::string_view value) const;
 
     public:
-        config_parser(const data_type& in_data) : data(in_data), section_count(in_data.size()) {}
         config_parser() noexcept = default;
         ~config_parser() = default;
 
@@ -25,6 +24,11 @@ namespace ark
 
         int add_section(stl::string_view section);
         int add_key_in_section(stl::string_view section, stl::string_view key);
+
+        void swap(data_type& data_to_swap)
+        {
+            data.swap(data_to_swap);
+        }
 
         template<typename T>
         T get(stl::string_view section, stl::string_view value)
