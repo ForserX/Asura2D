@@ -75,6 +75,35 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bins/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bins/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bins/bin) 
 
+# Create ImGui CMake file
+FILE(WRITE libs/imgui/CMakeLists.txt
+"cmake_minimum_required(VERSION 3.16)\n"
+"project(arkane C CXX)\n\n"
+"file(GLOB IMGUI_SRC\n"
+"	\"imgui.h\"\n"
+"	\"imconfig.h\"\n"
+"	\"imgui_internal.h\"\n"
+"	\"imgui.cpp\"\n"
+"	\"imgui_demo.cpp\"\n"
+"	\"imgui_draw.cpp\"\n"
+"	\"imgui_tables.cpp\"\n"
+"	\"imgui_widgets.cpp\"\n"
+"	\"imgui_rectpack.cpp\"\n"
+"	\"imgui_textedit.cpp\"\n"
+"	\"imgui_truetype.cpp\"\n"
+")\n\n"
+"file(GLOB IMGUI_BACKEND_SRC\n"
+"	\"backends/imgui_impl_sdl.h\"\n"
+"	\"backends/imgui_impl_sdlrenderer.h\"\n"
+"	\"backends/imgui_impl_sdl.cpp\"\n"
+"	\"backends/imgui_impl_sdlrenderer.cpp\"\n"
+")\n\n"
+"add_library(\"imgui\" STATIC \${IMGUI_SRC} \${IMGUI_BACKEND_SRC})\n"
+"target_link_libraries(\"imgui\" PUBLIC SDL2::SDL2-static)\n\n"
+"target_include_directories(\"imgui\" PUBLIC \"\")\n"
+"target_include_directories(\"imgui\" PUBLIC \"backends\")\n"
+)
+
 add_subdirectory("libs/optick")
 add_subdirectory("libs/mimalloc")
 add_subdirectory("libs/SDL")
@@ -97,3 +126,5 @@ else()
 endif()
 
 add_subdirectory("src")
+
+FILE(REMOVE libs/imgui/CMakeLists.txt)
