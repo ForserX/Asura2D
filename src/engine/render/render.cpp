@@ -38,14 +38,17 @@ render::pre_init()
 	}
 
 	debug::msg("SDL Render mode support: {}", render_list);
-
+#if defined(__APPLE__)
     SDL_setenv("METAL_DEVICE_WRAPPER_TYPE", "1", 0);
+#endif
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
 }
 
 void
 render::init()
 {
+	pre_init();
+
 	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC);
 
 	ark_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
@@ -61,7 +64,14 @@ render::init()
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	
+#if defined(_WIN32) & defined(ARK_DX12)
+	ImGui_ImplSDL2_InitForD3D(window_handle);
+#elif defined(__APPLE__)
+	ImGui_ImplSDL2_InitForMetal(window_handle);
+#else
 	ImGui_ImplSDL2_InitForSDLRenderer(window_handle, renderer);
+#endif
+
 	ImGui_ImplSDLRenderer_Init(renderer);
 
 	graphics::init();
