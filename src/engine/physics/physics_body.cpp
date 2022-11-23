@@ -76,7 +76,7 @@ math::frect
 physics::physics_body::get_rect() const
 {
 	// #TODO: OPTIMIZE
-	return physics::get_body_position(this);
+	return physics::get_body_rect(this);
 }
 
 math::fvec2
