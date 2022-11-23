@@ -1,7 +1,7 @@
 # Build
 Ark Engine using CMake build system.
 
-![example workflow](https://github.com/ForserX/ark_engine/actions/workflows/cmake.yml/badge.svg)
+![example workflow](https://github.com/vertver/arkane/actions/workflows/cmake.yml/badge.svg)
 
 |Windows|MacOS|Linux|
 |---|---|---|
