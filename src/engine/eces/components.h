@@ -32,31 +32,13 @@ namespace ark::entities
 		static constexpr net::flag_t flag = 1 << 4;
 	};
 	
-	// serializable, for ground specification
-	struct ground_flag
-	{
-		static constexpr net::flag_t flag = 1 << 5;
-	};
-	
 	// serializable, for level specification
 	struct level_flag
 	{
-		static constexpr net::flag_t flag = 1 << 6;
+		static constexpr net::flag_t flag = 1 << 5;
 	};					
 
-	// serializable, for networking and delta serialize
-	struct net_id_flag
-	{
-		static constexpr net::flag_t flag = 1 << 7;
-	};
-
-	// serializable, for marking player as controlled by AI or player
-	struct net_controlled_flag
-	{
-		static constexpr net::flag_t flag = 1 << 8;
-	};
-
-    constexpr uint32_t last_flag_index = 8;
+    constexpr uint32_t last_flag_index = 5;
 
 	struct draw_color_component
 	{
@@ -92,7 +74,6 @@ namespace ark::entities
 		physics::physics_body* body = nullptr;
 	};
 }
-
 
 // Don't forget to add this defines in game code
 VISITABLE_STRUCT(ark::entities::draw_color_component, color);

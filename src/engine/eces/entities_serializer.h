@@ -65,10 +65,7 @@ namespace ark::entities
 #define DECLARE_SERIALIZABLE_FLAGS \
     ark::entities::background_flag, \
     ark::entities::drawable_flag, \
-    ark::entities::ground_flag, \
     ark::entities::level_flag, \
-    ark::entities::net_id_flag, \
-    ark::entities::net_controlled_flag \
 	DECLARE_GAME_SERIALIZABLE_FLAGS
 
 #define DECLARE_SERIALIZABLE_TYPES \
