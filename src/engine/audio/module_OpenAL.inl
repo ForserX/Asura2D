@@ -15,7 +15,7 @@ struct stream_audio_data
     ALsizei size_consumed = 0;
     ALenum format;
     OggVorbis_File ogg_vorbis_file;
-    std::int_fast32_t ogg_current_section = 0;
+    int ogg_current_section = 0;
     size_t duration;
 };
 

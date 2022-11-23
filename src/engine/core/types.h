@@ -1,17 +1,29 @@
 #pragma once
 
+
 void* ark_alloc(size_t size_to_alloc);
 void ark_free(void* ptr);
+
+inline void* operator new (size_t size) { return ark_alloc(size ? size : 1); }
+inline void* operator new[](size_t size) { return ark_alloc(size ? size : 1); }
+
+inline void operator delete (void* ptr) noexcept { ark_free(ptr); }
+inline void operator delete[](void* ptr) noexcept { ark_free(ptr); }
+
 
 namespace ark::stl
 {
 #ifdef ARK_ALLOCATOR_USE
+
 	template <typename T>
 	struct ark_allocator
 	{
 		using value_type = T;
+		using size_type = size_t;
+		using difference_type = ptrdiff_t; 
 
 		constexpr ark_allocator() = default;
+		~ark_allocator() = default;
 
 		template <class Other>
 		constexpr ark_allocator(const ark_allocator<Other>&) noexcept {}

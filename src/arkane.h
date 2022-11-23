@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <set>
+#include <map>
 #include <vector>
 #include <memory>
 #include <string>
@@ -16,6 +17,7 @@
 #include <thread>
 #include <execution>
 #include <filesystem>
+#include <mutex>
 
 #ifdef _WIN32
 #include <format>

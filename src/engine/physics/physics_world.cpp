@@ -100,7 +100,7 @@ physics::world::init()
 			OPTICK_THREAD("Physics thread")
 
 			// Setup affinity to second thread
-			threads::set_thread_affinity(physics_thread->native_handle(), 1);
+			threads::set_thread_affinity((void*)physics_thread->native_handle(), 1);
 			
 			while (!enable_thread) {
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
