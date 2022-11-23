@@ -6,6 +6,9 @@ namespace ark::entities
 	{
 		void serialize(stl::stream_vector& data);
 		void deserialize(stl::stream_vector& data);
+
+		void string_serialize(stl::tree_string_map& data);
+		void string_deserialize(const stl::tree_string_map& data);
 	}
 
 	const std::chrono::nanoseconds& get_last_serialize_time();
@@ -13,8 +16,14 @@ namespace ark::entities
 	void deserialize_state(stl::string_view state_name);
 	void serialize_state(stl::string_view state_name);
 
+	void string_serialize_state(stl::string_view state_name);
+	void string_deserialize_state(stl::string_view state_name);
+
 	void serialize(stl::stream_vector& data);
 	void deserialize(stl::stream_vector& data);
+
+	void string_serialize(stl::tree_string_map& data);
+	void string_deserialize(const stl::tree_string_map& data);
 
 	template<typename T>
 	struct custom_serializer;

@@ -12,7 +12,7 @@ namespace ark
         const stl::string& get(stl::string_view section, stl::string_view value) const;
 
     public:
-        config_parser(data_type&& in_data, size_t in_section_count) : data(in_data), section_count(in_section_count) {}
+        config_parser(const data_type& in_data) : data(in_data), section_count(in_data.size()) {}
         config_parser() noexcept = default;
         ~config_parser() = default;
 

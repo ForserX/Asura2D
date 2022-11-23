@@ -5,6 +5,7 @@ using namespace ark;
 void shit_detector_tick();
 
 stl::stream_vector entities_data = {};
+stl::tree_string_map entities_string_data = {};
 std::chrono::nanoseconds entities_serilaize_last_time = {};
 
 ///////////////////////////////////////////////////////////
@@ -30,6 +31,31 @@ auto try_to_deserialize = [](stl::string_view state_name)
 	filesystem::read_file(path, entities_data);
 	entities::internal::deserialize(entities_data);
 };
+
+auto try_to_string_serialize = [](stl::string_view state_name)
+{
+	std::filesystem::path path = filesystem::get_userdata_dir();
+	path.append(state_name);
+
+	entities_string_data.clear();
+	entities::internal::string_serialize(entities_string_data);
+
+	config_parser parser(entities_string_data);
+	parser.save(path);
+};
+
+auto try_to_string_deserialize = [](stl::string_view state_name)
+{
+	std::filesystem::path path = filesystem::get_userdata_dir();
+	path.append(state_name);
+
+	entities_string_data.clear();
+	config_parser parser;
+	parser.load(path);
+
+	entities::internal::string_deserialize(parser.get_data());
+};
+
 
 ///////////////////////////////////////////////////////////
 // Binary deserialization
@@ -149,13 +175,8 @@ serialize_entity(stl::stream_vector& data, entt::entity ent)
 ///////////////////////////////////////////////////////////
 template<typename Component>
 void
-string_serialize_entity_component(stl::string_map& data, entity_desc& desc, entt::entity ent)
+string_serialize_entity_component(stl::string_map& data, entity_desc& desc, stl::vector<entt::id_type> components, entt::entity ent)
 {
-	static_assert(
-		!stl::meta::is_detected<decltype(Component::id)>::value, 
-		"The type cannot contain field with \"id\" key. Try to rename it to something else"
-	);
-
 	const auto& reg = entities::internal::get_registry().get();
 	if (reg.all_of<Component>(ent)) {
 		if constexpr (stl::contains_flag_v<Component>) {
@@ -166,13 +187,13 @@ string_serialize_entity_component(stl::string_map& data, entity_desc& desc, entt
 
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
 			if (value_ptr != nullptr) {
-				//data["id"] = std::to_string(id);
+				components.emplace_back(id);
 				if constexpr (stl::is_custom_serialize_v<Component>) {
 					if (entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) {
 						entities::custom_serializer<Component>::string_serialize(*value_ptr, data);
 					}
 				} else {
-					visit_struct::for_each(*value_ptr, []<typename T>(const char* name, const T& value) {
+					visit_struct::for_each(*value_ptr, [&data]<typename T>(const char* name, const T& value) {
 						static const stl::string combined_name = stl::combine_string<T>(name);
 						data[combined_name] = stl::stringify(value);
 					});
@@ -194,8 +215,20 @@ string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 	}
 
 	entity_desc desc = {};
-	//std::string entity_key = std::to_string(static_cast<uint32_t>(ent)) + "" + std::to_string(desc.flags);
-	//(string_serialize_entity_component<Args>(data[entity_key], desc, ent), ...);
+	stl::vector<entt::id_type> components;
+
+	stl::string entity_key = stl::to_string(static_cast<uint32_t>(ent));
+	stl::string_map& ent_data = data[entity_key];
+
+	(string_serialize_entity_component<Args>(ent_data, desc, components, ent), ...);
+	if (desc.flags != 0) {
+		ent_data["flags"] = stl::to_string(desc.flags);
+	}
+
+	if (!components.empty()) {
+		ent_data["components"] = stl::stringify(components);
+	}
+
 }
 
 ///////////////////////////////////////////////////////////
@@ -220,6 +253,32 @@ entities::serialize_state(stl::string_view state_name)
 	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
 		internal::process_entities([state_name]() {
 			try_to_serialize(state_name);
+		}, entities_state::reading);
+
+		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+		return false;
+	});
+}
+
+void
+entities::string_serialize_state(stl::string_view state_name)
+{
+	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
+		internal::process_entities([state_name]() {
+			try_to_string_serialize(state_name);
+		}, entities_state::reading);
+
+		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+		return false;
+	});
+}
+
+void 
+entities::string_deserialize_state(stl::string_view state_name)
+{
+	scheduler::schedule(scheduler::entity_serializator, [state_name]() {
+		internal::process_entities([state_name]() {
+			try_to_string_deserialize(state_name);
 		}, entities_state::reading);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
@@ -284,12 +343,62 @@ entities::internal::deserialize(stl::stream_vector& data)
 	}
 }
 
+void 
+entities::internal::string_serialize(stl::tree_string_map& data)
+{
+	OPTICK_EVENT("entities string serializer");
+
+	const auto& reg = get_registry().get();
+	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
+	uint32_t entities_count = reg.size() - ent_view.size_hint();
+
+	if (entities_count != 0) {
+		const entt::entity* ent_ptr = reg.data();
+		while (ent_ptr != reg.data() + reg.size()) {
+			string_serialize_entity<DECLARE_SERIALIZABLE_ENTITY_TYPES>(data, *ent_ptr);
+			ent_ptr++;
+		}
+	}
+}
+
+void 
+entities::internal::string_deserialize(const stl::tree_string_map& data)
+{
+	OPTICK_EVENT("entities string deserializer");
+}
+
 void
 entities::deserialize(stl::stream_vector& data)
 {
 	scheduler::schedule(scheduler::entity_serializator, [&data]() {
 		internal::process_entities([&data]() {
 			internal::deserialize(data);
+		}, entities_state::writing);
+
+		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+		return false;
+	});
+}
+
+void 
+entities::string_serialize(stl::tree_string_map& data)
+{
+	scheduler::schedule(scheduler::entity_serializator, [&data]() {
+		internal::process_entities([&data]() {
+			internal::string_serialize(data);
+		}, entities_state::writing);
+
+		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();
+		return false;
+	});
+}
+
+void 
+entities::string_deserialize(const stl::tree_string_map& data)
+{
+	scheduler::schedule(scheduler::entity_serializator, [&data]() {
+		internal::process_entities([&data]() {
+			internal::string_deserialize(data);
 		}, entities_state::writing);
 
 		entities_serilaize_last_time = std::chrono::steady_clock::now().time_since_epoch();

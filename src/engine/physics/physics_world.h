@@ -173,9 +173,14 @@ namespace ark
 				data["v_pos"] = stl::stringify(pos);
 				data["v_size"] = stl::stringify(size);
 
-				data["i_mat"] = stl::stringify(packed_type.mat);
-				data["i_shape"] = stl::stringify(packed_type.shape);
-				data["i_type"] = stl::stringify(packed_type.type);
+				uint32_t temp_value = packed_type.mat;
+				data["i_mat"] = stl::stringify(temp_value);
+
+				temp_value = packed_type.shape;
+				data["i_shape"] = stl::stringify(temp_value);
+
+				temp_value = packed_type.type;
+				data["i_type"] = stl::stringify(temp_value);
 			}
 
 			void string_deserialize(stl::string_map& data)

@@ -131,7 +131,7 @@ namespace ark::math
 
         stl::string to_string()
         {
-            return std::to_string(x()) + " " + std::to_string(y());
+            return stl::to_string(x()) + " " + stl::to_string(y());
         }
 
         void from_string(const stl::string_view& sval)

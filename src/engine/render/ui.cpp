@@ -210,11 +210,19 @@ ui::tick(float dt)
                     ImGui::Separator();
 
                     if (ImGui::MenuItem("Serialize game state")) {
-                        entities::serialize_state("debug_game_state");
+                        entities::serialize_state("debug_game_state.bin");
                     }
 
                     if (ImGui::MenuItem("Deserialize game state")) {
-                        entities::deserialize_state("debug_game_state");
+                        entities::deserialize_state("debug_game_state.bin");
+                    }
+
+                    if (ImGui::MenuItem("String serialize game state")) {
+                        entities::string_serialize_state("string_debug_game_state.ini");
+                    }
+
+                    if (ImGui::MenuItem("String deserialize game state")) {
+                        entities::string_deserialize_state("string_debug_game_state.ini");
                     }
 
                     ImGui::EndMenu();

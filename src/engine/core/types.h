@@ -126,6 +126,15 @@ namespace ark::stl
 			sprintf(buf, "%d", Value);
 #endif
 		}
+		else if constexpr (std::is_same_v<T, short>)
+		{
+
+#ifdef _WIN32
+			_itoa(Value, &buf[0], 10);
+#else
+			sprintf(buf, "%d", Value);
+#endif
+		}
 		else if constexpr (std::is_same_v<T, uint32>)
 		{
 #ifdef _WIN32
@@ -144,7 +153,7 @@ namespace ark::stl
 		}
 		else
 		{
-			sprintf(buf, "%ll", Value);
+			sprintf(buf, "%lld", Value);
 		}
 
 		return string(buf);

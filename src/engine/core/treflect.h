@@ -29,20 +29,50 @@ namespace ark::stl
 		data.first += sizeof(value);
 	}
 
+	template<typename>
+	struct is_stl_vector : std::false_type {};
+
+	template<typename T>
+	struct is_stl_vector<stl::vector<T>> : std::true_type {};
+
 	template<typename T>
 	stl::string stringify(T value)
 	{
 		using U = stl::clear_type<T>;
-		if constexpr (std::is_same_v<U, math::transform>) {
-			return value.to_string();
-		} else if constexpr (std::is_same_v<U, ImColor>) {
-			return stl::to_string(static_cast<uint32_t>(value));
-		} else if constexpr (std::is_same_v<U, bool>) {
-			return stl::string(value == true ? "true" : "false");
-		} else if constexpr (std::is_enum_v<U>) {
-			return stl::to_string(static_cast<int64_t>(value));
+
+		auto stringify_type = []<typename CT>(CT value) -> stl::string
+		{
+			if constexpr (std::is_same_v<CT, math::transform>) {
+				return value.to_string();
+			} else if constexpr (std::is_same_v<CT, math::fvec2>) {
+				return value.to_string();
+			} else if constexpr (std::is_same_v<U, ImColor>) {
+				return stl::to_string(static_cast<uint32_t>(value));
+			} else if constexpr (std::is_same_v<U, bool>) {
+				return stl::string(value == true ? "true" : "false");
+			} else if constexpr (std::is_enum_v<U>) {
+				return stl::to_string(static_cast<int64_t>(value));
+			} else if constexpr (std::is_integral_v<U>) {
+				return stl::to_string(static_cast<int64_t>(value));
+			} else {
+				return stl::to_string(value);
+			}
+		};
+
+		if constexpr (is_stl_vector<U>::value) {
+			using vec_elem_type = typename U::value_type;
+
+			stl::string vector_string;
+			vector_string += "{";
+			for (const vec_elem_type& elem : value) {
+				vector_string += stringify_type(elem);
+				vector_string += " ";
+			}
+
+			vector_string += "}";
+			return vector_string;
 		} else {
-			return stl::to_string(value);
+			return stringify_type(value);
 		}
 	}
 
@@ -51,7 +81,7 @@ namespace ark::stl
 	{
 		auto unstrigify_type = []<typename CT>(CT& val, const stl::string_view& string_value)
 		{
-			if constexpr (stl::meta::is_specialization<CT, math::vec2>::value) {
+			if constexpr (std::is_same_v<CT, math::vec2<float>>) {
 				val.from_string(string_value);
 			} else if constexpr (std::is_floating_point_v<CT>) {
 				val = static_cast<CT>(stl::stod(string_value));
@@ -74,7 +104,7 @@ namespace ark::stl
 			}
 		};
 
-		if constexpr (stl::meta::is_specialization<U, stl::vector>::value) {
+		if constexpr (is_stl_vector<U>::value) {
 			size_t offset = value.find_first_of('{');
 			if (offset == size_t(-1)) {
 				// #TODO: parsing error
@@ -112,9 +142,8 @@ namespace ark::stl
 	template<typename T>
 	constexpr stl::string_view get_type_string()
 	{
-		if constexpr (stl::meta::is_specialization<T, stl::vector>::value) {
-			constexpr stl::string type_string = stl::string("vec_") + stl::get_type_string<T::value_type>();
-			return type_string.data();
+		if constexpr (std::is_same_v<T, math::vec2<float>>) {
+			return "vec_f_";
 		} else if constexpr (std::is_floating_point_v<T>) {
 			return "f_";
 		} else if constexpr (std::is_same_v<T, ImColor>) {
