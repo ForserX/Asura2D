@@ -88,6 +88,8 @@ void check_al_errors(const stl::string_view filename, const std::uint_fast32_t l
     }
 }
 
+static stl::byte_vector audio_buffer;
+
 size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fileHandle)
 {
     stream_audio_data* audio_data = reinterpret_cast<stream_audio_data*>(fileHandle);
@@ -107,18 +109,16 @@ size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fi
         }
     }
 
-    char* moreData = new char[length];
+    std::memset(audio_buffer.data(), 0, audio_buffer.size());
+    audio_buffer.resize(length);
 
     audio_data->file.clear();
     audio_data->file.seekg(audio_data->size_consumed);
-    if (!audio_data->file.read(&moreData[0], length))
-    {
-        if (audio_data->file.eof())
-        {
+    if (!audio_data->file.read(audio_buffer.data(), length)) {
+        if (audio_data->file.eof()) {
             audio_data->file.clear(); // just clear the error, we will resolve it later
         }
-        else if (audio_data->file.fail())
-        {
+        else if (audio_data->file.fail()) {
             debug::msg("AL ERROR: OGG stream has fail bit set {} ", audio_data->filename);
             audio_data->file.clear();
             return 0;
@@ -130,12 +130,9 @@ size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fi
             return 0;
         }
     }
+
     audio_data->size_consumed += length;
-
-    std::memcpy(destination, &moreData[0], length);
-
-    delete[] moreData;
-
+    std::memcpy(destination, audio_buffer.data(), length);
     audio_data->file.clear();
 
     return length;
