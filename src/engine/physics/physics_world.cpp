@@ -333,7 +333,7 @@ physics::world::internal_tick(float dt)
 }
 
 math::frect
-physics::world::get_real_body_position(b2Body* body)
+physics::world::get_real_body_rect(b2Body* body)
 {
 	if (body == nullptr) {
 		return {};
@@ -404,10 +404,10 @@ physics::world::destroy_world()
 }
 
 math::frect
-physics::world::get_body_position(const physics_body* body)
+physics::world::get_body_rect(const physics_body* body)
 {
 	if (body != nullptr) {
-		return get_real_body_position(body->get_body());
+		return get_real_body_rect(body->get_body());
 	}
 
 	// return proxy position, until our object doesn't created

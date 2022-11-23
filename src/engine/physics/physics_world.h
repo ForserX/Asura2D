@@ -28,7 +28,7 @@ namespace ark
 			void pre_tick();
 			void debug_joints_tick();
 			void internal_tick(float dt);
-            math::frect get_real_body_position(b2Body* body);
+            math::frect get_real_body_rect(b2Body* body);
 			
 		public:
 			world();
@@ -45,7 +45,7 @@ namespace ark
 			void destroy_world();
 		
 		public:
-			math::frect get_body_position(const physics_body* body);
+			math::frect get_body_rect(const physics_body* body);
 			
 		public:
 			physics_body* schedule_creation(body_parameters parameters);

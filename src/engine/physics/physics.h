@@ -12,7 +12,7 @@ namespace ark::physics
 	b2World& get_world();
 	b2Body* get_ground();
 	
-    math::frect get_body_position(const physics_body* body);
+    math::frect get_body_rect(const physics_body* body);
 	physics_body* schedule_creation(body_parameters parameters);
 	void schedule_free(physics_body* body);
 	

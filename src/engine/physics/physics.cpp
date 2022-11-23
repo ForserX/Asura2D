@@ -31,9 +31,9 @@ physics::tick(float dt)
 }
 
 math::frect
-physics::get_body_position(const physics_body* body)
+physics::get_body_rect(const physics_body* body)
 {
-	return game_world.get_body_position(body);
+	return game_world.get_body_rect(body);
 }
 
 physics::physics_body*
