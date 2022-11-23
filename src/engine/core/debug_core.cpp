@@ -44,7 +44,7 @@ debug::print_message(stl::string_view message)
 	log_file << message << std::endl;
 	ui::push_console_string(message);
 
-#if defined(_DEBUG) & defined(_WIN32)
+#if defined(_DEBUG) & defined(OS_WINDOWS)
 	if (IsDebuggerPresent()) {
 		OutputDebugString("ark: ");
 		OutputDebugString(message.data());

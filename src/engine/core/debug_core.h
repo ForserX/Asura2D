@@ -24,7 +24,7 @@ namespace ark::debug
 	template <typename... Args>
 	inline void msg(stl::string_view rt_fmt_str, Args&&... args)
 	{
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 		print_message(std::vformat(rt_fmt_str.data(), std::make_format_args(args...)));
 #else
 		print_message(fmt::vformat(rt_fmt_str.data(), fmt::make_format_args(args...)));

@@ -12,13 +12,13 @@ void
 render::pre_init()
 {
 	stl::string render_list;
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 	stl::string mode = "direct3d11";
-#elif defined(__linux__)
+#elif defined(OS_LINUX)
 	stl::string mode = "opengl";
-#elif defined(__ANDROID__)
+#elif defined(OS_ANDROID)
 	stl::string mode = "opengles2";
-#elif defined(__APPLE__)
+#elif defined(OS_APPLE_SERIES)
     stl::string mode = "metal";
 #else
 	stl::string mode = "opengl";
@@ -38,7 +38,7 @@ render::pre_init()
 	}
 
 	debug::msg("SDL Render mode support: {}", render_list);
-#if defined(__APPLE__)
+#if defined(OS_APPLE_SERIES)
     SDL_setenv("METAL_DEVICE_WRAPPER_TYPE", "1", 0);
 #endif
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
@@ -64,9 +64,9 @@ render::init()
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	
-#if defined(_WIN32) & defined(ARK_DX12)
+#if defined(OS_WINDOWS) & defined(ARK_DX12)
 	ImGui_ImplSDL2_InitForD3D(window_handle);
-#elif defined(__APPLE__)
+#elif defined(OS_APPLE_SERIES)
 	ImGui_ImplSDL2_InitForMetal(window_handle);
 #else
 	ImGui_ImplSDL2_InitForSDLRenderer(window_handle, renderer);
@@ -114,7 +114,7 @@ render::tick(float dt)
 	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
 
 	{
-		OPTICK_EVENT("render new frame prepare")
+		OPTICK_EVENT("render new frame prepare");
 		ImGui_ImplSDLRenderer_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
