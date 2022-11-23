@@ -150,8 +150,8 @@ namespace ark::stl
 		return string(buf);
 	}
 
-	[[nodiscard]] inline uint64 stoull(const string& str, size_t* idx = nullptr, int base = 10) {
-		const char* str_ptr = str.c_str();
+	[[nodiscard]] inline uint64 stoull(const string_view& str, size_t* idx = nullptr, int base = 10) {
+		const char* str_ptr = str.data();
 		char* end_ptr;
 		const unsigned long long ans = std::strtoull(str_ptr, &end_ptr, base);
 
@@ -162,8 +162,8 @@ namespace ark::stl
 		return ans;
 	}
 
-	[[nodiscard]] inline int64_t stoll(const string& str, size_t* idx = nullptr, int base = 10) {
-		const char* str_ptr = str.c_str();
+	[[nodiscard]] inline int64_t stoll(const string_view& str, size_t* idx = nullptr, int base = 10) {
+		const char* str_ptr = str.data();
 		char* end_ptr;
 		const long long ans = std::strtoll(str_ptr, &end_ptr, base);
 
@@ -174,14 +174,14 @@ namespace ark::stl
 		return ans;
 	}
 
-	[[nodiscard]] inline uint32 stoul(string str, size_t* idx = nullptr)
+	[[nodiscard]] inline uint32 stoul(const string_view& str, size_t* idx = nullptr)
 	{
 		return uint32(stoull(str, idx));
 	}
 
-	[[nodiscard]] inline double stof(const string& str, size_t* idx = nullptr)
+	[[nodiscard]] inline double stof(const string_view& str, size_t* idx = nullptr)
 	{
-		const char* str_ptr = str.c_str();
+		const char* str_ptr = str.data();
 		char* end_ptr;
 
 		const float ans = std::strtod(str_ptr, &end_ptr);
@@ -193,7 +193,7 @@ namespace ark::stl
 		return ans;
 	}
 
-	[[nodiscard]] inline float stod(string str, size_t* idx = nullptr)
+	[[nodiscard]] inline float stod(string_view str, size_t* idx = nullptr)
 	{
 		return float(stof(str, idx));
 	}

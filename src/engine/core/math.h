@@ -134,7 +134,7 @@ namespace ark::math
             return std::to_string(x()) + " " + std::to_string(y());
         }
 
-        void from_string(const stl::string& sval)
+        void from_string(const stl::string_view& sval)
         {
             size_t offset = 0;
             auto get_string = [&sval, &offset]() {
@@ -142,11 +142,11 @@ namespace ark::math
                 const size_t end_offset = sval.find_first_of(' ', begin_offset);
                 offset = end_offset;
 
-                return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
+                return stl::string_view(sval.begin() + begin_offset, sval.begin() + end_offset);
             };
 
-            data[0] = std::stod(get_string());
-            data[1] = std::stod(get_string());
+            data[0] = stl::stod(get_string());
+            data[1] = stl::stod(get_string());
         }
 
         static vec2<T> unstrigify(const stl::string& sval)
