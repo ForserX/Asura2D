@@ -58,32 +58,9 @@ namespace ark::entities
 
     constexpr uint32_t last_flag_index = 8;
 
-	#define PUSH_MEMBER(val) \
-		{ \
-			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
-			string_map[val_string] = stl::stringify(val); \
-		} \
-
-	#define POP_MEMBER(val) \
-		{ \
-			const static stl::string val_string = stl::combine_string<decltype(val)>(#val); \
-			if (string_map.contains(val_string)) \
-				val = stl::unstringify<decltype(val)>(string_map.at(val_string)); \
-		} \
-
 	struct draw_color_component
 	{
 		ImColor color;
-
-		void string_serialize(stl::string_map& string_map)
-		{
-			PUSH_MEMBER(color);
-		}
-
-		void string_deserialize(stl::string_map& string_map)
-		{
-			POP_MEMBER(color);
-		}
 	};
 
 	struct draw_gradient_component
@@ -99,13 +76,13 @@ namespace ark::entities
 
 	struct scene_component
 	{
-        math::fvec2 size = {};
-        math::transform transform = {};
+        math::fvec2 size;
+        math::transform transform;
 	};
 	
     struct camera_component
     {
-        float cam_zoom = 0.f;
+        float cam_zoom;
         math::transform cam_transform;
     };
 
@@ -113,24 +90,13 @@ namespace ark::entities
 	{
 		static constexpr bool custom_serialize = true;
 		physics::physics_body* body = nullptr;
-
-		bool can_serialize_now() const
-		{
-			return body != nullptr;
-		}
-
-		void serialize(stl::stream_vector& data) const
-		{
-			const physics::body_parameters parameters = body->copy_parameters();
-			parameters.serialize(data);
-		}
-
-		void deserialize(stl::stream_vector& data)
-		{
-			ark_assert(body == nullptr, "Body is not freed yet. That means that you have a memory leak", {})
-
-			const physics::body_parameters parameters(data);
-			body = physics::schedule_creation(parameters);
-		}
 	};
 }
+
+
+// Don't forget to add this defines in game code
+VISITABLE_STRUCT(ark::entities::draw_color_component, color);
+VISITABLE_STRUCT(ark::entities::draw_gradient_component, first_color, second_color);
+VISITABLE_STRUCT(ark::entities::draw_texture_component, texture_resource);
+VISITABLE_STRUCT(ark::entities::scene_component, size, transform);
+VISITABLE_STRUCT(ark::entities::camera_component, cam_zoom, cam_transform);

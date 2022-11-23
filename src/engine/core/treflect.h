@@ -49,28 +49,99 @@ namespace ark::stl
 	template<typename T>
 	T unstringify(const stl::string& value)
 	{
-		using U = stl::clear_type<T>;
-		if constexpr (std::is_floating_point_v<U>) {
-			return static_cast<U>(stl::stod(value));
-		} else if constexpr (std::is_same_v<U, ImColor>) {
-			return T(stl::stoul(value));
-		} else if constexpr (stl::is_string_serialize_v<U>) {
-			return U::from_string(value);
-		} else if constexpr (std::is_same_v<U, bool>) {
-			return value == "true";
-		} else if constexpr (std::is_integral_v<U>) {
-			if constexpr (std::is_unsigned_v<U>) {
-				return static_cast<U>(stl::stoull(value));
+		auto stringify_type = []<typename U>(U ival)
+		{
+			if constexpr (stl::is_string_serialize_v<U>) {
+				return ival.to_string();
+			} else if constexpr (std::is_same_v<U, ImColor>) {
+				return std::to_string(static_cast<uint32_t>(ival));
+			} else if constexpr (std::is_same_v<U, bool>) {
+				return stl::string(ival == true ? "true" : "false");
+			} else if constexpr (std::is_integral_v<U>) {
+				return std::to_string(ival);
+			} else if constexpr (std::is_enum_v<U>) {
+				return std::to_string(static_cast<int64_t>(ival));
 			} else {
-				return static_cast<U>(stl::stoll(value));
+				return std::to_string(ival);
 			}
-		} else if constexpr (std::is_enum_v<U>) {
-			return static_cast<U>(stl::stoll(value));
+		};
+
+		using ClearType = stl::clear_type<T>;
+		if constexpr (stl::meta::is_specialization<ClearType, stl::vector>::value) {
+			stl::string combined_string = "{ ";
+			for (const auto& elem : value) {
+				combined_string += stringify_type(elem);
+				combined_string += " ";
+			}
+
+			return combined_string;
 		} else {
-			return value.data();
+			return stringify_type(value);
 		}
 	}
 
+	template<typename T, typename U = stl::clear_type<T>>
+	U unstringify(const stl::string& value)
+	{
+		auto unstrigify_type = [](auto& out, const stl::string& string_value)
+		{
+			if constexpr (std::is_floating_point_v<U>) {
+				out = static_cast<U>(std::stod(string_value));
+			} else if constexpr (std::is_same_v<U, ImColor>) {
+				out = U(std::stoul(string_value));
+			} else if constexpr (stl::is_string_serialize_v<U>) {
+				out = U::unstrigify(string_value);
+			} else if constexpr (std::is_same_v<U, bool>) {
+				out = !string_value.compare("true");
+			} else if constexpr (std::is_integral_v<U>) {
+				if constexpr (std::is_unsigned_v<U>) {
+					out = static_cast<U>(std::stoull(string_value));
+				} else {
+					out = static_cast<U>(std::stoll(string_value));
+				}
+			} else if constexpr (std::is_enum_v<U>) {
+				out = static_cast<U>(std::stoll(string_value));
+			} else {
+				out = string_value.data();
+			}
+		};
+
+		using ClearType = stl::clear_type<T>;
+		if constexpr (stl::meta::is_specialization<ClearType, stl::vector>::value) {
+			stl::vector<ClearType::value_type> OutValue;
+
+			size_t offset = value.find_first_of('{');
+			if (offset == size_t(-1)) {
+				// #TODO: parsing error
+				return {};
+			}
+
+			offset = value.find_first_not_of(' ', offset + 1);
+			if (offset == size_t(-1)) {
+				// #TODO: parsing error
+				return {};
+			}
+
+			const size_t offset_end = value.find_first_of('}');
+			while (offset != size_t(-1) && offset < offset_end) {
+				const size_t begin_offset = value.find_first_not_of(' ', offset);
+				const size_t end_offset = value.find_first_of(' ', begin_offset);
+				offset = end_offset;
+
+				typename ClearType::value_type out_value;
+				unstrigify_type(out_value, stl::string(value.begin() + begin_offset, value.begin() + end_offset));
+				OutValue.push_back(unstrigify_type(stl::string(value.begin() + begin_offset, value.begin() + end_offset)));
+			}
+
+			return OutValue;
+		} else {
+			U out_value = {};
+			unstrigify_type(out_value, value);
+			return out_value;
+		}
+	}
+
+	/*
 	void inspect(const stl::string& skey, const stl::string& sval, auto&& func)
 	{
 		if (!skey.compare("b_")) {
@@ -91,11 +162,15 @@ namespace ark::stl
 			func(stl::unstringify<stl::string_view>(sval));
 		}
 	}
+	*/
 
 	template<typename T>
 	constexpr stl::string_view get_type_string()
 	{
-		if constexpr (std::is_floating_point_v<T>) {
+		if constexpr (stl::meta::is_specialization<T, stl::vector>::value) {
+			const static stl::string type_string = stl::string("vec_") + stl::get_type_string<T::value_type>();
+			return type_string.data();
+		} else if constexpr (std::is_floating_point_v<T>) {
 			return "f_";
 		} else if constexpr (std::is_same_v<T, ImColor>) {
 			return "c_";

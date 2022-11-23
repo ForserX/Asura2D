@@ -109,17 +109,6 @@ if (UNIX)
 	list(APPEND LIBRARIES_TO_LINK "fmt")
 endif()
 
-if (ARKANE_ASAN)
-	target_compile_options("libarkane" PUBLIC "-fsanitize=address")
-    target_link_libraries("libarkane" PUBLIC "-fsanitize=address")
-	target_compile_options("box2d" PUBLIC "-fsanitize=address")
-    target_link_libraries("box2d" PUBLIC "-fsanitize=address")
-
-    if (WIN32)
-		list(APPEND LIBRARIES_TO_LINK "libsancov.lib")
-	endif()
-endif()
-
 if (MIMALLOC_ENABLED)
 	list(APPEND LIBRARIES_TO_LINK "mimalloc-static")
 endif()
@@ -131,6 +120,17 @@ endif()
 ################################################
 add_library("libarkane" STATIC ${ENGINE_SRC_FILES})
 target_link_libraries("libarkane" PUBLIC ${LIBRARIES_TO_LINK})
+
+if (ARKANE_ASAN)
+	target_compile_options("libarkane" PUBLIC "-fsanitize=address")
+    target_link_libraries("libarkane" PUBLIC "-fsanitize=address")
+	target_compile_options("box2d" PUBLIC "-fsanitize=address")
+    target_link_libraries("box2d" PUBLIC "-fsanitize=address")
+
+    if (WIN32)
+		list(APPEND LIBRARIES_TO_LINK "libsancov.lib")
+	endif()
+endif()
 
 ################################################
 #

@@ -34,7 +34,8 @@
 #include <pthread.h>
 #endif
 
-#include <boost/pfr/pfr.hpp>
+#include <visit_struct/visit_struct.hpp>
+
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
 

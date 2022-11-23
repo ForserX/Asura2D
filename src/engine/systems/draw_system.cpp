@@ -30,12 +30,14 @@ draw_system::tick(float dt)
 	OPTICK_EVENT("engine draw system tick");
 
 	entities::access_view([this]() {
+		const int64_t width = ui::get_cmd_int("window_width");
+		const int64_t height = ui::get_cmd_int("window_height");
 		const auto draw_view = entities::get_view<drawable_flag>();
 		const auto background_view = entities::get_view<background_flag>();
 
 		{
 			OPTICK_EVENT("engine background objects draw");
-			background_view.each([this](entt::entity entity) {
+			background_view.each([this, width, height](entt::entity entity) {
 				OPTICK_EVENT("background draw");
 				if (!entities::is_valid(entity)) {
 					return;
@@ -43,8 +45,7 @@ draw_system::tick(float dt)
 
                 ark_assert(!entities::contains<drawable_flag>(entity), "background entity can't contain draw flag!", return);
 
-				const int64_t width = ui::get_cmd_int("window_width");
-				const int64_t height = ui::get_cmd_int("window_height");
+
 				if (entities::contains<draw_color_component>(entity)) {
 					const auto draw_color_comp = entities::try_get<draw_color_component>(entity);
 					if (draw_color_comp != nullptr) {

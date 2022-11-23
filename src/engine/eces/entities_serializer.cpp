@@ -38,15 +38,16 @@ template<typename Component>
 void
 deserialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt::entity ent, entt::id_type cmp_id)
 {
-	if constexpr (!stl::is_flag_v<Component>) {
+	if constexpr (!stl::contains_flag_v<Component>) {
 		entt::id_type id = entt::type_id<Component>().hash();
 		if (id == cmp_id) {
 			Component component = {};
 			if constexpr (stl::is_custom_serialize_v<Component>) {
-				component.deserialize(data);
+				entities::custom_serializer<Component>::deserialize(component, data);
 			} else {
 				stl::read_memory(data, component);
 			}
+
 			reg.emplace<Component>(ent, std::move(component));
 		}
 	}
@@ -56,7 +57,7 @@ template<typename Component>
 void
 deserialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::registry& reg, entt::entity ent)
 {
-	if constexpr (stl::is_flag_v<Component>) {
+	if constexpr (stl::contains_flag_v<Component>) {
 		if (desc.flags & Component::flag) {
 			entities::add_field<Component>(ent);
 		}
@@ -88,7 +89,7 @@ template<typename Component>
 void
 serialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt::entity ent, entity_desc& desc)
 {
-	if constexpr (!stl::is_flag_v<Component>) {
+	if constexpr (!stl::contains_flag_v<Component>) {
 		if (reg.all_of<Component>(ent)) {
 			entt::id_type id = entt::type_id<Component>().hash();
 			auto& storage = (*reg.storage(id)).second;
@@ -96,9 +97,9 @@ serialize_entity_component(stl::stream_vector& data, entt::registry& reg, entt::
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
 			if (value_ptr != nullptr) {
 				if constexpr (stl::is_custom_serialize_v<Component>) {
-					if (value_ptr->can_serialize_now()) {
+					if (entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) {
 						stl::push_memory(data, id);
-						value_ptr->serialize(data);
+						entities::custom_serializer<Component>::serialize(*value_ptr, data);
 					}
 				} else {
 					stl::push_memory(data, id);
@@ -115,7 +116,7 @@ template<typename Component>
 void
 serialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::registry& reg, entt::entity ent)
 {
-	if constexpr (stl::is_flag_v<Component>) {
+	if constexpr (stl::contains_flag_v<Component>) {
 		if (reg.all_of<Component>(ent)) {
 			desc.flags |= Component::flag;
 		}
@@ -133,10 +134,11 @@ serialize_entity(stl::stream_vector& data, entt::entity ent)
 
 	entity_desc desc = {};
 	const int64_t ent_pos = data.second.size();
+
+	(serialize_entity_flag<Args>(data, desc, reg, ent), ...);
 	stl::push_memory(data, desc);
 
 	(serialize_entity_component<Args>(data, reg, ent, desc), ...);
-	(serialize_entity_flag<Args>(data, desc, reg, ent), ...);
 
 	auto* desc_ptr = reinterpret_cast<entity_desc*>(&data.second[ent_pos]);
 	std::memcpy(desc_ptr, &desc, sizeof(entity_desc));
@@ -147,18 +149,35 @@ serialize_entity(stl::stream_vector& data, entt::entity ent)
 ///////////////////////////////////////////////////////////
 template<typename Component>
 void
-string_serialize_entity_component(stl::string_map& data, entt::entity ent, entity_desc& desc)
+string_serialize_entity_component(stl::string_map& data, entity_desc& desc, entt::entity ent)
 {
+	static_assert(
+		!stl::meta::is_detected<decltype(Component::id)>::value, 
+		"The type cannot contain field with \"id\" key. Try to rename it to something else"
+	);
+
 	const auto& reg = entities::internal::get_registry().get();
 	if (reg.all_of<Component>(ent)) {
-		if constexpr (stl::is_flag_v<Component>) {
+		if constexpr (stl::contains_flag_v<Component>) {
 			desc.flags |= Component::flag;
 		} else {
 			entt::id_type id = entt::type_id<Component>().hash();
 			auto& storage = (*reg.storage(id)).second;
+
 			const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
-			if (value_ptr != nullptr && value_ptr->can_serialize_now()) {
-				value_ptr->string_serialize(data);
+			if (value_ptr != nullptr) {
+				//data["id"] = std::to_string(id);
+				if constexpr (stl::is_custom_serialize_v<Component>) {
+					if (entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) {
+						entities::custom_serializer<Component>::string_serialize(*value_ptr, data);
+					}
+				} else {
+					visit_struct::for_each(*value_ptr, []<typename T>(const char* name, const T& value) {
+						static const stl::string combined_name = stl::combine_string<T>(name);
+						data[combined_name] = stl::stringify(value);
+					});
+				}
+
 				desc.components_count++;
 			}
 		}
@@ -175,9 +194,8 @@ string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 	}
 
 	entity_desc desc = {};
-	stl::string entity_key = stl::to_string(static_cast<uint32_t>(ent));
-	(string_serialize_entity_component<Args>(data[entity_key], ent, desc), ...);
-	data[entity_key]["flags"] = stl::to_string(desc.flags);
+	//std::string entity_key = std::to_string(static_cast<uint32_t>(ent)) + "" + std::to_string(desc.flags);
+	//(string_serialize_entity_component<Args>(data[entity_key], desc, ent), ...);
 }
 
 ///////////////////////////////////////////////////////////
@@ -230,7 +248,7 @@ entities::internal::serialize(stl::stream_vector& data)
 		stl::push_memory(data, entities_count);
 		const entt::entity* ent_ptr = reg.data();
 		while (ent_ptr != reg.data() + reg.size()) {
-			serialize_entity<DECLARE_ENTITIES_TYPES>(data, *ent_ptr);
+			serialize_entity<DECLARE_SERIALIZABLE_ENTITY_TYPES>(data, *ent_ptr);
 			ent_ptr++;
 		}
 	}
@@ -262,7 +280,7 @@ entities::internal::deserialize(stl::stream_vector& data)
 	uint32_t entities_count = 0;
 	stl::read_memory(data, entities_count);
 	for (uint32_t i = 0; i < entities_count; i++) {
-		deserialize_entity<DECLARE_ENTITIES_TYPES>(data);
+		deserialize_entity<DECLARE_SERIALIZABLE_ENTITY_TYPES>(data);
 	}
 }
 
