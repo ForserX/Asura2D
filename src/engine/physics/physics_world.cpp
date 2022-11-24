@@ -299,7 +299,7 @@ void
 physics::world::internal_tick(float dt)
 {
 	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
-	if (window::is_destroyed() || ark_editor_mode) {
+	if (window::is_destroyed()) {
 		return;
 	}
 
@@ -311,6 +311,10 @@ physics::world::internal_tick(float dt)
 	{
 		OPTICK_EVENT("physics debug joints tick")
 		debug_joints_tick();
+	}
+
+	if (ark_editor_mode) {
+		return;
 	}
 
 	for (int i = 0; i < target_steps_count; i++) {
