@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <iostream>
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <Windows.h>
 #else
 #define DebugBreak

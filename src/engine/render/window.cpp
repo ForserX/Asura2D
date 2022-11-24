@@ -1,6 +1,5 @@
-#include <SDL_syswm.h>
-
 #include "pch.h"
+#include <SDL_syswm.h>
 
 SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
