@@ -258,8 +258,8 @@ namespace ark::math
         vec2<T> center() const
         {
             return {
-                min_x + 0.5 * (max_x() - min_x()),
-                min_y + 0.5 * (max_y() - min_y())
+                min_x() + 0.5 * (max_x() - min_x()),
+                min_y() + 0.5 * (max_y() - min_y())
             };
         }
 
