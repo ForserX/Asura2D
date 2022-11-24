@@ -68,4 +68,8 @@ namespace ark::entities
 		material::shape shape = material::shape::box,
 		material::type mat = material::type::solid
 	);
+
+	const entity_view& add_scene_component(
+		const entity_view& ent
+	);
 }

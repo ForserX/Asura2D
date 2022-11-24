@@ -194,6 +194,22 @@ entities::add_phys_body(
 	if (!contains<scene_component>(ent)) {
 		add_field<scene_component>(ent);
 	}
+	if (contains<draw_color_component>(ent)) {
+		erase_field<draw_color_component>(ent);
+	}
+
+	return ent;
+}
+
+const entity_view&
+entities::add_scene_component(
+	const entity_view& ent
+)
+{
+	add_field<scene_component>(ent);
+	add_field<draw_color_component>(ent);
+
+	add_field<entities::drawable_flag>(ent);
 
 	return ent;
 }
