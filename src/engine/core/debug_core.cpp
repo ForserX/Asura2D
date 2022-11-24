@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <iostream>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -51,4 +52,8 @@ debug::print_message(stl::string_view message)
 		OutputDebugString("\r\n");
 	}
 #endif
+#if defined(OS_LINUX)
+	std::cout << "ark: " << message.data() << std::endl;	
+#endif
+
 }
