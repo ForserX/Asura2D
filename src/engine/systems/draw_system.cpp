@@ -81,6 +81,13 @@ draw_system::tick(float dt)
 							const auto end_pos = scene_comp->transform.position() + half_size;
 							graphics::draw_textured_rect(texture_comp->texture_resource, { begin_pos, end_pos });
 						}
+						else if (const auto color_comp = entities::try_get<draw_color_component>(entity)) {
+							const auto entt_id = reinterpret_cast<ptrdiff_t>(color_comp);
+							const auto half_size = math::fvec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
+							const auto begin_pos = scene_comp->transform.position() - half_size;
+							const auto end_pos = scene_comp->transform.position() + half_size;
+							graphics::draw_rect(color_map[entt_id % 4096], { begin_pos, end_pos });
+						}
 					}
 				} else if (const auto phys_comp = entities::try_get<physics_body_component>(entity)) {
 					const auto physical_body = phys_comp->body;
