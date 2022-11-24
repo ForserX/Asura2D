@@ -38,9 +38,9 @@ void camera::tick(float dt)
 	}
     
     if constexpr (test_world_transform) {
-        auto mouse_vec = math::fvec2(input::get_mouse_pos().x(), input::get_mouse_pos().y());
+        auto mouse_vec = math::fvec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
         mouse_vec = world_to_screen(screen_to_world(mouse_vec));
-        math::frect rect = { math::fvec2(mouse_vec.x() - 10.f, mouse_vec.y() - 10.f), math::fvec2(mouse_vec.x() + 10.f, mouse_vec.y() + 10.f) };
+        math::frect rect = { math::fvec2(mouse_vec.x - 10.f, mouse_vec.y - 10.f), math::fvec2(mouse_vec.x + 10.f, mouse_vec.y + 10.f) };
         graphics::draw_rect(ImColor(1.f, 1.f, 1.f, 1.f), rect);
     }
 }
@@ -122,8 +122,8 @@ camera::screen_to_world(const math::fvec2& screenPoint)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);
-    const float u = screenPoint.x() / w;
-    const float v = (h - screenPoint.y()) / h;
+    const float u = screenPoint.x / w;
+    const float v = (h - screenPoint.y) / h;
     const float ratio = w / h;
     math::fvec2 extents(ratio * 25.0f, 25.0f);
     extents *= scaled_cam_zoom;
@@ -132,8 +132,8 @@ camera::screen_to_world(const math::fvec2& screenPoint)
     const math::fvec2 upper = cam_center + extents;
 
     math::fvec2 pw;
-    pw[0] = (1.0f - u) * lower.x() + u * upper.x();
-    pw[1] = (1.0f - v) * lower.y() + v * upper.y();
+    pw[0] = (1.0f - u) * lower.x + u * upper.x;
+    pw[1] = (1.0f - v) * lower.y + v * upper.y;
     return pw;
 }
 
@@ -148,8 +148,8 @@ camera::world_to_screen(const math::fvec2& worldPoint)
 
     const math::fvec2 lower = cam_center - extents;
     const math::fvec2 upper = cam_center + extents;
-    const float u = (worldPoint.x() - lower.x()) / (upper.x() - lower.x());
-    const float v = (worldPoint.y() - lower.y()) / (upper.y() - lower.y());
+    const float u = (worldPoint.x - lower.x) / (upper.x - lower.x);
+    const float v = (worldPoint.y - lower.y) / (upper.y - lower.y);
 
     math::fvec2 ps;
     ps[0] = u * w;

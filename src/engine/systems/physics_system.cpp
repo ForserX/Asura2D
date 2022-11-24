@@ -23,7 +23,7 @@ physics_system::tick(float dt)
 		const auto view = entities::get_view<entities::physics_body_component, entities::scene_component>();
 		view.each([](const entt::entity ent, entities::physics_body_component& phys_comp, entities::scene_component& scene_comp) {
 			if (entities::is_valid(ent)) {
-				if (scene_comp.transform.position().y() < y_destroy_coord) {
+				if (scene_comp.transform.position().y < y_destroy_coord) {
 					entities::mark_as_garbage(ent);
 					return;
 				}

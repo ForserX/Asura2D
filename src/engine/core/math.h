@@ -22,11 +22,21 @@ namespace ark::math
     public:
         static constexpr bool string_serialize = true;
 
-    private:
-        T data[2] = {};
+    public:
+        union
+        {
+            struct {
+                T data[2];
+            };
+
+            struct {
+                T x;
+                T y;
+            };
+        };
 
     public:
-        vec2() = default;
+        vec2() : x(0), y(0) {};
         vec2(auto dx, auto dy)
         {
             data[0] = static_cast<T>(dx);
@@ -43,16 +53,6 @@ namespace ark::math
         {
             data[0] = static_cast<T>(vec.x);
             data[1] = static_cast<T>(vec.y);
-        }
-
-        const T& x() const
-        {
-            return data[0];
-        }
-        
-        const T& y() const
-        {
-            return data[1];
         }
         
         const T& operator()(int32 i) const
@@ -126,15 +126,15 @@ namespace ark::math
         bool empty() const
         {
             if constexpr (std::is_floating_point_v<T>) {
-                return (x() == FLT_MAX && y() == FLT_MAX) || (x() == static_cast<T>(0) && y() == static_cast<T>(0));
+                return (x == FLT_MAX && y == FLT_MAX) || (x == static_cast<T>(0) && y == static_cast<T>(0));
             }
             
-            return (x() == static_cast<T>(0) && y() == static_cast<T>(0));
+            return (x == static_cast<T>(0) && y == static_cast<T>(0));
         }
 
         stl::string to_string()
         {
-            return "[ " + stl::to_string(x()) + " " + stl::to_string(y()) + " ]";
+            return "[ " + stl::to_string(x) + " " + stl::to_string(y) + " ]";
         }
 
         void from_string(const stl::string_view& sval)
@@ -164,49 +164,49 @@ namespace ark::math
         
         static vec2<T> min(const vec2<T>& first, const vec2<T>& second)
         {
-            return vec2<T>(std::min(first.x(), second.x()), std::min(first.y(), second.y()));
+            return vec2<T>(std::min(first.x, second.x), std::min(first.y, second.y));
         }
         
         static vec2<T> max(const vec2<T>& first, const vec2<T>& second)
         {
-            return vec2<T>(std::max(first.x(), second.x()), std::max(first.y(), second.y()));
+            return vec2<T>(std::max(first.x, second.x), std::max(first.y, second.y));
         }
     };
 
     template<typename T>
     vec2<T> operator+(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x() + b.x(), a.y() + b.y());
+        return vec2<T>(a.x + b.x, a.y + b.y);
     }
 
     template<typename T>
     vec2<T> operator-(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x() - b.x(), a.y() - b.y());
+        return vec2<T>(a.x - b.x, a.y - b.y);
     }
 
     template<typename T>
     vec2<T> operator*(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x() * b.x(), a.y() * b.y());
+        return vec2<T>(a.x * b.x, a.y * b.y);
     }
 
     template<typename T>
     vec2<T> operator/(const vec2<T>& a, const vec2<T>& b)
     {
-        return vec2<T>(a.x() / b.x(), a.y() / b.y());
+        return vec2<T>(a.x / b.x, a.y / b.y);
     }
 
     template<typename T>
     bool operator==(const vec2<T>& a, const vec2<T>& b)
     {
-        return a.x() == b.x() && a.y() == b.y();
+        return a.x == b.x && a.y == b.y;
     }
 
     template<typename T>
     bool operator!=(const vec2<T>& a, const vec2<T>& b)
     {
-        return a.x() != b.x() || a.y() != b.y();
+        return a.x != b.x || a.y != b.y;
     }
 
     using ivec2 = vec2<int16_t>;
@@ -221,10 +221,10 @@ namespace ark::math
         rect() = default;
         rect(vec2<T> first, vec2<T> second)
         {
-            values[0] = std::min(first.x(), second.x());
-            values[1] = std::min(first.y(), second.y());
-            values[2] = std::max(first.x(), second.x());
-            values[3] = std::max(first.y(), second.y());
+            values[0] = std::min(first.x, second.x);
+            values[1] = std::min(first.y, second.y);
+            values[2] = std::max(first.x, second.x);
+            values[3] = std::max(first.y, second.y);
         }
         
         rect(auto x, auto y, auto w, auto h)
@@ -258,19 +258,19 @@ namespace ark::math
         vec2<T> center() const
         {
             return {
-                min_x() + 0.5 * (max_x() - min_x()),
-                min_y() + 0.5 * (max_y() - min_y())
+                min_x + 0.5 * (max_x() - min_x()),
+                min_y + 0.5 * (max_y() - min_y())
             };
         }
 
         vec2<T> min() const
         {
-            return { min_x(), min_y() };
+            return { min_x(), min_y()};
         }
         
         vec2<T> max() const
         {
-            return { max_x(), max_y() };
+            return { max_x(), max_y()};
         }
         
         T width() const
@@ -316,8 +316,8 @@ namespace ark::math
 
         float angle() const
         {
-            float acos = ::acosf(rot.y());
-            float angle = (rot.x() >= 0) ? acos : -acos;
+            float acos = ::acosf(rot.y);
+            float angle = (rot.x >= 0) ? acos : -acos;
             return angle;
         }
         
@@ -349,7 +349,7 @@ namespace ark::math
 
         stl::string to_string()
         {
-            return "[ " + stl::to_string(pos.x()) + " " + stl::to_string(pos.y()) + " " + stl::to_string(rot.x()) + " " + stl::to_string(rot.y()) + " ]";
+            return "[ " + stl::to_string(pos.x) + " " + stl::to_string(pos.y) + " " + stl::to_string(rot.x) + " " + stl::to_string(rot.y) + " ]";
         }
 
         void from_string(const stl::string& sval)

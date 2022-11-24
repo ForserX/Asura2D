@@ -56,7 +56,7 @@ input::tick(float dt)
 		}
 	}
 
-	delta_mouse_pos = math::fvec2(current_mouse_pos.x(), current_mouse_pos.y()) - math::fvec2(previous_mouse_pos.x(), previous_mouse_pos.y());
+	delta_mouse_pos = math::fvec2(current_mouse_pos.x, current_mouse_pos.y) - math::fvec2(previous_mouse_pos.x, previous_mouse_pos.y);
 	previous_mouse_pos = current_mouse_pos;
 	changed_keys.erase(SDL_SCANCODE_MOUSEWHEEL);
 }

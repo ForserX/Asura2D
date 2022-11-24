@@ -1,14 +1,19 @@
 #include "pch.h"
 
 using namespace ark;
-extern bool fullscreen_mode;
+
 extern int window_width;
 extern int window_height;
+
 extern bool window_maximized;
 extern bool physical_debug_draw;
+extern bool fullscreen_mode;
+extern bool ark_editor_mode;
+
 extern float target_physics_tps;
 extern float target_physics_hertz;
 extern float cam_zoom;
+
 extern std::unique_ptr<ui::console> console;
 
 bool show_entity_inspector = false;
@@ -74,7 +79,13 @@ ui::init()
 void
 ui::tick(float dt)
 {
-    OPTICK_EVENT("ui draw")
+    OPTICK_EVENT("ui draw");
+
+    if (ark_editor_mode)
+    {
+        editor_tick();
+        return;
+    }
 
 #ifndef ARKANE_SHIPPING 
     if (ImGui::IsKeyPressed(ImGuiKey_F2)) {
@@ -148,9 +159,9 @@ ui::tick(float dt)
                     ImGui::Text("  Alive: %d", static_cast<int>(registry.alive()));
                     ImGui::Separator();
                     ImGui::Text("UI Info:");
-                    ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x(), camera::camera_position().y());
-                    ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x(), cursor_pos.y());
-                    ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x(), wcursor_pos.y());
+                    ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
+                    ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
+                    ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
                 }
             }
                 
@@ -319,4 +330,21 @@ ui::destroy()
 {
     ::console->flush();
     ::console->clear_log();
+}
+
+bool bEditorStatic = true;
+bool bEditorBox = true;
+
+void 
+ui::editor_tick()
+{
+    ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 0 });
+    ImGui::SetNextWindowSize({ 400, (float)window_height });
+
+    if (ImGui::Begin("Create object tools", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse)) {
+        ImGui::Checkbox("Static object", &bEditorStatic);
+        ImGui::Checkbox("Box object", &bEditorBox);
+
+        ImGui::End();
+    }
 }

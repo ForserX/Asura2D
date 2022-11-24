@@ -63,7 +63,7 @@ public:
 	bool ReportFixture(b2Fixture* fixture) override
 	{
 		const b2Body* body = fixture->GetBody();
-        if (fixture->TestPoint({m_point.x(), m_point.y()})) {
+        if (fixture->TestPoint({m_point.x, m_point.y})) {
 			m_fixture = fixture;
 			return false;
 		}
@@ -81,7 +81,7 @@ physics::hit_test(math::fvec2 pos)
 	// Make a small box.
 	b2AABB aabb = {};
 	b2Vec2 d = {};
-    b2Vec2 phys_pos = {pos.x(), pos.y()};
+    b2Vec2 phys_pos = {pos.x, pos.y};
 	d.Set(0.001f, 0.001f);
 	aabb.lowerBound = phys_pos - d;
 	aabb.upperBound = phys_pos + d;

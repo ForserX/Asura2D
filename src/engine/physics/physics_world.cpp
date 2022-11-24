@@ -15,7 +15,7 @@ physics::physics_body* MoveBody = nullptr;
 math::fvec2 ContactPoint = {};
 
 std::mutex physics_lock = {};
-// Test 
+extern bool ark_editor_mode; 
 
 class ark::CollisionLister final : public b2ContactListener
 {
@@ -299,7 +299,7 @@ void
 physics::world::internal_tick(float dt)
 {
 	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
-	if (window::is_destroyed()) {
+	if (window::is_destroyed() || ark_editor_mode) {
 		return;
 	}
 
@@ -367,7 +367,7 @@ physics::world::get_real_body_rect(b2Body* body)
 void
 physics::world::tick(float dt)
 {
-	if (!use_parallel) {
+	if (!use_parallel && !ark_editor_mode) {
 		static float phys_accum = 0.f;
 		phys_accum += dt;
 		if (phys_accum >= 1.f / target_physics_tps) {

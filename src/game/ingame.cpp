@@ -44,8 +44,8 @@ auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state
         if (ark::input::is_key_pressed(SDL_SCANCODE_LCTRL)) {
             if (state == ark::input::key_state::hold) {
                 const auto& mouse_delta = ark::input::get_mouse_delta();
-                ark::camera::move(ark::camera::cam_move::left, (mouse_delta.x() * 0.05f));
-                ark::camera::move(ark::camera::cam_move::up, (mouse_delta.y() * 0.05f));
+                ark::camera::move(ark::camera::cam_move::left, (mouse_delta.x * 0.05f));
+                ark::camera::move(ark::camera::cam_move::up, (mouse_delta.y * 0.05f));
             }
         }
 		break;
@@ -67,6 +67,17 @@ auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state
 	}
 };
 
+static bool editor = false;
+auto editor_key_change = [](int16_t scan_code, ark::input::key_state state) {
+	if (scan_code == SDL_SCANCODE_X)
+	{
+		if (state == ark::input::key_state::press) {
+			editor = !editor;
+			ark::game::editor(editor);
+		}
+	}
+};
+
 auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
 	switch (scan_code) {
 	case SDL_SCANCODE_MOUSEWHEEL:
@@ -78,6 +89,7 @@ auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
 };
 
 ark::input::on_key_change camera_mouse_key_event;
+ark::input::on_key_change editor_key_event;
 ark::input::on_input_change camera_camera_mouse_wheel_event;
 
 ark::entity_view TestObject;
@@ -90,6 +102,7 @@ void ingame::init()
 	using namespace ark;
 	using namespace entities;
 	
+#if 0
 	TestObject = add_phys_body(create(), {}, { 50, 50 }, { 20, 10 });
 	TestObject2 = add_phys_body(create(), {}, { 350, 100 }, { 200, 10 });
 
@@ -116,6 +129,9 @@ void ingame::init()
 		add_field<drawable_flag>(ent);
 	}
 
+#endif
+
+	editor_key_event = ark::input::subscribe_key_event(editor_key_change);
 	camera_mouse_key_event = ark::input::subscribe_key_event(camera_mouse_key_change);
 	camera_camera_mouse_wheel_event = ark::input::subscribe_input_event(camera_mouse_wheel_change);
 }
@@ -124,4 +140,5 @@ void ingame::destroy()
 {
 	ark::input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
 	ark::input::unsubscribe_key_event(camera_mouse_key_event);
+	ark::input::unsubscribe_key_event(editor_key_event);
 }

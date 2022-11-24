@@ -103,7 +103,7 @@ namespace ark
 			mass(in_mass)
 			{
 				if (in_mass_center.empty()) {
-					mass_center = { size.x() / 2, size.y() / 2 };
+					mass_center = { size.x / 2, size.y / 2 };
 				} else {
 					mass_center = in_mass_center;
 				}

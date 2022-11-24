@@ -161,7 +161,7 @@ void
 physics::physics_body::set_position(const math::fvec2& new_pos)
 {
 	if (body != nullptr) {
-        body->SetTransform({new_pos.x(), new_pos.y()}, body->GetAngle());
+        body->SetTransform({new_pos.x, new_pos.y}, body->GetAngle());
 	}
 
 	parameters.pos = new_pos;
@@ -210,12 +210,12 @@ physics::physics_body::create()
 
 	switch (static_cast<material::shape>(parameters.packed_type.shape)) {
 	case material::shape::box:
-		poly_shape.SetAsBox(parameters.size.x(), parameters.size.y());
+		poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
 		fixtureDef.shape = &poly_shape;
 		break;
 	case material::shape::circle:
-		circle_shape.m_p.Set(parameters.size.x(), parameters.size.y());
-		circle_shape.m_radius = parameters.size.x() / 2;
+		circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
+		circle_shape.m_radius = parameters.size.x / 2;
 		fixtureDef.shape = &circle_shape;
 		break;
     default:
