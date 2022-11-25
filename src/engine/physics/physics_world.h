@@ -26,7 +26,6 @@ namespace ark
 		private:
 			void destroy_all_bodies();
 			void pre_tick();
-			void debug_joints_tick();
 			void internal_tick(float dt);
             math::frect get_real_body_rect(b2Body* body);
 			

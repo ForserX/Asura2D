@@ -9,11 +9,6 @@ float target_physics_hertz = 60.f;
 float physics_delta = 0.f;
 float physics_real_delta = 0.f;
 
-b2MouseJoint* TestMouseJoint = nullptr;
-physics::physics_body* ContactBody = nullptr;
-physics::physics_body* MoveBody = nullptr;
-math::fvec2 ContactPoint = {};
-
 std::mutex physics_lock = {};
 extern bool ark_editor_mode; 
 
@@ -212,90 +207,6 @@ physics::world::pre_tick()
 }
 
 void
-physics::world::debug_joints_tick()
-{
-    if (input::is_focused_on_ui()) {
-        return;
-    }
-
-    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1)) {
-        math::fvec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
-        if (ContactBody == nullptr) {
-            ContactBody = hit_test(mouse_position_absolute);
-            ContactPoint = mouse_position_absolute;
-        }
-        else {
-            const physics_body* test_body = hit_test(mouse_position_absolute);
-            if (test_body != nullptr && test_body != ContactBody && test_body->get_body_type() != body_type::static_body) {
-                constexpr float frequency_hz = 5.0f;
-                constexpr float damping_ratio = 0.7f;
-
-                b2DistanceJointDef jointDef;
-                jointDef.Initialize(ContactBody->get_body(), test_body->get_body(), ContactPoint, mouse_position_absolute);
-
-                jointDef.collideConnected = true;
-                b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
-
-                physics::get_world().CreateJoint(&jointDef);
-                test_body->get_body()->SetAwake(true);
-            }
-
-            ContactBody = nullptr;
-        }
-    }
-
-	static bool sound_started = false;
-
-    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
-        math::fvec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
-        if (TestMouseJoint == nullptr) {
-            MoveBody = hit_test(mouse_position_absolute);
-            if (MoveBody != nullptr && MoveBody->get_body_type() != body_type::static_body) {
-				if (!sound_started)
-				{
-					std::filesystem::path snd_path = filesystem::get_content_dir();
-					snd_path.append("sound").append("click.ogg");
-					audio::start((stl::string)snd_path.generic_string());
-
-					sound_started = true;
-				}
-                constexpr float frequency_hz = 60.0f;
-                constexpr float damping_ratio = 1.f;
-                b2MouseJointDef jd;
-                jd.bodyA = ground;
-                jd.bodyB = MoveBody->get_body();
-                jd.target = mouse_position_absolute;
-                jd.maxForce = 1000.0f * MoveBody->get_body()->GetMass();
-                b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
-
-                TestMouseJoint = dynamic_cast<b2MouseJoint*>(physics::get_world().CreateJoint(&jd));
-                MoveBody->get_body()->SetAwake(true);
-            } else {
-                TestMouseJoint = nullptr;
-            }
-        } else {
-            if (!MoveBody->is_destroyed()) {
-                TestMouseJoint->SetTarget(mouse_position_absolute);
-            } else {
-                TestMouseJoint = nullptr;
-            }
-        }
-    }
-	else
-	{
-		sound_started = false;
-	}
-    
-    if (TestMouseJoint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) {
-        physics::get_world().DestroyJoint(TestMouseJoint);
-        TestMouseJoint = nullptr;
-        MoveBody = nullptr;
-    }
-}
-
-void
 physics::world::internal_tick(float dt)
 {
 	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
@@ -304,31 +215,33 @@ physics::world::internal_tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("physics pre tick")
+		OPTICK_EVENT("physics pre tick");
 		pre_tick();
-	}
-
-	{
-		OPTICK_EVENT("physics debug joints tick")
-		debug_joints_tick();
 	}
 
 	if (ark_editor_mode) {
 		return;
 	}
 
+	{
+		OPTICK_EVENT("physics debug joints tick");
+		if (gameplay::holder_type == gameplay::holder_mode::free) {
+			gameplay::holder::free::tick();
+		}
+	}
+
 	for (int i = 0; i < target_steps_count; i++) {
-		OPTICK_EVENT("physics step")
+		OPTICK_EVENT("physics step");
 		world_holder->Step(dt, 6, 2);
 	}
 
 	{
-		OPTICK_EVENT("physics substepping")
+		OPTICK_EVENT("physics substepping");
 		world_holder->ClearForces();
 	}
 
 	{
-		OPTICK_EVENT("physics systems tick")
+		OPTICK_EVENT("physics systems tick");
 		systems::physics_tick(dt);
 	}
 

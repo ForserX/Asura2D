@@ -28,6 +28,11 @@ file(GLOB ARK_ENGINE_PHYSICS_SRC
 	"engine/physics/*.h"
 )
 
+file(GLOB ARK_ENGINE_GAMEPLAY_SRC
+	"engine/gameplay/*.cpp"
+	"engine/gameplay/*.h"
+)
+
 file(GLOB ARK_ENGINE_RENDER_SRC
 	"engine/render/*.cpp"
 	"engine/render/*.h"
@@ -61,6 +66,7 @@ file(GLOB_RECURSE ARK_GAME_SRC
 source_group("editor" FILES ${ARK_EDITOR_SRC})
 source_group("engine" FILES ${ARK_ENGINE_ENGINE_SRC})
 source_group("engine\\core" FILES ${ARK_ENGINE_CORE_SRC})
+source_group("gameplay" FILES ${ARK_ENGINE_GAMEPLAY_SRC})
 source_group("engine\\audio" FILES ${ARK_ENGINE_AUDIO_SRC})
 source_group("engine\\eces" FILES ${ARK_ENGINE_ECES_SRC})
 source_group("engine\\network" FILES ${ARK_ENGINE_NET_SRC})
@@ -71,6 +77,7 @@ source_group("engine\\systems" FILES ${ARK_ENGINE_SYSTEMS_SRC})
 set(ENGINE_SRC_FILES)
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ENGINE_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_CORE_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_GAMEPLAY_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ECES_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_AUDIO_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_NET_SRC})

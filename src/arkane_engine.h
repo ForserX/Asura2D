@@ -51,3 +51,5 @@
 #include "engine/engine/engine.h"
 #include "engine/engine/input.h"
 #include "engine/engine/game.h"
+
+#include "engine/gameplay/gameplay_common.h"
