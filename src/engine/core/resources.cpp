@@ -209,7 +209,7 @@ resources::lock(id_t resource_id, int64_t begin_offset, int64_t end_offset)
         end_offset = resource.handle.size();
     }
     
-#ifdef _WIN32
+#ifdef OS_WINDOWS
     bool locked = !!VirtualLock(const_cast<char*>(mapping_handle), end_offset - begin_offset);
 #else
     bool locked = (mlock(mapping_handle, end_offset - begin_offset) == 0);
@@ -236,7 +236,7 @@ resources::unlock(id_t resource_id, int64_t begin_offset, int64_t end_offset)
         end_offset = resource.handle.size();
     }
     
-#ifdef _WIN32
+#ifdef OS_WINDOWS
     bool unlocked = !!VirtualUnlock(const_cast<char*>(mapping_handle), end_offset - begin_offset);
 #else
     bool unlocked = (munlock(mapping_handle, end_offset - begin_offset));

@@ -20,9 +20,9 @@ scheduler::init()
 	scheduler_thread = std::make_unique<std::thread>([]() {
         std::chrono::nanoseconds last_scheduler_time = {};
         
-		OPTICK_THREAD("scheduler thread")
+		OPTICK_THREAD("scheduler thread");
 		while (!scheduler_destroyed) {
-			OPTICK_EVENT("scheduler tick")
+			OPTICK_EVENT("scheduler tick");
 			auto trigger = [](bool parallel, global_task_type task_type) {
 				stl::function_set<scheduler::global_function> funcs_to_delete;
 				auto trigger_all = [&](const scheduler::global_function& func) {
@@ -54,20 +54,20 @@ scheduler::init()
 			auto schedule_time = (std::chrono::steady_clock::now() + 50ms);
             
 			{
-				OPTICK_EVENT("scheduler work")
+				OPTICK_EVENT("scheduler work");
 
 				{
-					OPTICK_EVENT("garbage collector")
+					OPTICK_EVENT("garbage collector");
 					trigger(false, global_task_type::garbage_collector);
 				}
 
 				{
-					OPTICK_EVENT("entity serializator")
+					OPTICK_EVENT("entity serializator");
 					trigger(false, global_task_type::entity_serializator);
 				}
 
 				{
-					OPTICK_EVENT("resource manager")
+					OPTICK_EVENT("resource manager");
 					trigger(false, global_task_type::resource_manager);
 				}
 			}
@@ -76,7 +76,7 @@ scheduler::init()
             scheduler_real_delta = static_cast<double>(real_delta_time.count()) / 1000000000.;
 
 			{
-				OPTICK_EVENT("scheduler wait")
+				OPTICK_EVENT("scheduler wait");
 				std::this_thread::sleep_until(schedule_time);
 			}
 		}

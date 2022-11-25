@@ -1,6 +1,8 @@
 #include "pch.h"
 
-#ifdef OS_UNIX
+#ifdef OS_MACOS
+#define DebugBreak __builtin_trap
+#elif defined(OS_UNIX)
 #define DebugBreak
 #endif
 

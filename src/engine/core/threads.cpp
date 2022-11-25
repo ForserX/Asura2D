@@ -5,7 +5,7 @@ using namespace ark;
 void
 threads::init()
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	timeBeginPeriod(1);
 #endif
 }
@@ -13,14 +13,14 @@ threads::init()
 void
 threads::destroy()
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	timeEndPeriod(1);
 #endif
 }
 
 void threads::set_thread_affinity(void* handle, int64_t core)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	auto mask = (static_cast<DWORD_PTR>(1) << core); 
 	SetThreadAffinityMask(handle, mask);
 #else
@@ -31,7 +31,7 @@ void threads::set_thread_affinity(void* handle, int64_t core)
 
 inline void nop()
 {
-#if defined(_WIN32)
+#ifdef OS_WINDOWS
 	__nop();
 #else
 	__asm__ __volatile__("nop");
