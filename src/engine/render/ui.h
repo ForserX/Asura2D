@@ -8,6 +8,4 @@ namespace ark::ui
 
 	int64_t get_cmd_int(stl::string_view key);
 	void push_console_string(stl::string_view str);
-
-	void editor_tick();
 }

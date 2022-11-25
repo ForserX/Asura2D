@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "../editor/editor_common.h"
 
 using namespace ark;
 
@@ -83,7 +84,7 @@ ui::tick(float dt)
 
     if (ark_editor_mode)
     {
-        editor_tick();
+        editor::ui::tick();
         return;
     }
 
@@ -330,21 +331,4 @@ ui::destroy()
 {
     ::console->flush();
     ::console->clear_log();
-}
-
-bool bEditorStatic = true;
-bool bEditorBox = true;
-
-void 
-ui::editor_tick()
-{
-    ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), 0 });
-    ImGui::SetNextWindowSize({ 400, (float)window_height });
-
-    if (ImGui::Begin("Create object tools", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse)) {
-        ImGui::Checkbox("Static object", &bEditorStatic);
-        ImGui::Checkbox("Box object", &bEditorBox);
-
-        ImGui::End();
-    }
 }

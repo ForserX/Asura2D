@@ -58,6 +58,7 @@ file(GLOB_RECURSE ARK_GAME_SRC
 # Define engine source files directories
 #
 ################################################
+source_group("editor" FILES ${ARK_EDITOR_SRC})
 source_group("engine" FILES ${ARK_ENGINE_ENGINE_SRC})
 source_group("engine\\core" FILES ${ARK_ENGINE_CORE_SRC})
 source_group("engine\\audio" FILES ${ARK_ENGINE_AUDIO_SRC})
@@ -73,6 +74,7 @@ list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_CORE_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_ECES_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_AUDIO_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_NET_SRC})
+list(APPEND ENGINE_SRC_FILES ${ARK_EDITOR_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_PHYSICS_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_RENDER_SRC})
 list(APPEND ENGINE_SRC_FILES ${ARK_ENGINE_SYSTEMS_SRC})

@@ -19,19 +19,20 @@
 #include <filesystem>
 #include <mutex>
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <format>
 #else
 #include <fmt/format.h>
 #endif
 
-#ifdef WIN32
+#ifdef OS_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#include <windows.h>
+#include <Windows.h>
 #include <timeapi.h>
 #else
-#ifdef __GNUC__
+#ifdef OS_UNIX
+#include <iostream>
 #include <cxxabi.h>
 #endif
 #include <pthread.h>
