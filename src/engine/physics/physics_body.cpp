@@ -208,18 +208,19 @@ physics::physics_body::create()
 	b2PolygonShape poly_shape = {};
 	b2CircleShape circle_shape = {};
 
-	switch (static_cast<material::shape>(parameters.packed_type.shape)) {
-	case material::shape::box:
-		poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
-		fixtureDef.shape = &poly_shape;
-		break;
-	case material::shape::circle:
-		circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
-		circle_shape.m_radius = parameters.size.x / 2;
-		fixtureDef.shape = &circle_shape;
-		break;
-    default:
-        break;
+	switch (static_cast<material::shape>(parameters.packed_type.shape)) 
+	{
+		case material::shape::box:
+			poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
+			fixtureDef.shape = &poly_shape;
+			break;
+		case material::shape::circle:
+			circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
+			circle_shape.m_radius = parameters.size.x / 2;
+			fixtureDef.shape = &circle_shape;
+			break;
+		default:
+		    break;
 	}
 
 	const auto& [friction, restitution, density, ignore_collision] = material::get(static_cast<material::type>(parameters.packed_type.mat));

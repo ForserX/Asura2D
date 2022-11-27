@@ -29,7 +29,7 @@ void gameplay::holder::free::tick()
         } 
         else {
             const physics::physics_body* test_body = physics::hit_test(mouse_position_absolute);
-            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != physics::body_type::static_body) {
+            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != physics::body_type::ph_static) {
                 constexpr float frequency_hz = 5.0f;
                 constexpr float damping_ratio = 0.7f;
 
@@ -57,7 +57,7 @@ void gameplay::holder::free::tick()
         {
             current_contol_body = physics::hit_test(mouse_position_absolute);
 
-            if (current_contol_body != nullptr && current_contol_body->get_body_type() != physics::body_type::static_body) 
+            if (current_contol_body != nullptr && current_contol_body->get_body_type() != physics::body_type::ph_static)
             {
                 if (!sound_started)
                 {

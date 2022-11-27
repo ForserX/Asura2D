@@ -42,6 +42,11 @@ physics::schedule_creation(body_parameters parameters)
 	return game_world.schedule_creation(parameters);
 }
 
+physics::physics_joint* ark::physics::schedule_creation(joint_data&& parameters)
+{
+	return game_world.schedule_creation(std::move(parameters));
+}
+
 b2Body*
 physics::get_ground()
 {

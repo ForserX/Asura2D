@@ -2,16 +2,14 @@
 
 using namespace ark;
 
-void
-threads::init()
+void threads::init()
 {
 #ifdef OS_WINDOWS
 	timeBeginPeriod(1);
 #endif
 }
 
-void
-threads::destroy()
+void threads::destroy()
 {
 #ifdef OS_WINDOWS
 	timeEndPeriod(1);
@@ -38,8 +36,7 @@ inline void nop()
 #endif
 }
 
-void
-threads::switch_context()
+void threads::switch_context()
 {
 	for (int i = 0; i < 256; i++)
 	{

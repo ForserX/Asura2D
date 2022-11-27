@@ -106,6 +106,28 @@ draw_system::tick(float dt)
 					}
 
 					return;
+				} else if (const auto phys_comp = entities::try_get<physics_joint_component>(entity)) {
+					const auto physical_body = phys_comp->joint;
+					if (!physical_body) {	
+						return;
+					}
+
+					const b2Transform& xf1 = physical_body->get()->GetBodyA()->GetTransform();
+					const b2Transform& xf2 = physical_body->get()->GetBodyB()->GetTransform();
+
+					math::fvec2 p1 = camera::world_to_screen(xf1.p);
+					math::fvec2 p2 = camera::world_to_screen(xf2.p);
+
+					if (p1.x == p2.x)
+					{
+						p1.x -= 1;
+						p2.x += 1;
+					}
+
+					const auto phys_body_id = reinterpret_cast<ptrdiff_t>(physical_body);
+					graphics::draw_rect(color_map[phys_body_id % 4096], { p1, p2 });
+
+					return;
 				}
 			});
 		}

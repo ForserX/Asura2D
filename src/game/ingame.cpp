@@ -130,6 +130,7 @@ void ingame::init()
 	}
 
 #endif
+	add_phys_body_preset(create(), {100, 30}, "Teeter.ini");
 
 	editor_key_event = ark::input::subscribe_key_event(editor_key_change);
 	camera_mouse_key_event = ark::input::subscribe_key_event(camera_mouse_key_change);

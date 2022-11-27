@@ -22,6 +22,7 @@ namespace ark
 
 			stl::hash_set<physics_body*> scheduled_to_delete_bodies;
 			stl::hash_set<physics_body*> bodies;
+			stl::hash_set<physics_joint*> joints;
 
 		private:
 			void destroy_all_bodies();
@@ -48,6 +49,7 @@ namespace ark
 			
 		public:
 			physics_body* schedule_creation(body_parameters parameters);
+			physics_joint* schedule_creation(joint_data&& parameters);
 			void schedule_free(physics_body* body);
 		};
 	}

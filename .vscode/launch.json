@@ -1,0 +1,14 @@
+{
+    "name": "C++ Launch (Windows)",
+    "type": "cppvsdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/bins/bin/arkgame.exe",
+    "symbolSearchPath": "C:\\Symbols;C:\\SymbolDir2",
+    "externalConsole": true,
+    "logging": {
+      "moduleLoad": false,
+      "trace": true
+    },
+    "visualizerFile": "${workspaceFolder}/my.natvis",
+    "showDisplayString": true
+}

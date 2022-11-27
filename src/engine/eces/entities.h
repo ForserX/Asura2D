@@ -64,9 +64,15 @@ namespace ark::entities
 		math::fvec2 vel,
         math::fvec2 pos,
         math::fvec2 size,
-		physics::body_type type = physics::body_type::dynamic_body,
+		physics::body_type type = physics::body_type::ph_dynamic,
 		material::shape shape = material::shape::box,
 		material::type mat = material::type::solid
+	);
+
+	const entity_view& add_phys_body_preset(
+		const entity_view& ent,
+		math::fvec2 pos,
+		stl::string_view preset
 	);
 
 	const entity_view& add_scene_component(

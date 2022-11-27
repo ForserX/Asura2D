@@ -201,6 +201,65 @@ entities::add_phys_body(
 	return ent;
 }
 
+const entity_view& ark::entities::add_phys_body_preset(const entity_view& ent, math::fvec2 pos, stl::string_view preset)
+{
+	stl::path preset_file = filesystem::get_content_dir();
+	preset_file.append("bodies").append(preset);
+
+	config_parser reader;
+	reader.load(preset_file);
+
+	stl::tree_string_map parser_data = reader.get_data();
+
+	stl::vector<physics::physics_body*> new_bodies;
+
+	for (auto [sect, key_val] : parser_data)
+	{
+		if (sect.find("body") != std::string::npos) 
+		{
+			physics::body_parameters phys_parameters = {};
+			phys_parameters.pos.x = pos.x + stl::stof(key_val["x_offset"]);
+			phys_parameters.pos.y = pos.y + stl::stof(key_val["y_offset"]);
+			phys_parameters.angle = 0;
+			phys_parameters.angular_vel = 0;
+			phys_parameters.vel = { 0, 0 };
+			phys_parameters.size.from_string(key_val["size"]);
+			phys_parameters.packed_type.shape = 1 + (key_val["shape"] != "box");
+			phys_parameters.packed_type.type = 1 + (key_val["type"] == "dynamic");
+			phys_parameters.packed_type.mat = 1;
+
+			auto body = new_bodies.emplace_back(schedule_creation(phys_parameters));
+
+			const entity_view& ent_body = create();
+
+			add_field<physics_body_component>(ent_body, body);
+			add_field<scene_component>(ent_body);
+			add_field<entities::drawable_flag>(ent_body);
+		}
+		else if (sect.find("joint") != std::string::npos)
+		{
+			physics::joint_data jdata = {
+				new_bodies[stl::stoull(key_val["first"])] , new_bodies[stl::stoull(key_val["second"])],
+				(float)stl::stof(key_val["lower"]), (float)stl::stof(key_val["upper"]),
+				key_val["type"] == "revolute" ? physics::joint_type::revolute : physics::joint_type::base,
+				key_val["limit"] == "true"
+			};
+
+			auto joint = schedule_creation(std::move(jdata));
+
+			const entity_view& ent_body = create();
+
+			add_field<physics_joint_component>(ent_body, joint);
+			add_field<scene_component>(ent_body);
+			add_field<entities::drawable_flag>(ent_body);
+		}
+	}
+
+	new_bodies.clear();
+
+	return ent;
+}
+
 const entity_view&
 entities::add_scene_component(
 	const entity_view& ent

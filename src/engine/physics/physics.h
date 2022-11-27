@@ -14,6 +14,7 @@ namespace ark::physics
 	
     math::frect get_body_rect(const physics_body* body);
 	physics_body* schedule_creation(body_parameters parameters);
+	physics_joint* schedule_creation(joint_data&& parameters);
 	void schedule_free(physics_body* body);
 	
 	physics_body* hit_test(math::fvec2 pos);

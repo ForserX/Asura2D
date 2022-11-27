@@ -12,9 +12,10 @@ namespace ark
 		{
 			invalid = 0,
 
-			static_body,
-			dynamic_body,
-			kinematic_body
+			ph_static,
+			ph_dynamic,
+			ph_kinematic,
+			ph_preset
 		};
 
 		inline
@@ -22,13 +23,13 @@ namespace ark
 		get_box2d_body_type(uint8_t type)
 		{
 			switch (static_cast<body_type>(type)) {
-			case body_type::kinematic_body:
+			case body_type::ph_kinematic:
 				return b2_kinematicBody;
 				break;
-			case body_type::static_body:
+			case body_type::ph_static:
 				return b2_staticBody;
 				break;
-			case body_type::dynamic_body:
+			case body_type::ph_dynamic:
 				return b2_dynamicBody;
 				break;
 			default:
@@ -45,17 +46,17 @@ namespace ark
 		{
 			switch (type) {
 			case b2_kinematicBody:
-				return body_type::kinematic_body;
+				return body_type::ph_kinematic;
 			case b2_staticBody:
-				return body_type::static_body;
+				return body_type::ph_static;
 			case b2_dynamicBody:
-				return body_type::dynamic_body;
+				return body_type::ph_dynamic;
 			default:
 				ark_assert(false, "Invalid body type", {});
 				break;
 			}
 
-			return body_type::dynamic_body;
+			return body_type::ph_dynamic;
 		}
 
 		struct body_parameters
@@ -81,7 +82,7 @@ namespace ark
             math::fvec2 size;
             math::fvec2 mass_center;
 
-			body_parameters() = delete;
+			body_parameters() = default;
 			body_parameters(
 				float in_angle,
 				float in_vel_angle,

@@ -166,6 +166,12 @@ physics::world::pre_tick()
 		}
 	}
 
+	for (const auto joint : joints) {
+		if (!joint->is_created()) {
+			joint->create();
+		}
+	}
+
 #ifdef ARKANE_BOX2D_OPTIMIZED
 	stl::hash_set<b2Contact*> contacts;
 	for (const auto body : scheduled_to_delete_bodies) {
@@ -337,6 +343,13 @@ physics::world::schedule_creation(body_parameters parameters)
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	const auto& [key, value] = bodies.insert(new physics_body(parameters));
 	return *key;
+}
+
+physics::physics_joint* ark::physics::world::schedule_creation(joint_data&& parameters)
+{
+	std::scoped_lock<std::mutex> scope_lock(physics_lock);
+	auto value = joints.emplace(new physics_joint(std::move(parameters)));
+	return *(value.first);
 }
 
 void

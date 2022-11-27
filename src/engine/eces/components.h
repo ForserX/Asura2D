@@ -73,6 +73,12 @@ namespace ark::entities
 		static constexpr bool custom_serialize = true;
 		physics::physics_body* body = nullptr;
 	};
+
+	struct physics_joint_component
+	{
+		static constexpr bool custom_serialize = true;
+		physics::physics_joint* joint = nullptr;
+	};
 }
 
 // Don't forget to add this defines in game code

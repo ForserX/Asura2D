@@ -215,4 +215,6 @@ namespace ark::stl
 
 	using string_map = stl::hash_map<stl::string, stl::string>;
 	using tree_string_map = stl::hash_map<stl::string, string_map>;
+
+	using path = std::filesystem::path;
 }

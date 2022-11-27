@@ -134,15 +134,15 @@ namespace ark::math
 
         stl::string to_string()
         {
-            return "[ " + stl::to_string(x) + " " + stl::to_string(y) + " ]";
+            return "[" + stl::to_string(x) + "," + stl::to_string(y) + "]";
         }
 
         void from_string(const stl::string_view& sval)
         {
             size_t offset = 0;
-            auto get_string = [&sval, &offset]() {
-                const size_t begin_offset = sval.find_first_not_of(' ', offset);
-                const size_t end_offset = sval.find_first_of(' ', begin_offset);
+            auto get_string = [&sval, &offset](char start, char end) {
+                const size_t begin_offset = sval.find_first_not_of(start, offset);
+                const size_t end_offset = sval.find_first_of(end, begin_offset);
                 offset = end_offset;
 
                 return stl::string(sval.begin() + begin_offset, sval.begin() + end_offset);
@@ -150,8 +150,8 @@ namespace ark::math
 
             offset = sval.find_first_not_of('[');
             if (offset != static_cast<size_t>(-1)) {
-                data[0] = stl::stod(get_string());
-                data[1] = stl::stod(get_string());
+                data[0] = stl::stod(get_string('[', ','));
+                data[1] = stl::stod(get_string(',', ']'));
             }
         }
 
