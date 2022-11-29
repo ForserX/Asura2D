@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::gameplay
+namespace asura::gameplay
 {
 	enum class holder_mode
 	{

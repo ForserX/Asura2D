@@ -1,8 +1,8 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
-namespace ark::scene 
+namespace asura::scene 
 {
 	config_parser section_parser;
 }
@@ -40,7 +40,7 @@ scene::import_scene(std::string_view scene_name)
 	scene_path.append("scene");
 	scene_path.append(scene_name);
 
-	ark_assert(std::filesystem::exists(scene_path), "Can't find scene", return);
+	game_assert(std::filesystem::exists(scene_path), "Can't find scene", return);
 	section_parser.load(scene_path);
 
 	//entities::string_deserialize(section_parser.get_data());

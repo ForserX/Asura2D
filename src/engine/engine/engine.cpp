@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 bool paused = false;
 bool use_parallel = true;

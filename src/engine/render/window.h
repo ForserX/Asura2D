@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::window
+namespace asura::window
 {
 	void init();
 	void destroy();

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 constexpr int32 k_maxContactPoints = 2048;
 int target_steps_count = 1;
@@ -12,7 +12,7 @@ float physics_real_delta = 0.f;
 std::mutex physics_lock = {};
 extern bool ark_editor_mode; 
 
-class ark::CollisionLister final : public b2ContactListener
+class asura::CollisionLister final : public b2ContactListener
 {
 	struct ContactPoint
 	{
@@ -269,7 +269,7 @@ physics::world::get_real_body_rect(b2Body* body)
 	b2Fixture* fixture = body->GetFixtureList();
 	while (fixture != nullptr) {
 		const b2Shape* shape = fixture->GetShape();
-#ifdef ARKANE_BOX2D_OPTIMIZED
+#ifdef ASURA_BOX2D_OPTIMIZED
 		b2AABB shapeAABB = {};
 		shape->ComputeAABB(&shapeAABB, t);
 		aabb.Combine(shapeAABB);
@@ -345,7 +345,7 @@ physics::world::schedule_creation(body_parameters parameters)
 	return *key;
 }
 
-physics::physics_joint* ark::physics::world::schedule_creation(joint_data&& parameters)
+physics::physics_joint* asura::physics::world::schedule_creation(joint_data&& parameters)
 {
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	auto value = joints.emplace(new physics_joint(std::move(parameters)));

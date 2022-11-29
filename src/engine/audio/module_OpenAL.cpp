@@ -7,7 +7,7 @@
 #include <ogg/include/ogg/os_types.h>
 #include <ogg/include/ogg/ogg.h>
 
-using namespace ark;
+using namespace asura;
 
 static bool al_work = false;
 

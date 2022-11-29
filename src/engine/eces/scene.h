@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::scene
+namespace asura::scene
 {
 	void init();
 	void destroy();

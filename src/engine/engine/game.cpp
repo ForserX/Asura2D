@@ -3,7 +3,7 @@
 
 extern bool ark_editor_mode;
 
-using namespace ark;
+using namespace asura;
 
 void
 game::init()

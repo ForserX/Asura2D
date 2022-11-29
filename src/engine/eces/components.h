@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::entities
+namespace asura::entities
 {
 	// non-serializable, created for scheduled entities destroying
 	struct garbage_flag
@@ -82,8 +82,8 @@ namespace ark::entities
 }
 
 // Don't forget to add this defines in game code
-VISITABLE_STRUCT(ark::entities::draw_color_component, color);
-VISITABLE_STRUCT(ark::entities::draw_gradient_component, first_color, second_color);
-VISITABLE_STRUCT(ark::entities::draw_texture_component, texture_resource);
-VISITABLE_STRUCT(ark::entities::scene_component, size, transform);
-VISITABLE_STRUCT(ark::entities::camera_component, cam_zoom, cam_transform);
+VISITABLE_STRUCT(asura::entities::draw_color_component, color);
+VISITABLE_STRUCT(asura::entities::draw_gradient_component, first_color, second_color);
+VISITABLE_STRUCT(asura::entities::draw_texture_component, texture_resource);
+VISITABLE_STRUCT(asura::entities::scene_component, size, transform);
+VISITABLE_STRUCT(asura::entities::camera_component, cam_zoom, cam_transform);

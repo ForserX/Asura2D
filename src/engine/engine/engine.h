@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::engine
+namespace asura::engine
 {
 	void start();
 	void init(int argc, char** argv);

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 extern bool fullscreen_mode;
 extern bool show_fps_counter;

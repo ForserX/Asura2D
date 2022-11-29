@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark::systems;
+using namespace asura::systems;
 
 constexpr float y_destroy_coord = -100.f;
 

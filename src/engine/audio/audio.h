@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "module_OpenAL.h"
 
-namespace ark::audio
+namespace asura::audio
 {
 	using namespace audio::openal;
 }

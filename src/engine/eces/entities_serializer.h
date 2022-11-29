@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::entities
+namespace asura::entities
 {
 	namespace internal
 	{
@@ -63,17 +63,17 @@ namespace ark::entities
 }
 
 #define DECLARE_SERIALIZABLE_FLAGS \
-    ark::entities::background_flag, \
-    ark::entities::drawable_flag, \
-    ark::entities::level_flag, \
+    asura::entities::background_flag, \
+    asura::entities::drawable_flag, \
+    asura::entities::level_flag, \
 	DECLARE_GAME_SERIALIZABLE_FLAGS
 
 #define DECLARE_SERIALIZABLE_TYPES \
-    ark::entities::draw_color_component, \
-    ark::entities::draw_gradient_component, \
-    ark::entities::draw_texture_component, \
-    ark::entities::scene_component, \
-    ark::entities::physics_body_component \
+    asura::entities::draw_color_component, \
+    asura::entities::draw_gradient_component, \
+    asura::entities::draw_texture_component, \
+    asura::entities::scene_component, \
+    asura::entities::physics_body_component \
 	DECLARE_GAME_SERIALIZABLE_TYPES
 
 #define DECLARE_SERIALIZABLE_ENTITY_TYPES \
@@ -81,9 +81,9 @@ namespace ark::entities
     DECLARE_SERIALIZABLE_TYPES
 
 #define DECLARE_NON_SERIALIZABLE_TYPES \
-    ark::entities::garbage_flag, \
-    ark::entities::non_serializable_flag, \
-    ark::entities::dont_free_after_reset_flag \
+    asura::entities::garbage_flag, \
+    asura::entities::non_serializable_flag, \
+    asura::entities::dont_free_after_reset_flag \
 	DECLARE_GAME_NON_SERIALIZABLE_ENTITY_TYPES
 
 #define DECLARE_ENTITIES_TYPES \

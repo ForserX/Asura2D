@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "editor_common.h"
 
-using namespace ark;
+using namespace asura;
 
 extern int window_width;
 extern int window_height;

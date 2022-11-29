@@ -1,10 +1,10 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 std::filesystem::path path_level = {};
 stl::vector<entity_view> ent_list = {};
 
-namespace ark::level
+namespace asura::level
 {
     config_parser level_data = {};
 
@@ -18,7 +18,8 @@ namespace ark::level
 		float level_h = 0;
 
 		// сука, это нужно будет переделать
-		for (const auto &[section, kv] : level_data.get_data()) {
+		for (const auto &[section, kv] : level_data.get_data()) 
+		{
 			if (section == "background") {
 				auto background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), level_data.get<stl::string_view>(section, "path")));
 				entities::add_field<entities::background_flag>(background_ent);
@@ -66,9 +67,10 @@ void level::init()
 	path_level = filesystem::get_content_dir();
 	path_level.append("level");
 
-	ark_assert(std::filesystem::exists(path_level), "Level path not found! Please, reinstall game!", return);
+	game_assert(std::filesystem::exists(path_level), "Level path not found! Please, reinstall game!", return);
 
-	for (auto& dir_iter : std::filesystem::directory_iterator{ path_level }) {
+	for (auto& dir_iter : std::filesystem::directory_iterator{ path_level }) 
+	{
 		load(dir_iter);
 	}
 }

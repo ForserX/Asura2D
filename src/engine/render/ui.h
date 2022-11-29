@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::ui
+namespace asura::ui
 {
 	void init();
 	void tick(float dt);

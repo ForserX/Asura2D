@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::ui
+namespace asura::ui
 {
     struct console
     {

@@ -8,7 +8,7 @@
 
 static std::ofstream log_file;
 
-using namespace ark;
+using namespace asura;
 
 void debug::init()
 {
@@ -42,12 +42,12 @@ void debug::print_message(stl::string_view message)
 
 #if defined(_DEBUG) & defined(OS_WINDOWS)
 	if (IsDebuggerPresent()) {
-		OutputDebugString("ark: ");
+		OutputDebugString("asura: ");
 		OutputDebugString(message.data());
 		OutputDebugString("\r\n");
 	}
 #endif
 #if defined(OS_LINUX)
-	std::cout << "ark: " << message.data() << std::endl;	
+	std::cout << "asura: " << message.data() << std::endl;	
 #endif
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::editor
+namespace asura::editor
 {
 	void init();
 	void destroy();

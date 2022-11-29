@@ -1,23 +1,23 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
-ark::physics::physics_joint::~physics_joint()
+asura::physics::physics_joint::~physics_joint()
 {
 	destroy();
 }
 
-void ark::physics::physics_joint::create()
+void asura::physics::physics_joint::create()
 {
 	switch (data.type)
 	{
-		case ark::physics::joint_type::base:
+		case asura::physics::joint_type::base:
 			break;
-		case ark::physics::joint_type::mouse:
+		case asura::physics::joint_type::mouse:
 			break;
-		case ark::physics::joint_type::motor:
+		case asura::physics::joint_type::motor:
 			break;
-		case ark::physics::joint_type::revolute:
+		case asura::physics::joint_type::revolute:
 		{
 			b2RevoluteJointDef jdata = {};
 			jdata.lowerAngle = data.lower;
@@ -35,7 +35,7 @@ void ark::physics::physics_joint::create()
 	created = true;
 }
 
-void ark::physics::physics_joint::destroy()
+void asura::physics::physics_joint::destroy()
 {
 	if (destroyed)
 		return;

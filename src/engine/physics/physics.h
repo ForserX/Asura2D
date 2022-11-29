@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::physics
+namespace asura::physics
 {
 	void start();
 	void init();

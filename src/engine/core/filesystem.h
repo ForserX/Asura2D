@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <filesystem>
 
-namespace ark::filesystem
+namespace asura::filesystem
 {
 	void init();
 	void destroy();

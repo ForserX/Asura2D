@@ -1,5 +1,5 @@
 #pragma once
-#include "ark_config.h"
+#include "asura_config.h"
 
 #include <cstdint>
 #include <set>
@@ -62,8 +62,8 @@
 
 #include <optick.h>
 
-#ifdef ARK_VULKAN
+#ifdef ASURA_VULKAN
 #include <vulkan.hpp>
 #endif
 
-#include "arkane_engine.h"
+#include "asura_engine.h"

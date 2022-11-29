@@ -4,12 +4,11 @@ extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
 extern int window_height;
 
-using namespace ark;
+using namespace asura;
 
 stl::hash_map<resources::id_t, render::texture_id> textures_list;
 
-void 
-render::pre_init()
+void render::pre_init()
 {
 	stl::string render_list;
 #if defined(OS_WINDOWS)
@@ -28,8 +27,9 @@ render::pre_init()
 	{
 		SDL_RendererInfo rendererInfo = {};
 		SDL_GetRenderDriverInfo(i, &rendererInfo);
-#ifdef ARK_DX12
-		if (!stl::string_view("direct3d12").compare(rendererInfo.name)) {
+#ifdef ASURA_DX12
+		if (!stl::string_view("direct3d12").compare(rendererInfo.name))
+		{
 			mode = rendererInfo.name;
 		}
 #endif
@@ -44,14 +44,13 @@ render::pre_init()
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
 }
 
-void
-render::init()
+void render::init()
 {
 	pre_init();
 
 	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC);
 
-	ark_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
+	game_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
 	
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
@@ -59,12 +58,12 @@ render::init()
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ark_assert(ImGui::GetCurrentContext() != nullptr, "ImGui Context is broken", std::terminate());
+	game_assert(ImGui::GetCurrentContext() != nullptr, "ImGui Context is broken", std::terminate());
 
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	
-#if defined(OS_WINDOWS) & defined(ARK_DX12)
+#if defined(OS_WINDOWS) & defined(ASURA_DX12)
 	ImGui_ImplSDL2_InitForD3D(window_handle);
 #elif defined(OS_APPLE_SERIES)
 	ImGui_ImplSDL2_InitForMetal(window_handle);
@@ -77,10 +76,9 @@ render::init()
 	graphics::init();
 }
 
-void
-render::init_vulkan()
+void render::init_vulkan()
 {
-#ifdef ARK_VULKAN
+#ifdef ASURA_VULKAN
 	SDL_Vulkan_LoadLibrary(nullptr);
 	uint32_t extensionCount;
 	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, nullptr);
@@ -90,12 +88,12 @@ render::init_vulkan()
 #endif
 }
 
-void
-render::destroy()
+void render::destroy()
 {
 	graphics::destroy();
     
-    for (auto [resource, texture] : textures_list) {
+    for (auto [resource, texture] : textures_list)
+	{
         SDL_DestroyTexture(static_cast<SDL_Texture*>(texture));
     }
 	
@@ -106,8 +104,7 @@ render::destroy()
 	SDL_DestroyRenderer(renderer);
 }
 
-void
-render::tick(float dt)
+void render::tick(float dt)
 {
 	OPTICK_EVENT("render tick")
 	OPTICK_CATEGORY("systems tick", Optick::Category::Rendering)
@@ -121,19 +118,19 @@ render::tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("graphics tick")
+		OPTICK_EVENT("graphics tick");
 		graphics::tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("ImGui render")
+		OPTICK_EVENT("ImGui render");
 		
 		// Rendering
 		ImGui::Render();
 	}
 
 	{
-		OPTICK_EVENT("graphics present")
+		OPTICK_EVENT("graphics present");
 		SDL_SetRenderDrawColor(
 			renderer,
 			static_cast<Uint8>(clear_color[0] * 255),
@@ -148,25 +145,26 @@ render::tick(float dt)
 	}
 }
 
-render::texture_id
-render::get_texture(resources::id_t resource_id)
+render::texture_id render::get_texture(resources::id_t resource_id)
 {
-    if (!textures_list.contains(resource_id)) {
+    if (!textures_list.contains(resource_id)) 
+	{
         return nullptr;
     }
     
     return textures_list.at(resource_id);
 }
 
-render::texture_id
-render::load_texture(resources::id_t resource_id)
+render::texture_id render::load_texture(resources::id_t resource_id)
 {
-    if (textures_list.contains(resource_id)) {
+    if (textures_list.contains(resource_id))
+	{
         return textures_list.at(resource_id);
     }
     
     SDL_RWops* rw = SDL_RWFromConstMem(resources::get_ptr(resource_id), resources::get_size(resource_id));
-    if (rw == nullptr) {
+    if (rw == nullptr) 
+	{
         return nullptr;
     }
     
@@ -174,7 +172,8 @@ render::load_texture(resources::id_t resource_id)
     ImTextureID texture_handle = IMG_LoadTexture_RW(renderer, rw, 0);
     resources::unlock(resource_id);
     
-    if (texture_handle == nullptr) {
+    if (texture_handle == nullptr)
+	{
         return nullptr;
     }
     

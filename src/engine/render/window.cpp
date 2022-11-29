@@ -10,40 +10,38 @@ int window_width = 1600;
 int window_height = 900;
 bool window_maximized = false;
 
-using namespace ark;
+using namespace asura;
 
-void
-window::init()
+void window::init()
 {
 	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE);
 
-	if (fullscreen_mode) {
+	if (fullscreen_mode) 
+	{
 		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);
 	}
 
 	// Setup window
-	window_handle = SDL_CreateWindow("Arkane", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, window_flags);
+	// #TODO: Set as main.cpp
+	window_handle = SDL_CreateWindow("Asura 2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, window_flags);
 
-#ifdef ARK_VULKAN
+#ifdef ASURA_VULKAN
 	graphics::init_vulkan();
 #endif
 }
 
-void
-window::destroy()
+void window::destroy()
 {
 	wants_to_exit = true;
 	SDL_DestroyWindow(window_handle);
 }
 
-bool
-window::is_destroyed()
+bool window::is_destroyed()
 {
 	return wants_to_exit;
 }
 
-void
-window::tick()
+void window::tick()
 {
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -56,12 +54,14 @@ window::tick()
 		int tx = 0;
 		int ty = 0;
 		ImGui_ImplSDL2_ProcessEvent(&event);
-		switch (event.type) {
+		switch (event.type) 
+		{
 		case SDL_QUIT:
 			wants_to_exit = true;
 			break;
 		case SDL_WINDOWEVENT:
-			if (event.window.windowID == SDL_GetWindowID(window_handle)) {
+			if (event.window.windowID == SDL_GetWindowID(window_handle)) 
+			{
 				switch (event.window.event) 
 				{
 				case SDL_WINDOWEVENT_CLOSE:
@@ -71,7 +71,7 @@ window::tick()
 					window_width = event.window.data1;
 					window_height = event.window.data2;
 					camera::reset_wh();
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 					// Stupid bug on Windows
 					SDL_GetWindowPosition(window_handle, &tx, &ty);
 					SDL_SetWindowPosition(window_handle, tx + 1, ty + 1);
@@ -94,7 +94,8 @@ window::tick()
 				}
 			}
 			break;
-		case SDL_MOUSEMOTION: {
+		case SDL_MOUSEMOTION: 
+		{
 			const auto pos = ImGui::GetMousePos();
 			input::update_mouse_pos({static_cast<short>(pos.x), static_cast<short>(pos.y)});
 		}
@@ -122,16 +123,15 @@ window::tick()
 	engine::tick();
 }
 
-void
-window::change_fullscreen()
+void window::change_fullscreen()
 {
 	SDL_SetWindowFullscreen(window_handle, fullscreen_mode ? SDL_WINDOW_FULLSCREEN : 0);
 }
 
-void
-window::change_window_mode()
+void window::change_window_mode()
 {
-	if (window_maximized) {
+	if (window_maximized) 
+	{
 		SDL_MaximizeWindow(window_handle);
 	}
 	else if (SDL_GetWindowFlags(window_handle) & SDL_WINDOW_MAXIMIZED)
@@ -140,18 +140,17 @@ window::change_window_mode()
 	}
 }
 
-void
-window::change_resolution()
+void window::change_resolution()
 {
 	SDL_SetWindowSize(window_handle, window_width, window_height);
 	camera::reset_wh();
 	camera::reset_view();
 }
 
-void
-window::loop()
+void window::loop()
 {
-	while (!wants_to_exit) {
+	while (!wants_to_exit) 
+	{
 		tick();
 	}
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include <box2d/box2d.h>
 
-namespace ark
+namespace asura
 {
 	class CollisionLister;
 	
@@ -22,7 +22,8 @@ namespace ark
 		b2BodyType 
 		get_box2d_body_type(uint8_t type)
 		{
-			switch (static_cast<body_type>(type)) {
+			switch (static_cast<body_type>(type)) 
+			{
 			case body_type::ph_kinematic:
 				return b2_kinematicBody;
 				break;
@@ -33,7 +34,7 @@ namespace ark
 				return b2_dynamicBody;
 				break;
 			default:
-				ark_assert(false, "Invalid body type", {});
+				game_assert(false, "Invalid body type", {});
 				break;
 			}
 
@@ -44,7 +45,8 @@ namespace ark
 		body_type 
 		get_ark_body_type(b2BodyType type)
 		{
-			switch (type) {
+			switch (type) 
+			{
 			case b2_kinematicBody:
 				return body_type::ph_kinematic;
 			case b2_staticBody:
@@ -52,7 +54,7 @@ namespace ark
 			case b2_dynamicBody:
 				return body_type::ph_dynamic;
 			default:
-				ark_assert(false, "Invalid body type", {});
+				game_assert(false, "Invalid body type", {});
 				break;
 			}
 
@@ -202,15 +204,18 @@ namespace ark
 				read_on_existing("vecf_pos", pos);
 				read_on_existing("vecf_size", size);
 
-				if (data.contains("i_mat")) {
+				if (data.contains("i_mat"))
+				{
 					packed_type.mat = stl::unstringify<uint8_t>(data["i_mat"]);
 				}
 
-				if (data.contains("i_shape")) {
+				if (data.contains("i_shape")) 
+				{
 					packed_type.mat = stl::unstringify<uint8_t>(data["i_shape"]);
 				}
 
-				if (data.contains("i_type")) {
+				if (data.contains("i_type"))
+				{
 					packed_type.mat = stl::unstringify<uint8_t>(data["i_type"]);
 				}
 

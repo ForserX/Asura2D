@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 void shit_detector_tick();
 

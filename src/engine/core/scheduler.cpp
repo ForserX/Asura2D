@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 constexpr auto scheduler_period = std::chrono::milliseconds(static_cast<int>(target_scheduler_tps));
 

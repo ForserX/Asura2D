@@ -1,12 +1,12 @@
 #include "ingame.h"
 
-using namespace ark::systems;
+using namespace asura::systems;
 
-ark::stl::vector<std::unique_ptr<ark::system>> pre_game_update_systems;
-ark::stl::vector<std::unique_ptr<ark::system>> game_update_systems;
-ark::stl::vector<std::unique_ptr<ark::system>> post_game_update_systems;
-ark::stl::vector<std::unique_ptr<ark::system>> game_physics_systems;
-ark::stl::vector<std::unique_ptr<ark::system>> game_draw_systems;
+asura::stl::vector<std::unique_ptr<asura::system>> pre_game_update_systems;
+asura::stl::vector<std::unique_ptr<asura::system>> game_update_systems;
+asura::stl::vector<std::unique_ptr<asura::system>> post_game_update_systems;
+asura::stl::vector<std::unique_ptr<asura::system>> game_physics_systems;
+asura::stl::vector<std::unique_ptr<asura::system>> game_draw_systems;
 
 void init_systems()
 {
@@ -38,29 +38,29 @@ void ingame::pre_init()
 	}
 }
 
-auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state) {
+auto camera_mouse_key_change = [](int16_t scan_code, asura::input::key_state state) {
 	switch (scan_code) {
 	case SDL_SCANCODE_MOUSE_LEFT: {
-        if (ark::input::is_key_pressed(SDL_SCANCODE_LCTRL)) {
-            if (state == ark::input::key_state::hold) {
-                const auto& mouse_delta = ark::input::get_mouse_delta();
-                ark::camera::move(ark::camera::cam_move::left, (mouse_delta.x * 0.05f));
-                ark::camera::move(ark::camera::cam_move::up, (mouse_delta.y * 0.05f));
+        if (asura::input::is_key_pressed(SDL_SCANCODE_LCTRL)) {
+            if (state == asura::input::key_state::hold) {
+                const auto& mouse_delta = asura::input::get_mouse_delta();
+                asura::camera::move(asura::camera::cam_move::left, (mouse_delta.x * 0.05f));
+                asura::camera::move(asura::camera::cam_move::up, (mouse_delta.y * 0.05f));
             }
         }
 		break;
 	}
 	case SDL_SCANCODE_LEFT:
-		ark::camera::move(ark::camera::cam_move::left, 1.f);
+		asura::camera::move(asura::camera::cam_move::left, 1.f);
 		break;
 	case SDL_SCANCODE_RIGHT:
-		ark::camera::move(ark::camera::cam_move::right, 1.f);
+		asura::camera::move(asura::camera::cam_move::right, 1.f);
 		break;
 	case SDL_SCANCODE_UP:
-		ark::camera::move(ark::camera::cam_move::up, 1.f);
+		asura::camera::move(asura::camera::cam_move::up, 1.f);
 		break;
 	case SDL_SCANCODE_DOWN:
-		ark::camera::move(ark::camera::cam_move::down, 1.f);
+		asura::camera::move(asura::camera::cam_move::down, 1.f);
 		break;
 	default:
 		break;
@@ -68,12 +68,12 @@ auto camera_mouse_key_change = [](int16_t scan_code, ark::input::key_state state
 };
 
 static bool editor = false;
-auto editor_key_change = [](int16_t scan_code, ark::input::key_state state) {
+auto editor_key_change = [](int16_t scan_code, asura::input::key_state state) {
 	if (scan_code == SDL_SCANCODE_X)
 	{
-		if (state == ark::input::key_state::press) {
+		if (state == asura::input::key_state::press) {
 			editor = !editor;
-			ark::game::editor(editor);
+			asura::game::editor(editor);
 		}
 	}
 };
@@ -81,25 +81,25 @@ auto editor_key_change = [](int16_t scan_code, ark::input::key_state state) {
 auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
 	switch (scan_code) {
 	case SDL_SCANCODE_MOUSEWHEEL:
-		ark::camera::zoom((-1.f * state) * 2.f);
+		asura::camera::zoom((-1.f * state) * 2.f);
 		break;
 	default:
 		break;
 	}
 };
 
-ark::input::on_key_change camera_mouse_key_event;
-ark::input::on_key_change editor_key_event;
-ark::input::on_input_change camera_camera_mouse_wheel_event;
+asura::input::on_key_change camera_mouse_key_event;
+asura::input::on_key_change editor_key_event;
+asura::input::on_input_change camera_camera_mouse_wheel_event;
 
-ark::entity_view TestObject;
-ark::entity_view TestObject2;
+asura::entity_view TestObject;
+asura::entity_view TestObject2;
 
-ark::stl::vector<ark::entity_view> circles;
+asura::stl::vector<asura::entity_view> circles;
 
 void ingame::init()
 {
-	using namespace ark;
+	using namespace asura;
 	using namespace entities;
 	
 #if 0
@@ -132,14 +132,14 @@ void ingame::init()
 #endif
 	add_phys_body_preset(create(), {100, 30}, "Teeter.ini");
 
-	editor_key_event = ark::input::subscribe_key_event(editor_key_change);
-	camera_mouse_key_event = ark::input::subscribe_key_event(camera_mouse_key_change);
-	camera_camera_mouse_wheel_event = ark::input::subscribe_input_event(camera_mouse_wheel_change);
+	editor_key_event = asura::input::subscribe_key_event(editor_key_change);
+	camera_mouse_key_event = asura::input::subscribe_key_event(camera_mouse_key_change);
+	camera_camera_mouse_wheel_event = asura::input::subscribe_input_event(camera_mouse_wheel_change);
 }
 
 void ingame::destroy()
 {
-	ark::input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
-	ark::input::unsubscribe_key_event(camera_mouse_key_event);
-	ark::input::unsubscribe_key_event(editor_key_event);
+	asura::input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
+	asura::input::unsubscribe_key_event(camera_mouse_key_event);
+	asura::input::unsubscribe_key_event(editor_key_event);
 }

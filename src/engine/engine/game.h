@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::game
+namespace asura::game
 {
 	void init();
 	void destroy();

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::core
+namespace asura::core
 {
 	void init();
 	void destroy();

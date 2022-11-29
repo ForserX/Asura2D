@@ -1,12 +1,11 @@
 #include "pch.h"
 #include <SDL_image/SDL_image.h>
 
-using namespace ark;
+using namespace asura;
 
 graphics::theme::style window_style = {};
 
-void
-graphics::init()
+void graphics::init()
 {
 	window_style = theme::style::dark;
 	theme::change();
@@ -15,14 +14,12 @@ graphics::init()
 	camera::init();
 }
 
-void
-graphics::destroy()
+void graphics::destroy()
 {
 	ui::destroy();
 }
 
-void
-graphics::draw_convex_poly_filled(
+void graphics::draw_convex_poly_filled(
     ImDrawList* draw_list,
     const math::fvec2* points,
     const int points_count,
@@ -33,7 +30,8 @@ graphics::draw_convex_poly_filled(
 
     const ImVec2 uv = draw_list->_Data->TexUvWhitePixel;
 
-    if (draw_list->Flags & ImDrawListFlags_AntiAliasedFill) {
+    if (draw_list->Flags & ImDrawListFlags_AntiAliasedFill) 
+	{
         // Anti-aliased Fill
         const ImU32 col_trans = col & ~IM_COL32_A_MASK;
         const int idx_count = (points_count - 2) * 3 + points_count * 6;
@@ -43,7 +41,8 @@ graphics::draw_convex_poly_filled(
         // Add indexes for fill
         const unsigned int vtx_inner_idx = draw_list->_VtxCurrentIdx;
         const unsigned int vtx_outer_idx = draw_list->_VtxCurrentIdx + 1;
-        for (int i = 2; i < points_count; i++) {
+        for (int i = 2; i < points_count; i++) 
+		{
             draw_list->_IdxWritePtr[0] = static_cast<ImDrawIdx>(vtx_inner_idx);
             draw_list->_IdxWritePtr[1] = static_cast<ImDrawIdx>(vtx_inner_idx + ((i - 1) << 1));
             draw_list->_IdxWritePtr[2] = static_cast<ImDrawIdx>(vtx_inner_idx + (i << 1));
@@ -52,14 +51,17 @@ graphics::draw_convex_poly_filled(
 
         // Compute normals
         auto* temp_normals = static_cast<math::fvec2*>(alloca(points_count * sizeof(math::fvec2))); //-V630
-        for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
+        for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) 
+		{
             const math::fvec2& p0 = points[i0];
             const math::fvec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             {
                 float d2 = dx * dx + dy * dy;
-                if (d2 > 0.0f) {
+
+                if (d2 > 0.0f) 
+				{
                     const float inv_len = 1.0f / ImSqrt(d2);
                     dx *= inv_len;
                     dy *= inv_len;
@@ -69,7 +71,8 @@ graphics::draw_convex_poly_filled(
             temp_normals[i0] = {dy, -dx};
         }
 
-        for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) {
+        for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) 
+		{
             constexpr float AA_SIZE = 1.0f;
             
             // Average normals
@@ -84,6 +87,7 @@ graphics::draw_convex_poly_filled(
                 dm_x *= inv_lensq;
                 dm_y *= inv_lensq;
             }
+
             dm_x *= AA_SIZE * 0.5f;
             dm_y *= AA_SIZE * 0.5f;
 
@@ -109,7 +113,9 @@ graphics::draw_convex_poly_filled(
         }
         
         draw_list->_VtxCurrentIdx += static_cast<ImDrawIdx>(vtx_count);
-    } else {
+    } 
+	else 
+	{
         // Non Anti-aliased Fill
         const int idx_count = (points_count - 2) * 3;
         const int vtx_count = points_count;
@@ -134,8 +140,7 @@ graphics::draw_convex_poly_filled(
     }
 }
 
-void
-graphics::draw_rect(
+void graphics::draw_rect(
 	ImColor color,
     const math::frect& rect,
 	bool filled
@@ -149,36 +154,37 @@ graphics::draw_rect(
 	}
 }
 
-void
-graphics::draw_background(resources::id_t resource_id)
+void graphics::draw_background(resources::id_t resource_id)
 {
 	OPTICK_EVENT("graphics draw background");
 	const int64_t width = ui::get_cmd_int("window_width");
 	const int64_t height = ui::get_cmd_int("window_height");
     const ImTextureID texture_id = render::get_texture(resource_id);
-    if (texture_id != nullptr) {
+
+    if (texture_id != nullptr) 
+	{
         ImGui::GetBackgroundDrawList()->AddImage(texture_id, {0,0}, {static_cast<float>(width), static_cast<float>(height)});
     }
 }
 
-void 
-graphics::draw_textured_rect(resources::id_t resource_id, const math::frect& rect)
+void graphics::draw_textured_rect(resources::id_t resource_id, const math::frect& rect)
 {
 	const ImTextureID texture_id = render::get_texture(resource_id);
-	if (texture_id != nullptr) {
+
+	if (texture_id != nullptr) 
+	{
 		ImGui::GetBackgroundDrawList()->AddImage(texture_id, rect.min(), rect.max());
 	}
 }
 
-void
-graphics::draw_physical_object(b2Body* object, const ImColor& clr)
+void graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 {
 	OPTICK_EVENT("graphics draw phys object");
 	const auto poly = dynamic_cast<b2PolygonShape*>(object->GetFixtureList()->GetShape());
-	ark_assert(poly != nullptr, "Can't cast shape to polygon shape", return);
+	game_assert(poly != nullptr, "Can't cast shape to polygon shape", return);
     
 	const int32 vertexCount = poly->m_count;
-	ark_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
+	game_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
 	math::fvec2 vertices[b2_maxPolygonVertices];
 
 	for (int32 i = 0; i < vertexCount; ++i) {
@@ -188,8 +194,7 @@ graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 	draw_convex_poly_filled(ImGui::GetBackgroundDrawList(), vertices, vertexCount, clr);
 }
 
-void
-graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
+void graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 {
 	OPTICK_EVENT("graphics draw phys circle");
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
@@ -201,24 +206,18 @@ graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 	ImGui::GetBackgroundDrawList()->AddCircle(center, radius, clr, 0, 0.3 * radius);
 }
 
-void
-graphics::tick(float dt)
+void graphics::tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
 	
 	draw(dt);
-
-	//if (ImGui::Begin(" ", 0, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration)) {
-	//	ImGui::End();
-	//}
 	
 	ui::tick(dt);
 	camera::tick(dt);
 }
 
-void
-graphics::draw(float dt)
+void graphics::draw(float dt)
 {
 	OPTICK_EVENT("scene draw")
 	systems::draw_tick(dt);
@@ -226,7 +225,8 @@ graphics::draw(float dt)
 
 void graphics::theme::change()
 {
-	switch (window_style) {
+	switch (window_style) 
+	{
 	case style::dark:
 		dark();
 		break;

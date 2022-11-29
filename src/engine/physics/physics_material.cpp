@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 static material::data material_data[static_cast<uint8_t>(material::type::out_of)] = {};
 

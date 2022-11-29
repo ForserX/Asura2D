@@ -28,8 +28,9 @@
 #endif
 
 #ifndef OS_LINUX
-    #define ARK_ALLOCATOR_USE
+    #define ASURA_ALLOCATOR_USE
 #endif
 
-//#define ARK_VULKAN
-//#define ARK_DX12
+//#define ASURA_VULKAN
+//#define ASURA_DX12
+//#define ASURA_USE_STD_CONTAINERS

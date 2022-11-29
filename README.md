@@ -1,13 +1,13 @@
 # Build
-Ark Engine using CMake build system.
+Asura Engine using CMake build system.
 
-![example workflow](https://github.com/vertver/arkane/actions/workflows/cmake.yml/badge.svg)
+![example workflow](https://github.com/ForserX/Asura2D/actions/workflows/cmake.yml/badge.svg)
 
 |Windows|MacOS|Linux|
 |---|---|---|
-| Yes | Yes | No |
-# Ark Engine 
-Ark Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives.
+| Yes | Yes | Ubunty |
+# Asura Engine 
+Asura Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives or textures.
 
 
 ![image](https://user-images.githubusercontent.com/13867290/192002058-8ea97db7-ccf3-4d9a-b2a7-659104f998af.png)
@@ -21,3 +21,5 @@ Ark Engine is a 2D game engine that focuses on physical objects, rendering with 
 * [Function2](https://github.com/Naios/function2) (extended)
 * [MiMalloc](https://github.com/microsoft/mimalloc)
 * [Marl](https://github.com/google/marl)
+* [OpenAL Soft](https://github.com/kcat/openal-soft)
+* vorbis + ogg 

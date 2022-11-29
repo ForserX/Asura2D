@@ -1,16 +1,16 @@
-#include "arkane.h"
+#include "asura_engine.h"
 #include "game/ingame.h"
 
 int main(int argc, char** argv)
 {
 	ingame::pre_init();
-	ark::window::init();
-	ark::engine::init(argc, argv);
+	asura::window::init();
+	asura::engine::init(argc, argv);
 	ingame::init();
 
-	ark::engine::start();
-	ark::window::loop();
+	asura::engine::start();
+	asura::window::loop();
 
-	ark::engine::destroy();
+	asura::engine::destroy();
 	return 0;
 }

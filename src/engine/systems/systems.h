@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark
+namespace asura
 {
 	class system : entt::process<system, float> 
 	{
@@ -30,7 +30,7 @@ namespace ark
 	};
 }
 
-namespace ark::systems
+namespace asura::systems
 {
 	enum class update_type
 	{

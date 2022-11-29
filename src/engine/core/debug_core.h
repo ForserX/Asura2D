@@ -1,19 +1,19 @@
 #pragma once
 
 #ifdef _DEBUG
-#define ark_assert(error_code, message, exist_code) \
+#define game_assert(error_code, message, exist_code) \
 	if(!(error_code)) {\
-		ark::debug::show_error(message);\
+		asura::debug::show_error(message);\
 		exist_code;\
 	}
 #else
-#define ark_assert(error_code, message, exist_code) \
+#define game_assert(error_code, message, exist_code) \
 	if (!(error_code)) {\
 		exist_code;\
 	}
 #endif
 
-namespace ark::debug
+namespace asura::debug
 {
 	void init();
 	void destroy();

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::scheduler
+namespace asura::scheduler
 {
 	using global_function = fu2::function<bool() const>;
 

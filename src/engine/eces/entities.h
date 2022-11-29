@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark
+namespace asura
 {
 	class registry
 	{
@@ -36,7 +36,7 @@ namespace ark
 	};
 }
 
-namespace ark::entities
+namespace asura::entities
 {
 	void init();
 	void destroy();

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::gameplay::holder::player
+namespace asura::gameplay::holder::player
 {
 	void init();
 	void tick();

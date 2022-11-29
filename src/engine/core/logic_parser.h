@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark
+namespace asura
 {
     class config_parser
     {

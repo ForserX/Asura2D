@@ -3,7 +3,7 @@
 #undef M_PI
 #define M_PI 3.14159265358979323846
 
-namespace ark::math
+namespace asura::math
 {
     template<typename T>
     struct mtx_2x2

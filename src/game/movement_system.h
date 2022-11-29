@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "arkane.h"
+#include "asura.h"
 
 namespace ingame
 {
 	
-class movement_system final : public ark::system
+class movement_system final : public asura::system
 {
 public:
 	void init() override;

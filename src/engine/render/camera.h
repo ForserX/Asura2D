@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::camera
+namespace asura::camera
 {
 	enum class cam_move : int64_t {
 		left,

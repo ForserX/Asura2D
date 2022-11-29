@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::systems
+namespace asura::systems
 {
 	class draw_system final : public system
 	{

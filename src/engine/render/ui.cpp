@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "../editor/editor_common.h"
 
-using namespace ark;
+using namespace asura;
 
 extern int window_width;
 extern int window_height;
@@ -21,54 +21,7 @@ bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;
 
-/*
-template<typename Component>
-void inspect_entity_component(stl::hash_map<stl::string, stl::string>& kv_storage, entt::entity ent)
-{
-    if (entities::contains<Component>(ent)) {
-        entt::id_type id = entt::type_id<Component>().hash();
-        auto& storage = (*entities::internal::get_registry().get().storage(id)).second;
-        if constexpr (entities::is_flag_v<Component>) {
-#ifdef __GNUC__
-            int status = 0;
-            char* string_ptr = abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status);
-            ImGui::Text("Flag: %s", string_ptr);
-            free(string_ptr);
-#else
-            ImGui::Text("Flag: %s", typeid(Component).name());
-#endif
-        } else {
-#ifdef __GNUC__
-            int status = 0;
-            char* string_ptr = abi::__cxa_demangle(typeid(Component).name(), 0, 0, &status);
-            ImGui::Text("Component: %s", string_ptr);
-            free(string_ptr);
-#else
-            ImGui::Text("Component: %s", typeid(Component).name());
-#endif
-            const Component* value_ptr = static_cast<const Component*>(storage.get(ent));
-            if (value_ptr != nullptr) {
-                value_ptr->string_serialize(kv_storage);
-            }
-        }
-    }
-}
-
-template<typename... Args>
-void inspect_entity(entt::entity ent)
-{
-    stl::hash_map<stl::string, stl::string> kv_storage;
-    (inspect_entity_component<Args>(kv_storage, ent), ...);
-
-    ImGui::Separator();
-    for (const auto& [key, value] : kv_storage) {
-        ImGui::Text("%s: %s", key.data(), value.data());
-    }
-}
-*/
-
-void
-ui::init()
+void ui::init()
 {
     std::filesystem::path font_dir = filesystem::get_content_dir();
     font_dir.append("fonts").append("RobotoMono-Regular.ttf");
@@ -77,8 +30,7 @@ ui::init()
     io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 }
 
-void
-ui::tick(float dt)
+void ui::tick(float dt)
 {
     OPTICK_EVENT("ui draw");
 
@@ -89,11 +41,13 @@ ui::tick(float dt)
     }
 
 #ifndef ARKANE_SHIPPING 
-    if (ImGui::IsKeyPressed(ImGuiKey_F2)) {
+    if (ImGui::IsKeyPressed(ImGuiKey_F2)) 
+    {
         show_entity_inspector = !show_entity_inspector;
     }
     
-    if (ImGui::IsKeyPressed(ImGuiKey_F3)) {
+    if (ImGui::IsKeyPressed(ImGuiKey_F3)) 
+    {
         show_fps_counter = !show_fps_counter;
     }
 
@@ -104,8 +58,11 @@ ui::tick(float dt)
     if (show_console) {
 		OPTICK_EVENT("ui console draw")
         ::console->draw(dt, "Arkane console", &show_console);
-    } else { 
-        if (show_fps_counter) {
+    } 
+    else 
+    { 
+        if (show_fps_counter) 
+        {
             fps_counter_size = stat_enable ? 700 : 240;
             ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), navigation_bar_size });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
@@ -135,7 +92,9 @@ ui::tick(float dt)
                 ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
                 ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
                 ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
-                if (stat_enable) {
+
+                if (stat_enable) 
+                {
                     ImGui::Separator();
                     ImGui::Text("UI:");
                     ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
@@ -171,39 +130,49 @@ ui::tick(float dt)
 
         ImGui::SetNextWindowPos({ 0, 0 });
         ImGui::SetNextWindowSize({ static_cast<float>(window_width), navigation_bar_size });
-        if (ImGui::Begin("NavigationBar", nullptr, ImGuiWindowFlags_NoDecoration)) {
+        if (ImGui::Begin("NavigationBar", nullptr, ImGuiWindowFlags_NoDecoration))
+        {
             ImGui::BeginChild("ChildR", ImVec2(0, 260), true, ImGuiWindowFlags_MenuBar);
-            if (ImGui::BeginMenuBar()) {
-                if (ImGui::BeginMenu("File")) {
-                    if (ImGui::MenuItem("Update directories")) {
+            if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::BeginMenu("File")) 
+                {
+                    if (ImGui::MenuItem("Update directories"))
+                    {
                         resources::update_directories();
                     }
 
                     ImGui::EndMenu();
                 }
 
-                if (ImGui::BeginMenu("Edit")) {
+                if (ImGui::BeginMenu("Edit"))
+                {
                     ImGui::MenuItem("Redo", "Ctrl + Shift + Z", nullptr, false);
                     ImGui::MenuItem("Undo", "Ctrl + Z", nullptr, false);
                     ImGui::EndMenu();
                 }
 
-                if (ImGui::BeginMenu("View")) {
+                if (ImGui::BeginMenu("View")) 
+                {
                     ImGui::MenuItem("Entity Inspector", "F2", &show_entity_inspector);
                     ImGui::MenuItem("FPS Counter", "F3", &show_fps_counter);
                     ImGui::EndMenu();
                 }
                 
-                if (ImGui::BeginMenu("Scene")) {
-                    if (ImGui::MenuItem("Import scene", "Ctrl + O")) {
+                if (ImGui::BeginMenu("Scene")) 
+                {
+                    if (ImGui::MenuItem("Import scene", "Ctrl + O")) 
+                    {
                         
                     }
 
-                    if (ImGui::MenuItem("Export scene", "Ctrl + S")) {
+                    if (ImGui::MenuItem("Export scene", "Ctrl + S")) 
+                    {
 
                     }
 
-                    if (ImGui::MenuItem("Close scene")) {
+                    if (ImGui::MenuItem("Close scene")) 
+                    {
                         scene::close_scene();
                     }
                     
@@ -211,29 +180,35 @@ ui::tick(float dt)
                 }
 
                 if (ImGui::BeginMenu("Entities")) {
-                    if (ImGui::MenuItem("Destroy all entities")) {
+                    if (ImGui::MenuItem("Destroy all entities"))
+                    {
                         entities::free();
                     }
 
-                    if (ImGui::MenuItem("Clear all entities")) {
+                    if (ImGui::MenuItem("Clear all entities")) 
+                    {
                         entities::clear();
                     }
 
                     ImGui::Separator();
 
-                    if (ImGui::MenuItem("Serialize game state")) {
+                    if (ImGui::MenuItem("Serialize game state")) 
+                    {
                         entities::serialize_state("debug_game_state.bin");
                     }
 
-                    if (ImGui::MenuItem("Deserialize game state")) {
+                    if (ImGui::MenuItem("Deserialize game state")) 
+                    {
                         entities::deserialize_state("debug_game_state.bin");
                     }
 
-                    if (ImGui::MenuItem("String serialize game state")) {
+                    if (ImGui::MenuItem("String serialize game state")) 
+                    {
                         entities::string_serialize_state("string_debug_game_state.ini");
                     }
 
-                    if (ImGui::MenuItem("String deserialize game state")) {
+                    if (ImGui::MenuItem("String deserialize game state")) 
+                    {
                         entities::string_deserialize_state("string_debug_game_state.ini");
                     }
 
@@ -247,23 +222,33 @@ ui::tick(float dt)
             ImGui::End();
         }
 
-         if (show_entity_inspector) {
+         if (show_entity_inspector) 
+         {
              auto height_value = static_cast<float>(window_height - fps_counter_size);
-             if (height_value < fps_counter_size) {
+             if (height_value < fps_counter_size) 
+             {
                  ImGui::SetNextWindowPos({ 0, navigation_bar_size });
                  ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - navigation_bar_size) });
-             } else {
+             } 
+             else 
+             {
                  ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), static_cast<float>(navigation_bar_size + fps_counter_size) });
                  ImGui::SetNextWindowSize({ 400, static_cast<float>(window_height - fps_counter_size) });
              }
 
-             if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration)) {
+             if (ImGui::Begin("EntityInspector", nullptr, ImGuiWindowFlags_NoDecoration))
+             {
                  static entt::entity inspected_entity = entt::null;
-                 if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                 if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+                 {
                      auto phys_body = physics::hit_test(camera::screen_to_world(cursor_pos));
-                     if (phys_body != nullptr) {
+
+                     if (phys_body != nullptr) 
+                     {
                          inspected_entity = entities::get_entity_from_body(phys_body->get_body()).get();
-                     } else {
+                     } 
+                     else 
+                     {
                          inspected_entity = entt::null;
                      }
                  }
@@ -274,60 +259,68 @@ ui::tick(float dt)
     }
 
     auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
-    if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) {
+    if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) 
+    {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 325, 8), ImColor(1.f, 1.f, 1.f), "Serialization/Deserialization complete");
-    } else if (current_ms_time < (resources::get_last_update_time().count() / 1000000) + 2000) {
+    } 
+    else if (current_ms_time < (resources::get_last_update_time().count() / 1000000) + 2000)
+    {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 220, 8), ImColor(1.f, 1.f, 1.f), "Engine directories update");
     }
 #endif
 }
 
-int64_t 
-ui::get_cmd_int(stl::string_view str)
+int64 ui::get_cmd_int(stl::string_view str)
 {
-    if (str == "window_fullscreen") {
+    if (str == "window_fullscreen") 
+    {
         return fullscreen_mode;
     }
 
-    if (str == "window_width") {
+    if (str == "window_width")
+    {
         return window_width;
     }
 
-    if (str == "window_height") {
+    if (str == "window_height") 
+    {
         return window_height;
     }
 
-    if (str == "draw_fps") {
+    if (str == "draw_fps") 
+    {
         return show_fps_counter;
     }
     
-    if (str == "physics_tps") {
+    if (str == "physics_tps")
+    {
         return target_physics_tps;
     }
 
-    if (str == "physics_hertz") {
+    if (str == "physics_hertz")
+    {
         return target_physics_hertz;
     }
 
-    if (str == "window_maximized") {
+    if (str == "window_maximized")
+    {
         return window_maximized;
     }
 
-    if (str == "physical_debug_draw") {
+    if (str == "physical_debug_draw")
+    {
         return physical_debug_draw;
     }
     
     return -1;
 }
 
-void 
-ui::push_console_string(stl::string_view str)
+void ui::push_console_string(stl::string_view str)
 {
     ::console->push_log_item(str);
 }
 
-void
-ui::destroy()
+void ui::destroy()
 {
     ::console->flush();
     ::console->clear_log();

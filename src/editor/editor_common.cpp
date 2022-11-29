@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "editor_common.h"
 
-using namespace ark;
+using namespace asura;
 
 static entity_view current_entt_object;
 
@@ -14,17 +14,17 @@ bool ark_editor_mode = false;
 
 void editor::init()
 {
-	auto editor_key = [](int16_t scan_code, ark::input::key_state state)
+	auto editor_key = [](int16_t scan_code, asura::input::key_state state)
 	{
 		if (!ark_editor_mode)
 			return;
 
 		if (scan_code == SDL_SCANCODE_MOUSE_LEFT)
 		{
-			if (state == ark::input::key_state::press) {
+			if (state == asura::input::key_state::press) {
 				object::create_fake();
 			}
-			else if (state == ark::input::key_state::hold) {
+			else if (state == asura::input::key_state::hold) {
 				object::update_fake();
 			}
 			else {
@@ -38,7 +38,7 @@ void editor::init()
 
 void editor::destroy()
 {
-	ark::input::unsubscribe_key_event(editor_key_click_event);
+	asura::input::unsubscribe_key_event(editor_key_click_event);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::resources
+namespace asura::resources
 {
     using id_t = int64_t;
 

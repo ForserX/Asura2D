@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(arkane C CXX)
+project(asura C CXX)
 if(APPLE)
     enable_language(OBJC)
 endif()
@@ -8,20 +8,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(ARKANE_PROJECT_NAME "arkgame")
-set(ARKANE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
-set(ARKANE_FOLDER_PREGEN FOLDER "Pre-generated")
-set(ARKANE_FOLDER_THIRD_PARTY FOLDER "3rd-party")
-set(ARKANE_FOLDER_PROFILR FOLDER "profiler")
-set(ARKANE_FOLDER_ENGINE FOLDER "Engine")
-set(ARKANE_FOLDER_GAME FOLDER "Game")
+set(ASURA_PROJECT_NAME "example")
+set(ASURA_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+set(ASURA_FOLDER_PREGEN FOLDER "Pre-generated")
+set(ASURA_FOLDER_THIRD_PARTY FOLDER "3rd-party")
+set(ASURA_FOLDER_PROFILR FOLDER "profiler")
+set(ASURA_FOLDER_ENGINE FOLDER "Engine")
+set(ASURA_FOLDER_GAME FOLDER "Game")
 
 # OPTICK_ENABLED
-option(ARKANE_SHIPPING "Shipping build of arkane" OFF)
-option(ARKANE_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
-option(ARKANE_OPTICK "Enable optick profiler" ON)
-option(ARKANE_ASAN "Enable address sanitizer" OFF)
-option(ARKANE_MIMALLOC "Enable mimalloc" ON)
+option(ASURA_SHIPPING "Shipping build of asura" OFF)
+option(ASURA_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
+option(ASURA_OPTICK "Enable optick profiler" ON)
+option(ASURA_ASAN "Enable address sanitizer" OFF)
+option(ASURA_MIMALLOC "Enable mimalloc" ON)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
@@ -29,10 +29,10 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
 endif()
 
-if (ARKANE_ASAN)
+if (ASURA_ASAN)
 	set(MARL_ASAN ON CACHE BOOL "marl asan" FORCE)
-elseif (ARKANE_SHIPPING)
-	set(ARKANE_OPTICK OFF CACHE BOOL "force optick" FORCE)
+elseif (ASURA_SHIPPING)
+	set(ASURA_OPTICK OFF CACHE BOOL "force optick" FORCE)
 endif()
 
 option(BOX2D_BUILD_UNIT_TESTS "Build the Box2D unit tests" ON)
@@ -42,8 +42,8 @@ set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "shared libraries" FORCE)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "shared libraries" FORCE)
 set(BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
 #set(SDL2IMAGE_BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
-set(OPTICK_ENABLED ${ARKANE_OPTICK} CACHE BOOL "optick enabled" FORCE)
-set(MIMALLOC_ENABLED ${ARKANE_MIMALLOC} CACHE BOOL "mimalloc enabled" FORCE)
+set(OPTICK_ENABLED ${ASURA_OPTICK} CACHE BOOL "optick enabled" FORCE)
+set(MIMALLOC_ENABLED ${ASURA_MIMALLOC} CACHE BOOL "mimalloc enabled" FORCE)
 
 set(BUILD_TESTING OFF CACHE BOOL "shared libraries" FORCE)
 
@@ -54,8 +54,8 @@ set(AL_LIBTYPE_STATIC ON CACHE BOOL "shared libraries" FORCE)
 
 add_compile_definitions("ENTT_USE_ATOMIC")
 
-if (ARKANE_SHIPPING)
-	add_compile_definitions("ARKANE_SHIPPING")
+if (ASURA_SHIPPING)
+	add_compile_definitions("ASURA_SHIPPING")
 endif()
 
 if (MIMALLOC_ENABLED)
@@ -78,7 +78,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bins/bin)
 # Create ImGui CMake file
 FILE(WRITE libs/imgui/CMakeLists.txt
 "cmake_minimum_required(VERSION 3.16)\n"
-"project(arkane C CXX)\n\n"
+"project(asura C CXX)\n\n"
 "file(GLOB IMGUI_SRC\n"
 "	\"imgui.h\"\n"
 "	\"imconfig.h\"\n"
@@ -119,7 +119,7 @@ if (UNIX)
 	add_subdirectory("libs/fmt")
 endif()
 
-if (ARKANE_BOX2D_OPTIMIZED)
+if (ASURA_BOX2D_OPTIMIZED)
 	add_subdirectory("libs/box2d-opt")
 else()
 	add_subdirectory("libs/box2d")

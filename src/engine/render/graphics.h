@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::graphics
+namespace asura::graphics
 {
 	void init();
 

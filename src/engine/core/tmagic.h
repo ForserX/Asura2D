@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ark::stl
+namespace asura::stl
 {
 	template <class T> 
 	using clear_type = std::remove_cv_t<std::remove_reference_t<T>>;

@@ -7,7 +7,7 @@
 #define SDL_SCANCODE_MOUSE_X2 SDL_SCANCODE_ENDCALL + SDL_BUTTON_X2
 #define SDL_SCANCODE_MOUSEWHEEL SDL_SCANCODE_ENDCALL + SDL_SCANCODE_MOUSE_X2 + 1
 
-namespace ark::input
+namespace asura::input
 {
 	enum class mouse_key : int16_t
 	{

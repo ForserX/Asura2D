@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 gameplay::holder_mode gameplay::holder_type = {};
 

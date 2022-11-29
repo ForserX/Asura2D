@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::threads
+namespace asura::threads
 {
 	void init();
 	void destroy();

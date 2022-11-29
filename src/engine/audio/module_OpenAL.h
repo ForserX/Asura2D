@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace ark::audio::openal
+namespace asura::audio::openal
 {
 	void init();
 	void tick();

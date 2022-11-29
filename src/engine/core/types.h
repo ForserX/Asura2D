@@ -5,9 +5,9 @@ void* ark_alloc(size_t size_to_alloc);
 void ark_free(void* ptr);
 
 
-namespace ark::stl
+namespace asura::stl
 {
-#ifdef ARK_ALLOCATOR_USE
+#ifdef ASURA_ALLOCATOR_USE
 
 	template <typename T>
 	struct ark_allocator
@@ -86,7 +86,7 @@ namespace ark::stl
     using ark_allocator = std::allocator<T>;
 #endif
 	
-#if 0
+#ifdef ASURA_USE_STD_CONTAINERS
 	template<typename K, typename T, typename Hash = std::hash<K>, typename Equal = std::equal_to<K>>
 	using hash_map = std::unordered_map<K, T, Hash, Equal, ark_allocator<std::pair<const K, T>>>;
 	
@@ -126,7 +126,7 @@ namespace ark::stl
 		if constexpr (std::is_same_v<T, int>)
 		{
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 			_itoa(Value, &buf[0], 10);
 #else
 			sprintf(buf, "%d", Value);
@@ -135,7 +135,7 @@ namespace ark::stl
 		else if constexpr (std::is_same_v<T, short>)
 		{
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 			_itoa(Value, &buf[0], 10);
 #else
 			sprintf(buf, "%d", Value);
@@ -143,7 +143,7 @@ namespace ark::stl
 		}
 		else if constexpr (std::is_same_v<T, uint32>)
 		{
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 			_ultoa(Value, &buf[0], 10);
 #else
 			sprintf(buf, "%u", Value);

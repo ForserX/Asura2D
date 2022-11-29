@@ -1,8 +1,6 @@
-#include "arkane.h"
-#include <fstream>
-#include <set>
+#include "pch.h"
 
-using namespace ark;
+using namespace asura;
 
 static std::filesystem::path working_dir = {};
 static std::filesystem::path content_dir = {};
@@ -10,14 +8,12 @@ static std::filesystem::path userdata_dir = {};
 
 static stl::hash_set<std::string> file_list = {};
 
-const std::filesystem::path& 
-filesystem::get_working_dir()
+const std::filesystem::path& filesystem::get_working_dir()
 {
 	return working_dir;
 }
 
-void 
-filesystem::init()
+void filesystem::init()
 {
 	working_dir = std::filesystem::current_path();
 	content_dir = std::filesystem::current_path().append("content");
@@ -33,8 +29,7 @@ filesystem::init()
 
 }
 
-void
-filesystem::destroy()
+void filesystem::destroy()
 {
 	file_list.clear();
 	userdata_dir.clear();
@@ -42,20 +37,17 @@ filesystem::destroy()
 	working_dir.clear();
 }
 
-const std::filesystem::path& 
-filesystem::get_content_dir()
+const std::filesystem::path& filesystem::get_content_dir()
 {
 	return content_dir;
 }
 
-const std::filesystem::path& 
-filesystem::get_userdata_dir()
+const std::filesystem::path& filesystem::get_userdata_dir()
 {
 	return userdata_dir;
 }
 
-void
-filesystem::create_file(const std::filesystem::path& file_name)
+void filesystem::create_file(const std::filesystem::path& file_name)
 {
 	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
@@ -68,8 +60,7 @@ filesystem::create_file(const std::filesystem::path& file_name)
 	outfile.close();
 }
 
-void
-filesystem::create_dir(const std::filesystem::path& dir_name)
+void filesystem::create_dir(const std::filesystem::path& dir_name)
 {
 	const auto file_iter = file_list.find(dir_name.generic_string());
 	if (file_iter != file_list.end()) {
@@ -79,11 +70,10 @@ filesystem::create_dir(const std::filesystem::path& dir_name)
 	file_list.emplace(dir_name.generic_string());
 	
 	const bool can_create = std::filesystem::create_directories(dir_name);
-	ark_assert(can_create, "file creating error", std::terminate());
+	game_assert(can_create, "file creating error", std::terminate());
 }
 
-void 
-filesystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+void filesystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
 {
 	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
@@ -97,8 +87,7 @@ filesystem::write_file(const std::filesystem::path& file_name, stl::stream_vecto
 	out_stream.close();
 }
 
-void 
-filesystem::read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+void filesystem::read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
 {
 	std::fstream in_stream(file_name, std::fstream::binary | std::fstream::in);
 	stream_data.second.resize(std::filesystem::file_size(file_name));
