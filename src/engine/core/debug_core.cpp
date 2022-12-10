@@ -7,13 +7,7 @@ using namespace asura;
 #ifdef OS_APPLE_SERIES
 #define DebugBreak __builtin_trap
 
-#include <assert.h>
-#include <stdbool.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/sysctl.h>
-
-bool IsDebuggerPresent()
+bool XCodeDebuggerPresent()
 {
     int mib[4];
     struct kinfo_proc info;
@@ -39,12 +33,11 @@ void OutputDebugString(const char* data)
 	std::cout << "Asura Engine: " << data << std::endl;
 }
 
-#elif defined(OS_LINUX)
-#include <sys/ptrace.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#define IsDebuggerPresent XCodeDebuggerPresent
 
-bool IsDebuggerPresent()
+#elif defined(OS_LINUX)
+
+bool GDBDebuggerPresent()
 {
     int pid = fork();
     int res = 0;
@@ -86,7 +79,9 @@ bool IsDebuggerPresent()
     return !!res;
 }
 
-void DebugBreak()
+#define IsDebuggerPresent GDBDebuggerPresent
+
+inline void DebugBreak()
 {
     using BYTE = unsigned char;
 	BYTE bCrash = *(BYTE*)(nullptr);
@@ -118,10 +113,9 @@ void debug::show_error(stl::string_view message)
 	print_message(message);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
     
-
-	if (IsDebuggerPresent()) 
+	if (dbg_atttached())
     {
-        DebugBreak();
+        dbg_break();
     }
 }
 
@@ -129,17 +123,31 @@ void debug::print_message(stl::string_view message)
 {
 	log_file << message << std::endl;
 	ui::push_console_string(message);
+    dbg_print(message);
+}
 
+void asura::debug::dbg_break()
+{
+    DebugBreak();
+}
+
+void asura::debug::dbg_print(stl::string_view msg)
+{
 #if defined(_DEBUG) & defined(OS_WINDOWS)
-	if (IsDebuggerPresent()) {
-		OutputDebugString("Asura Engine: ");
-		OutputDebugString(message.data());
-		OutputDebugString("\r\n");
-	}
+    if (dbg_atttached()) {
+        OutputDebugString("Asura Engine: ");
+        OutputDebugString(msg.data());
+        OutputDebugString("\r\n");
+    }
 #else
-	if (IsDebuggerPresent()) 
+    if (dbg_atttached())
     {
         OutputDebugString(message.data());
     }
 #endif
+}
+
+bool asura::debug::dbg_atttached()
+{
+    return IsDebuggerPresent();
 }

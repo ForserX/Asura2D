@@ -31,9 +31,20 @@
 #include <Windows.h>
 #include <timeapi.h>
 #else
+#ifdef OS_LINUX
+#	include <sys/ptrace.h>
+#	include <sys/wait.h>
+#endif
+#ifdef OS_APPLE_SERIES
+#	include <assert.h>
+#	include <stdbool.h>
+#	include <sys/types.h>
+#	include <sys/sysctl.h>
+#endif
 #ifdef OS_UNIX
-#include <iostream>
-#include <cxxabi.h>
+#	include <iostream>
+#	include <cxxabi.h>
+#	include <unistd.h>
 #endif
 #include <pthread.h>
 #endif

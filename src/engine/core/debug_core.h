@@ -36,4 +36,8 @@ namespace asura::debug
 	{
 		print_message(message);
 	}
+
+	void dbg_break();
+	void dbg_print(stl::string_view msg);
+	bool dbg_atttached();
 }
