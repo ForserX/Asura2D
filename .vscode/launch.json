@@ -1,14 +1,25 @@
 {
-    "name": "C++ Launch (Windows)",
-    "type": "cppvsdbg",
-    "request": "launch",
-    "program": "${workspaceFolder}/bins/bin/arkgame.exe",
-    "symbolSearchPath": "C:\\Symbols;C:\\SymbolDir2",
-    "externalConsole": true,
-    "logging": {
-      "moduleLoad": false,
-      "trace": true
-    },
-    "visualizerFile": "${workspaceFolder}/my.natvis",
-    "showDisplayString": true
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "In debug",
+          "cwd": "${workspaceFolder}",
+          "type": "cppdbg",
+          "request": "launch",
+          "program": "${workspaceFolder}/bins/bin/example",
+          "stopAtEntry": false,
+          "environment": [],
+          "externalConsole": false,
+          "MIMode": "gdb",
+          "setupCommands": [
+              {
+                  "description": "Enable pretty-printing for gdb",
+                  "text": "-enable-pretty-printing",
+                  "ignoreFailures": true
+              }
+          ],
+          "preLaunchTask": "${defaultBuildTask}",
+          "miDebuggerPath": "/usr/bin/gdb"
+      }
+  ]
 }

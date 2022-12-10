@@ -62,7 +62,7 @@ namespace asura::level
 	};
 };
 
-void level::init()
+void asura::level::init()
 {
 	path_level = filesystem::get_content_dir();
 	path_level.append("level");
@@ -75,10 +75,10 @@ void level::init()
 	}
 }
 
-void level::tick(float dt)
+void asura::level::tick(float dt)
 {
 }
 
-void level::destroy()
+void asura::level::destroy()
 {
 }

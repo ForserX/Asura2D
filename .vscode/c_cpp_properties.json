@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/libs/",
+                "${workspaceFolder}/libs/imgui/",
+                "${workspaceFolder}/libs/optick/src/",
+                "${workspaceFolder}/libs/SDL/include/",
+                "${workspaceFolder}/libs/SDL_image/",
+                "${workspaceFolder}/libs/imgui/backends/",
+                "${workspaceFolder}/libs/fmt/include/",
+                "${workspaceFolder}/libs/entt/single_include/",
+                "${workspaceFolder}/libs/fmt/include/",
+                "${workspaceFolder}/libs/box2d-opt/include/",
+                "${workspaceFolder}/src/",
+                "${workspaceFolder}/src/engine/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

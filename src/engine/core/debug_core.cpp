@@ -38,7 +38,12 @@ void OutputDebugString(const char* data)
 
 	std::cout << "Asura Engine: " << data << std::endl;
 }
+
 #elif defined(OS_LINUX)
+#include <sys/ptrace.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
 bool IsDebuggerPresent()
 {
     int pid = fork();
@@ -63,9 +68,6 @@ bool IsDebuggerPresent()
 
             /* Detach */
             ptrace(PTRACE_DETACH, getppid(), NULL, NULL);
-
-            /* We were the tracers, so gdb is not present */
-            res = 0;
         }
         else
         {
@@ -80,11 +82,13 @@ bool IsDebuggerPresent()
         waitpid(pid, &status, 0);
         res = WEXITSTATUS(status);
     }
+    
     return !!res;
 }
 
 void DebugBreak()
 {
+    using BYTE = unsigned char;
 	BYTE bCrash = *(BYTE*)(nullptr);
 }
 
@@ -111,12 +115,14 @@ void debug::destroy()
 
 void debug::show_error(stl::string_view message)
 {
-#ifdef _DEBUG
-	DebugBreak();
-#endif
-
 	print_message(message);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
+    
+
+	if (IsDebuggerPresent()) 
+    {
+        DebugBreak();
+    }
 }
 
 void debug::print_message(stl::string_view message)
@@ -131,6 +137,9 @@ void debug::print_message(stl::string_view message)
 		OutputDebugString("\r\n");
 	}
 #else
-    OutputDebugString(message.data());
+	if (IsDebuggerPresent()) 
+    {
+        OutputDebugString(message.data());
+    }
 #endif
 }

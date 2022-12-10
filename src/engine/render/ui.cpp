@@ -256,7 +256,7 @@ void ui::tick(float dt)
 #endif
 }
 
-int64 ui::get_cmd_int(stl::string_view str)
+int64_t ui::get_cmd_int(stl::string_view str)
 {
     if (str == "window_fullscreen") 
     {
