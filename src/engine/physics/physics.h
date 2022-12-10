@@ -10,7 +10,7 @@ namespace asura::physics
 	void destroy_world();
 
 	b2World& get_world();
-	b2Body* get_ground();
+	physics_body* get_ground();
 	
     math::frect get_body_rect(const physics_body* body);
 	physics_body* schedule_creation(body_parameters parameters);

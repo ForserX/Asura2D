@@ -227,15 +227,11 @@ void graphics::theme::change()
 {
 	switch (window_style) 
 	{
-	case style::dark:
-		dark();
-		break;
-	case style::red:
-		red();
-		break;
+	case style::dark:		dark(); break;
+	case style::red:		red(); break;
+	case style::white:		ImGui::StyleColorsLight(); break;
 	case style::invalid:
-	default:
-		break;
+	default:				break;
 	}
 }
 

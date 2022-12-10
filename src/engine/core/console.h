@@ -6,7 +6,6 @@ namespace asura::ui
     {
         char InputBuf[256] = {};
         ImVector<char*> Items;
-        ImVector<const char*> Commands;
         stl::hash_map<stl::string, stl::string> cmd_hint;
 
         ImVector<char*> History;

@@ -196,10 +196,13 @@ physics::world::pre_tick()
 	}
 #endif
 	
-	for (const auto body : scheduled_to_delete_bodies) {
+	for (const auto body : scheduled_to_delete_bodies) 
+	{
 		body->get_body()->ClearContacts();
 		body->destroy();
-		if (bodies.contains(body)) {
+
+		if (bodies.contains(body))
+		{
 			bodies.erase(body);
 		}
 
@@ -213,7 +216,8 @@ void
 physics::world::internal_tick(float dt)
 {
 	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
-	if (window::is_destroyed()) {
+	if (window::is_destroyed()) 
+	{
 		return;
 	}
 
@@ -228,12 +232,15 @@ physics::world::internal_tick(float dt)
 
 	{
 		OPTICK_EVENT("physics debug joints tick");
-		if (gameplay::holder_type == gameplay::holder_mode::free) {
+		
+		if (gameplay::holder_type == gameplay::holder_mode::free) 
+		{
 			gameplay::holder::free::tick();
 		}
 	}
 
-	for (int i = 0; i < target_steps_count; i++) {
+	for (int i = 0; i < target_steps_count; i++) 
+	{
 		OPTICK_EVENT("physics step");
 		world_holder->Step(dt, 6, 2);
 	}
@@ -252,8 +259,7 @@ physics::world::internal_tick(float dt)
 	physics_real_delta = static_cast<float>((end_real_time - begin_real_time).count()) / 1000000000.f;
 }
 
-math::frect
-physics::world::get_real_body_rect(b2Body* body)
+math::frect physics::world::get_real_body_rect(b2Body* body)
 {
 	if (body == nullptr) {
 		return {};
@@ -284,8 +290,7 @@ physics::world::get_real_body_rect(b2Body* body)
 	return math::frect(aabb.lowerBound, aabb.upperBound);
 }
 
-void
-physics::world::tick(float dt)
+void physics::world::tick(float dt)
 {
 	if (!use_parallel && !ark_editor_mode) {
 		static float phys_accum = 0.f;
@@ -298,20 +303,17 @@ physics::world::tick(float dt)
 	}
 }
 
-b2World& 
-physics::world::get_world() const
+b2World& physics::world::get_world() const
 {
 	return *world_holder;
 }
 
-b2Body*
-physics::world::get_ground() const
+b2Body* physics::world::get_ground() const
 {
 	return ground;
 }
 
-void
-physics::world::destroy_world()
+void physics::world::destroy_world()
 {
 	OPTICK_EVENT("physics destroy world")
 	destroy_thread = true;
@@ -323,8 +325,7 @@ physics::world::destroy_world()
 	world_holder.reset();
 }
 
-math::frect
-physics::world::get_body_rect(const physics_body* body)
+math::frect physics::world::get_body_rect(const physics_body* body)
 {
 	if (body != nullptr) {
 		return get_real_body_rect(body->get_body());
@@ -334,8 +335,7 @@ physics::world::get_body_rect(const physics_body* body)
 	return {};
 }
 
-physics::physics_body*
-physics::world::schedule_creation(body_parameters parameters)
+physics::physics_body* physics::world::schedule_creation(body_parameters parameters)
 {
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	const auto& [key, value] = bodies.insert(new physics_body(parameters));

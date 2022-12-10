@@ -12,50 +12,20 @@ console::console()
     memset(InputBuf, 0, sizeof(InputBuf));
     HistoryPos = -1;
 
-    // "CLASSIFY" is here to provide the test case where "C"+[tab] completes to "CL" and display multiple matches.
-    Commands.push_back("help");
     cmd_hint["help"] = "";
-
-    Commands.push_back("hide");
     cmd_hint["hide"] = "";
-    
-    Commands.push_back("history");
     cmd_hint["history"] = "";
-
-    Commands.push_back("clear");
     cmd_hint["clear"] = "";
-    
-    Commands.push_back("physical_debug_draw");
     cmd_hint["physical_debug_draw"] = "1 , 0";
-
-    Commands.push_back("use_parallel");
     cmd_hint["use_parallel"] = "1 , 0";
-    
-    Commands.push_back("pause");
     cmd_hint["pause"] = {};
-    
-    Commands.push_back("physics_tps");
     cmd_hint["physics_tps"] = "0 - 120";
-    
-    Commands.push_back("physics_hertz");
     cmd_hint["physics_hertz"] = "0 - 120";
-
-    Commands.push_back("window_maximized");
     cmd_hint["window_maximized"] = "1, 0";
-
-    Commands.push_back("draw_fps");
     cmd_hint["draw_fps"] = "1, 0";
-
-    Commands.push_back("window_style");
     cmd_hint["window_style"] = "red, dark, white";
-
-    Commands.push_back("window_fullscreen");
     cmd_hint["window_fullscreen"] = "1, 0";
-
-    Commands.push_back("window_width");
     cmd_hint["window_width"] = "int";
-
-    Commands.push_back("window_height");
     cmd_hint["window_height"] = "int";
 
     AutoScroll = true;
@@ -311,8 +281,10 @@ void console::ExecCommand(const char* command_line)
     else if (cmd == "help")
     {
         debug::msg("Commands:");
-        for (int i = 0; i < Commands.Size; i++)
-            debug::msg("- {}", Commands[i]);
+        for (const auto& [key, tip] : cmd_hint)
+        {
+            debug::msg("- {} : {}", key, tip);
+        }
     }
     else if (cmd == "history")
     {
@@ -328,6 +300,9 @@ void console::ExecCommand(const char* command_line)
         }
         else if (cmd == "dark") {
             window_style = graphics::theme::style::dark;
+        }
+        else if (cmd == "white") {
+            window_style = graphics::theme::style::white;
         }
         else {
             window_style = graphics::theme::style::invalid;
@@ -368,9 +343,11 @@ int console::TextEditCallback(ImGuiInputTextCallbackData* data)
 
         // Build a list of candidates
         ImVector<const char*> candidates;
-        for (int i = 0; i < Commands.Size; i++)
-            if (strnicmp(Commands[i], word_start, (int)(word_end - word_start)) == 0)
-                candidates.push_back(Commands[i]);
+        for (const auto& [key, tip] : cmd_hint)
+        {
+            if (strnicmp(key.c_str(), word_start, (int)(word_end - word_start)) == 0)
+                candidates.push_back(key.c_str());
+        }
 
         if (candidates.Size == 0)
         {

@@ -22,6 +22,7 @@ namespace asura::graphics
 		{
 			red,
 			dark,
+			white,
 			invalid
 		};
 

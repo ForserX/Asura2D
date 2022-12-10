@@ -41,18 +41,36 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
   build-ubuntu:
-    if: "contains(github.event.head_commit.message, '[ci]') || github.event_name == 'release'"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        Configuration: [Release]
+        Platform: [x64]
+        CC: [clang-13]
+        include:
+          - CC: clang-13
+            CXX: clang++-13
 
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
-        
+
+    - name: Install Clang x64
+      uses: egor-tensin/setup-clang@v1
+      with:
+        version: 13
+        platform: x64
+
     - name: Configure CMake
       run: |
         git submodule update
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.Configuration}}
  
     - name: Build
+      # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      env:
+          CC: ${{ matrix.CC }}
+          CXX: ${{ matrix.CXX }}

@@ -71,7 +71,7 @@ void gameplay::holder::free::tick()
                 constexpr float damping_ratio = 1.f;
                 b2MouseJointDef jd;
 
-                jd.bodyA = physics::get_ground();
+                jd.bodyA = physics::get_ground()->get_body();
                 jd.bodyB = current_contol_body->get_body();
                 jd.target = mouse_position_absolute;
                 jd.maxForce = 1000.0f * current_contol_body->get_body()->GetMass();
