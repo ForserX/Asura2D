@@ -5,7 +5,6 @@ using namespace asura;
 bool paused = false;
 bool use_parallel = true;
 std::atomic_bool engine_ticking_now = {};
-extern std::unique_ptr<ui::console> console;
 
 void
 engine::start()

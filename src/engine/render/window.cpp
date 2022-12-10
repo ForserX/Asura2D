@@ -4,7 +4,6 @@
 SDL_Window* window_handle = nullptr;
 bool wants_to_exit = false;
 bool fullscreen_mode = false;
-extern bool show_console;
 
 int window_width = 1600;
 int window_height = 900;

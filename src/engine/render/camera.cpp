@@ -104,8 +104,8 @@ void camera::reset_view()
 
 void camera::reset_wh()
 {
-	cam_width = ui::get_cmd_int("window_width");
-	cam_height = ui::get_cmd_int("window_height");
+	cam_width = window_width;
+	cam_height = window_height;
 }
 
 const math::fvec2& camera::camera_position()

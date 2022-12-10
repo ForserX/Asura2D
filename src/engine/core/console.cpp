@@ -2,20 +2,6 @@
 
 using namespace asura;
 
-extern bool fullscreen_mode;
-extern bool show_fps_counter;
-extern bool show_console;
-extern bool window_maximized;
-extern bool physical_debug_draw;
-
-extern int window_width;
-extern int window_height;
-
-extern graphics::theme::style window_style;
-
-extern float target_physics_tps;
-extern float target_physics_hertz;
-
 input::on_key_change console_key_change;
 
 using ui::console;

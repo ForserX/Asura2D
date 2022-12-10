@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "../editor/editor_common.h"
 
-extern bool ark_editor_mode;
-
 using namespace asura;
 
 void

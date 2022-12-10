@@ -10,7 +10,6 @@ float physics_delta = 0.f;
 float physics_real_delta = 0.f;
 
 std::mutex physics_lock = {};
-extern bool ark_editor_mode; 
 
 class asura::CollisionLister final : public b2ContactListener
 {
@@ -72,14 +71,12 @@ physics::world::~world()
 {
 }
 
-void
-physics::world::start()
+void physics::world::start()
 {
 	enable_thread = true;
 }
 
-void
-physics::world::init()
+void physics::world::init()
 {
 	b2Vec2 gravity(0.0f, -9.8f);
 	world_holder = std::make_unique<b2World>(gravity);

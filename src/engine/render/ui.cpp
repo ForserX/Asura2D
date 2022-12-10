@@ -3,20 +3,6 @@
 
 using namespace asura;
 
-extern int window_width;
-extern int window_height;
-
-extern bool window_maximized;
-extern bool physical_debug_draw;
-extern bool fullscreen_mode;
-extern bool ark_editor_mode;
-
-extern float target_physics_tps;
-extern float target_physics_hertz;
-extern float cam_zoom;
-
-extern std::unique_ptr<ui::console> console;
-
 bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;

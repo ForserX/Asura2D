@@ -5,7 +5,7 @@ Asura Engine using CMake build system.
 
 |Windows|MacOS|Linux|
 |---|---|---|
-| Yes | Yes | Ubunty |
+| Yes | Yes | Ubuntu |
 # Asura Engine 
 Asura Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives or textures.
 

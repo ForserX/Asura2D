@@ -1,8 +1,6 @@
 #include "pch.h"
 
-extern SDL_Window* window_handle;
 SDL_Renderer* renderer = nullptr;
-extern int window_height;
 
 using namespace asura;
 
