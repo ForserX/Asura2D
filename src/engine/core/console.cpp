@@ -2,6 +2,7 @@
 
 using namespace asura;
 
+std::unique_ptr<ui::console> console;
 input::on_key_change console_key_change;
 
 using ui::console;
@@ -35,7 +36,9 @@ console::console()
 console::~console()
 {
     clear_log();
-    for (int i = 0; i < History.Size; i++) {
+
+    for (int i = 0; i < History.Size; i++)
+    {
         free(History[i]);
     }
 
@@ -83,7 +86,6 @@ void console::draw(float dt, const char* title, bool* p_open)
     const bool copy_to_clipboard = ImGui::SmallButton("Copy");
     ImGui::SameLine();
     ImGui::Text("FPS/DeltaTime: %.4f/%.4f", 1 / dt, dt);
-    //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
 
     ImGui::Separator();
 
@@ -151,10 +153,12 @@ void console::draw(float dt, const char* title, bool* p_open)
         size_t Iter = 0;
         for (const auto&[command, hint] : cmd_hint)
         {
-            if (strlen(InputBuf) == command.length()) {
+            if (strlen(InputBuf) == command.length()) 
+            {
                 skip = true;
                 break;
             }
+
             if (command.find(InputBuf) != stl::string::npos)
             {
                 stl::string print = command + stl::string(" (") + hint + ")";
@@ -175,7 +179,8 @@ void console::draw(float dt, const char* title, bool* p_open)
             ImGui::SetCursorPos(safe_pos);
         }
 
-        if (item_current != -1) {
+        if (item_current != -1) 
+        {
             stl::string try_str = item_list[item_current];
 
             const size_t space_iter = try_str.find(' ');
@@ -187,7 +192,8 @@ void console::draw(float dt, const char* title, bool* p_open)
             item_current = -1;
         }
 
-        for (size_t del_iter = 0; del_iter < Iter; del_iter++) {
+        for (size_t del_iter = 0; del_iter < Iter; del_iter++) 
+        {
             delete(item_list[del_iter]);
         }
 
@@ -269,7 +275,7 @@ void console::ExecCommand(const char* command_line)
     CHECK_FROM_CMD_EX("window_maximized",   window_maximized,   window::change_window_mode);
     CHECK_FROM_CMD_EX("window_fullscreen",  fullscreen_mode,    window::change_fullscreen);
     
-    // Process  other command
+    // Process other command
     if (cmd == "clear")
     {
         clear_log();
@@ -366,17 +372,22 @@ int console::TextEditCallback(ImGuiInputTextCallbackData* data)
             // Multiple matches. Complete as much as we can..
             // So inputing "C"+Tab will complete to "CL" then display "CLEAR" and "CLASSIFY" as matches.
             int match_len = static_cast<int>(word_end - word_start);
-            for (;;)
+            while (true)
             {
                 int c = 0;
                 bool all_candidates_matches = true;
+
                 for (int i = 0; i < candidates.Size && all_candidates_matches; i++)
+                {
                     if (i == 0)
                         c = toupper(candidates[i][match_len]);
                     else if (c == 0 || c != toupper(candidates[i][match_len]))
                         all_candidates_matches = false;
+                }
+
                 if (!all_candidates_matches)
                     break;
+
                 match_len++;
             }
 
@@ -449,7 +460,8 @@ void console::init()
     console_key_change = input::subscribe_key_event(
         [](int16_t scan_code, input::key_state state)
         {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) {
+            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) 
+            {
                 show_console = !show_console;
             }
         }
@@ -471,5 +483,3 @@ void console::init()
         ExecCommand(line.c_str());
     }
 }
-
-std::unique_ptr<ui::console> console;

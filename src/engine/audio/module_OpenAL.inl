@@ -113,7 +113,9 @@ size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fi
     ALsizei length = size1 * size2;
 
     if (audio_data->size_consumed + length > audio_data->size)
+    {
         length = audio_data->size - audio_data->size_consumed;
+    }
 
     if (!audio_data->file.is_open())
     {
@@ -130,7 +132,9 @@ size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fi
 
     audio_data->file.clear();
     audio_data->file.seekg(audio_data->size_consumed);
-    if (!audio_data->file.read(audio_buffer.data(), length)) {
+
+    if (!audio_data->file.read(audio_buffer.data(), length)) 
+    {
         if (audio_data->file.eof()) {
             audio_data->file.clear(); // just clear the error, we will resolve it later
         }

@@ -13,7 +13,7 @@ void game::init()
 
 	editor::init();
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	threads::sync_sleep();
 }
 
 void game::destroy()

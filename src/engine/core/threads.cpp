@@ -36,6 +36,11 @@ inline void nop()
 #endif
 }
 
+void asura::threads::sync_sleep()
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(200));
+}
+
 void threads::switch_context()
 {
 	for (int i = 0; i < 256; i++)
