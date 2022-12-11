@@ -1,61 +1,61 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-physics::world game_world = {};
-physics::physics_body* ground_base = nullptr;
+Physics::world game_world = {};
+Physics::PhysicsBody* ground_base = nullptr;
 
-void physics::start()
+void Physics::start()
 {
 	game_world.start();
 }
 
-void physics::init()
+void Physics::Init()
 {
-	material::init();
-	game_world.init();
+	material::Init();
+	game_world.Init();
 }
 
-void physics::destroy()
+void Physics::Destroy()
 {
-	game_world.destroy();
-	material::destroy();
+	game_world.Destroy();
+	material::Destroy();
 
 	// Auto deleted into World
 	ground_base = nullptr;
 }
 
-void physics::tick(float dt)
+void Physics::Tick(float dt)
 {
-	game_world.tick(dt);
+	game_world.Tick(dt);
 }
 
-math::frect physics::get_body_rect(const physics_body* body)
+Math::FRect Physics::get_body_rect(const PhysicsBody* body)
 {
 	return game_world.get_body_rect(body);
 }
 
-physics::physics_body* physics::schedule_creation(body_parameters parameters)
+Physics::PhysicsBody* Physics::schedule_creation(body_parameters parameters)
 {
 	return game_world.schedule_creation(parameters);
 }
 
-physics::physics_joint* asura::physics::schedule_creation(joint_data&& parameters)
+Physics::PhysicsJoint* Asura::Physics::schedule_creation(joint_data&& parameters)
 {
 	return game_world.schedule_creation(std::move(parameters));
 }
 
-physics::physics_body* physics::get_ground()
+Physics::PhysicsBody* Physics::get_ground()
 {
 	if (ground_base == nullptr)
 	{
-		ground_base = new physics_body(game_world.get_ground());
+		ground_base = new PhysicsBody(game_world.get_ground());
 	}
 
 	return ground_base;
 }
 
-void physics::schedule_free(physics_body* body)
+void Physics::schedule_free(PhysicsBody* body)
 {
 	game_world.schedule_free(body);
 }
@@ -63,7 +63,7 @@ void physics::schedule_free(physics_body* body)
 class QueryCallback : public b2QueryCallback
 {
 public:
-	QueryCallback(const math::fvec2& point)
+	QueryCallback(const Math::FVec2& point)
 		: m_point(point) {}
 
 	bool ReportFixture(b2Fixture* fixture) override
@@ -78,11 +78,11 @@ public:
 		return true;
 	}
 
-    math::fvec2 m_point = {};
+    Math::FVec2 m_point = {};
 	b2Fixture* m_fixture = nullptr;
 };
 
-physics::physics_body* physics::hit_test(math::fvec2 pos)
+Physics::PhysicsBody* Physics::hit_test(Math::FVec2 pos)
 {	
 	// Make a small box.
 	b2AABB aabb = {};
@@ -94,12 +94,12 @@ physics::physics_body* physics::hit_test(math::fvec2 pos)
 
 	// Query the world for overlapping shapes.
 	QueryCallback callback(pos);
-	game_world.get_world().QueryAABB(&callback, aabb);
+	game_world.GetWorld().QueryAABB(&callback, aabb);
 
 	if (callback.m_fixture)
 	{
 		const b2Body* phys_body = callback.m_fixture->GetBody();
-		const auto entity = entities::get_entity_from_body(phys_body);
+		const auto entity = entities::GetEntityByBbody(phys_body);
 		const auto phys_comp = entities::try_get<entities::physics_body_component>(entity);
 		if (phys_comp != nullptr) 
 		{
@@ -110,12 +110,12 @@ physics::physics_body* physics::hit_test(math::fvec2 pos)
 	return nullptr;
 }
 
-void physics::destroy_world()
+void Physics::DestroyWorld()
 {
-	game_world.destroy_world();
+	game_world.DestroyWorld();
 }
 
-b2World& physics::get_world()
+b2World& Physics::GetWorld()
 {
-	return game_world.get_world();
+	return game_world.GetWorld();
 }

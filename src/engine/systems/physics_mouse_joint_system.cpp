@@ -1,19 +1,19 @@
 ﻿#include "pch.h"
 
-using namespace asura::systems;
+using namespace Asura::systems;
 
 void
-physics_mouse_joint_system::init()
+physics_mouse_joint_system::Init()
 {
 }
 
 void
-physics_mouse_joint_system::reset()
+physics_mouse_joint_system::Reset()
 {
 }
 
 void
-physics_mouse_joint_system::tick(float dt)
+physics_mouse_joint_system::Tick(float dt)
 {
 
 }

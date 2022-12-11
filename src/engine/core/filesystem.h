@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include <filesystem>
+#include <FileSystem>
 
-namespace asura::filesystem
+namespace Asura::FileSystem
 {
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
 	const std::filesystem::path& get_working_dir();
 	const std::filesystem::path& get_content_dir();

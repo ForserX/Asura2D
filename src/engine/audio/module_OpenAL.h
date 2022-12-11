@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-namespace asura::audio::openal
+namespace Asura::audio::openal
 {
-	void init();
-	void tick();
-	void destroy();
+	void Init();
+	void Tick();
+	void Destroy();
 
 	void start(stl::string_view sound_src);
 };

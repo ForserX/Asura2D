@@ -1,9 +1,9 @@
 #pragma once
 
-namespace asura::editor
+namespace Asura::editor
 {
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
 	namespace object
 	{
@@ -14,6 +14,6 @@ namespace asura::editor
 
 	namespace ui
 	{
-		void tick();
+		void Destroy();
 	}
 };

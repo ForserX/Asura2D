@@ -1,17 +1,17 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 extern gameplay::holder_mode holder_type;
 
-void gameplay::holder::player::init()
+void gameplay::holder::player::Init()
 {
 }
 
-void gameplay::holder::player::tick()
+void gameplay::holder::player::Tick()
 {
 }
 
-void gameplay::holder::player::destroy()
+void gameplay::holder::player::Destroy()
 {
 }

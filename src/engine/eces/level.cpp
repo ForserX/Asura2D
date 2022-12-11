@@ -1,12 +1,12 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 std::filesystem::path path_level = {};
 stl::vector<entity_view> ent_list = {};
 
-namespace asura::level
+namespace Asura::level
 {
-    config_parser level_data = {};
+    CfgParser level_data = {};
 
 	void load(const std::filesystem::path path)
 	{
@@ -21,7 +21,7 @@ namespace asura::level
 		for (const auto &[section, kv] : level_data.get_data()) 
 		{
 			if (section == "background") {
-				auto background_ent = ent_list.emplace_back(entities::add_texture(entities::create(), level_data.get<stl::string_view>(section, "path")));
+				auto background_ent = ent_list.emplace_back(entities::AddTexture(entities::Create(), level_data.get<stl::string_view>(section, "path")));
 				entities::add_field<entities::background_flag>(background_ent);
                 entities::add_field<entities::scene_component>(background_ent);
 				continue;
@@ -33,7 +33,7 @@ namespace asura::level
 			level_w = level_data.get<float>(section, "w");
 			level_h = level_data.get<float>(section, "h");
 					
-			const auto body_type = level_data.get<physics::body_type>(section, "type");
+			const auto body_type = level_data.get<Physics::body_type>(section, "type");
 			const auto body_shape = level_data.get<material::shape>(section, "shape");
 			const auto material_type = level_data.get<material::type>(section, "material");
 			
@@ -44,8 +44,8 @@ namespace asura::level
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
 			auto ent = ent_list.emplace_back(
-				entities::add_phys_body(
-					entities::create(),
+				entities::AddPhysBody(
+					entities::Create(),
 					{},
 					{ level_x, level_y },
 					{ level_w, level_h },
@@ -62,23 +62,23 @@ namespace asura::level
 	};
 };
 
-void asura::level::init()
+void Asura::level::Init()
 {
-	path_level = filesystem::get_content_dir();
+	path_level = FileSystem::get_content_dir();
 	path_level.append("level");
 
 	game_assert(std::filesystem::exists(path_level), "Level path not found! Please, reinstall game!", return);
 
-	for (auto& dir_iter : std::filesystem::directory_iterator{ path_level }) 
+	for (auto& dir_iter : std::filesystem::directory_iterator{ path_level })
 	{
 		load(dir_iter);
 	}
 }
 
-void asura::level::tick(float dt)
+void Asura::level::Tick(float dt)
 {
 }
 
-void asura::level::destroy()
+void Asura::level::Destroy()
 {
 }

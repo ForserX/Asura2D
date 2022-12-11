@@ -1,10 +1,10 @@
 #pragma once
 
-namespace asura::scene
+namespace Asura::scene
 {
-	void init();
-	void destroy();
-	void tick(float dt);
+	void Init();
+	void Destroy();
+	void Tick(float dt);
 
 	void close_scene();
 	void import_scene(std::string_view scene_name);

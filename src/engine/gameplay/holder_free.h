@@ -1,8 +1,8 @@
 #pragma once
 
-namespace asura::gameplay::holder::free
+namespace Asura::gameplay::holder::free
 {
-	void init();
-	void tick();
-	void destroy();
+	void Init();
+	void Tick();
+	void Destroy();
 }

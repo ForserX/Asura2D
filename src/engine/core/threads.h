@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-namespace asura::threads
+namespace Asura::Threads
 {
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
-	void set_thread_affinity(void* handle, int64_t core);
+	void SetAffinity(void* handle, int64_t Core);
 
 	void sync_sleep();
 	void switch_context();

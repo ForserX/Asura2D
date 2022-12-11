@@ -1,11 +1,11 @@
 #pragma once
 
-namespace asura::resources
+namespace Asura::resources
 {
     using id_t = int64_t;
 
-	void init();
-    void destroy();
+	void Init();
+    void Destroy();
     bool is_loading();
 
     void update_directories();

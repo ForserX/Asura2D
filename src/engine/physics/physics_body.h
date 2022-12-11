@@ -1,12 +1,12 @@
 #pragma once
 #include <box2d/box2d.h>
 
-namespace asura
+namespace Asura
 {
 	class CollisionLister;
 }
 
-namespace asura::physics
+namespace Asura::Physics
 {
 	// 4 bits
 	enum class body_type : uint8_t
@@ -79,23 +79,23 @@ namespace asura::physics
 		float mass = 0.f;
 		float angle = 0.f;
 		float angular_vel = 0.f;
-		math::fvec2 vel;
-           math::fvec2 pos;
-           math::fvec2 size;
-           math::fvec2 mass_center;
+		Math::FVec2 vel;
+           Math::FVec2 pos;
+           Math::FVec2 size;
+           Math::FVec2 mass_center;
 
 		body_parameters() = default;
 		body_parameters(
 			float in_angle,
 			float in_vel_angle,
-			math::fvec2 in_vel,
-			math::fvec2 in_pos,
-			math::fvec2 in_size,
+			Math::FVec2 in_vel,
+			Math::FVec2 in_pos,
+			Math::FVec2 in_size,
 			body_type in_type,
 			material::shape in_shape,
 			material::type in_mat,
 			float in_mass = 0.f,
-			math::fvec2 in_mass_center = {}
+			Math::FVec2 in_mass_center = {}
 		) :
 		angle(in_angle), angular_vel(in_vel_angle),
 		vel(in_vel), pos(in_pos), size(in_size), mass(in_mass),
@@ -218,7 +218,7 @@ namespace asura::physics
 		}
 	};
 	
-	class physics_body
+	class PhysicsBody
 	{
 	private:
 		bool created = false;
@@ -227,13 +227,13 @@ namespace asura::physics
 		body_parameters parameters;
 		
 	public:
-		physics_body() = delete;
-		physics_body(b2Body* copy_body) : body(copy_body) {};
-		physics_body(body_parameters in_parameters);
-		~physics_body();
+		PhysicsBody() = delete;
+		PhysicsBody(b2Body* copy_body) : body(copy_body) {};
+		PhysicsBody(body_parameters in_parameters);
+		~PhysicsBody();
 		
-		inline bool is_created() const { return created; }
-		inline bool is_destroyed() const { return destroyed; }
+		inline bool IsCreated() const { return created; }
+		inline bool IsDestroyed() const { return destroyed; }
 		inline bool is_enabled() const { return (body ? body->IsEnabled() : false); }
 		
 		b2Body* get_body() const { return body; }
@@ -246,29 +246,29 @@ namespace asura::physics
 		float get_angle() const;
 		float get_angular_velocity() const;
 
-		math::fvec2 get_mass_center() const;
-		math::fvec2 get_velocity() const;
-		math::fvec2 get_position() const;
+		Math::FVec2 get_mass_center() const;
+		Math::FVec2 get_velocity() const;
+		Math::FVec2 get_position() const;
 
-		math::frect get_rect() const;
+		Math::FRect get_rect() const;
 
 	public:
 		void set_body_type(body_type new_type);
 		void set_mass(float new_mass);
-		void set_mass_center(const math::fvec2& new_center);
+		void set_mass_center(const Math::FVec2& new_center);
 		void set_angle(float new_angle);
 		void set_angular_velocity(float new_angular_vel);
-		void set_velocity(const math::fvec2& new_vel);
-		void set_position(const math::fvec2& new_pos);
+		void set_velocity(const Math::FVec2& new_vel);
+		void set_position(const Math::FVec2& new_pos);
 
-		void apply_impulse(const math::fvec2& impulse);
+		void apply_impulse(const Math::FVec2& impulse);
 		void apply_angular_impulse(float impulse);
 
 	public:
 		body_parameters copy_parameters() const;
 
 	public:
-		void create();
-		void destroy();
+		void Create();
+		void Destroy();
 	};
 }

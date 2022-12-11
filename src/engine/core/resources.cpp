@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <mio/mio.hpp>
 
-using namespace asura;
+using namespace Asura;
 
 struct resource_state
 {
@@ -33,8 +33,8 @@ std::mutex resource_manager_lock;
 
 auto load_content_context = []()
 {
-    const auto& content_dir = filesystem::get_content_dir();
-    for (const auto& it : std::filesystem::recursive_directory_iterator(content_dir)) 
+    const auto& content_dir = FileSystem::get_content_dir();
+    for (const auto& it : std::filesystem::recursive_directory_iterator(content_dir))
     {
         if (it.is_regular_file())
         {
@@ -84,16 +84,16 @@ auto resources_scheduled_worker = []()
     return !resources_destroyed;
 };
 
-void resources::init()
+void resources::Init()
 {
     resources_destroyed = false;
-    scheduler::schedule(scheduler::global_task_type::resource_manager, resources_scheduled_worker);
+    Scheduler::schedule(Scheduler::global_task_type::resource_manager, resources_scheduled_worker);
     
     load_content_context();
     resources_inited = true;
 }
 
-void resources::destroy()
+void resources::Destroy()
 {
     resources_destroyed = true;
     resources_inited = false;
@@ -130,13 +130,13 @@ resources::id_t resources::load(stl::string_view file_name)
         return resource_id;
     }
     
-    auto path = filesystem::get_content_dir();
+    auto path = FileSystem::get_content_dir();
     path.append(file_name);
     
     resource_state state = {};
     
     std::error_code error;
-    state.file_path = std::filesystem::relative(path, filesystem::get_content_dir(), error);
+    state.file_path = std::filesystem::relative(path, FileSystem::get_content_dir(), error);
 
     if (error) 
     {

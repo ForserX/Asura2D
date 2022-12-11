@@ -5,7 +5,7 @@ void* ark_alloc(size_t size_to_alloc);
 void ark_free(void* ptr);
 
 
-namespace asura::stl
+namespace Asura::stl
 {
 #ifdef ASURA_ALLOCATOR_USE
 
@@ -79,7 +79,7 @@ namespace asura::stl
 
 		void construct(T* p, T&& _Val) { new (p) T(std::forward<T>(_Val)); }
 
-		void destroy(T* p) { p->~T(); }
+		void Destroy(T* p) { p->~T(); }
 	};
 #else
     template <typename T>

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace asura::systems
+namespace Asura::systems
 {
 	class draw_system final : public system
 	{
@@ -13,8 +13,8 @@ namespace asura::systems
 	public:
 		draw_system() : r_engine(r_device()) {}
 		
-		void init() override;
-		void reset() override;
-		void tick(float dt) override;
+		void Init() override;
+		void Reset() override;
+		void Tick(float dt) override;
 	};
 }

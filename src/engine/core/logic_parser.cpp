@@ -1,8 +1,8 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-void config_parser::load(const std::filesystem::path& file_path)
+void CfgParser::load(const std::filesystem::path& file_path)
 {
     std::ifstream file(file_path);
     game_assert(file.is_open(), "File not found", return);
@@ -51,7 +51,7 @@ void config_parser::load(const std::filesystem::path& file_path)
     file.close();
 }
 
-void config_parser::save(const std::filesystem::path& file_path) const
+void CfgParser::save(const std::filesystem::path& file_path) const
 {
 	std::ofstream file(file_path, std::ios_base::out);
     
@@ -70,7 +70,7 @@ void config_parser::save(const std::filesystem::path& file_path) const
 	file.close();
 }
 
-const stl::string& config_parser::get(stl::string_view section, stl::string_view key) const
+const stl::string& CfgParser::get(stl::string_view section, stl::string_view key) const
 {
     static const stl::string empty_string;
     auto& current_data = data.at(section.data());
@@ -86,7 +86,7 @@ const stl::string& config_parser::get(stl::string_view section, stl::string_view
     game_assert(false, "Not found", return empty_string);
 }
 
-int config_parser::set_value(stl::string_view section, stl::string_view key, stl::string_view value)
+int CfgParser::set_value(stl::string_view section, stl::string_view key, stl::string_view value)
 {
     game_assert(section.empty(), "section can't be null", return -1);
     game_assert(key.empty(), "key can't be null", return -2);
@@ -108,7 +108,7 @@ int config_parser::set_value(stl::string_view section, stl::string_view key, stl
     return 0;
 }
 
-int config_parser::add_section(stl::string_view section)
+int CfgParser::add_section(stl::string_view section)
 {
     for (const auto& fIter : data) 
     {
@@ -119,7 +119,7 @@ int config_parser::add_section(stl::string_view section)
     return 0;
 }
 
-int config_parser::add_key_in_section(stl::string_view section, stl::string_view key)
+int CfgParser::add_key_in_section(stl::string_view section, stl::string_view key)
 {
 	for (const auto& fIter : data) 
     {

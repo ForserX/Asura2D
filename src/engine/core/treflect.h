@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::stl
+namespace Asura::stl
 {
 	template<typename T>
 	void write_memory(stream_vector& data, T& value)
@@ -42,9 +42,9 @@ namespace asura::stl
 
 		auto stringify_type = []<typename CT>(CT value) -> stl::string
 		{
-			if constexpr (std::is_same_v<CT, math::transform>) {
+			if constexpr (std::is_same_v<CT, Math::Transform>) {
 				return value.to_string();
-			} else if constexpr (std::is_same_v<CT, math::fvec2>) {
+			} else if constexpr (std::is_same_v<CT, Math::FVec2>) {
 				return value.to_string();
 			} else if constexpr (std::is_same_v<U, ImColor>) {
 				return stl::to_string(static_cast<uint32_t>(value));
@@ -81,7 +81,7 @@ namespace asura::stl
 	{
 		auto unstrigify_type = []<typename CT>(CT& val, const stl::string_view& string_value)
 		{
-			if constexpr (std::is_same_v<CT, math::vec2<float>>) {
+			if constexpr (std::is_same_v<CT, Math::vec2<float>>) {
 				val.from_string(string_value);
 			} else if constexpr (std::is_floating_point_v<CT>) {
 				val = static_cast<CT>(stl::stod(string_value));
@@ -144,15 +144,15 @@ namespace asura::stl
 	{
 		if constexpr (is_stl_vector<T>::value) {
 			return "arr_";
-		} else if constexpr (std::is_same_v<T, math::vec2<float>>) {
+		} else if constexpr (std::is_same_v<T, Math::vec2<float>>) {
 			return "vecf_";
 		} else if constexpr (std::is_floating_point_v<T>) {
 			return "f_";
 		} else if constexpr (std::is_same_v<T, ImColor>) {
 			return "c_";
-		} else if constexpr (std::is_same_v<T, math::transform>) {
+		} else if constexpr (std::is_same_v<T, Math::Transform>) {
 			return "t_"; 
-		} else if constexpr (std::is_same_v<T, math::fvec2>) {
+		} else if constexpr (std::is_same_v<T, Math::FVec2>) {
 			return "v_";
 		} else if constexpr (std::is_same_v<T, bool>) {
 			return "b_";

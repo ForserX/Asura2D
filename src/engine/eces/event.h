@@ -1,14 +1,14 @@
 #pragma once
 
-namespace asura::event
+namespace Asura::event
 {
 	using parameter = std::variant<
  		std::monostate,
  		stl::string_view,
  		entity_view,
  		int64_t,
- 		math::ivec2,
- 		math::fvec2,
+ 		Math::IVec2,
+ 		Math::FVec2,
  		double,
  		bool
 	>;
@@ -86,9 +86,9 @@ namespace asura::event
 		>;
 	}
 
-	void init();
-	void destroy();
-	void tick();
+	void Init();
+	void Tick();
+	void Destroy();
 
 	void create(stl::string_view name, int64_t parameters_count);
 	void remove(stl::string_view name);
@@ -106,13 +106,18 @@ namespace asura::event
 				"Invalid parameters count."
 			);
 			
-			if constexpr (args_count == 0) {
+			if constexpr (args_count == 0) 
+			{
 				auto return_callback = callback_0(functor);
 				return callback(return_callback);
-			} else if constexpr (args_count == 1) {
+			} 
+			else if constexpr (args_count == 1) 
+			{
 				auto return_callback = callback_1(functor);
 				return callback(return_callback);
-			} else if constexpr (args_count == 2) {
+			} 
+			else if constexpr (args_count == 2)
+			{
 				auto return_callback = callback_2(functor);
 				return callback(return_callback);
 			}

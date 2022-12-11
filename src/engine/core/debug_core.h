@@ -3,7 +3,7 @@
 #ifdef _DEBUG
 #define game_assert(error_code, message, exist_code) \
 	if(!(error_code)) {\
-		asura::debug::show_error(message);\
+		Asura::Debug::show_error(message);\
 		exist_code;\
 	}
 #else
@@ -13,10 +13,10 @@
 	}
 #endif
 
-namespace asura::debug
+namespace Asura::Debug
 {
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
 	void show_error(stl::string_view message);
 	void print_message(stl::string_view message);

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 constexpr int32 k_maxContactPoints = 2048;
 int target_steps_count = 1;
@@ -11,14 +11,14 @@ float physics_real_delta = 0.f;
 
 std::mutex physics_lock = {};
 
-class asura::CollisionLister final : public b2ContactListener
+class Asura::CollisionLister final : public b2ContactListener
 {
 	struct ContactPoint
 	{
 		b2Fixture* fixtureA;
 		b2Fixture* fixtureB;
-		math::fvec2 normal;
-		math::fvec2 position;
+		Math::FVec2 normal;
+		Math::FVec2 position;
 		b2PointState state;
 		float normalImpulse;
 		float tangentImpulse;
@@ -32,7 +32,8 @@ class asura::CollisionLister final : public b2ContactListener
 	{
 		const b2Manifold* manifold = contact->GetManifold();
 
-		if (manifold->pointCount == 0) {
+		if (manifold->pointCount == 0)
+		{
 			return;
 		}
 
@@ -63,20 +64,20 @@ class asura::CollisionLister final : public b2ContactListener
 	}
 };
 
-physics::world::world()
+Physics::world::world()
 {
 }
 
-physics::world::~world()
+Physics::world::~world()
 {
 }
 
-void physics::world::start()
+void Physics::world::start()
 {
 	enable_thread = true;
 }
 
-void physics::world::init()
+void Physics::world::Init()
 {
 	b2Vec2 gravity(0.0f, -9.8f);
 	world_holder = std::make_unique<b2World>(gravity);
@@ -87,12 +88,14 @@ void physics::world::init()
 	groundBodyDef.position.Set(0.0f, -10.0f);
 	ground = world_holder->CreateBody(&groundBodyDef);
 
-	if (use_parallel) {
-		physics_thread = std::make_unique<std::thread>([this]() {
+	if (use_parallel)
+	{
+		physics_thread = std::make_unique<std::thread>([this]()
+		{
 			OPTICK_THREAD("Physics thread")
 
 			// Setup affinity to second thread
-			threads::set_thread_affinity((void*)physics_thread->native_handle(), 1);
+			Threads::SetAffinity((void*)physics_thread->native_handle(), 1);
 			
 			while (!enable_thread) {
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -101,13 +104,16 @@ void physics::world::init()
 			enable_thread = false;
 			std::chrono::nanoseconds begin_physics_time = {};
 			std::chrono::nanoseconds end_physics_time = {};
-			while (!destroy_thread) {
-				OPTICK_EVENT("physics loop")
-				if (use_parallel && !paused) {
+
+			while (!destroy_thread) 
+			{
+				OPTICK_EVENT("Physics loop")
+				if (use_parallel && !paused) 
+				{
 					auto temp_physics_time = begin_physics_time;
                     
 					{
-						OPTICK_EVENT("physics tick")
+						OPTICK_EVENT("Physics Destroy")
 						is_phys_ticking = true;
 						internal_tick(1.f / target_physics_hertz);
 						is_phys_ticking = false;
@@ -115,14 +121,18 @@ void physics::world::init()
 
 					end_physics_time = begin_physics_time + std::chrono::nanoseconds(static_cast<int64_t>((1.f / target_physics_tps) * 1000000000.f));
 					{
-						OPTICK_EVENT("physics wait")
-						while (end_physics_time > begin_physics_time) {
+						OPTICK_EVENT("Physics wait")
+						while (end_physics_time > begin_physics_time) 
+						{
 							const float milliseconds_to_end = static_cast<float>((end_physics_time - begin_physics_time).count()) / 1000000.f;
 							begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
-							if (milliseconds_to_end > 5.f) {
+							if (milliseconds_to_end > 5.f) 
+							{
 								std::this_thread::sleep_for(std::chrono::milliseconds(2));
-							} else {
-								threads::switch_context();
+							} 
+							else 
+							{
+								Threads::switch_context();
 							}
 						}
 					}
@@ -136,48 +146,53 @@ void physics::world::init()
 	}
 }
 
-void
-physics::world::destroy()
+void Physics::world::Destroy()
 {
-	destroy_world();
+	DestroyWorld();
 }
 
-void
-physics::world::destroy_all_bodies()
+void Physics::world::destroy_all_bodies()
 {
 	// At this stage, we're calling destructor in our proxy bodies
-	for (const auto body : bodies) {
+	for (const auto body : bodies)
+	{
 		delete body;
 	}
 	
 	bodies.clear();
 }
 
-void
-physics::world::pre_tick()
+void Physics::world::pre_tick()
 {
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
-	for (const auto body : bodies) {
-		if (!body->is_created()) {
-			body->create();
+	for (const auto body : bodies) 
+	{
+		if (!body->IsCreated()) 
+		{
+			body->Create();
 		}
 	}
 
-	for (const auto joint : joints) {
-		if (!joint->is_created()) {
-			joint->create();
+	for (const auto joint : joints)
+	{
+		if (!joint->IsCreated())
+		{
+			joint->Create();
 		}
 	}
 
 #ifdef ARKANE_BOX2D_OPTIMIZED
 	stl::hash_set<b2Contact*> contacts;
-	for (const auto body : scheduled_to_delete_bodies) {
+	for (const auto body : scheduled_to_delete_bodies)
+	{
 		const auto phys_body = body->get_body();
-		if (phys_body != nullptr) {
+		if (phys_body != nullptr) 
+		{
 			// In this case, we're trying to write temp pointer to this element to
 			// delete after searching this contact in all bodies.
 			contacts.reserve(std::max(contacts.size(), static_cast<size_t>(phys_body->GetContactCount())));
-			for (int i = 0; i < phys_body->GetContactCount(); i++) {
+			for (int i = 0; i < phys_body->GetContactCount(); i++)
+			{
 				const auto contact = phys_body->GetContact(i);
 				if (contact != nullptr) {
 					contacts.insert(contact);
@@ -191,7 +206,8 @@ physics::world::pre_tick()
 
 	// Yep, this is most interesting part: we're deleting all founded by iterating
 	// contacts and free it after processing
-	for	(const auto contact : contacts) {
+	for	(const auto contact : contacts)
+	{
 		world_holder->GetContactManager().Destroy(contact);
 	}
 #endif
@@ -199,7 +215,7 @@ physics::world::pre_tick()
 	for (const auto body : scheduled_to_delete_bodies) 
 	{
 		body->get_body()->ClearContacts();
-		body->destroy();
+		body->Destroy();
 
 		if (bodies.contains(body))
 		{
@@ -212,46 +228,46 @@ physics::world::pre_tick()
 	scheduled_to_delete_bodies.clear();
 }
 
-void
-physics::world::internal_tick(float dt)
+void Physics::world::internal_tick(float dt)
 {
 	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
-	if (window::is_destroyed()) 
+	if (window::IsDestroyed()) 
 	{
 		return;
 	}
 
 	{
-		OPTICK_EVENT("physics pre tick");
+		OPTICK_EVENT("Physics pre Destroy");
 		pre_tick();
 	}
 
-	if (ark_editor_mode) {
+	if (ark_editor_mode)
+	{
 		return;
 	}
 
 	{
-		OPTICK_EVENT("physics debug joints tick");
+		OPTICK_EVENT("Physics Debug joints Destroy");
 		
 		if (gameplay::holder_type == gameplay::holder_mode::free) 
 		{
-			gameplay::holder::free::tick();
+			gameplay::holder::free::Tick();
 		}
 	}
 
 	for (int i = 0; i < target_steps_count; i++) 
 	{
-		OPTICK_EVENT("physics step");
+		OPTICK_EVENT("Physics step");
 		world_holder->Step(dt, 6, 2);
 	}
 
 	{
-		OPTICK_EVENT("physics substepping");
+		OPTICK_EVENT("Physics substepping");
 		world_holder->ClearForces();
 	}
 
 	{
-		OPTICK_EVENT("physics systems tick");
+		OPTICK_EVENT("Physics systems Destroy");
 		systems::physics_tick(dt);
 	}
 
@@ -259,9 +275,10 @@ physics::world::internal_tick(float dt)
 	physics_real_delta = static_cast<float>((end_real_time - begin_real_time).count()) / 1000000000.f;
 }
 
-math::frect physics::world::get_real_body_rect(b2Body* body)
+Math::FRect Physics::world::get_real_body_rect(b2Body* body)
 {
-	if (body == nullptr) {
+	if (body == nullptr)
+	{
 		return {};
 	}
 
@@ -270,7 +287,8 @@ math::frect physics::world::get_real_body_rect(b2Body* body)
 	
 	t.SetIdentity();
 	b2Fixture* fixture = body->GetFixtureList();
-	while (fixture != nullptr) {
+	while (fixture != nullptr) 
+	{
 		const b2Shape* shape = fixture->GetShape();
 #ifdef ASURA_BOX2D_OPTIMIZED
 		b2AABB shapeAABB = {};
@@ -278,7 +296,8 @@ math::frect physics::world::get_real_body_rect(b2Body* body)
 		aabb.Combine(shapeAABB);
 #else
 		const int childCount = shape->GetChildCount();
-		for (int child = 0; child < childCount; ++child) {
+		for (int child = 0; child < childCount; ++child) 
+		{
 			b2AABB shapeAABB = {};
 			shape->ComputeAABB(&shapeAABB, t, child);
 			aabb.Combine(shapeAABB);
@@ -287,15 +306,18 @@ math::frect physics::world::get_real_body_rect(b2Body* body)
 		fixture = fixture->GetNext();
 	}
 
-	return math::frect(aabb.lowerBound, aabb.upperBound);
+	return Math::FRect(aabb.lowerBound, aabb.upperBound);
 }
 
-void physics::world::tick(float dt)
+void Physics::world::Tick(float dt)
 {
-	if (!use_parallel && !ark_editor_mode) {
+	if (!use_parallel && !ark_editor_mode)
+	{
 		static float phys_accum = 0.f;
 		phys_accum += dt;
-		if (phys_accum >= 1.f / target_physics_tps) {
+
+		if (phys_accum >= 1.f / target_physics_tps)
+		{
 			physics_delta = phys_accum;
 			internal_tick(1.f / target_physics_tps);
 			phys_accum = 0.f;
@@ -303,19 +325,19 @@ void physics::world::tick(float dt)
 	}
 }
 
-b2World& physics::world::get_world() const
+b2World& Physics::world::GetWorld() const
 {
 	return *world_holder;
 }
 
-b2Body* physics::world::get_ground() const
+b2Body* Physics::world::get_ground() const
 {
 	return ground;
 }
 
-void physics::world::destroy_world()
+void Physics::world::DestroyWorld()
 {
-	OPTICK_EVENT("physics destroy world")
+	OPTICK_EVENT("Physics Destroy world")
 	destroy_thread = true;
 
     physics_thread->join();
@@ -325,7 +347,7 @@ void physics::world::destroy_world()
 	world_holder.reset();
 }
 
-math::frect physics::world::get_body_rect(const physics_body* body)
+Math::FRect Physics::world::get_body_rect(const PhysicsBody* body)
 {
 	if (body != nullptr) {
 		return get_real_body_rect(body->get_body());
@@ -335,22 +357,21 @@ math::frect physics::world::get_body_rect(const physics_body* body)
 	return {};
 }
 
-physics::physics_body* physics::world::schedule_creation(body_parameters parameters)
+Physics::PhysicsBody* Physics::world::schedule_creation(body_parameters parameters)
 {
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
-	const auto& [key, value] = bodies.insert(new physics_body(parameters));
+	const auto& [key, value] = bodies.insert(new PhysicsBody(parameters));
 	return *key;
 }
 
-physics::physics_joint* asura::physics::world::schedule_creation(joint_data&& parameters)
+Physics::PhysicsJoint* Asura::Physics::world::schedule_creation(joint_data&& parameters)
 {
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
-	auto value = joints.emplace(new physics_joint(std::move(parameters)));
+	auto value = joints.emplace(new PhysicsJoint(std::move(parameters)));
 	return *(value.first);
 }
 
-void
-physics::world::schedule_free(physics_body* body)
+void Physics::world::schedule_free(PhysicsBody* body)
 {
     std::scoped_lock<std::mutex> scope_lock(physics_lock);
 	scheduled_to_delete_bodies.emplace(body);

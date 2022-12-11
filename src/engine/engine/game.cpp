@@ -1,63 +1,63 @@
 ﻿#include "pch.h"
 #include "../editor/editor_common.h"
 
-using namespace asura;
+using namespace Asura;
 
-void game::init()
+void game::Init()
 {
-	physics::init();
+	Physics::Init();
 	systems::pre_init();
-	systems::init();
-	entities::init();
-	level::init();
+	systems::Init();
+	entities::Init();
+	level::Init();
 
-	editor::init();
+	editor::Init();
 
-	threads::sync_sleep();
+	Threads::sync_sleep();
 }
 
-void game::destroy()
+void game::Destroy()
 {
-	editor::destroy();
+	editor::Destroy();
 
-	level::destroy();
-	entities::destroy();
-	systems::destroy();
-	physics::destroy();
+	level::Destroy();
+	entities::Destroy();
+	systems::Destroy();
+	Physics::Destroy();
 }
 
-void game::tick(float dt)
+void game::Tick(float dt)
 {
-	OPTICK_EVENT("game tick");
-	OPTICK_CATEGORY("systems tick", Optick::Category::GameLogic);
+	OPTICK_EVENT("game Destroy");
+	OPTICK_CATEGORY("systems Destroy", Optick::Category::GameLogic);
 	
 	{
-		OPTICK_EVENT("systems pre tick");
+		OPTICK_EVENT("systems pre Destroy");
 		systems::pre_tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("physics tick");
-		physics::tick(dt);
+		OPTICK_EVENT("Physics Destroy");
+		Physics::Tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("scene tick");
-		scene::tick(dt);
+		OPTICK_EVENT("scene Destroy");
+		scene::Tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("systems tick");
-		systems::tick(dt);
+		OPTICK_EVENT("systems Destroy");
+		systems::Tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("entities tick");
-		entities::tick(dt);
+		OPTICK_EVENT("entities Destroy");
+		entities::Tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("systems post tick");
+		OPTICK_EVENT("systems post Destroy");
 		systems::post_tick(dt);
 	}
 }

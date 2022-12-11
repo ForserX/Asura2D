@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "module_OpenAL.h"
 
-using namespace asura;
+using namespace Asura;
 
 static bool al_work = false;
 
@@ -12,13 +12,13 @@ namespace al_trash
 
 static stl::vector<al_trash::stream_audio_data*> data;
 
-void audio::openal::init()
+void audio::openal::Init()
 {
 	al_work = !al_trash::init_al();
 	data = {};
 }
 
-void audio::openal::tick()
+void audio::openal::Tick()
 {
 	if (!al_work)
 	{
@@ -38,7 +38,7 @@ void audio::openal::tick()
 	}
 }
 
-void audio::openal::destroy()
+void audio::openal::Destroy()
 {
 	if (!al_work) 
 	{

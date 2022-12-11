@@ -3,16 +3,16 @@
 using namespace ingame;
 
 void
-movement_system::init()
+movement_system::Init()
 {
 }
 
 void
-movement_system::tick(float dt)
+movement_system::Tick(float dt)
 {
 }
 
 void
-movement_system::reset()
+movement_system::Reset()
 {
 }

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace asura
+namespace Asura
 {
 	class system : entt::process<system, float> 
 	{
@@ -8,9 +8,9 @@ namespace asura
 		virtual ~system() = default;
 
 	public:
-		virtual void init() = 0;
-		virtual void reset() = 0;
-		virtual void tick(float dt) = 0;
+		virtual void Init() = 0;
+		virtual void Reset() = 0;
+		virtual void Tick(float dt) = 0;
 
 	};
 
@@ -24,13 +24,13 @@ namespace asura
 				return;
 			}
 
-			sys->tick(delta);
+			sys->Tick(delta);
 			succeed();
 		}
 	};
 }
 
-namespace asura::systems
+namespace Asura::systems
 {
 	enum class update_type
 	{
@@ -45,11 +45,11 @@ namespace asura::systems
 	void add_system(system* system_to_add, update_type type);
 		
 	void pre_init();
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 	
 	void pre_tick(float dt);
-	void tick(float dt);
+	void Tick(float dt);
 	void post_tick(float dt);
 	void draw_tick(float dt);
 	void physics_tick(float dt);

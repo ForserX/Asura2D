@@ -1,8 +1,8 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-static math::fvec2 cam_center = {};
+static Math::FVec2 cam_center = {};
 float cam_zoom = 0.f;
 float cam_rotation = 0.f;
 static float scaled_cam_zoom = {};
@@ -13,25 +13,25 @@ static entity_view attached_entity = {};
 static bool attached = false;
 constexpr bool test_world_transform = false;
 
-void camera::init()
+void Camera::Init()
 {
 	reset_wh();
 	reset_view();
 }
 
-void camera::destroy()
+void Camera::Destroy()
 {
 
 }
 
-void camera::tick(float dt)
+void Camera::Tick(float dt)
 {
 	const float delta_size =  static_cast<float>(cam_height) / static_cast<float>(cam_width);
 	scaled_cam_zoom = cam_zoom * delta_size;
 	
 	if (attached) 
 	{
-		if (!entities::is_valid(attached_entity)) 
+		if (!entities::IsValid(attached_entity)) 
 		{
 			detach();
 		} else {
@@ -40,14 +40,14 @@ void camera::tick(float dt)
 	}
     
     if constexpr (test_world_transform) {
-        auto mouse_vec = math::fvec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
+        auto mouse_vec = Math::FVec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
         mouse_vec = world_to_screen(screen_to_world(mouse_vec));
-        math::frect rect = { math::fvec2(mouse_vec.x - 10.f, mouse_vec.y - 10.f), math::fvec2(mouse_vec.x + 10.f, mouse_vec.y + 10.f) };
-        graphics::draw_rect(ImColor(1.f, 1.f, 1.f, 1.f), rect);
+        Math::FRect Rect = { Math::FVec2(mouse_vec.x - 10.f, mouse_vec.y - 10.f), Math::FVec2(mouse_vec.x + 10.f, mouse_vec.y + 10.f) };
+        graphics::draw_rect(ImColor(1.f, 1.f, 1.f, 1.f), Rect);
     }
 }
 
-void camera::move(cam_move move, float point)
+void Camera::move(cam_move move, float point)
 {
 	detach();
 	switch (move) 
@@ -67,18 +67,18 @@ void camera::move(cam_move move, float point)
 	}
 }
 
-void camera::zoom(float value)
+void Camera::zoom(float value)
 {
 	cam_zoom += value * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
 	cam_zoom = std::clamp(cam_zoom, 1.f, 100.f);
 }
 
-bool camera::is_attached()
+bool Camera::is_attached()
 {
 	return attached;
 }
 
-void camera::attach(entity_view entity)
+void Camera::attach(entity_view entity)
 {
 	if (attached) {
 		detach();
@@ -88,13 +88,13 @@ void camera::attach(entity_view entity)
 	attached = true;
 }
 
-void camera::detach()
+void Camera::detach()
 {
 	attached = false;
 	attached_entity = {};
 }
 
-void camera::reset_view()
+void Camera::reset_view()
 {
 	cam_zoom = 30.f;
 	scaled_cam_zoom = 16;
@@ -102,56 +102,56 @@ void camera::reset_view()
     cam_center = {496, 320};
 }
 
-void camera::reset_wh()
+void Camera::reset_wh()
 {
 	cam_width = window_width;
 	cam_height = window_height;
 }
 
-const math::fvec2& camera::camera_position()
+const Math::FVec2& Camera::camera_position()
 {
 	return cam_center;
 }
 
-math::fvec2 camera::screen_to_world(const math::fvec2& screenPoint)
+Math::FVec2 Camera::screen_to_world(const Math::FVec2& screenPoint)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);
     const float u = screenPoint.x / w;
     const float v = (h - screenPoint.y) / h;
     const float ratio = w / h;
-    math::fvec2 extents(ratio * 25.0f, 25.0f);
+    Math::FVec2 extents(ratio * 25.0f, 25.0f);
     extents *= scaled_cam_zoom;
 
-    const math::fvec2 lower = cam_center - extents;
-    const math::fvec2 upper = cam_center + extents;
+    const Math::FVec2 lower = cam_center - extents;
+    const Math::FVec2 upper = cam_center + extents;
 
-    math::fvec2 pw;
+    Math::FVec2 pw;
     pw[0] = (1.0f - u) * lower.x + u * upper.x;
     pw[1] = (1.0f - v) * lower.y + v * upper.y;
     return pw;
 }
 
-math::fvec2 camera::world_to_screen(const math::fvec2& worldPoint)
+Math::FVec2 Camera::world_to_screen(const Math::FVec2& worldPoint)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);
     const float ratio = w / h;
-    math::fvec2 extents(ratio * 25.0f, 25.0f);
+    Math::FVec2 extents(ratio * 25.0f, 25.0f);
     extents *= scaled_cam_zoom;
 
-    const math::fvec2 lower = cam_center - extents;
-    const math::fvec2 upper = cam_center + extents;
+    const Math::FVec2 lower = cam_center - extents;
+    const Math::FVec2 upper = cam_center + extents;
     const float u = (worldPoint.x - lower.x) / (upper.x - lower.x);
     const float v = (worldPoint.y - lower.y) / (upper.y - lower.y);
 
-    math::fvec2 ps;
+    Math::FVec2 ps;
     ps[0] = u * w;
     ps[1] = (1.0f - v) * h;
     return ps;
 }
 
-float camera::scale_factor(float in)
+float Camera::scale_factor(float in)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);

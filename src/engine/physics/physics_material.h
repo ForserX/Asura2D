@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace asura::material
+namespace Asura::material
 {
 	struct data
 	{
@@ -30,8 +30,8 @@ namespace asura::material
 		circle
 	};
 
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
 	[[nodiscard]] const data& get(type type);
 }

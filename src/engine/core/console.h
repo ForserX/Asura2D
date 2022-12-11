@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace asura::ui
+namespace Asura::ui
 {
-    struct console
+    struct Console
     {
         char InputBuf[256] = {};
         ImVector<char*> Items;
@@ -14,16 +14,16 @@ namespace asura::ui
         bool AutoScroll;
         bool ScrollToBottom;
 
-        console();
+        Console();
 
-        ~console();
+        ~Console();
 
         void clear_log();
 
         void push_log_item(stl::string_view str);
         void draw(float dt, const char* title, bool* p_open);
         void flush();
-        void init();
+        void Init();
 
         void ExecCommand(const char* command_line);
         static int TextEditCallbackStub(ImGuiInputTextCallbackData* data);

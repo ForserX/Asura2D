@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 std::atomic_bool is_phys_ticking = false;
 std::atomic_bool is_game_ticking = false;
@@ -8,19 +8,19 @@ std::atomic_bool is_game_ticking = false;
 std::atomic_uint8_t serialization_ref_counter = 0;
 std::atomic_uint8_t serialization_state = 0;
 
-void core::init()
+void Core::Init()
 {
-	std::filesystem::path log_path = filesystem::get_userdata_dir();
+	std::filesystem::path log_path = FileSystem::get_userdata_dir();
 	log_path.append("user.ini");
 
-	filesystem::create_file(log_path);
+	FileSystem::create_file(log_path);
 }
 
-void core::destroy()
+void Core::Destroy()
 {
 }
 
-int64_t core::get_cmd_int(stl::string_view key)
+int64_t Core::GetCmdInt(stl::string_view key)
 {
-    return ui::get_cmd_int(key);
+    return ui::GetCmdInt(key);
 }

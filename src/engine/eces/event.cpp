@@ -1,18 +1,18 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 event::internal::event_callback_storage events = {};
 
-void event::init()
+void event::Init()
 {
 }
 
-void event::destroy()
+void event::Tick()
 {
 }
 
-void event::tick()
+void event::Destroy()
 {
 }
 

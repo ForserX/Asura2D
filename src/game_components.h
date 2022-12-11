@@ -7,7 +7,7 @@ namespace valued
 {
 	struct some_flag
 	{
-		static constexpr asura::net::flag_t flag = 1 << (asura::entities::last_flag_index + 1);
+		static constexpr Asura::net::flag_t flag = 1 << (Asura::entities::last_flag_index + 1);
 	};
 }
 

@@ -1,42 +1,37 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-namespace asura::scene 
+namespace Asura::scene 
 {
-	config_parser section_parser;
+	CfgParser section_parser;
 }
 
-void 
-scene::init()
+void scene::Init()
 {
 }
 
-void
-scene::destroy()
+void scene::Destroy()
 {
 
 }
 
-void 
-scene::tick(float dt)
+void scene::Tick(float dt)
 {
 
 }
 
-void
-scene::close_scene()
+void scene::close_scene()
 {
 	auto scene_entities = entities::get_view<entities::scene_component>();
 	for (auto ent : scene_entities) {
-		entities::mark_as_garbage(ent);
+		entities::MarkAsGarbage(ent);
 	}
 }
 
-void 
-scene::import_scene(std::string_view scene_name)
+void scene::import_scene(std::string_view scene_name)
 {
-	std::filesystem::path scene_path = filesystem::get_content_dir();
+	std::filesystem::path scene_path = FileSystem::get_content_dir();
 	scene_path.append("scene");
 	scene_path.append(scene_name);
 
@@ -46,16 +41,15 @@ scene::import_scene(std::string_view scene_name)
 	//entities::string_deserialize(section_parser.get_data());
 }
 
-void
-scene::export_scene(std::string_view scene_name)
+void scene::export_scene(std::string_view scene_name)
 {
-	std::filesystem::path scene_path = filesystem::get_content_dir();
+	std::filesystem::path scene_path = FileSystem::get_content_dir();
 	scene_path.append("scene");
 	scene_path.append(scene_name);
 
 	stl::tree_string_map scene_map;
 	//entities::string_serialize(scene_map);
 
-	//section_parser = std::move(config_parser(std::move(scene_map), section_parser.get_count()));
+	//section_parser = std::move(CfgParser(std::move(scene_map), section_parser.get_count()));
 	//section_parser.save(scene_path);
 }

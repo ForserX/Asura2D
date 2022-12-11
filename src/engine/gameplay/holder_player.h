@@ -1,8 +1,8 @@
 #pragma once
 
-namespace asura::gameplay::holder::player
+namespace Asura::gameplay::holder::player
 {
-	void init();
-	void tick();
-	void destroy();
+	void Init();
+	void Tick();
+	void Destroy();
 }

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 bool paused = false;
 bool use_parallel = true;
@@ -8,69 +8,69 @@ std::atomic_bool engine_ticking_now = {};
 
 void engine::start()
 {
-	physics::start();
+	Physics::start();
 }
 
-void engine::init(int argc, char** argv)
+void engine::Init(int argc, char** argv)
 {
 	OPTICK_THREAD("Main thread");
     
-    console = std::make_unique<ui::console>();
+    console = std::make_unique<ui::Console>();
     
-    filesystem::init();
-    debug::init();
+    FileSystem::Init();
+    Debug::Init();
 
-	input::init();
-	debug::msg("initializing input system");
+	input::Init();
+	Debug::msg("initializing input system");
 
-    console->init();
-    debug::msg("base systems inited. intializing other systems");
+    console->Init();
+    Debug::msg("base systems inited. intializing other systems");
     
-	threads::init();
-    debug::msg("initializing threads system");
+	Threads::Init();
+    Debug::msg("initializing Threads system");
     
-	scheduler::init();
-    debug::msg("initializing scheduler system");
+	Scheduler::Init();
+    Debug::msg("initializing Scheduler system");
     
-    resources::init();
-    debug::msg("initializing resource system");
+    resources::Init();
+    Debug::msg("initializing resource system");
     
-	event::init();
-    debug::msg("initializing event system");
+	event::Init();
+    Debug::msg("initializing event system");
     
-	render::init();
-    debug::msg("initializing render system");
+	render::Init();
+    Debug::msg("initializing render system");
     
-	game::init();
-    debug::msg("initializing game system");
+	game::Init();
+    Debug::msg("initializing game system");
 
-	audio::init();
-	debug::msg("initializing audio system");
+	audio::Init();
+	Debug::msg("initializing audio system");
 }
 
-void engine::destroy()
+void engine::Destroy()
 {
-	game::destroy();
-	render::destroy();
-	input::destroy();
-	event::destroy();
-    resources::destroy();
-	scheduler::destroy();
-	threads::destroy();
-	audio::destroy();
+	game::Destroy();
+	render::Destroy();
+	input::Destroy();
+	event::Destroy();
+    resources::Destroy();
+	Scheduler::Destroy();
+	Threads::Destroy();
+	audio::Destroy();
 
     console.reset();
     
-    debug::destroy();
-    filesystem::destroy();
+    Debug::Destroy();
+    FileSystem::Destroy();
 }
 
-void engine::tick()
+void engine::Tick()
 {
 	engine_ticking_now = true;
 	
 	OPTICK_FRAME("Engine");
-	OPTICK_EVENT("engine tick");
+	OPTICK_EVENT("Engine Tick");
 
 	static auto current_time = std::chrono::steady_clock::now().time_since_epoch();
 	const auto new_time = std::chrono::steady_clock::now().time_since_epoch();
@@ -82,23 +82,23 @@ void engine::tick()
 		dt = 0.06f;
 	}
 
-	input::tick(dt);
+	input::Tick(dt);
 
 	if (!paused) 
 	{
 		is_game_ticking = true;
-		game::tick(dt);
+		game::Tick(dt);
 		is_game_ticking = false;
 	}
 	
-	render::tick(dt);
+	render::Tick(dt);
 	
-	audio::tick();
+	audio::Tick();
 
 	engine_ticking_now = false;
 }
 
-bool engine::is_ticking()
+bool engine::IsTicking()
 {
 	return engine_ticking_now;
 }

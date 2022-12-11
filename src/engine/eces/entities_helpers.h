@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::entities
+namespace Asura::entities
 {
 	namespace internal
 	{
@@ -25,7 +25,7 @@ namespace asura::entities
 		{
 			OPTICK_EVENT("waiting for write access")
 				while (serialization_state != entities_state::idle) {
-					threads::switch_context();
+					Threads::switch_context();
 				}
 		}
 
@@ -48,7 +48,7 @@ namespace asura::entities
 		{
 			OPTICK_EVENT("waiting for view access")
 				while (serialization_state != entities_state::idle && serialization_state != entities_state::viewing) {
-					threads::switch_context();
+					Threads::switch_context();
 				}
 		}
 

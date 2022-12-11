@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::scheduler
+namespace Asura::Scheduler
 {
 	using global_function = fu2::function<bool() const>;
 
@@ -18,15 +18,15 @@ namespace asura::scheduler
 		const global_function& schedule(global_task_type task_type, const global_function& func);
 	}
 
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
 	const void schedule(global_task_type task_type, auto&& func)
 	{
 		internal::schedule(task_type, global_function(func));
 	}
 
-	void unschedule(global_task_type task_type, const global_function& func);
+	void Unschedule(global_task_type task_type, const global_function& func);
 }
 
 constexpr float target_scheduler_tps = 50.f;

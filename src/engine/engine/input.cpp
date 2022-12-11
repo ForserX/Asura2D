@@ -1,12 +1,12 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 float keys_states[1024] = {};
 
-math::ivec2 previous_mouse_pos = {};
-math::ivec2 current_mouse_pos = {};
-math::fvec2 delta_mouse_pos = {};
+Math::IVec2 previous_mouse_pos = {};
+Math::IVec2 current_mouse_pos = {};
+Math::FVec2 delta_mouse_pos = {};
 
 stl::hash_map<int16_t, float> changed_keys;
 stl::function_set<input::on_key_change> key_change_callbacks;
@@ -22,18 +22,18 @@ input::key_state get_enum_from_state(int16_t scan_code)
 	return new_state ? input::key_state::hold : input::key_state::nothing;
 }
 
-void input::init()
+void input::Init()
 {
     changed_keys = {};
     key_change_callbacks = {};
     input_change_callbacks = {};
 }
 
-void input::destroy()
+void input::Destroy()
 {
 }
 
-void input::tick(float dt)
+void input::Tick(float dt)
 {
 	for (const auto& [key, state] : changed_keys) 
 	{
@@ -57,7 +57,7 @@ void input::tick(float dt)
 		}
 	}
 
-	delta_mouse_pos = math::fvec2(current_mouse_pos.x, current_mouse_pos.y) - math::fvec2(previous_mouse_pos.x, previous_mouse_pos.y);
+	delta_mouse_pos = Math::FVec2(current_mouse_pos.x, current_mouse_pos.y) - Math::FVec2(previous_mouse_pos.x, previous_mouse_pos.y);
 	previous_mouse_pos = current_mouse_pos;
 	changed_keys.erase(SDL_SCANCODE_MOUSEWHEEL);
 }
@@ -72,7 +72,7 @@ void input::update_key(int16_t scan_code, float state)
 	changed_keys[scan_code] = state;
 }
 
-void input::update_mouse_pos(math::ivec2 pos)
+void input::update_mouse_pos(Math::IVec2 pos)
 {
 	previous_mouse_pos = current_mouse_pos;
 	current_mouse_pos = pos;
@@ -83,12 +83,12 @@ bool input::is_key_pressed(int16_t scan_code)
 	return static_cast<bool>(keys_states[scan_code]);
 }
 
-math::ivec2& input::get_mouse_pos()
+Math::IVec2& input::get_mouse_pos()
 {
 	return current_mouse_pos;
 }
 
-math::fvec2& input::get_mouse_delta()
+Math::FVec2& input::get_mouse_delta()
 {
 	return delta_mouse_pos;
 }

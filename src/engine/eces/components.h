@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::entities
+namespace Asura::entities
 {
 	// non-serializable, created for scheduled entities destroying
 	struct garbage_flag
@@ -58,32 +58,32 @@ namespace asura::entities
 
 	struct scene_component
 	{
-        math::fvec2 size;
-        math::transform transform;
+        Math::FVec2 size;
+        Math::Transform Transform;
 	};
 	
     struct camera_component
     {
         float cam_zoom;
-        math::transform cam_transform;
+        Math::Transform cam_transform;
     };
 
 	struct physics_body_component
 	{
 		static constexpr bool custom_serialize = true;
-		physics::physics_body* body = nullptr;
+		Physics::PhysicsBody* body = nullptr;
 	};
 
 	struct physics_joint_component
 	{
 		static constexpr bool custom_serialize = true;
-		physics::physics_joint* joint = nullptr;
+		Physics::PhysicsJoint* joint = nullptr;
 	};
 }
 
 // Don't forget to add this defines in game code
-VISITABLE_STRUCT(asura::entities::draw_color_component, color);
-VISITABLE_STRUCT(asura::entities::draw_gradient_component, first_color, second_color);
-VISITABLE_STRUCT(asura::entities::draw_texture_component, texture_resource);
-VISITABLE_STRUCT(asura::entities::scene_component, size, transform);
-VISITABLE_STRUCT(asura::entities::camera_component, cam_zoom, cam_transform);
+VISITABLE_STRUCT(Asura::entities::draw_color_component, color);
+VISITABLE_STRUCT(Asura::entities::draw_gradient_component, first_color, second_color);
+VISITABLE_STRUCT(Asura::entities::draw_texture_component, texture_resource);
+VISITABLE_STRUCT(Asura::entities::scene_component, size, Transform);
+VISITABLE_STRUCT(Asura::entities::camera_component, cam_zoom, cam_transform);

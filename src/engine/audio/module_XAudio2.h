@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-namespace asura::audio::xaudio2
+namespace Asura::audio::xaudio2
 {
-	void init();
-	void tick();
-	void destroy();
+	void Init();
+	void Tick();
+	void Destroy();
 
 	void start(stl::string_view sound_src);
 };

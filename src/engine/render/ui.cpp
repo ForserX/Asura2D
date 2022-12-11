@@ -1,28 +1,28 @@
 #include "pch.h"
 #include "../editor/editor_common.h"
 
-using namespace asura;
+using namespace Asura;
 
 bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;
 
-void ui::init()
+void ui::Init()
 {
-    std::filesystem::path font_dir = filesystem::get_content_dir();
+    std::filesystem::path font_dir = FileSystem::get_content_dir();
     font_dir.append("fonts").append("RobotoMono-Regular.ttf");
 
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 }
 
-void ui::tick(float dt)
+void ui::Tick(float dt)
 {
     OPTICK_EVENT("ui draw");
 
     if (ark_editor_mode)
     {
-        editor::ui::tick();
+        editor::ui::Destroy();
         return;
     }
 
@@ -40,10 +40,10 @@ void ui::tick(float dt)
     uint32_t fps_counter_size = 0;
     float navigation_bar_size = 30.f;
     static bool stat_enable = false;
-    math::fvec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
+    Math::FVec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
     if (show_console) {
-		OPTICK_EVENT("ui console draw")
-        ::console->draw(dt, "Arkane console", &show_console);
+		OPTICK_EVENT("ui Console draw")
+        ::console->draw(dt, "Arkane Console", &show_console);
     } 
     else 
     { 
@@ -52,8 +52,8 @@ void ui::tick(float dt)
             fps_counter_size = stat_enable ? 700 : 240;
             ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), navigation_bar_size });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
-            if (ImGui::Begin("debug draw", 0, ImGuiWindowFlags_NoDecoration)) {
-                math::fvec2 wcursor_pos = camera::screen_to_world(cursor_pos);
+            if (ImGui::Begin("Debug draw", 0, ImGuiWindowFlags_NoDecoration)) {
+                Math::FVec2 wcursor_pos = Camera::screen_to_world(cursor_pos);
 
                 const float draw_fps = 1.f / dt;
                 const float draw_ms = dt * 1000.f;
@@ -98,14 +98,14 @@ void ui::tick(float dt)
                     ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
                     ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
                     ImGui::ProgressBar(phys_load_percent);
-                    ImGui::Text("  Bodies count: %i", physics::get_world().GetBodyCount());
+                    ImGui::Text("  Bodies count: %i", Physics::GetWorld().GetBodyCount());
                     ImGui::Separator();
                     ImGui::Text("Entities");
                     ImGui::Text("  Allocated: %d", static_cast<int>(registry.capacity()));
                     ImGui::Text("  Alive: %d", static_cast<int>(registry.alive()));
                     ImGui::Separator();
                     ImGui::Text("UI Info:");
-                    ImGui::Text("  Camera position: %.1f, %.1f", camera::camera_position().x, camera::camera_position().y);
+                    ImGui::Text("  Camera position: %.1f, %.1f", Camera::camera_position().x, Camera::camera_position().y);
                     ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
                     ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
                 }
@@ -227,11 +227,11 @@ void ui::tick(float dt)
                  static entt::entity inspected_entity = entt::null;
                  if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
                  {
-                     auto phys_body = physics::hit_test(camera::screen_to_world(cursor_pos));
+                     auto phys_body = Physics::hit_test(Camera::screen_to_world(cursor_pos));
 
                      if (phys_body != nullptr) 
                      {
-                         inspected_entity = entities::get_entity_from_body(phys_body->get_body()).get();
+                         inspected_entity = entities::GetEntityByBbody(phys_body->get_body()).get();
                      } 
                      else 
                      {
@@ -256,7 +256,7 @@ void ui::tick(float dt)
 #endif
 }
 
-int64_t ui::get_cmd_int(stl::string_view str)
+int64_t ui::GetCmdInt(stl::string_view str)
 {
     if (str == "window_fullscreen") 
     {
@@ -306,7 +306,7 @@ void ui::push_console_string(stl::string_view str)
     ::console->push_log_item(str);
 }
 
-void ui::destroy()
+void ui::Destroy()
 {
     ::console->flush();
     ::console->clear_log();

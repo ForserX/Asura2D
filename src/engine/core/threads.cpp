@@ -1,25 +1,25 @@
 ﻿#include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-void threads::init()
+void Threads::Init()
 {
 #ifdef OS_WINDOWS
 	timeBeginPeriod(1);
 #endif
 }
 
-void threads::destroy()
+void Threads::Destroy()
 {
 #ifdef OS_WINDOWS
 	timeEndPeriod(1);
 #endif
 }
 
-void threads::set_thread_affinity(void* handle, int64_t core)
+void Threads::SetAffinity(void* handle, int64_t Core)
 {
 #ifdef OS_WINDOWS
-	auto mask = (static_cast<DWORD_PTR>(1) << core); 
+	auto mask = (static_cast<DWORD_PTR>(1) << Core); 
 	SetThreadAffinityMask(handle, mask);
 #else
 
@@ -36,12 +36,12 @@ inline void nop()
 #endif
 }
 
-void asura::threads::sync_sleep()
+void Asura::Threads::sync_sleep()
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
-void threads::switch_context()
+void Threads::switch_context()
 {
 	for (int i = 0; i < 256; i++)
 	{

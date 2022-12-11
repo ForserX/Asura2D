@@ -1,19 +1,18 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 constexpr auto scheduler_period = std::chrono::milliseconds(static_cast<int>(target_scheduler_tps));
 
 std::mutex scheduler_mutex = {};
 std::unique_ptr<std::thread> scheduler_thread = {};
-std::array<stl::function_set<scheduler::global_function>, scheduler::global_task_type::count_of_elems> global_func_map;
+std::array<stl::function_set<Scheduler::global_function>, Scheduler::global_task_type::count_of_elems> global_func_map;
 bool scheduler_destroyed = false;
 
 float scheduler_delta = 0.f;
 float scheduler_real_delta = 0.f;
 
-void 
-scheduler::init()
+void Scheduler::Init()
 {
 	using namespace std::chrono_literals;
 
@@ -21,14 +20,14 @@ scheduler::init()
 		{
         std::chrono::nanoseconds last_scheduler_time = {};
         
-		OPTICK_THREAD("scheduler thread");
+		OPTICK_THREAD("Scheduler thread");
 		while (!scheduler_destroyed)
 		{
-			OPTICK_EVENT("scheduler tick");
+			OPTICK_EVENT("Scheduler Destroy");
 			auto trigger = [](bool parallel, global_task_type task_type) 
 			{
-				stl::function_set<scheduler::global_function> funcs_to_delete;
-				auto trigger_all = [&](const scheduler::global_function& func) 
+				stl::function_set<Scheduler::global_function> funcs_to_delete;
+				auto trigger_all = [&](const Scheduler::global_function& func) 
 				{
 					if (!func()) 
 					{
@@ -63,7 +62,7 @@ scheduler::init()
 			auto schedule_time = (std::chrono::steady_clock::now() + 50ms);
             
 			{
-				OPTICK_EVENT("scheduler work");
+				OPTICK_EVENT("Scheduler work");
 
 				{
 					OPTICK_EVENT("garbage collector");
@@ -85,7 +84,7 @@ scheduler::init()
             scheduler_real_delta = static_cast<double>(real_delta_time.count()) / 1000000000.;
 
 			{
-				OPTICK_EVENT("scheduler wait");
+				OPTICK_EVENT("Scheduler wait");
 				std::this_thread::sleep_until(schedule_time);
 			}
 		}
@@ -94,20 +93,20 @@ scheduler::init()
 	});
 }
 
-void scheduler::destroy()
+void Scheduler::Destroy()
 {
     scheduler_destroyed = true;
 	scheduler_thread->join();
 	scheduler_thread.reset();
 }
 
-const scheduler::global_function& scheduler::internal::schedule(global_task_type task_type, const global_function& func)
+const Scheduler::global_function& Scheduler::internal::schedule(global_task_type task_type, const global_function& func)
 {
     std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
 	return *global_func_map[task_type].insert(func).first;
 }
 
-void scheduler::unschedule(global_task_type task_type, const global_function& func)
+void Scheduler::Unschedule(global_task_type task_type, const global_function& func)
 {
 	global_func_map[task_type].erase(func);
 }

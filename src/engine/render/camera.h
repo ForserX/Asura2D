@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::camera
+namespace Asura::Camera
 {
 	enum class cam_move : int64_t {
 		left,
@@ -9,9 +9,9 @@ namespace asura::camera
 		down
 	};
 
-	void init();
-	void destroy();
-	void tick(float dt);
+	void Init();
+	void Destroy();
+	void Tick(float dt);
 
 	void move(cam_move move, float point);
 	void zoom(float value);
@@ -23,9 +23,9 @@ namespace asura::camera
 	void reset_view();
 	void reset_wh();
 
-	const math::fvec2& camera_position();
-    math::fvec2 screen_to_world(const math::fvec2& screenPoint);
-    math::fvec2 world_to_screen(const math::fvec2& worldPoint);
+	const Math::FVec2& camera_position();
+    Math::FVec2 screen_to_world(const Math::FVec2& screenPoint);
+    Math::FVec2 world_to_screen(const Math::FVec2& worldPoint);
 	float scale_factor(float in);
 
 }

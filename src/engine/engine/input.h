@@ -7,7 +7,7 @@
 #define SDL_SCANCODE_MOUSE_X2 SDL_SCANCODE_ENDCALL + SDL_BUTTON_X2
 #define SDL_SCANCODE_MOUSEWHEEL SDL_SCANCODE_ENDCALL + SDL_SCANCODE_MOUSE_X2 + 1
 
-namespace asura::input
+namespace Asura::input
 {
 	enum class mouse_key : int16_t
 	{
@@ -24,20 +24,20 @@ namespace asura::input
 		nothing
 	};
 	
-	void init();
-	void destroy();
-	void tick(float dt);
+	void Init();
+	void Destroy();
+	void Tick(float dt);
 
 	bool is_focused_on_ui();
 
 	// event window listeners
 	void update_key(int16_t scan_code, float state);
-	void update_mouse_pos(math::ivec2 pos);
+	void update_mouse_pos(Math::IVec2 pos);
 
 	// state checkers
 	bool is_key_pressed(int16_t scan_code);
-	math::ivec2& get_mouse_pos();
-	math::fvec2& get_mouse_delta();
+	Math::IVec2& get_mouse_pos();
+	Math::FVec2& get_mouse_delta();
 
 	using on_key_change = fu2::function<void(int16_t scan_code, key_state state) const>;
 	using on_input_change = fu2::function<void(int16_t scan_code, float new_state) const>;

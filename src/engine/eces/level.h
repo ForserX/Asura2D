@@ -1,8 +1,8 @@
 #pragma once 
 
-namespace asura::level
+namespace Asura::level
 {
-	void init();
-	void tick(float dt);
-	void destroy();
+	void Init();
+	void Tick(float dt);
+	void Destroy();
 }

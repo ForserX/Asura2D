@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 static std::filesystem::path working_dir = {};
 static std::filesystem::path content_dir = {};
@@ -8,28 +8,30 @@ static std::filesystem::path userdata_dir = {};
 
 static stl::hash_set<std::string> file_list = {};
 
-const std::filesystem::path& filesystem::get_working_dir()
+const std::filesystem::path& FileSystem::get_working_dir()
 {
 	return working_dir;
 }
 
-void filesystem::init()
+void FileSystem::Init()
 {
 	working_dir = std::filesystem::current_path();
 	content_dir = std::filesystem::current_path().append("content");
 	userdata_dir = std::filesystem::current_path().append("userdata");
 
-	for (const std::filesystem::directory_entry& dir : std::filesystem::recursive_directory_iterator{ working_dir }) {
+	for (const std::filesystem::directory_entry& dir : std::filesystem::recursive_directory_iterator{ working_dir }) 
+	{
 		file_list.emplace(dir.path().generic_string());
 	}
 
-	if (!std::filesystem::exists(userdata_dir)) {
+	if (!std::filesystem::exists(userdata_dir)) 
+	{
 		create_dir(userdata_dir);
 	}
 
 }
 
-void filesystem::destroy()
+void FileSystem::Destroy()
 {
 	file_list.clear();
 	userdata_dir.clear();
@@ -37,17 +39,17 @@ void filesystem::destroy()
 	working_dir.clear();
 }
 
-const std::filesystem::path& filesystem::get_content_dir()
+const std::filesystem::path& FileSystem::get_content_dir()
 {
 	return content_dir;
 }
 
-const std::filesystem::path& filesystem::get_userdata_dir()
+const std::filesystem::path& FileSystem::get_userdata_dir()
 {
 	return userdata_dir;
 }
 
-void filesystem::create_file(const std::filesystem::path& file_name)
+void FileSystem::create_file(const std::filesystem::path& file_name)
 {
 	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
@@ -60,10 +62,11 @@ void filesystem::create_file(const std::filesystem::path& file_name)
 	outfile.close();
 }
 
-void filesystem::create_dir(const std::filesystem::path& dir_name)
+void FileSystem::create_dir(const std::filesystem::path& dir_name)
 {
 	const auto file_iter = file_list.find(dir_name.generic_string());
-	if (file_iter != file_list.end()) {
+	if (file_iter != file_list.end()) 
+	{
 		return;
 	}
 
@@ -73,12 +76,14 @@ void filesystem::create_dir(const std::filesystem::path& dir_name)
 	game_assert(can_create, "file creating error", std::terminate());
 }
 
-void filesystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+void FileSystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
 {
 	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
 		std::filesystem::remove(file_name);
-	} else {
+	} 
+	else 
+	{
 		file_list.emplace(file_name.generic_string());
 	}
 
@@ -87,7 +92,7 @@ void filesystem::write_file(const std::filesystem::path& file_name, stl::stream_
 	out_stream.close();
 }
 
-void filesystem::read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+void FileSystem::read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
 {
 	std::fstream in_stream(file_name, std::fstream::binary | std::fstream::in);
 	stream_data.second.resize(std::filesystem::file_size(file_name));

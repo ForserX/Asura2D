@@ -1,17 +1,17 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 //stl::hash_map<net::id_type, entt::entity> net_map;
 
 void
-net::init()
+net::Init()
 {
     
 }
 
 void
-net::destroy()
+net::Destroy()
 {
     
 }

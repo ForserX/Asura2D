@@ -2,7 +2,7 @@
 
 SDL_Renderer* renderer = nullptr;
 
-using namespace asura;
+using namespace Asura;
 
 stl::hash_map<resources::id_t, render::texture_id> textures_list;
 
@@ -35,14 +35,14 @@ void render::pre_init()
 		render_list += ", ";
 	}
 
-	debug::msg("SDL Render mode support: {}", render_list);
+	Debug::msg("SDL Render mode support: {}", render_list);
 #if defined(OS_APPLE_SERIES)
     SDL_setenv("METAL_DEVICE_WRAPPER_TYPE", "1", 0);
 #endif
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
 }
 
-void render::init()
+void render::Init()
 {
 	pre_init();
 
@@ -52,7 +52,7 @@ void render::init()
 	
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
-	debug::msg("Current SDL_Renderer: {}", info.name);
+	Debug::msg("Current SDL_Renderer: {}", info.name);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -71,7 +71,7 @@ void render::init()
 
 	ImGui_ImplSDLRenderer_Init(renderer);
 
-	graphics::init();
+	graphics::Init();
 }
 
 void render::init_vulkan()
@@ -86,9 +86,9 @@ void render::init_vulkan()
 #endif
 }
 
-void render::destroy()
+void render::Destroy()
 {
-	graphics::destroy();
+	graphics::Destroy();
     
     for (auto [resource, texture] : textures_list)
 	{
@@ -102,10 +102,10 @@ void render::destroy()
 	SDL_DestroyRenderer(renderer);
 }
 
-void render::tick(float dt)
+void render::Tick(float dt)
 {
-	OPTICK_EVENT("render tick")
-	OPTICK_CATEGORY("systems tick", Optick::Category::Rendering)
+	OPTICK_EVENT("render Destroy")
+	OPTICK_CATEGORY("systems Destroy", Optick::Category::Rendering)
 	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
 
 	{
@@ -116,8 +116,8 @@ void render::tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("graphics tick");
-		graphics::tick(dt);
+		OPTICK_EVENT("graphics Destroy");
+		graphics::Tick(dt);
 	}
 
 	{

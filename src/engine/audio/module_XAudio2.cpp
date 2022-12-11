@@ -5,14 +5,14 @@
 #ifdef OS_WINDOWS
 #include "module_XAudio2.inl"
 
-using namespace asura;
+using namespace Asura;
 static stl::vector<CAudio*> AudioData;
 
-void audio::xaudio2::init()
+void audio::xaudio2::Init()
 {
 }
 
-void audio::xaudio2::tick()
+void audio::xaudio2::Tick()
 {
 	for (CAudio* Audio : AudioData)
 	{
@@ -27,7 +27,7 @@ void audio::xaudio2::tick()
 	}
 }
 
-void audio::xaudio2::destroy()
+void audio::xaudio2::Destroy()
 {
 	for (CAudio* Audio : AudioData)
 	{

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::entities
+namespace Asura::entities
 {
 
 }

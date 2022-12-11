@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-namespace asura::ui
+namespace Asura::ui
 {
-	void init();
-	void tick(float dt);
-	void destroy();
+	void Init();
+	void Tick(float dt);
+	void Destroy();
 
-	int64_t get_cmd_int(stl::string_view key);
+	int64_t GetCmdInt(stl::string_view key);
 	void push_console_string(stl::string_view str);
 }

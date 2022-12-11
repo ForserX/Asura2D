@@ -9,9 +9,9 @@ int window_width = 1600;
 int window_height = 900;
 bool window_maximized = false;
 
-using namespace asura;
+using namespace Asura;
 
-void window::init()
+void window::Init()
 {
 	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE);
 
@@ -29,18 +29,18 @@ void window::init()
 #endif
 }
 
-void window::destroy()
+void window::Destroy()
 {
 	wants_to_exit = true;
 	SDL_DestroyWindow(window_handle);
 }
 
-bool window::is_destroyed()
+bool window::IsDestroyed()
 {
 	return wants_to_exit;
 }
 
-void window::tick()
+void window::Tick()
 {
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -69,7 +69,7 @@ void window::tick()
 				case SDL_WINDOWEVENT_RESIZED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
-					camera::reset_wh();
+					Camera::reset_wh();
 #ifdef OS_WINDOWS
 					// Stupid bug on Windows
 					SDL_GetWindowPosition(window_handle, &tx, &ty);
@@ -80,7 +80,7 @@ void window::tick()
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
-					camera::reset_wh();
+					Camera::reset_wh();
 					break;
 				case SDL_WINDOWEVENT_RESTORED:
 					window_maximized = false;
@@ -119,7 +119,7 @@ void window::tick()
 		}
 	}
 
-	engine::tick();
+	engine::Tick();
 }
 
 void window::change_fullscreen()
@@ -142,14 +142,14 @@ void window::change_window_mode()
 void window::change_resolution()
 {
 	SDL_SetWindowSize(window_handle, window_width, window_height);
-	camera::reset_wh();
-	camera::reset_view();
+	Camera::reset_wh();
+	Camera::reset_view();
 }
 
 void window::loop()
 {
 	while (!wants_to_exit) 
 	{
-		tick();
+		Tick();
 	}
 }

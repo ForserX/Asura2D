@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::entities
+namespace Asura::entities
 {
 	namespace internal
 	{
@@ -40,40 +40,40 @@ namespace asura::entities
 
 		static void serialize(const physics_body_component& comp, stl::stream_vector& data)
 		{
-			const physics::body_parameters parameters = comp.body->copy_parameters();
+			const Physics::body_parameters parameters = comp.body->copy_parameters();
 			parameters.serialize(data);
 		}
 
 		static void deserialize(physics_body_component& comp, stl::stream_vector& data)
 		{
-			comp.body = physics::schedule_creation(physics::body_parameters(data));
+			comp.body = Physics::schedule_creation(Physics::body_parameters(data));
 		}
 
 		static void string_serialize(const physics_body_component& comp, stl::string_map& data)
 		{
-			const physics::body_parameters parameters = comp.body->copy_parameters();
+			const Physics::body_parameters parameters = comp.body->copy_parameters();
 			parameters.string_serialize(data);
 		}
 
 		static void string_deserialize(physics_body_component& comp, stl::string_map& data)
 		{
-			comp.body = physics::schedule_creation(physics::body_parameters(data));
+			comp.body = Physics::schedule_creation(Physics::body_parameters(data));
 		}
 	};
 }
 
 #define DECLARE_SERIALIZABLE_FLAGS \
-    asura::entities::background_flag, \
-    asura::entities::drawable_flag, \
-    asura::entities::level_flag, \
+    Asura::entities::background_flag, \
+    Asura::entities::drawable_flag, \
+    Asura::entities::level_flag, \
 	DECLARE_GAME_SERIALIZABLE_FLAGS
 
 #define DECLARE_SERIALIZABLE_TYPES \
-    asura::entities::draw_color_component, \
-    asura::entities::draw_gradient_component, \
-    asura::entities::draw_texture_component, \
-    asura::entities::scene_component, \
-    asura::entities::physics_body_component \
+    Asura::entities::draw_color_component, \
+    Asura::entities::draw_gradient_component, \
+    Asura::entities::draw_texture_component, \
+    Asura::entities::scene_component, \
+    Asura::entities::physics_body_component \
 	DECLARE_GAME_SERIALIZABLE_TYPES
 
 #define DECLARE_SERIALIZABLE_ENTITY_TYPES \
@@ -81,9 +81,9 @@ namespace asura::entities
     DECLARE_SERIALIZABLE_TYPES
 
 #define DECLARE_NON_SERIALIZABLE_TYPES \
-    asura::entities::garbage_flag, \
-    asura::entities::non_serializable_flag, \
-    asura::entities::dont_free_after_reset_flag \
+    Asura::entities::garbage_flag, \
+    Asura::entities::non_serializable_flag, \
+    Asura::entities::dont_free_after_reset_flag \
 	DECLARE_GAME_NON_SERIALIZABLE_ENTITY_TYPES
 
 #define DECLARE_ENTITIES_TYPES \

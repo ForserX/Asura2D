@@ -65,13 +65,13 @@ CAudio::CAudio(void)
 
 	if (FAILED(hr = XAudio2Create(&pXAudio2, flags)))
 	{
-		asura::debug::msg("Failed to init XAudio2 engine: {}", hr);
+		Asura::Debug::msg("Failed to init XAudio2 engine: {}", hr);
 		return;
 	}
 
 	if (FAILED(hr = pXAudio2->CreateMasteringVoice(&pMasteringVoice)))
 	{
-		asura::debug::msg("Failed creating mastering voice : {}", hr);
+		Asura::Debug::msg("Failed creating mastering voice : {}", hr);
 		return;
 	}
 }
@@ -125,11 +125,11 @@ bool CAudio::LoadSound(const char* strSoundPath)
 
 	if ((err = fopen_s(&f, strSoundPath, "rb")) != 0)
 	{
-		asura::debug::msg("Failed to open audio: {}", strSoundPath);
+		Asura::Debug::msg("Failed to open audio: {}", strSoundPath);
 
 		char szBuffer[MAX_PATH];
 		_strerror_s(szBuffer, MAX_PATH, nullptr);
-		asura::debug::msg("Reason: {}", szBuffer);
+		Asura::Debug::msg("Reason: {}", szBuffer);
 		return false;
 	}
 

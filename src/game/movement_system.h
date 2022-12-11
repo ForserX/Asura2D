@@ -4,12 +4,12 @@
 namespace ingame
 {
 	
-class movement_system final : public asura::system
+class movement_system final : public Asura::system
 {
 public:
-	void init() override;
-	void tick(float dt) override;
-	void reset() override;
+	void Init() override;
+	void Tick(float dt) override;
+	void Reset() override;
 };
 	
 }

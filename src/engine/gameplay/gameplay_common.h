@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura::gameplay
+namespace Asura::gameplay
 {
 	enum class holder_mode
 	{

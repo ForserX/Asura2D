@@ -1,9 +1,9 @@
 #pragma once
 #include <box2d/box2d.h>
 
-namespace asura
+namespace Asura
 {
-	namespace physics
+	namespace Physics
 	{
 		enum class joint_type
 		{
@@ -15,8 +15,8 @@ namespace asura
 
 		struct joint_data
 		{
-			physics_body* body_first;
-			physics_body* body_second;
+			PhysicsBody* body_first;
+			PhysicsBody* body_second;
 
 			float lower;
 			float upper;
@@ -26,7 +26,7 @@ namespace asura
 			bool limit;
 		};
 
-		class physics_joint
+		class PhysicsJoint
 		{
 		private:
 			bool created = false;
@@ -35,17 +35,17 @@ namespace asura
 			joint_data data;
 
 		public:
-			physics_joint() = delete;
-			physics_joint(joint_data&& local_data) : data(local_data) {};
-			~physics_joint();
+			PhysicsJoint() = delete;
+			PhysicsJoint(joint_data&& local_data) : data(local_data) {};
+			~PhysicsJoint();
 			
-			inline bool is_created() const { return created; }
-			inline bool is_destroyed() const { return destroyed; }
+			inline bool IsCreated() const { return created; }
+			inline bool IsDestroyed() const { return destroyed; }
 			
-			inline b2Joint* get() const { return try_joint; }
+			inline b2Joint* Get() const { return try_joint; }
 		public:
-			void create();
-			void destroy();
+			void Create();
+			void Destroy();
 		};
 	}
 }

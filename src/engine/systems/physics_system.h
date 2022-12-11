@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace asura::systems
+namespace Asura::systems
 {
 	class physics_system final : public system
 	{
@@ -8,8 +8,8 @@ namespace asura::systems
 
 
 	public:
-		void init() override;
-		void reset() override;
-		void tick(float dt) override;
+		void Init() override;
+		void Reset() override;
+		void Tick(float dt) override;
 	};
 }

@@ -3,7 +3,7 @@
 #undef M_PI
 #define M_PI 3.14159265358979323846
 
-namespace asura::math
+namespace Asura::Math
 {
     template<typename T>
     struct mtx_2x2
@@ -209,17 +209,17 @@ namespace asura::math
         return a.x != b.x || a.y != b.y;
     }
 
-    using ivec2 = vec2<int16_t>;
-    using fvec2 = vec2<float>;
+    using IVec2 = vec2<int16_t>;
+    using FVec2 = vec2<float>;
     
-    // quad or rect class, for rotations and min/max calculations
+    // quad or Rect class, for rotations and min/max calculations
     template<typename T>
-    struct rect
+    struct Rect
     {
         T values[4] = {};
         
-        rect() = default;
-        rect(vec2<T> first, vec2<T> second)
+        Rect() = default;
+        Rect(vec2<T> first, vec2<T> second)
         {
             values[0] = std::min(first.x, second.x);
             values[1] = std::min(first.y, second.y);
@@ -227,7 +227,7 @@ namespace asura::math
             values[3] = std::max(first.y, second.y);
         }
         
-        rect(auto x, auto y, auto w, auto h)
+        Rect(auto x, auto y, auto w, auto h)
         {
             values[0] = static_cast<T>(x);
             values[1] = static_cast<T>(y);
@@ -294,21 +294,21 @@ namespace asura::math
         }
     };
 
-    using irect = rect<int16_t>;
-    using frect = rect<float>;
+    using IRect = Rect<int16_t>;
+    using FRect = Rect<float>;
 
-    class transform
+    class Transform
     {
     public:
         static constexpr bool string_serialize = true;
 
     private:
-        fvec2 pos = {};
-        fvec2 rot = {};        // sin - x, cos - y
+        FVec2 pos = {};
+        FVec2 rot = {};        // sin - x, cos - y
         
     public:
-        transform() = default;
-        transform(fvec2 in_pos, fvec2 in_rot)
+        Transform() = default;
+        Transform(FVec2 in_pos, FVec2 in_rot)
         {
             pos = in_pos;
             rot = in_rot;
@@ -321,12 +321,12 @@ namespace asura::math
             return angle;
         }
         
-        const fvec2& rotation() const
+        const FVec2& rotation() const
         {
             return rot;
         }
         
-        const fvec2& position() const
+        const FVec2& position() const
         {
             return pos;
         }
@@ -337,12 +337,12 @@ namespace asura::math
             rot[1] = ::cosf(angle);
         }
         
-        void set_rotation(const fvec2& new_rot)
+        void set_rotation(const FVec2& new_rot)
         {
             rot = new_rot;
         }
         
-        void set_position(const fvec2& new_pos)
+        void set_position(const FVec2& new_pos)
         {
             pos = new_pos;
         }
@@ -372,9 +372,9 @@ namespace asura::math
             }
         }
 
-        static transform unstrigify(const stl::string& sval)
+        static Transform unstrigify(const stl::string& sval)
         {
-            transform trans;
+            Transform trans;
             trans.from_string(sval);
             return trans;
         }
@@ -391,10 +391,10 @@ namespace asura::math
     }
 
     /*
-        void rotate_rect(mtx& rect, const fvec2& center, float angle)
+        void rotate_rect(mtx& Rect, const FVec2& center, float angle)
         {
-            float x1 = rect.x - center.x;
-            float y1 = rect.y - center.y;
+            float x1 = Rect.x - center.x;
+            float y1 = Rect.y - center.y;
             
             
         }

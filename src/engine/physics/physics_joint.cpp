@@ -1,23 +1,23 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-asura::physics::physics_joint::~physics_joint()
+Asura::Physics::PhysicsJoint::~PhysicsJoint()
 {
-	destroy();
+	Destroy();
 }
 
-void asura::physics::physics_joint::create()
+void Asura::Physics::PhysicsJoint::Create()
 {
 	switch (data.type)
 	{
-		case asura::physics::joint_type::base:
+		case Asura::Physics::joint_type::base:
 			break;
-		case asura::physics::joint_type::mouse:
+		case Asura::Physics::joint_type::mouse:
 			break;
-		case asura::physics::joint_type::motor:
+		case Asura::Physics::joint_type::motor:
 			break;
-		case asura::physics::joint_type::revolute:
+		case Asura::Physics::joint_type::revolute:
 		{
 			b2RevoluteJointDef jdata = {};
 			jdata.lowerAngle = data.lower;
@@ -25,7 +25,7 @@ void asura::physics::physics_joint::create()
 			jdata.enableLimit = data.limit;
 
 			jdata.Initialize(data.body_first->get_body(), data.body_second->get_body(), data.body_second->get_body()->GetPosition());
-			try_joint = physics::get_world().CreateJoint(&jdata);
+			try_joint = Physics::GetWorld().CreateJoint(&jdata);
 			break;
 		}
 		default:
@@ -35,11 +35,11 @@ void asura::physics::physics_joint::create()
 	created = true;
 }
 
-void asura::physics::physics_joint::destroy()
+void Asura::Physics::PhysicsJoint::Destroy()
 {
 	if (destroyed)
 		return;
 
-	get_world().DestroyJoint(try_joint);
+	GetWorld().DestroyJoint(try_joint);
 	destroyed = true;
 }

@@ -29,7 +29,7 @@ int init_al()
     device = alcOpenDevice(nullptr);
     if (!device)
     {
-        debug::msg("Could not open a device!");
+        Debug::msg("Could not open a device!");
         return 1;
     }
 
@@ -40,7 +40,7 @@ int init_al()
             alcDestroyContext(ctx);
 
         alcCloseDevice(device);
-        debug::msg("Could not set a context!");
+        Debug::msg("Could not set a context!");
         return 1;
     }
 
@@ -51,7 +51,7 @@ int init_al()
     if (!name || alcGetError(device) != AL_NO_ERROR)
         name = alcGetString(device, ALC_DEVICE_SPECIFIER);
 
-    debug::msg("Opened {}", name);
+    Debug::msg("Opened {}", name);
 
     return 0;
 }
@@ -80,26 +80,26 @@ void check_al_errors(const stl::string_view filename, const std::uint_fast32_t l
     ALCenum error = alGetError();
     if (error != AL_NO_ERROR)
     {
-        debug::msg("AL: {} {}", filename, line);
+        Debug::msg("AL: {} {}", filename, line);
         switch (error)
         {
         case AL_INVALID_NAME:
-            debug::msg("AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function");
+            Debug::msg("AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function");
             break;
         case AL_INVALID_ENUM:
-            debug::msg("AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function");
+            Debug::msg("AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function");
             break;
         case AL_INVALID_VALUE:
-            debug::msg("AL_INVALID_VALUE: an invalid value was passed to an OpenAL function");
+            Debug::msg("AL_INVALID_VALUE: an invalid value was passed to an OpenAL function");
             break;
         case AL_INVALID_OPERATION:
-            debug::msg("AL_INVALID_OPERATION: the requested operation is not valid");
+            Debug::msg("AL_INVALID_OPERATION: the requested operation is not valid");
             break;
         case AL_OUT_OF_MEMORY:
-            debug::msg("AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory");
+            Debug::msg("AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory");
             break;
         default:
-            debug::msg("UNKNOWN AL ERROR: {} ", error);
+            Debug::msg("UNKNOWN AL ERROR: {} ", error);
         }
     }
 }
@@ -122,7 +122,7 @@ size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fi
         audio_data->file.open(audio_data->filename, std::ios::binary);
         if (!audio_data->file.is_open())
         {
-            debug::msg("AL ERROR: Could not re - open streaming file {}", audio_data->filename);
+            Debug::msg("AL ERROR: Could not re - open streaming file {}", audio_data->filename);
             return 0;
         }
     }
@@ -139,13 +139,13 @@ size_t read_ogg_callback(void* destination, size_t size1, size_t size2, void* fi
             audio_data->file.clear(); // just clear the error, we will resolve it later
         }
         else if (audio_data->file.fail()) {
-            debug::msg("AL ERROR: OGG stream has fail bit set {} ", audio_data->filename);
+            Debug::msg("AL ERROR: OGG stream has fail bit set {} ", audio_data->filename);
             audio_data->file.clear();
             return 0;
         }
         else if (audio_data->file.bad())
         {
-            debug::msg("AL ERROR: OGG stream has bad bit set {}", audio_data->filename);
+            Debug::msg("AL ERROR: OGG stream has bad bit set {}", audio_data->filename);
             audio_data->file.clear();
             return 0;
         }
@@ -220,7 +220,7 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
     audio_data.file.open(filename.data(), std::ios::binary);
     if (!audio_data.file.is_open())
     {
-        debug::msg("AL ERROR: couldn't open file");
+        Debug::msg("AL ERROR: couldn't open file");
         return 0;
     }
 
@@ -239,7 +239,7 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
 
     if (ov_open_callbacks(reinterpret_cast<void*>(&audio_data), &audio_data.ogg_vorbis_file, nullptr, -1, oggCallbacks) < 0)
     {
-        debug::msg("AL ERROR: Could not ov_open_callbacks");
+        Debug::msg("AL ERROR: Could not ov_open_callbacks");
         return false;
     }
 
@@ -260,17 +260,17 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
 
     if (audio_data.file.eof())
     {
-        debug::msg("AL ERROR: Already reached EOF without loading data");
+        Debug::msg("AL ERROR: Already reached EOF without loading data");
         return false;
     }
     else if (audio_data.file.fail())
     {
-        debug::msg("AL ERROR: Fail bit set");
+        Debug::msg("AL ERROR: Fail bit set");
         return false;
     }
     else if (!audio_data.file)
     {
-        debug::msg("AL ERROR: file is false");
+        Debug::msg("AL ERROR: file is false");
         return false;
     }
 
@@ -284,22 +284,22 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
             std::int32_t result = ov_read(&audio_data.ogg_vorbis_file, &data[dataSoFar], BUFFER_SIZE - dataSoFar, 0, 2, 1, &audio_data.ogg_current_section);
             if (result == OV_HOLE)
             {
-                debug::msg("AL ERROR: OV_HOLE found in initial read of buffer {}", i);
+                Debug::msg("AL ERROR: OV_HOLE found in initial read of buffer {}", i);
                 break;
             }
             else if (result == OV_EBADLINK)
             {
-                debug::msg("AL ERROR:  OV_EBADLINK found in initial read of buffer {}", i);
+                Debug::msg("AL ERROR:  OV_EBADLINK found in initial read of buffer {}", i);
                 break;
             }
             else if (result == OV_EINVAL)
             {
-                debug::msg("AL ERROR: OV_EINVAL found in initial read of buffer {}", i);
+                Debug::msg("AL ERROR: OV_EINVAL found in initial read of buffer {}", i);
                 break;
             }
             else if (result == 0)
             {
-                debug::msg("AL ERROR: EOF found in initial read of buffer {}", i);
+                Debug::msg("AL ERROR: EOF found in initial read of buffer {}", i);
                 break;
             }
 
@@ -316,7 +316,7 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
             audio_data.format = AL_FORMAT_STEREO16;
         else
         {
-            debug::msg("AL ERROR: unrecognised ogg format: {} channels, {} bps", audio_data.channels, audio_data.bitsPerSample);
+            Debug::msg("AL ERROR: unrecognised ogg format: {} channels, {} bps", audio_data.channels, audio_data.bitsPerSample);
             delete[] data;
             return false;
         }

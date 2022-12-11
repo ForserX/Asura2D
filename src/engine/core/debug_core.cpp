@@ -2,7 +2,7 @@
 
 static std::ofstream log_file;
 
-using namespace asura;
+using namespace Asura;
 
 #ifdef OS_APPLE_SERIES
 #define DebugBreak __builtin_trap
@@ -93,22 +93,22 @@ void OutputDebugString(const char* data)
 }
 #endif
 
-void debug::init()
+void Debug::Init()
 {
-	std::filesystem::path log_path = filesystem::get_userdata_dir();
+	std::filesystem::path log_path = FileSystem::get_userdata_dir();
 	log_path.append("user.log");
 
-	filesystem::create_file(log_path);
+	FileSystem::create_file(log_path);
 
 	log_file.open(log_path);
 }
 
-void debug::destroy()
+void Debug::Destroy()
 {
 	log_file.close();
 }
 
-void debug::show_error(stl::string_view message)
+void Debug::show_error(stl::string_view message)
 {
 	print_message(message);
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!", message.data(), nullptr);
@@ -119,19 +119,19 @@ void debug::show_error(stl::string_view message)
     }
 }
 
-void debug::print_message(stl::string_view message)
+void Debug::print_message(stl::string_view message)
 {
 	log_file << message << std::endl;
 	ui::push_console_string(message);
     dbg_print(message);
 }
 
-void asura::debug::dbg_break()
+void Asura::Debug::dbg_break()
 {
     DebugBreak();
 }
 
-void asura::debug::dbg_print(stl::string_view msg)
+void Asura::Debug::dbg_print(stl::string_view msg)
 {
 #if defined(_DEBUG) & defined(OS_WINDOWS)
     if (dbg_atttached()) {
@@ -147,7 +147,7 @@ void asura::debug::dbg_print(stl::string_view msg)
 #endif
 }
 
-bool asura::debug::dbg_atttached()
+bool Asura::Debug::dbg_atttached()
 {
     return IsDebuggerPresent();
 }

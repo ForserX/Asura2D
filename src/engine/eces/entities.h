@@ -1,6 +1,6 @@
 #pragma once
 
-namespace asura
+namespace Asura
 {
 	class registry
 	{
@@ -11,7 +11,7 @@ namespace asura
 		entt::registry& get() { return base_registry; }
 		
 		entt::entity create() { return base_registry.create(); }
-		void destroy(const entt::entity& entity) { base_registry.destroy(entity); }
+		void Destroy(const entt::entity& entity) { base_registry.destroy(entity); }
 	};
 	
 	class entity_view
@@ -36,46 +36,46 @@ namespace asura
 	};
 }
 
-namespace asura::entities
+namespace Asura::entities
 {
-	void init();
-	void destroy();
-	void tick(float dt);
+	void Init();
+	void Destroy();
+	void Tick(float dt);
 
 	void clear();
 	void free();
 
-	bool is_valid(entity_view ent);
-	bool is_null(entity_view ent);
+	bool IsValid(entity_view ent);
+	bool IsNull(entity_view ent);
 	
-	entity_view create();
-	void mark_as_garbage(const entity_view& ent);
+	entity_view Create();
+	void MarkAsGarbage(const entity_view& ent);
 
-	entity_view get_entity_from_body(const b2Body* body);
-    const math::fvec2& get_position(const entity_view& ent);
+	entity_view GetEntityByBbody(const b2Body* body);
+    const Math::FVec2& get_position(const entity_view& ent);
 
-	const entity_view& add_texture(
+	const entity_view& AddTexture(
 		const entity_view& ent,
 		stl::string_view path
 	);
 	
-	const entity_view& add_phys_body(
+	const entity_view& AddPhysBody(
 		const entity_view& ent,
-		math::fvec2 vel,
-        math::fvec2 pos,
-        math::fvec2 size,
-		physics::body_type type = physics::body_type::ph_dynamic,
+		Math::FVec2 vel,
+        Math::FVec2 pos,
+        Math::FVec2 size,
+		Physics::body_type type = Physics::body_type::ph_dynamic,
 		material::shape shape = material::shape::box,
 		material::type mat = material::type::solid
 	);
 
-	const entity_view& add_phys_body_preset(
+	const entity_view& AddPhysBodyPreset(
 		const entity_view& ent,
-		math::fvec2 pos,
+		Math::FVec2 pos,
 		stl::string_view preset
 	);
 
-	const entity_view& add_scene_component(
+	const entity_view& AddSceneComponent(
 		const entity_view& ent
 	);
 }

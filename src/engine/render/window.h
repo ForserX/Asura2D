@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-namespace asura::window
+namespace Asura::window
 {
-	void init();
-	void destroy();
-	void tick();
+	void Init();
+	void Tick();
+	void Destroy();
 
-	bool is_destroyed();
+	bool IsDestroyed();
 
 	void loop();
 	void change_fullscreen();

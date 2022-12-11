@@ -1,28 +1,28 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-physics::physics_body::physics_body(body_parameters in_parameters)
+Physics::PhysicsBody::PhysicsBody(body_parameters in_parameters)
 	: parameters(in_parameters)
 {
 }
 
-physics::physics_body::~physics_body()
+Physics::PhysicsBody::~PhysicsBody()
 {
 
 }
 
-physics::body_type physics::physics_body::get_body_type() const
+Physics::body_type Physics::PhysicsBody::get_body_type() const
 {
 	if (body != nullptr)
 	{
 		return get_ark_body_type(body->GetType());
 	}
 
-	return static_cast<physics::body_type>(parameters.packed_type.type);
+	return static_cast<Physics::body_type>(parameters.packed_type.type);
 }
 
-float physics::physics_body::get_mass() const
+float Physics::PhysicsBody::get_mass() const
 {
 	if (body != nullptr)
 	{
@@ -32,7 +32,7 @@ float physics::physics_body::get_mass() const
 	return parameters.mass;
 }
 
-float physics::physics_body::get_angle() const
+float Physics::PhysicsBody::get_angle() const
 {
 	if (body != nullptr)
 	{
@@ -42,7 +42,7 @@ float physics::physics_body::get_angle() const
 	return parameters.angle;
 }
 
-float physics::physics_body::get_angular_velocity() const
+float Physics::PhysicsBody::get_angular_velocity() const
 {
 	if (body != nullptr)
 	{
@@ -52,7 +52,7 @@ float physics::physics_body::get_angular_velocity() const
 	return parameters.angular_vel;
 }
 
-math::fvec2 asura::physics::physics_body::get_velocity() const
+Math::FVec2 Asura::Physics::PhysicsBody::get_velocity() const
 {
 	if (body != nullptr)
 	{
@@ -62,7 +62,7 @@ math::fvec2 asura::physics::physics_body::get_velocity() const
 	return parameters.vel;
 }
 
-math::fvec2 physics::physics_body::get_position() const
+Math::FVec2 Physics::PhysicsBody::get_position() const
 {
 	if (body != nullptr) {
 		auto temp_pos = body->GetPosition();
@@ -72,13 +72,13 @@ math::fvec2 physics::physics_body::get_position() const
 	return parameters.pos;
 }
 
-math::frect physics::physics_body::get_rect() const
+Math::FRect Physics::PhysicsBody::get_rect() const
 {
 	// #TODO: OPTIMIZE
-	return physics::get_body_rect(this);
+	return Physics::get_body_rect(this);
 }
 
-math::fvec2 physics::physics_body::get_mass_center() const
+Math::FVec2 Physics::PhysicsBody::get_mass_center() const
 {
 	if (body != nullptr)
 	{
@@ -90,7 +90,7 @@ math::fvec2 physics::physics_body::get_mass_center() const
 	return parameters.pos;
 }
 
-void physics::physics_body::set_body_type(body_type new_type)
+void Physics::PhysicsBody::set_body_type(body_type new_type)
 {
 	if (body != nullptr)
 	{
@@ -100,7 +100,7 @@ void physics::physics_body::set_body_type(body_type new_type)
 	parameters.packed_type.type = static_cast<uint8_t>(new_type);
 }
 
-void physics::physics_body::set_mass(float new_mass)
+void Physics::PhysicsBody::set_mass(float new_mass)
 {
 	if (body != nullptr)
 	{
@@ -113,7 +113,7 @@ void physics::physics_body::set_mass(float new_mass)
 	parameters.mass = new_mass;
 }
 
-void physics::physics_body::set_mass_center(const math::fvec2& new_center)
+void Physics::PhysicsBody::set_mass_center(const Math::FVec2& new_center)
 {
 	if (body != nullptr)
 	{
@@ -126,7 +126,7 @@ void physics::physics_body::set_mass_center(const math::fvec2& new_center)
 	parameters.mass_center = new_center;
 }
 
-void physics::physics_body::set_angle(float new_angle)
+void Physics::PhysicsBody::set_angle(float new_angle)
 {
 	if (body != nullptr)
 	{
@@ -136,7 +136,7 @@ void physics::physics_body::set_angle(float new_angle)
 	parameters.angle = new_angle;
 }
 
-void physics::physics_body::set_angular_velocity(float new_angular_vel)
+void Physics::PhysicsBody::set_angular_velocity(float new_angular_vel)
 {
 	if (body != nullptr)
 	{
@@ -146,7 +146,7 @@ void physics::physics_body::set_angular_velocity(float new_angular_vel)
 	parameters.angular_vel = new_angular_vel;
 }
 
-void physics::physics_body::set_velocity(const math::fvec2& new_vel)
+void Physics::PhysicsBody::set_velocity(const Math::FVec2& new_vel)
 {
 	if (body != nullptr)
 	{
@@ -156,7 +156,7 @@ void physics::physics_body::set_velocity(const math::fvec2& new_vel)
 	parameters.vel = new_vel;
 }
 
-void physics::physics_body::set_position(const math::fvec2& new_pos)
+void Physics::PhysicsBody::set_position(const Math::FVec2& new_pos)
 {
 	if (body != nullptr) 
 	{
@@ -166,7 +166,7 @@ void physics::physics_body::set_position(const math::fvec2& new_pos)
 	parameters.pos = new_pos;
 }
 
-void physics::physics_body::apply_impulse(const math::fvec2& impulse)
+void Physics::PhysicsBody::apply_impulse(const Math::FVec2& impulse)
 {
 	if (body != nullptr) 
 	{
@@ -174,7 +174,7 @@ void physics::physics_body::apply_impulse(const math::fvec2& impulse)
 	}
 }
 
-void physics::physics_body::apply_angular_impulse(float impulse)
+void Physics::PhysicsBody::apply_angular_impulse(float impulse)
 {
 	if (body != nullptr) 
 	{
@@ -182,7 +182,7 @@ void physics::physics_body::apply_angular_impulse(float impulse)
 	}
 }
 
-physics::body_parameters physics::physics_body::copy_parameters() const
+Physics::body_parameters Physics::PhysicsBody::copy_parameters() const
 {
 	body_parameters params = parameters;
 	if (body != nullptr) 
@@ -196,11 +196,11 @@ physics::body_parameters physics::physics_body::copy_parameters() const
 	return params;
 }
 
-void physics::physics_body::create()
+void Physics::PhysicsBody::Create()
 {
 	const b2BodyDef body_def = parameters;
 	const b2MassData mass_data = parameters;
-	body = get_world().CreateBody(&body_def);
+	body = GetWorld().CreateBody(&body_def);
 
 	b2FixtureDef fixtureDef;
 	b2PolygonShape poly_shape = {};
@@ -237,7 +237,7 @@ void physics::physics_body::create()
 	destroyed = false;
 }
 
-void physics::physics_body::destroy()
+void Physics::PhysicsBody::Destroy()
 {
 	destroyed = true;
 
@@ -246,11 +246,11 @@ void physics::physics_body::destroy()
 		for (auto joint = body->GetJointList(); joint != nullptr; )
 		{
 			const auto next_joint = joint->next;
-			get_world().DestroyJoint(joint->joint);
+			GetWorld().DestroyJoint(joint->joint);
 			joint = next_joint;
 		}
 
-		get_world().DestroyBody(body);
+		GetWorld().DestroyBody(body);
 		body = nullptr;
 	}
 }

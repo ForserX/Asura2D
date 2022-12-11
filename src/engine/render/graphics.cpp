@@ -1,27 +1,27 @@
 #include "pch.h"
 #include <SDL_image/SDL_image.h>
 
-using namespace asura;
+using namespace Asura;
 
 graphics::theme::style window_style = {};
 
-void graphics::init()
+void graphics::Init()
 {
 	window_style = theme::style::dark;
 	theme::change();
 	
-	ui::init();
-	camera::init();
+	ui::Init();
+	Camera::Init();
 }
 
-void graphics::destroy()
+void graphics::Destroy()
 {
-	ui::destroy();
+	ui::Destroy();
 }
 
 void graphics::draw_convex_poly_filled(
     ImDrawList* draw_list,
-    const math::fvec2* points,
+    const Math::FVec2* points,
     const int points_count,
     ImU32 col
 )
@@ -50,11 +50,11 @@ void graphics::draw_convex_poly_filled(
         }
 
         // Compute normals
-        auto* temp_normals = static_cast<math::fvec2*>(alloca(points_count * sizeof(math::fvec2))); //-V630
+        auto* temp_normals = static_cast<Math::FVec2*>(alloca(points_count * sizeof(Math::FVec2))); //-V630
         for (int i0 = points_count - 1, i1 = 0; i1 < points_count; i0 = i1++) 
 		{
-            const math::fvec2& p0 = points[i0];
-            const math::fvec2& p1 = points[i1];
+            const Math::FVec2& p0 = points[i0];
+            const Math::FVec2& p1 = points[i1];
             float dx = p1.x - p0.x;
             float dy = p1.y - p0.y;
             {
@@ -76,8 +76,8 @@ void graphics::draw_convex_poly_filled(
             constexpr float AA_SIZE = 1.0f;
             
             // Average normals
-            const math::fvec2& n0 = temp_normals[i0];
-            const math::fvec2& n1 = temp_normals[i1];
+            const Math::FVec2& n0 = temp_normals[i0];
+            const Math::FVec2& n1 = temp_normals[i1];
             float dm_x = (n0.x + n1.x) * 0.5f;
             float dm_y = (n0.y + n1.y) * 0.5f;
             {
@@ -142,23 +142,23 @@ void graphics::draw_convex_poly_filled(
 
 void graphics::draw_rect(
 	ImColor color,
-    const math::frect& rect,
+    const Math::FRect& Rect,
 	bool filled
 )
 {
-	OPTICK_EVENT("graphics draw rect");
+	OPTICK_EVENT("graphics draw Rect");
 	if (filled) {
-		ImGui::GetBackgroundDrawList()->AddRectFilled(rect.min(), rect.max(), color);
+		ImGui::GetBackgroundDrawList()->AddRectFilled(Rect.min(), Rect.max(), color);
 	} else {
-		ImGui::GetBackgroundDrawList()->AddRect(rect.min(), rect.max(), color);
+		ImGui::GetBackgroundDrawList()->AddRect(Rect.min(), Rect.max(), color);
 	}
 }
 
 void graphics::draw_background(resources::id_t resource_id)
 {
 	OPTICK_EVENT("graphics draw background");
-	const int64_t width = ui::get_cmd_int("window_width");
-	const int64_t height = ui::get_cmd_int("window_height");
+	const int64_t width = ui::GetCmdInt("window_width");
+	const int64_t height = ui::GetCmdInt("window_height");
     const ImTextureID texture_id = render::get_texture(resource_id);
 
     if (texture_id != nullptr) 
@@ -167,13 +167,13 @@ void graphics::draw_background(resources::id_t resource_id)
     }
 }
 
-void graphics::draw_textured_rect(resources::id_t resource_id, const math::frect& rect)
+void graphics::draw_textured_rect(resources::id_t resource_id, const Math::FRect& Rect)
 {
 	const ImTextureID texture_id = render::get_texture(resource_id);
 
 	if (texture_id != nullptr) 
 	{
-		ImGui::GetBackgroundDrawList()->AddImage(texture_id, rect.min(), rect.max());
+		ImGui::GetBackgroundDrawList()->AddImage(texture_id, Rect.min(), Rect.max());
 	}
 }
 
@@ -185,10 +185,10 @@ void graphics::draw_physical_object(b2Body* object, const ImColor& clr)
     
 	const int32 vertexCount = poly->m_count;
 	game_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
-	math::fvec2 vertices[b2_maxPolygonVertices];
+	Math::FVec2 vertices[b2_maxPolygonVertices];
 
 	for (int32 i = 0; i < vertexCount; ++i) {
-		vertices[i] = camera::world_to_screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
+		vertices[i] = Camera::world_to_screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
 	}
 
 	draw_convex_poly_filled(ImGui::GetBackgroundDrawList(), vertices, vertexCount, clr);
@@ -200,21 +200,21 @@ void graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
 
-	auto center = camera::world_to_screen(b2Mul(xf, circle->m_p));
-	float radius = camera::scale_factor(circle->m_radius);
+	auto center = Camera::world_to_screen(b2Mul(xf, circle->m_p));
+	float radius = Camera::scale_factor(circle->m_radius);
 
 	ImGui::GetBackgroundDrawList()->AddCircle(center, radius, clr, 0, 0.3 * radius);
 }
 
-void graphics::tick(float dt)
+void graphics::Tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
-	ImGui::SetNextWindowSize({ static_cast<float>(ui::get_cmd_int("window_width")), static_cast<float>(ui::get_cmd_int("window_height")) });
+	ImGui::SetNextWindowSize({ static_cast<float>(ui::GetCmdInt("window_width")), static_cast<float>(ui::GetCmdInt("window_height")) });
 	
 	draw(dt);
 	
-	ui::tick(dt);
-	camera::tick(dt);
+	ui::Tick(dt);
+	Camera::Tick(dt);
 }
 
 void graphics::draw(float dt)

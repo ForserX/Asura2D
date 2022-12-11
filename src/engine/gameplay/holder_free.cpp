@@ -1,20 +1,20 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 gameplay::holder_mode gameplay::holder_type = {};
 
 static b2MouseJoint* current_contol_joint = nullptr;
-static physics::physics_body* current_contol_body = nullptr;
+static Physics::PhysicsBody* current_contol_body = nullptr;
 
-static physics::physics_body* joint_contact_body = nullptr;
-static math::fvec2 joint_contact_point = {};
+static Physics::PhysicsBody* joint_contact_body = nullptr;
+static Math::FVec2 joint_contact_point = {};
 
-void gameplay::holder::free::init()
+void gameplay::holder::free::Init()
 {
 }
 
-void gameplay::holder::free::tick()
+void gameplay::holder::free::Tick()
 {
     if (input::is_focused_on_ui()) 
     {
@@ -23,17 +23,17 @@ void gameplay::holder::free::tick()
 
     if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1))
     {
-        math::fvec2 mouse_position_absolute = camera::screen_to_world(ImGui::GetMousePos());
+        Math::FVec2 mouse_position_absolute = Camera::screen_to_world(ImGui::GetMousePos());
 
         if (joint_contact_body == nullptr) 
         {
-            joint_contact_body = physics::hit_test(mouse_position_absolute);
+            joint_contact_body = Physics::hit_test(mouse_position_absolute);
             joint_contact_point = mouse_position_absolute;
         } 
         else 
         {
-            const physics::physics_body* test_body = physics::hit_test(mouse_position_absolute);
-            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != physics::body_type::ph_static)
+            const Physics::PhysicsBody* test_body = Physics::hit_test(mouse_position_absolute);
+            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != Physics::body_type::ph_static)
             {
                 constexpr float frequency_hz = 5.0f;
                 constexpr float damping_ratio = 0.7f;
@@ -44,7 +44,7 @@ void gameplay::holder::free::tick()
                 jointDef.collideConnected = true;
                 b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
 
-                physics::get_world().CreateJoint(&jointDef);
+                Physics::GetWorld().CreateJoint(&jointDef);
                 test_body->get_body()->SetAwake(true);
             }
 
@@ -56,18 +56,18 @@ void gameplay::holder::free::tick()
 
     if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) 
     {
-        math::fvec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = camera::screen_to_world(mouse_position_absolute);
+        Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
+        mouse_position_absolute = Camera::screen_to_world(mouse_position_absolute);
 
         if (current_contol_joint == nullptr) 
         {
-            current_contol_body = physics::hit_test(mouse_position_absolute);
+            current_contol_body = Physics::hit_test(mouse_position_absolute);
 
-            if (current_contol_body != nullptr && current_contol_body->get_body_type() != physics::body_type::ph_static)
+            if (current_contol_body != nullptr && current_contol_body->get_body_type() != Physics::body_type::ph_static)
             {
                 if (!sound_started)
                 {
-                    std::filesystem::path snd_path = filesystem::get_content_dir();
+                    std::filesystem::path snd_path = FileSystem::get_content_dir();
                     snd_path.append("sound").append("click.ogg");
                     audio::start((stl::string)snd_path.generic_string());
 
@@ -78,13 +78,13 @@ void gameplay::holder::free::tick()
                 constexpr float damping_ratio = 1.f;
                 b2MouseJointDef jd;
 
-                jd.bodyA = physics::get_ground()->get_body();
+                jd.bodyA = Physics::get_ground()->get_body();
                 jd.bodyB = current_contol_body->get_body();
                 jd.target = mouse_position_absolute;
                 jd.maxForce = 1000.0f * current_contol_body->get_body()->GetMass();
                 b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
-                current_contol_joint = dynamic_cast<b2MouseJoint*>(physics::get_world().CreateJoint(&jd));
+                current_contol_joint = dynamic_cast<b2MouseJoint*>(Physics::GetWorld().CreateJoint(&jd));
                 current_contol_body->get_body()->SetAwake(true);
             }
             else 
@@ -94,7 +94,7 @@ void gameplay::holder::free::tick()
         }
         else 
         {
-            if (!current_contol_body->is_destroyed())
+            if (!current_contol_body->IsDestroyed())
             {
                 current_contol_joint->SetTarget(mouse_position_absolute);
             }
@@ -111,12 +111,12 @@ void gameplay::holder::free::tick()
 
     if (current_contol_joint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) 
     {
-        physics::get_world().DestroyJoint(current_contol_joint);
+        Physics::GetWorld().DestroyJoint(current_contol_joint);
         current_contol_joint = nullptr;
         current_contol_body = nullptr;
     }
 }
 
-void gameplay::holder::free::destroy()
+void gameplay::holder::free::Destroy()
 {
 }

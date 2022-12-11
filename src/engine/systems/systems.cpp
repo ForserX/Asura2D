@@ -1,22 +1,22 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
 bool is_started = false;
 
-stl::hash_set<asura::system*> pre_update_systems = {};
-stl::hash_set<asura::system*> update_systems = {};
-stl::hash_set<asura::system*> post_update_systems = {};
+stl::hash_set<Asura::system*> pre_update_systems = {};
+stl::hash_set<Asura::system*> update_systems = {};
+stl::hash_set<Asura::system*> post_update_systems = {};
 
-stl::hash_set<asura::system*> draw_systems = {};
-stl::hash_set<asura::system*> physics_systems = {};
+stl::hash_set<Asura::system*> draw_systems = {};
+stl::hash_set<Asura::system*> physics_systems = {};
 
-std::unique_ptr<asura::system> engine_draw_system = {};
-std::unique_ptr<asura::system> engine_physics_system = {};
-std::unique_ptr<asura::system> engine_physics_scene_system = {};
-std::unique_ptr<asura::system> engine_physics_mouse_joint_system = {};
+std::unique_ptr<Asura::system> engine_draw_system = {};
+std::unique_ptr<Asura::system> engine_physics_system = {};
+std::unique_ptr<Asura::system> engine_physics_scene_system = {};
+std::unique_ptr<Asura::system> engine_physics_mouse_joint_system = {};
 
-stl::hash_set<asura::system*>* get_system_by_type(systems::update_type type)
+stl::hash_set<Asura::system*>* get_system_by_type(systems::update_type type)
 {
 	switch (type)
 	{
@@ -49,7 +49,7 @@ void systems::add_system(system* system_to_add, update_type type)
 	systems_list->insert(system_to_add);
 
 	if (is_started) {
-		system_to_add->init();
+		system_to_add->Init();
 	}
 }
 
@@ -68,63 +68,63 @@ void systems::pre_init()
 	physics_systems.insert(engine_physics_system.get());
 }
 
-void systems::init()
+void systems::Init()
 {
 	for	(const auto system : pre_update_systems) 
 	{
-		system->init();
+		system->Init();
 	}
 	
 	for	(const auto system : update_systems) 
 	{
-		system->init();
+		system->Init();
 	}
 
 	for	(const auto system : post_update_systems) 
 	{
-		system->init();
+		system->Init();
 	}
 
 	for	(const auto system : draw_systems) 
 	{
-		system->init();
+		system->Init();
 	}
 
 	for	(const auto system : physics_systems) 
 	{
-		system->init();
+		system->Init();
 	}
 	
 	is_started = true;
 }
 
-void systems::destroy()
+void systems::Destroy()
 {
 	is_started = false;
 	
 	for	(const auto system : pre_update_systems)
 	{
-		system->reset();
+		system->Reset();
 	}
 	
 	for	(const auto system : update_systems) 
 	{
-		system->reset();
+		system->Reset();
 	}
 
 	for	(const auto system : post_update_systems) 
 	{
-		system->reset();
+		system->Reset();
 	}
 
 	for	(const auto system : draw_systems) 
 	{
-		system->reset();
+		system->Reset();
 	}
 
 	for	(const auto system : physics_systems) 
 	{
-		system->reset();
+		system->Reset();
 	}
 	
 	pre_update_systems.clear();
@@ -135,11 +135,11 @@ void systems::destroy()
 	physics_systems.clear();
 }
 
-void system_tick(float dt, const stl::hash_set<asura::system*>& systems)
+void system_tick(float dt, const stl::hash_set<Asura::system*>& systems)
 {
 	for	(const auto system : systems)
 	{
-		system->tick(dt);
+		system->Tick(dt);
 	}
 }
 
@@ -148,7 +148,7 @@ void systems::pre_tick(float dt)
 	system_tick(dt, pre_update_systems);
 }
 
-void systems::tick(float dt)
+void systems::Tick(float dt)
 {
 	system_tick(dt, update_systems);
 }

@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-namespace asura::core
+namespace Asura::Core
 {
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
-	int64_t get_cmd_int(stl::string_view key);
-	stl::string_view get_cmd_string(stl::string_view key);
+	int64_t GetCmdInt(stl::string_view key);
+	stl::string_view GetCmdStr(stl::string_view key);
 }
 
 extern std::atomic_bool is_phys_ticking;

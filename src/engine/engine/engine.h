@@ -1,13 +1,13 @@
 #pragma once
 
-namespace asura::engine
+namespace Asura::engine
 {
 	void start();
-	void init(int argc, char** argv);
-	void destroy();
+	void Init(int argc, char** argv);
+	void Destroy();
 
-	void tick();
-	bool is_ticking();
+	void Tick();
+	bool IsTicking();
 }
 
 extern bool paused;

@@ -4,13 +4,13 @@
 int main(int argc, char** argv)
 {
 	ingame::pre_init();
-	asura::window::init();
-	asura::engine::init(argc, argv);
+	Asura::window::Init();
+	Asura::engine::Init(argc, argv);
 	ingame::init();
 
-	asura::engine::start();
-	asura::window::loop();
+	Asura::engine::start();
+	Asura::window::loop();
 
-	asura::engine::destroy();
+	Asura::engine::Destroy();
 	return 0;
 }

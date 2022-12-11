@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-namespace asura::game
+namespace Asura::game
 {
-	void init();
-	void destroy();
-	void tick(float dt);
+	void Init();
+	void Destroy();
+	void Tick(float dt);
 
 	void editor(bool state);
 }

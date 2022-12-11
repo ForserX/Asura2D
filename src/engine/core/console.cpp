@@ -1,13 +1,13 @@
 #include "pch.h"
 
-using namespace asura;
+using namespace Asura;
 
-std::unique_ptr<ui::console> console;
+std::unique_ptr<ui::Console> console;
 input::on_key_change console_key_change;
 
-using ui::console;
+using ui::Console;
 
-console::console()
+Console::Console()
 {
     clear_log();
     memset(InputBuf, 0, sizeof(InputBuf));
@@ -33,7 +33,7 @@ console::console()
     ScrollToBottom = false;
 }
 
-console::~console()
+Console::~Console()
 {
     clear_log();
 
@@ -49,19 +49,19 @@ console::~console()
 int  strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
 void strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
-void console::clear_log()
+void Console::clear_log()
 {
     for (int i = 0; i < Items.Size; i++)
         free(Items[i]);
     Items.clear();
 }
 
-void console::push_log_item(stl::string_view str)
+void Console::push_log_item(stl::string_view str)
 {
     Items.push_back(strdup(str.data()));
 }
 
-void console::draw(float dt, const char* title, bool* p_open)
+void Console::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
@@ -229,7 +229,7 @@ void console::draw(float dt, const char* title, bool* p_open)
         if (!cmd.empty()) { \
             output = (decltype(output))stl::stof(cmd); \
         } else { \
-            debug::msg("Invalid parameter: '{}'\n", command_line); \
+            Debug::msg("Invalid parameter: '{}'\n", command_line); \
         } \
     }
 
@@ -240,13 +240,13 @@ void console::draw(float dt, const char* title, bool* p_open)
             output = (decltype(output))stl::stof(cmd); \
             callback(); \
         } else { \
-            debug::msg("Invalid parameter: '{}'\n", command_line); \
+            Debug::msg("Invalid parameter: '{}'\n", command_line); \
         } \
     }
 
-void console::ExecCommand(const char* command_line)
+void Console::ExecCommand(const char* command_line)
 {
-    debug::msg("# {} \n", command_line);
+    Debug::msg("# {} \n", command_line);
 
     // Insert into history. First find match and delete it so it can be pushed to the back.
     // This isn't trying to be smart or optimal.
@@ -286,17 +286,17 @@ void console::ExecCommand(const char* command_line)
     }
     else if (cmd == "help")
     {
-        debug::msg("Commands:");
+        Debug::msg("Commands:");
         for (const auto& [key, tip] : cmd_hint)
         {
-            debug::msg("- {} : {}", key, tip);
+            Debug::msg("- {} : {}", key, tip);
         }
     }
     else if (cmd == "history")
     {
         const int first = History.Size - 10;
         for (int i = first > 0 ? first : 0; i < History.Size; i++)
-            debug::msg("{}: {}\n", i, History[i]);
+            Debug::msg("{}: {}\n", i, History[i]);
     }
     else if (strstr(command_line, "window_style")) {
         cmd = cmd.substr(12);
@@ -320,13 +320,13 @@ void console::ExecCommand(const char* command_line)
     ScrollToBottom = true;
 }
 
-int console::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
+int Console::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 {
-    auto* console = static_cast<ui::console*>(data->UserData);
-    return console->TextEditCallback(data);
+    auto* Console = static_cast<ui::Console*>(data->UserData);
+    return Console->TextEditCallback(data);
 }
 
-int console::TextEditCallback(ImGuiInputTextCallbackData* data)
+int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
@@ -358,7 +358,7 @@ int console::TextEditCallback(ImGuiInputTextCallbackData* data)
         if (candidates.Size == 0)
         {
             // No match
-            debug::msg("No match for \"{}\"!\n", (int)(word_end - word_start), word_start);
+            Debug::msg("No match for \"{}\"!\n", (int)(word_end - word_start), word_start);
         }
         else if (candidates.Size == 1)
         {
@@ -398,9 +398,9 @@ int console::TextEditCallback(ImGuiInputTextCallbackData* data)
             }
 
             // List matches
-            debug::msg("Possible matches: \n");
+            Debug::msg("Possible matches: \n");
             for (int i = 0; i < candidates.Size; i++)
-                debug::msg("- {}\n", candidates[i]);
+                Debug::msg("- {}\n", candidates[i]);
         }
 
         break;
@@ -438,11 +438,11 @@ int console::TextEditCallback(ImGuiInputTextCallbackData* data)
     return 0;
 }
 
-void console::flush()
+void Console::flush()
 {
-	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
+	std::filesystem::path cfg_path = FileSystem::get_userdata_dir();
 	cfg_path = cfg_path.append("user.cfg");
-    filesystem::create_file(cfg_path);
+    FileSystem::create_file(cfg_path);
     std::ofstream cfg(cfg_path);
 
 
@@ -450,12 +450,12 @@ void console::flush()
     {
         if (hint.length() > 0)
         {
-            cfg << cmd << " " << ui::get_cmd_int(cmd) << std::endl;
+            cfg << cmd << " " << ui::GetCmdInt(cmd) << std::endl;
         }
     }
 }
 
-void console::init()
+void Console::Init()
 {
     console_key_change = input::subscribe_key_event(
         [](int16_t scan_code, input::key_state state)
@@ -467,7 +467,7 @@ void console::init()
         }
     );
 
-	std::filesystem::path cfg_path = filesystem::get_userdata_dir();
+	std::filesystem::path cfg_path = FileSystem::get_userdata_dir();
     cfg_path = cfg_path.append("user.cfg");
     if (!std::filesystem::exists(cfg_path))
     {

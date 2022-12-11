@@ -1,8 +1,8 @@
 #pragma once
 
-namespace asura
+namespace Asura
 {
-    class config_parser
+    class CfgParser
     {
         using data_type = stl::tree_string_map;
         data_type data;
@@ -12,8 +12,8 @@ namespace asura
         const stl::string& get(stl::string_view section, stl::string_view value) const;
 
     public:
-        config_parser() noexcept = default;
-        ~config_parser() = default;
+        CfgParser() noexcept = default;
+        ~CfgParser() = default;
 
         void load(const std::filesystem::path& file);
         void save(const std::filesystem::path& file) const;
