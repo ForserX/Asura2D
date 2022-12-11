@@ -59,9 +59,11 @@
 #include <imgui_impl_sdlrenderer.h>
 #include <imgui_internal.h>
 #include <SDL.h>
+
 #ifdef ARK_VULKAN
 #include <SDL_vulkan.h>
 #endif
+
 #include <SDL_image.h>
 
 #ifdef MIMALLOC_ENABLED
@@ -77,4 +79,16 @@
 #include <vulkan.hpp>
 #endif
 
+// Audio trash
+#include <vorbis/include/vorbis/vorbisfile.h>
+#include <ogg/include/ogg/os_types.h>
+#include <ogg/include/ogg/ogg.h>
+
+#include <openal-soft/include/AL/al.h>
+#include <openal-soft/include/AL/alc.h>
+
 #include "asura_engine.h"
+
+#ifdef OS_WINDOWS
+#include <xaudio2.h>
+#endif

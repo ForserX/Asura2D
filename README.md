@@ -21,5 +21,5 @@ Asura Engine is a 2D game engine that focuses on physical objects, rendering wit
 * [Function2](https://github.com/Naios/function2) (extended)
 * [MiMalloc](https://github.com/microsoft/mimalloc)
 * [Marl](https://github.com/google/marl)
-* [OpenAL Soft](https://github.com/kcat/openal-soft)
+* [OpenAL Soft](https://github.com/kcat/openal-soft) | XAudio2 (Windows only)
 * vorbis + ogg 

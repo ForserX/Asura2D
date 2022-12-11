@@ -17,29 +17,38 @@ scheduler::init()
 {
 	using namespace std::chrono_literals;
 
-	scheduler_thread = std::make_unique<std::thread>([]() {
+	scheduler_thread = std::make_unique<std::thread>([]()
+		{
         std::chrono::nanoseconds last_scheduler_time = {};
         
 		OPTICK_THREAD("scheduler thread");
-		while (!scheduler_destroyed) {
+		while (!scheduler_destroyed)
+		{
 			OPTICK_EVENT("scheduler tick");
-			auto trigger = [](bool parallel, global_task_type task_type) {
+			auto trigger = [](bool parallel, global_task_type task_type) 
+			{
 				stl::function_set<scheduler::global_function> funcs_to_delete;
-				auto trigger_all = [&](const scheduler::global_function& func) {
-					if (!func()) {
+				auto trigger_all = [&](const scheduler::global_function& func) 
+				{
+					if (!func()) 
+					{
 						funcs_to_delete.insert(func);
 					}
 				};
 
 				auto& current_map = global_func_map[task_type];
-				if (!current_map.empty()) {
-					for (const auto& func : current_map) {
+
+				if (!current_map.empty()) 
+				{
+					for (const auto& func : current_map) 
+					{
 						trigger_all(func);
 					}
 
 					{
 						std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
-						for (const auto& elem : funcs_to_delete) {
+						for (const auto& elem : funcs_to_delete) 
+						{
 							current_map.erase(elem);
 						}
 					}
@@ -85,16 +94,14 @@ scheduler::init()
 	});
 }
 
-void 
-scheduler::destroy()
+void scheduler::destroy()
 {
     scheduler_destroyed = true;
 	scheduler_thread->join();
 	scheduler_thread.reset();
 }
 
-const scheduler::global_function&
-scheduler::internal::schedule(global_task_type task_type, const global_function& func)
+const scheduler::global_function& scheduler::internal::schedule(global_task_type task_type, const global_function& func)
 {
     std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
 	return *global_func_map[task_type].insert(func).first;

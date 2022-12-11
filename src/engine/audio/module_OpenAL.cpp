@@ -1,12 +1,6 @@
 #include "pch.h"
 #include "module_OpenAL.h"
 
-#include <openal-soft/include/AL/al.h>
-#include <openal-soft/include/AL/alc.h>
-#include <vorbis/include/vorbis/vorbisfile.h>
-#include <ogg/include/ogg/os_types.h>
-#include <ogg/include/ogg/ogg.h>
-
 using namespace asura;
 
 static bool al_work = false;
@@ -26,7 +20,8 @@ void audio::openal::init()
 
 void audio::openal::tick()
 {
-	if (!al_work) {
+	if (!al_work)
+	{
 		return;
 	}
 
@@ -45,7 +40,8 @@ void audio::openal::tick()
 
 void audio::openal::destroy()
 {
-	if (!al_work) {
+	if (!al_work) 
+	{
 		return;
 	}
 
@@ -60,9 +56,11 @@ void audio::openal::destroy()
 
 void audio::openal::start(stl::string_view sound_src)
 {
-	if (!al_work) {
+	if (!al_work) 
+	{
 		return;
 	}
+
 	al_trash::stream_audio_data& ref_data = *data.emplace_back(new al_trash::stream_audio_data);
 	al_trash::create_stream_from_file(sound_src, ref_data);
 	
