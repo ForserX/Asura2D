@@ -44,7 +44,7 @@ void engine::Init(int argc, char** argv)
 	game::Init();
     Debug::msg("initializing game system");
 
-	audio::Init();
+	Audio::Init();
 	Debug::msg("initializing audio system");
 }
 
@@ -57,7 +57,7 @@ void engine::Destroy()
     ResourcesManager::Destroy();
 	Scheduler::Destroy();
 	Threads::Destroy();
-	audio::Destroy();
+	Audio::Destroy();
 
     console.reset();
     
@@ -93,7 +93,7 @@ void engine::Tick()
 	
 	Render::Tick(dt);
 	
-	audio::Tick();
+	Audio::Tick();
 
 	engine_ticking_now = false;
 }

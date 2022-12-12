@@ -33,7 +33,7 @@ std::mutex resource_manager_lock;
 
 auto load_content_context = []()
 {
-    const auto& content_dir = FileSystem::get_content_dir();
+    const auto& content_dir = FileSystem::ContentDir();
     for (const auto& it : std::filesystem::recursive_directory_iterator(content_dir))
     {
         if (it.is_regular_file())
@@ -130,13 +130,13 @@ ResourcesManager::id_t ResourcesManager::Load(stl::string_view file_name)
         return resource_id;
     }
     
-    auto path = FileSystem::get_content_dir();
+    auto path = FileSystem::ContentDir();
     path.append(file_name);
     
     resource_state state = {};
     
     std::error_code error;
-    state.file_path = std::filesystem::relative(path, FileSystem::get_content_dir(), error);
+    state.file_path = std::filesystem::relative(path, FileSystem::ContentDir(), error);
 
     if (error) 
     {

@@ -8,7 +8,7 @@ static std::filesystem::path userdata_dir = {};
 
 static stl::hash_set<std::string> file_list = {};
 
-const std::filesystem::path& FileSystem::get_working_dir()
+const std::filesystem::path& FileSystem::WorkingDir()
 {
 	return working_dir;
 }
@@ -39,12 +39,12 @@ void FileSystem::Destroy()
 	working_dir.clear();
 }
 
-const std::filesystem::path& FileSystem::get_content_dir()
+const std::filesystem::path& FileSystem::ContentDir()
 {
 	return content_dir;
 }
 
-const std::filesystem::path& FileSystem::get_userdata_dir()
+const std::filesystem::path& FileSystem::UserdataDir()
 {
 	return userdata_dir;
 }

@@ -79,6 +79,10 @@
 #include <vulkan.hpp>
 #endif
 
+#ifdef OS_WINDOWS
+#include <xaudio2.h>
+#endif
+
 // Audio trash
 #include <vorbis/include/vorbis/vorbisfile.h>
 #include <ogg/include/ogg/os_types.h>
@@ -88,7 +92,3 @@
 #include <openal-soft/include/AL/alc.h>
 
 #include "asura_engine.h"
-
-#ifdef OS_WINDOWS
-#include <xaudio2.h>
-#endif

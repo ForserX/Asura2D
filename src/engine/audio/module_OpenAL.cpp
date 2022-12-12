@@ -10,59 +10,62 @@ namespace al_trash
 #	include "module_OpenAL.inl"
 }
 
-static stl::vector<al_trash::stream_audio_data*> data;
-
-void audio::openal::Init()
+Audio::DeviceOpenAL::DeviceOpenAL()
 {
 	al_work = !al_trash::init_al();
-	data = {};
+	AudioData = {};
 }
 
-void audio::openal::Tick()
+void Audio::DeviceOpenAL::Tick()
 {
 	if (!al_work)
 	{
 		return;
 	}
 
-	for (al_trash::stream_audio_data* it : data)
+	for (al_trash::stream_audio_data* it : AudioData)
 	{
 		bool playing = al_trash::update_stream(*it);
 
 		if (!playing)
 		{
-			auto iter = std::find(data.begin(), data.end(), it);
-			data.erase(iter);
+			auto iter = std::find(AudioData.begin(), AudioData.end(), it);
+			AudioData.erase(iter);
 			delete it;
 		}
 	}
 }
 
-void audio::openal::Destroy()
+Audio::DeviceOpenAL::~DeviceOpenAL()
 {
 	if (!al_work) 
 	{
 		return;
 	}
 
-	for (al_trash::stream_audio_data* it : data)
+	for (al_trash::stream_audio_data* it : AudioData)
 	{
 		delete it;
 	}
 
-	data.clear();
+	AudioData.clear();
 	al_trash::CloseAL();
 }
 
-void audio::openal::start(stl::string_view sound_src)
+void Audio::DeviceOpenAL::Load(ResourcesManager::id_t sound_src)
 {
 	if (!al_work) 
 	{
 		return;
 	}
 
-	al_trash::stream_audio_data& ref_data = *data.emplace_back(new al_trash::stream_audio_data);
-	al_trash::create_stream_from_file(sound_src, ref_data);
+	Resource Res = ResourcesManager::GetResource(sound_src);
+
+	std::filesystem::path FullPath = FileSystem::ContentDir();
+	FullPath.append(Res.Name);
+
+	al_trash::stream_audio_data& ref_data = *AudioData.emplace_back(new al_trash::stream_audio_data);
+	al_trash::create_stream_from_file(FullPath.generic_string().c_str(), ref_data);
 	
 	al_trash::play_stream(ref_data);
 }

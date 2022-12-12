@@ -440,7 +440,7 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
 
 void Console::flush()
 {
-	std::filesystem::path cfg_path = FileSystem::get_userdata_dir();
+	std::filesystem::path cfg_path = FileSystem::UserdataDir();
 	cfg_path = cfg_path.append("user.cfg");
     FileSystem::create_file(cfg_path);
     std::ofstream cfg(cfg_path);
@@ -467,7 +467,7 @@ void Console::Init()
         }
     );
 
-	std::filesystem::path cfg_path = FileSystem::get_userdata_dir();
+	std::filesystem::path cfg_path = FileSystem::UserdataDir();
     cfg_path = cfg_path.append("user.cfg");
     if (!std::filesystem::exists(cfg_path))
     {

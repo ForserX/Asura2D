@@ -1,17 +1,24 @@
 ﻿#pragma once
 
-#if defined(ASURA_OPEN_AL) | !defined(OS_WINDOWS)
-#include "module_OpenAL.h"
-
-namespace Asura::audio
+namespace Asura::Audio
 {
-	using namespace audio::openal;
-}
-#else
+	interface Device
+	{
+	public:
+		virtual void Load(ResourcesManager::id_t File) = 0;
+		virtual void Tick() = 0;
+	};
 
-#include "module_XAudio2.h"
-namespace Asura::audio
-{
-	using namespace audio::xaudio2;
+	enum class DeviceMode
+	{
+		eOpenAL,
+		eXAudio2
+	};
+
+	void Init();
+	void Tick();
+	void Destroy();
+
+	void Start(stl::string_view File);
+	void Reset(DeviceMode Mode = DeviceMode::eOpenAL);
 }
-#endif

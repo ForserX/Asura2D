@@ -9,7 +9,7 @@ bool show_fps_counter = true;
 
 void UI::Init()
 {
-    std::filesystem::path font_dir = FileSystem::get_content_dir();
+    std::filesystem::path font_dir = FileSystem::ContentDir();
     font_dir.append("fonts").append("RobotoMono-Regular.ttf");
 
     ImGuiIO& io = ImGui::GetIO();

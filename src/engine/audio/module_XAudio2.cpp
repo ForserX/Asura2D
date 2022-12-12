@@ -1,18 +1,29 @@
 #include "pch.h"
 
-#include "module_XAudio2.h"
-
 #ifdef OS_WINDOWS
+// FX: XAudio just it's DirectX Sound: Windows only
+
+#include "module_XAudio2.h"
 #include "module_XAudio2.inl"
 
 using namespace Asura;
-static stl::vector<CAudio*> AudioData;
 
-void audio::xaudio2::Init()
+Audio::DeviceXAudio2::DeviceXAudio2()
 {
 }
 
-void audio::xaudio2::Tick()
+Audio::DeviceXAudio2::~DeviceXAudio2()
+{
+	for (CAudio* Audio : AudioData)
+	{
+		Audio->Stop();
+		delete Audio;
+	}
+
+	AudioData.clear();
+}
+
+void Audio::DeviceXAudio2::Tick()
 {
 	for (CAudio* Audio : AudioData)
 	{
@@ -27,22 +38,15 @@ void audio::xaudio2::Tick()
 	}
 }
 
-void audio::xaudio2::Destroy()
-{
-	for (CAudio* Audio : AudioData)
-	{
-		Audio->Stop();
-		delete Audio;
-	}
-
-	AudioData.clear();
-}
-
-void audio::xaudio2::start(stl::string_view sound_src)
+void Audio::DeviceXAudio2::Load(ResourcesManager::id_t sound_src)
 {
 	CAudio* Audio = AudioData.emplace_back(new CAudio);
+	Resource Res = ResourcesManager::GetResource(sound_src);
 
-	Audio->LoadSound(sound_src.data());
+	std::filesystem::path FullPath = FileSystem::ContentDir();
+	FullPath.append(Res.Name);
+	
+	Audio->LoadSound(FullPath.generic_string().c_str());
 	Audio->Play(false);
 }
 

@@ -218,3 +218,10 @@ namespace Asura::stl
 
 	using path = std::filesystem::path;
 }
+
+#undef interface
+#ifdef OS_WINDOWS
+#define interface __interface
+#else
+#define interface class
+#endif

@@ -67,9 +67,7 @@ void gameplay::holder::free::Tick()
             {
                 if (!sound_started)
                 {
-                    std::filesystem::path snd_path = FileSystem::get_content_dir();
-                    snd_path.append("sound").append("click.ogg");
-                    audio::start((stl::string)snd_path.generic_string());
+                    Audio::Start("click.ogg");
 
                     sound_started = true;
                 }

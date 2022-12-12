@@ -31,7 +31,7 @@ void scene::close_scene()
 
 void scene::import_scene(std::string_view scene_name)
 {
-	std::filesystem::path scene_path = FileSystem::get_content_dir();
+	std::filesystem::path scene_path = FileSystem::ContentDir();
 	scene_path.append("scene");
 	scene_path.append(scene_name);
 
@@ -43,7 +43,7 @@ void scene::import_scene(std::string_view scene_name)
 
 void scene::export_scene(std::string_view scene_name)
 {
-	std::filesystem::path scene_path = FileSystem::get_content_dir();
+	std::filesystem::path scene_path = FileSystem::ContentDir();
 	scene_path.append("scene");
 	scene_path.append(scene_name);
 

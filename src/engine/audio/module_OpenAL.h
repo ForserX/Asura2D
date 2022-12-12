@@ -1,10 +1,19 @@
 ﻿#pragma once
-
-namespace Asura::audio::openal
+namespace al_trash
 {
-	void Init();
-	void Tick();
-	void Destroy();
+	struct stream_audio_data;
+};
 
-	void start(stl::string_view sound_src);
+namespace Asura::Audio
+{
+	class DeviceOpenAL final : public Device
+	{
+		stl::vector<al_trash::stream_audio_data*> AudioData;
+	public:
+		DeviceOpenAL();
+		~DeviceOpenAL();
+
+		virtual void Tick() override;
+		virtual void Load(ResourcesManager::id_t File) override;
+	};
 };

@@ -66,7 +66,7 @@ namespace Asura::Level::internal
 
 void Asura::Level::Init()
 {
-	path_level = FileSystem::get_content_dir();
+	path_level = FileSystem::ContentDir();
 	path_level.append("level");
 
 	game_assert(std::filesystem::exists(path_level), "Level path not found! Please, reinstall game!", return);

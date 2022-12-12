@@ -1,10 +1,17 @@
 ﻿#pragma once
 
-namespace Asura::audio::xaudio2
-{
-	void Init();
-	void Tick();
-	void Destroy();
+class CAudio;
 
-	void start(stl::string_view sound_src);
+namespace Asura::Audio
+{
+	class DeviceXAudio2 final : public Device
+	{
+		stl::vector<CAudio*> AudioData;
+	public:
+		DeviceXAudio2();
+		~DeviceXAudio2();
+
+		virtual void Tick() override;
+		virtual void Load(ResourcesManager::id_t File) override;
+	};
 };

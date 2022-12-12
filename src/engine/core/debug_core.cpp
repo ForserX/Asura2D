@@ -95,7 +95,7 @@ void OutputDebugString(const char* data)
 
 void Debug::Init()
 {
-	std::filesystem::path log_path = FileSystem::get_userdata_dir();
+	std::filesystem::path log_path = FileSystem::UserdataDir();
 	log_path.append("user.log");
 
 	FileSystem::create_file(log_path);

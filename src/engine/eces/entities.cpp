@@ -214,7 +214,7 @@ Entities::AddPhysBody(
 
 const entity_view& Asura::Entities::AddPhysBodyPreset(const entity_view& ent, Math::FVec2 pos, stl::string_view preset)
 {
-	stl::path preset_file = FileSystem::get_content_dir();
+	stl::path preset_file = FileSystem::ContentDir();
 	preset_file.append("bodies").append(preset);
 
 	CfgParser reader;
