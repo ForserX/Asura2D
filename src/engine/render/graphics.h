@@ -13,8 +13,8 @@ namespace Asura::graphics
 	void draw_convex_poly_filled(ImDrawList* draw_list, const Math::FVec2* points, const int points_count, ImU32 col);
 
 	void draw_rect(ImColor color, const Math::FRect& Rect, bool filled = true);
-	void draw_textured_rect(resources::id_t resource_id, const Math::FRect& Rect);
-	void draw_background(resources::id_t resource_id);
+	void draw_textured_rect(ResourcesManager::id_t resource_id, const Math::FRect& Rect);
+	void draw_background(ResourcesManager::id_t resource_id);
 
 	namespace theme
 	{

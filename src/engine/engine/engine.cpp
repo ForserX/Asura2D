@@ -32,14 +32,14 @@ void engine::Init(int argc, char** argv)
 	Scheduler::Init();
     Debug::msg("initializing Scheduler system");
     
-    resources::Init();
+    ResourcesManager::Init();
     Debug::msg("initializing resource system");
     
 	event::Init();
     Debug::msg("initializing event system");
     
-	render::Init();
-    Debug::msg("initializing render system");
+	Render::Init();
+    Debug::msg("initializing Render system");
     
 	game::Init();
     Debug::msg("initializing game system");
@@ -51,10 +51,10 @@ void engine::Init(int argc, char** argv)
 void engine::Destroy()
 {
 	game::Destroy();
-	render::Destroy();
+	Render::Destroy();
 	input::Destroy();
 	event::Destroy();
-    resources::Destroy();
+    ResourcesManager::Destroy();
 	Scheduler::Destroy();
 	Threads::Destroy();
 	audio::Destroy();
@@ -91,7 +91,7 @@ void engine::Tick()
 		is_game_ticking = false;
 	}
 	
-	render::Tick(dt);
+	Render::Tick(dt);
 	
 	audio::Tick();
 

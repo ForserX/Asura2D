@@ -154,12 +154,12 @@ void graphics::draw_rect(
 	}
 }
 
-void graphics::draw_background(resources::id_t resource_id)
+void graphics::draw_background(ResourcesManager::id_t resource_id)
 {
 	OPTICK_EVENT("graphics draw background");
 	const int64_t width = ui::GetCmdInt("window_width");
 	const int64_t height = ui::GetCmdInt("window_height");
-    const ImTextureID texture_id = render::get_texture(resource_id);
+    const ImTextureID texture_id = Render::GetTexture(resource_id);
 
     if (texture_id != nullptr) 
 	{
@@ -167,9 +167,9 @@ void graphics::draw_background(resources::id_t resource_id)
     }
 }
 
-void graphics::draw_textured_rect(resources::id_t resource_id, const Math::FRect& Rect)
+void graphics::draw_textured_rect(ResourcesManager::id_t resource_id, const Math::FRect& Rect)
 {
-	const ImTextureID texture_id = render::get_texture(resource_id);
+	const ImTextureID texture_id = Render::GetTexture(resource_id);
 
 	if (texture_id != nullptr) 
 	{

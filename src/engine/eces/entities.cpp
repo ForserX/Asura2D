@@ -174,8 +174,8 @@ void entities::MarkAsGarbage(const entity_view& ent)
 
 const entity_view& entities::AddTexture(const entity_view& ent, stl::string_view path)
 {
-    const resources::id_t texture_resource = resources::load(path);
-	const ImTextureID texture_id = render::load_texture(texture_resource);
+    const ResourcesManager::id_t texture_resource = ResourcesManager::Load(path);
+	const ImTextureID texture_id = Render::LoadTexture(texture_resource);
 	game_assert(texture_id != nullptr, "can't load texture", return ent);
 
 	add_field<draw_texture_component>(ent, texture_resource);

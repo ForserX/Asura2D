@@ -43,11 +43,11 @@
 #include "engine/systems/physics_mouse_joint_system.h"
 #include "engine/systems/draw_system.h"
 
-#include "engine/render/camera.h"
-#include "engine/render/window.h"
-#include "engine/render/ui.h"
-#include "engine/render/graphics.h"
-#include "engine/render/render.h"
+#include "engine/Render/camera.h"
+#include "engine/Render/window.h"
+#include "engine/Render/ui.h"
+#include "engine/Render/graphics.h"
+#include "engine/Render/Render.h"
 
 #include "engine/engine/engine.h"
 #include "engine/engine/input.h"

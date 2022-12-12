@@ -1,29 +1,52 @@
 #pragma once
 
-namespace Asura::resources
+namespace Asura
 {
-    using id_t = int64_t;
+    struct Resource
+    {
+        size_t Size;
+        ptrdiff_t ID;
+        const char* Ptr;
+        stl::string Name;
+    };
+
+    class ResourceScopeLock
+    {
+        Resource* Res;
+
+    public:
+        ResourceScopeLock() = delete;
+        ResourceScopeLock(Resource& Ref);
+        ~ResourceScopeLock();
+    };
+}
+
+namespace Asura::ResourcesManager
+{
+    using id_t = ptrdiff_t;
 
 	void Init();
     void Destroy();
-    bool is_loading();
+    bool IsLoading();
 
-    void update_directories();
-    const std::chrono::nanoseconds& get_last_update_time();
+    void UpdateDirs();
+    const std::chrono::nanoseconds& LastUpdateTime();
 
-    id_t load(stl::string_view file_path);
-	void unload(id_t resource_id);
+    id_t Load(stl::string_view file_path);
+	void Unload(id_t resource_id);
 
-	bool schedule_lock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
-	bool schedule_unlock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
-    bool lock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
-	bool unlock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
+	bool ScheduleLock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
+	bool ScheduleUnlock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
+    bool Lock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
+	bool Unlock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);
 
-    const char* get_ptr(id_t resource_id);
-    id_t get_id(std::string_view file_name);
-    uint64_t get_size(id_t resource_id);
-    stl::string get_name(id_t resource_id);
+    const char* GetPtr(id_t resource_id);
+    id_t GetID(std::string_view file_name);
+    uint64_t GetSize(id_t resource_id);
+    stl::string GetName(id_t resource_id);
 
-    bool exists(id_t resource_id);
-	bool loaded(id_t resource_id);
+    Resource GetResource(id_t resource_id);
+
+    bool Exists(id_t resource_id);
+	bool Loaded(id_t resource_id);
 }

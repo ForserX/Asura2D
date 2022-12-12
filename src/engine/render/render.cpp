@@ -4,9 +4,9 @@ SDL_Renderer* renderer = nullptr;
 
 using namespace Asura;
 
-stl::hash_map<resources::id_t, render::texture_id> textures_list;
+stl::hash_map<ResourcesManager::id_t, Render::texture_id> textures_list;
 
-void render::pre_init()
+void Render::InitialSDLDevice()
 {
 	stl::string render_list;
 #if defined(OS_WINDOWS)
@@ -42,9 +42,9 @@ void render::pre_init()
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
 }
 
-void render::Init()
+void Render::Init()
 {
-	pre_init();
+	InitialSDLDevice();
 
 	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC);
 
@@ -74,7 +74,7 @@ void render::Init()
 	graphics::Init();
 }
 
-void render::init_vulkan()
+void Render::init_vulkan()
 {
 #ifdef ASURA_VULKAN
 	SDL_Vulkan_LoadLibrary(nullptr);
@@ -86,7 +86,7 @@ void render::init_vulkan()
 #endif
 }
 
-void render::Destroy()
+void Render::Destroy()
 {
 	graphics::Destroy();
     
@@ -102,14 +102,14 @@ void render::Destroy()
 	SDL_DestroyRenderer(renderer);
 }
 
-void render::Tick(float dt)
+void Render::Tick(float dt)
 {
-	OPTICK_EVENT("render Destroy")
+	OPTICK_EVENT("Render Destroy")
 	OPTICK_CATEGORY("systems Destroy", Optick::Category::Rendering)
 	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
 
 	{
-		OPTICK_EVENT("render new frame prepare");
+		OPTICK_EVENT("Render new frame prepare");
 		ImGui_ImplSDLRenderer_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
@@ -121,7 +121,7 @@ void render::Tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("ImGui render");
+		OPTICK_EVENT("ImGui Render");
 		
 		// Rendering
 		ImGui::Render();
@@ -143,7 +143,7 @@ void render::Tick(float dt)
 	}
 }
 
-render::texture_id render::get_texture(resources::id_t resource_id)
+Render::texture_id Render::GetTexture(ResourcesManager::id_t resource_id)
 {
     if (!textures_list.contains(resource_id)) 
 	{
@@ -153,28 +153,29 @@ render::texture_id render::get_texture(resources::id_t resource_id)
     return textures_list.at(resource_id);
 }
 
-render::texture_id render::load_texture(resources::id_t resource_id)
+Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 {
-    if (textures_list.contains(resource_id))
+	if (textures_list.contains(resource_id))
 	{
-        return textures_list.at(resource_id);
-    }
-    
-    SDL_RWops* rw = SDL_RWFromConstMem(resources::get_ptr(resource_id), resources::get_size(resource_id));
-    if (rw == nullptr) 
+		return textures_list.at(resource_id);
+	}
+
+	Resource CurrentTexture = ResourcesManager::GetResource(resource_id);
+
+	SDL_RWops* rw = SDL_RWFromConstMem(CurrentTexture.Ptr, CurrentTexture.Size);
+	if (rw == nullptr)
 	{
-        return nullptr;
-    }
-    
-    resources::lock(resource_id);
-    ImTextureID texture_handle = IMG_LoadTexture_RW(renderer, rw, 0);
-    resources::unlock(resource_id);
-    
-    if (texture_handle == nullptr)
+		return nullptr;
+	}
+
+	ResourceScopeLock Lock(CurrentTexture);
+	ImTextureID texture_handle = IMG_LoadTexture_RW(renderer, rw, 0);
+
+	if (texture_handle == nullptr)
 	{
-        return nullptr;
-    }
-    
-    textures_list[resource_id] = texture_handle;
-    return texture_handle;
+		return nullptr;
+	}
+
+	textures_list[resource_id] = texture_handle;
+	return texture_handle;
 }

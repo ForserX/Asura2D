@@ -53,7 +53,7 @@ namespace Asura::entities
 
 	struct draw_texture_component
 	{
-        resources::id_t texture_resource;
+        ResourcesManager::id_t texture_resource;
 	};
 
 	struct scene_component

@@ -125,7 +125,7 @@ void ui::Tick(float dt)
                 {
                     if (ImGui::MenuItem("Update directories"))
                     {
-                        resources::update_directories();
+                        ResourcesManager::UpdateDirs();
                     }
 
                     ImGui::EndMenu();
@@ -249,7 +249,7 @@ void ui::Tick(float dt)
     {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 325, 8), ImColor(1.f, 1.f, 1.f), "Serialization/Deserialization complete");
     } 
-    else if (current_ms_time < (resources::get_last_update_time().count() / 1000000) + 2000)
+    else if (current_ms_time < (ResourcesManager::LastUpdateTime().count() / 1000000) + 2000)
     {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 220, 8), ImColor(1.f, 1.f, 1.f), "Engine directories update");
     }
