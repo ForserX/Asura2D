@@ -1,7 +1,7 @@
 #include "pch.h"
 
-using namespace Asura::systems;
-using namespace Asura::entities;
+using namespace Asura::Systems;
+using namespace Asura::Entities;
 
 bool physical_debug_draw = false;
 
@@ -26,38 +26,38 @@ void draw_system::Tick(float dt)
 {
 	OPTICK_EVENT("engine draw system Destroy");
 
-	entities::access_view([this]()
+	Entities::access_view([this]()
 	{
-		const int64_t width = ui::GetCmdInt("window_width");
-		const int64_t height = ui::GetCmdInt("window_height");
-		const auto draw_view = entities::get_view<drawable_flag>();
-		const auto background_view = entities::get_view<background_flag>();
+		const int64_t width = UI::GetCmdInt("window_width");
+		const int64_t height = UI::GetCmdInt("window_height");
+		const auto draw_view = Entities::get_view<drawable_flag>();
+		const auto background_view = Entities::get_view<background_flag>();
 
 		{
 			OPTICK_EVENT("engine background objects draw");
 			background_view.each([this, width, height](entt::entity entity)
 			{
 				OPTICK_EVENT("background draw");
-				if (!entities::IsValid(entity))
+				if (!Entities::IsValid(entity))
 				{
 					return;
 				}
 
-				game_assert(!entities::contains<drawable_flag>(entity), "background entity can't contain draw flag!", return);
+				game_assert(!Entities::contains<drawable_flag>(entity), "background entity can't contain draw flag!", return);
 
 
-				if (entities::contains<draw_color_component>(entity))
+				if (Entities::contains<draw_color_component>(entity))
 				{
-					const auto draw_color_comp = entities::try_get<draw_color_component>(entity);
+					const auto draw_color_comp = Entities::try_get<draw_color_component>(entity);
 					if (draw_color_comp != nullptr) {
 						graphics::draw_rect(draw_color_comp->color, Math::FRect(0, 0, width, height));
 						return;
 					}
 				}
 
-				if (entities::contains<draw_texture_component>(entity))
+				if (Entities::contains<draw_texture_component>(entity))
 				{
-					const auto draw_texture_comp = entities::try_get<draw_texture_component>(entity);
+					const auto draw_texture_comp = Entities::try_get<draw_texture_component>(entity);
 					if (draw_texture_comp != nullptr) {
 						graphics::draw_background(draw_texture_comp->texture_resource);
 						return;
@@ -71,24 +71,24 @@ void draw_system::Tick(float dt)
 			draw_view.each([this](entt::entity entity) 
 			{
 				OPTICK_EVENT("object draw");
-				if (!entities::IsValid(entity))
+				if (!Entities::IsValid(entity))
 				{
 					return;
 				}
 
 				// If we don't have any of draw components - try to draw Physics body with Debug view
-				if (entities::contains_any<draw_color_component, draw_gradient_component, draw_texture_component>(entity))
+				if (Entities::contains_any<draw_color_component, draw_gradient_component, draw_texture_component>(entity))
 				{
-					if (const auto scene_comp = entities::try_get<scene_component>(entity)) 
+					if (const auto scene_comp = Entities::try_get<scene_component>(entity)) 
 					{
-						if (const auto texture_comp = entities::try_get<draw_texture_component>(entity)) 
+						if (const auto texture_comp = Entities::try_get<draw_texture_component>(entity)) 
 						{
 							const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
 							const auto begin_pos = scene_comp->Transform.position() - half_size;
 							const auto end_pos = scene_comp->Transform.position() + half_size;
 							graphics::draw_textured_rect(texture_comp->texture_resource, { begin_pos, end_pos });
 						}
-						else if (const auto color_comp = entities::try_get<draw_color_component>(entity)) 
+						else if (const auto color_comp = Entities::try_get<draw_color_component>(entity)) 
 						{
 							const auto entt_id = reinterpret_cast<ptrdiff_t>(color_comp);
 							const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
@@ -98,7 +98,7 @@ void draw_system::Tick(float dt)
 						}
 					}
 				}
-				else if (const auto phys_comp = entities::try_get<physics_body_component>(entity)) 
+				else if (const auto phys_comp = Entities::try_get<physics_body_component>(entity)) 
 				{
 					const auto physical_body = phys_comp->body;
 
@@ -120,7 +120,7 @@ void draw_system::Tick(float dt)
 
 					return;
 				}
-				else if (const auto phys_comp = entities::try_get<physics_joint_component>(entity)) 
+				else if (const auto phys_comp = Entities::try_get<physics_joint_component>(entity)) 
 				{
 					const auto physical_body = phys_comp->joint;
 					if (!physical_body) 

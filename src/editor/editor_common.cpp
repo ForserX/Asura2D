@@ -49,13 +49,13 @@ void editor::Destroy()
 void editor::object::create_fake()
 {
 	start_mouse_position_absolute = ImGui::GetMousePos();
-	current_entt_object = entities::AddSceneComponent(entities::Create());
+	current_entt_object = Entities::AddSceneComponent(Entities::Create());
 }
 
 void editor::object::update_fake()
 {
 	last_mouse_position_absolute = ImGui::GetMousePos();
-	auto ent = entities::try_get<entities::scene_component>(current_entt_object);
+	auto ent = Entities::try_get<Entities::scene_component>(current_entt_object);
 	ent->size = start_mouse_position_absolute - last_mouse_position_absolute;
 
 	Math::FVec2 try_pos = start_mouse_position_absolute;
@@ -66,7 +66,7 @@ void editor::object::update_fake()
 
 void editor::object::make_phys()
 {
-	auto ent = entities::try_get<entities::scene_component>(current_entt_object);
+	auto ent = Entities::try_get<Entities::scene_component>(current_entt_object);
 
 	Math::FVec2 start_world = Camera::screen_to_world(start_mouse_position_absolute);
 	Math::FVec2 last_world = Camera::screen_to_world(last_mouse_position_absolute);
@@ -81,5 +81,5 @@ void editor::object::make_phys()
 	world_pos.y = std::max(start_mouse_position_absolute.y, last_mouse_position_absolute.y);
 	world_pos = Camera::screen_to_world(world_pos);
 
-	entities::AddPhysBody(current_entt_object, {}, world_pos + half_size, half_size);
+	Entities::AddPhysBody(current_entt_object, {}, world_pos + half_size, half_size);
 }

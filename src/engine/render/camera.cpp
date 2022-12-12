@@ -31,11 +31,11 @@ void Camera::Tick(float dt)
 	
 	if (attached) 
 	{
-		if (!entities::IsValid(attached_entity)) 
+		if (!Entities::IsValid(attached_entity)) 
 		{
 			detach();
 		} else {
-			cam_center = entities::get_position(attached_entity);
+			cam_center = Entities::get_position(attached_entity);
 		}
 	}
     

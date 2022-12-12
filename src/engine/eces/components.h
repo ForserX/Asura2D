@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Asura::entities
+namespace Asura::Entities
 {
-	// non-serializable, created for scheduled entities destroying
+	// non-serializable, created for scheduled Entities destroying
 	struct garbage_flag
 	{
 		static constexpr net::flag_t flag = 1 << 0;
@@ -14,7 +14,7 @@ namespace Asura::entities
 		static constexpr net::flag_t flag = 1 << 1;
 	};
 	
-	// non-serializable, created for engine/base game entities, which requirement is to be stable 
+	// non-serializable, created for engine/base game Entities, which requirement is to be stable 
 	struct dont_free_after_reset_flag
 	{
 		static constexpr net::flag_t flag = 1 << 2;
@@ -82,8 +82,8 @@ namespace Asura::entities
 }
 
 // Don't forget to add this defines in game code
-VISITABLE_STRUCT(Asura::entities::draw_color_component, color);
-VISITABLE_STRUCT(Asura::entities::draw_gradient_component, first_color, second_color);
-VISITABLE_STRUCT(Asura::entities::draw_texture_component, texture_resource);
-VISITABLE_STRUCT(Asura::entities::scene_component, size, Transform);
-VISITABLE_STRUCT(Asura::entities::camera_component, cam_zoom, cam_transform);
+VISITABLE_STRUCT(Asura::Entities::draw_color_component, color);
+VISITABLE_STRUCT(Asura::Entities::draw_gradient_component, first_color, second_color);
+VISITABLE_STRUCT(Asura::Entities::draw_texture_component, texture_resource);
+VISITABLE_STRUCT(Asura::Entities::scene_component, size, Transform);
+VISITABLE_STRUCT(Asura::Entities::camera_component, cam_zoom, cam_transform);

@@ -105,7 +105,7 @@ void Render::Destroy()
 void Render::Tick(float dt)
 {
 	OPTICK_EVENT("Render Destroy")
-	OPTICK_CATEGORY("systems Destroy", Optick::Category::Rendering)
+	OPTICK_CATEGORY("Systems Destroy", Optick::Category::Rendering)
 	static float clear_color[] = { 0.f, 0.f, 0.f, 1.f };
 
 	{

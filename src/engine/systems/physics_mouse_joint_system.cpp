@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 
-using namespace Asura::systems;
+using namespace Asura::Systems;
 
 void
 physics_mouse_joint_system::Init()

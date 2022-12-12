@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Asura::entities
+namespace Asura::Entities
 {
 	namespace internal
 	{

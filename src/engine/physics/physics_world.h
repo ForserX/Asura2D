@@ -7,7 +7,7 @@ namespace Asura
 	
 	namespace Physics
 	{
-		class world
+		class PhysicsWorld
 		{
 		private:
 			bool enable_thread = false;
@@ -26,31 +26,31 @@ namespace Asura
 
 		private:
 			void destroy_all_bodies();
-			void pre_tick();
-			void internal_tick(float dt);
-            Math::FRect get_real_body_rect(b2Body* body);
+			void PreTick();
+			void InternalTick(float dt);
+            Math::FRect GetRealBodyRect(b2Body* body);
 			
 		public:
-			world();
-			~world();
+			PhysicsWorld();
+			~PhysicsWorld();
 
-			void start();
+			void Start();
 			void Init();
 			void Destroy();
 			void Tick(float dt);
 			
 			b2World& GetWorld() const;
-			b2Body* get_ground() const;
+			b2Body* GetGround() const;
 
 			void DestroyWorld();
 		
 		public:
-			Math::FRect get_body_rect(const PhysicsBody* body);
+			Math::FRect GetBodyRect(const PhysicsBody* body);
 			
 		public:
-			PhysicsBody* schedule_creation(body_parameters parameters);
-			PhysicsJoint* schedule_creation(joint_data&& parameters);
-			void schedule_free(PhysicsBody* body);
+			PhysicsBody* SafeCreation(body_parameters parameters);
+			PhysicsJoint* SafeCreation(joint_data&& parameters);
+			void SafeFree(PhysicsBody* body);
 		};
 	}
 }

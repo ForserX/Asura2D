@@ -6,10 +6,10 @@ using namespace Asura;
 void game::Init()
 {
 	Physics::Init();
-	systems::pre_init();
-	systems::Init();
-	entities::Init();
-	level::Init();
+	Systems::pre_init();
+	Systems::Init();
+	Entities::Init();
+	Level::Init();
 
 	editor::Init();
 
@@ -20,20 +20,20 @@ void game::Destroy()
 {
 	editor::Destroy();
 
-	level::Destroy();
-	entities::Destroy();
-	systems::Destroy();
+	Level::Destroy();
+	Entities::Destroy();
+	Systems::Destroy();
 	Physics::Destroy();
 }
 
 void game::Tick(float dt)
 {
 	OPTICK_EVENT("game Destroy");
-	OPTICK_CATEGORY("systems Destroy", Optick::Category::GameLogic);
+	OPTICK_CATEGORY("Systems Destroy", Optick::Category::GameLogic);
 	
 	{
-		OPTICK_EVENT("systems pre Destroy");
-		systems::pre_tick(dt);
+		OPTICK_EVENT("Systems pre Destroy");
+		Systems::pre_tick(dt);
 	}
 
 	{
@@ -47,18 +47,18 @@ void game::Tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("systems Destroy");
-		systems::Tick(dt);
+		OPTICK_EVENT("Systems Destroy");
+		Systems::Tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("entities Destroy");
-		entities::Tick(dt);
+		OPTICK_EVENT("Entities Destroy");
+		Entities::Tick(dt);
 	}
 
 	{
-		OPTICK_EVENT("systems post Destroy");
-		systems::post_tick(dt);
+		OPTICK_EVENT("Systems post Destroy");
+		Systems::post_tick(dt);
 	}
 }
 

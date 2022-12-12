@@ -2,10 +2,10 @@
 
 using namespace Asura;
 
-std::unique_ptr<ui::Console> console;
+std::unique_ptr<UI::Console> console;
 input::on_key_change console_key_change;
 
-using ui::Console;
+using UI::Console;
 
 Console::Console()
 {
@@ -322,7 +322,7 @@ void Console::ExecCommand(const char* command_line)
 
 int Console::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 {
-    auto* Console = static_cast<ui::Console*>(data->UserData);
+    auto* Console = static_cast<UI::Console*>(data->UserData);
     return Console->TextEditCallback(data);
 }
 
@@ -450,7 +450,7 @@ void Console::flush()
     {
         if (hint.length() > 0)
         {
-            cfg << cmd << " " << ui::GetCmdInt(cmd) << std::endl;
+            cfg << cmd << " " << UI::GetCmdInt(cmd) << std::endl;
         }
     }
 }

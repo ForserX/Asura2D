@@ -27,12 +27,12 @@ void gameplay::holder::free::Tick()
 
         if (joint_contact_body == nullptr) 
         {
-            joint_contact_body = Physics::hit_test(mouse_position_absolute);
+            joint_contact_body = Physics::HitTest(mouse_position_absolute);
             joint_contact_point = mouse_position_absolute;
         } 
         else 
         {
-            const Physics::PhysicsBody* test_body = Physics::hit_test(mouse_position_absolute);
+            const Physics::PhysicsBody* test_body = Physics::HitTest(mouse_position_absolute);
             if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != Physics::body_type::ph_static)
             {
                 constexpr float frequency_hz = 5.0f;
@@ -61,7 +61,7 @@ void gameplay::holder::free::Tick()
 
         if (current_contol_joint == nullptr) 
         {
-            current_contol_body = Physics::hit_test(mouse_position_absolute);
+            current_contol_body = Physics::HitTest(mouse_position_absolute);
 
             if (current_contol_body != nullptr && current_contol_body->get_body_type() != Physics::body_type::ph_static)
             {
@@ -78,7 +78,7 @@ void gameplay::holder::free::Tick()
                 constexpr float damping_ratio = 1.f;
                 b2MouseJointDef jd;
 
-                jd.bodyA = Physics::get_ground()->get_body();
+                jd.bodyA = Physics::GetGround()->get_body();
                 jd.bodyB = current_contol_body->get_body();
                 jd.target = mouse_position_absolute;
                 jd.maxForce = 1000.0f * current_contol_body->get_body()->GetMass();

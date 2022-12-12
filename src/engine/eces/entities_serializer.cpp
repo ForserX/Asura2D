@@ -18,7 +18,7 @@ auto try_to_serialize = [](stl::string_view state_name)
 	path.append(state_name);
 
 	entities_data.second.clear();
-	entities::internal::serialize(entities_data);
+	Entities::internal::serialize(entities_data);
 	FileSystem::write_file(path, entities_data);
 };
 
@@ -29,7 +29,7 @@ auto try_to_deserialize = [](stl::string_view state_name)
 
 	entities_data.second.clear();
 	FileSystem::read_file(path, entities_data);
-	entities::internal::deserialize(entities_data);
+	Entities::internal::deserialize(entities_data);
 };
 
 auto try_to_string_serialize = [](stl::string_view state_name)
@@ -38,7 +38,7 @@ auto try_to_string_serialize = [](stl::string_view state_name)
 	path.append(state_name);
 
 	entities_string_data.clear();
-	entities::internal::string_serialize(entities_string_data);
+	Entities::internal::string_serialize(entities_string_data);
 
 	CfgParser parser;
 	parser.swap(entities_string_data);
@@ -54,7 +54,7 @@ auto try_to_string_deserialize = [](stl::string_view state_name)
 	CfgParser parser;
 	parser.load(path);
 
-	entities::internal::string_deserialize(parser.get_data());
+	Entities::internal::string_deserialize(parser.get_data());
 };
 
 
@@ -71,7 +71,7 @@ void deserialize_entity_component(stl::stream_vector& data, entt::registry& reg,
 			Component component = {};
 			if constexpr (stl::is_custom_serialize_v<Component>) 
 			{
-				entities::custom_serializer<Component>::deserialize(component, data);
+				Entities::custom_serializer<Component>::deserialize(component, data);
 			} 
 			else 
 			{
@@ -90,7 +90,7 @@ void deserialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::
 	{
 		if (desc.flags & Component::flag)
 		{
-			entities::add_field<Component>(ent);
+			Entities::add_field<Component>(ent);
 		}
 	}
 }
@@ -98,11 +98,11 @@ void deserialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::
 template<typename... Args>
 void deserialize_entity(stl::stream_vector& data)
 {
-	auto& reg = entities::internal::get_registry().get();
+	auto& reg = Entities::internal::get_registry().get();
 	entity_desc desc = {};
 	stl::read_memory(data, desc);
 
-	entity_view ent = entities::Create();
+	entity_view ent = Entities::Create();
 	(deserialize_entity_flag<Args>(data, desc, reg, ent.get()), ...);
 
 	for (int32_t i = 0; i < desc.components_count; i++)
@@ -131,10 +131,10 @@ void serialize_entity_component(stl::stream_vector& data, entt::registry& reg, e
 			{
 				if constexpr (stl::is_custom_serialize_v<Component>) 
 				{
-					if (entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) 
+					if (Entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) 
 					{
 						stl::push_memory(data, id);
-						entities::custom_serializer<Component>::serialize(*value_ptr, data);
+						Entities::custom_serializer<Component>::serialize(*value_ptr, data);
 					}
 				} 
 				else
@@ -163,8 +163,8 @@ void serialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::re
 template<typename... Args>
 void serialize_entity(stl::stream_vector& data, entt::entity ent)
 {
-	auto& reg = entities::internal::get_registry().get();
-	if (!entities::IsValid(ent) || !reg.any_of<Args...>(ent)) 
+	auto& reg = Entities::internal::get_registry().get();
+	if (!Entities::IsValid(ent) || !reg.any_of<Args...>(ent)) 
 	{
 		return;
 	}
@@ -187,7 +187,7 @@ void serialize_entity(stl::stream_vector& data, entt::entity ent)
 template<typename Component>
 void string_serialize_entity_component(stl::string_map& data, entity_desc& desc, stl::vector<entt::id_type>& components, entt::entity ent)
 {
-	const auto& reg = entities::internal::get_registry().get();
+	const auto& reg = Entities::internal::get_registry().get();
 
 	if (reg.all_of<Component>(ent)) 
 	{
@@ -206,9 +206,9 @@ void string_serialize_entity_component(stl::string_map& data, entity_desc& desc,
 				components.push_back(id);
 				if constexpr (stl::is_custom_serialize_v<Component>) 
 				{
-					if (entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) 
+					if (Entities::custom_serializer<Component>::can_serialize_now(*value_ptr)) 
 					{
-						entities::custom_serializer<Component>::string_serialize(*value_ptr, data);
+						Entities::custom_serializer<Component>::string_serialize(*value_ptr, data);
 					}
 				}
 				else 
@@ -229,8 +229,8 @@ void string_serialize_entity_component(stl::string_map& data, entity_desc& desc,
 template<typename... Args>
 void string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 {
-	const auto& reg = entities::internal::get_registry().get();
-	if (!entities::IsValid(ent) || !reg.any_of<Args...>(ent)) 
+	const auto& reg = Entities::internal::get_registry().get();
+	if (!Entities::IsValid(ent) || !reg.any_of<Args...>(ent)) 
 	{
 		return;
 	}
@@ -258,7 +258,7 @@ void string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 ///////////////////////////////////////////////////////////
 // Namespace members
 ///////////////////////////////////////////////////////////
-void entities::deserialize_state(stl::string_view state_name)
+void Entities::deserialize_state(stl::string_view state_name)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [state_name]() 
 		{
@@ -271,7 +271,7 @@ void entities::deserialize_state(stl::string_view state_name)
 	});
 }
 
-void entities::serialize_state(stl::string_view state_name)
+void Entities::serialize_state(stl::string_view state_name)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [state_name]()
 	{
@@ -285,7 +285,7 @@ void entities::serialize_state(stl::string_view state_name)
 	});
 }
 
-void entities::string_serialize_state(stl::string_view state_name)
+void Entities::string_serialize_state(stl::string_view state_name)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [state_name]()
 	{
@@ -299,7 +299,7 @@ void entities::string_serialize_state(stl::string_view state_name)
 	});
 }
 
-void entities::string_deserialize_state(stl::string_view state_name)
+void Entities::string_deserialize_state(stl::string_view state_name)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [state_name]()
 	{
@@ -313,14 +313,14 @@ void entities::string_deserialize_state(stl::string_view state_name)
 	});
 }
 
-const std::chrono::nanoseconds& entities::get_last_serialize_time()
+const std::chrono::nanoseconds& Entities::get_last_serialize_time()
 {
 	return entities_serilaize_last_time;
 }
 
-void entities::internal::serialize(stl::stream_vector& data)
+void Entities::internal::serialize(stl::stream_vector& data)
 {
-	OPTICK_EVENT("entities serializer");
+	OPTICK_EVENT("Entities serializer");
 	const auto& reg = get_registry().get();
 	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
 	uint32_t entities_count = reg.size() - ent_view.size_hint();
@@ -341,7 +341,7 @@ void entities::internal::serialize(stl::stream_vector& data)
 	}
 }
 
-void entities::serialize(stl::stream_vector& data)
+void Entities::serialize(stl::stream_vector& data)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [&data]()
 	{
@@ -355,9 +355,9 @@ void entities::serialize(stl::stream_vector& data)
 	});
 }
 
-void entities::internal::deserialize(stl::stream_vector& data)
+void Entities::internal::deserialize(stl::stream_vector& data)
 {
-	OPTICK_EVENT("entities deserializer");
+	OPTICK_EVENT("Entities deserializer");
 
 	free();
 	clear();
@@ -373,9 +373,9 @@ void entities::internal::deserialize(stl::stream_vector& data)
 	}
 }
 
-void entities::internal::string_serialize(stl::tree_string_map& data)
+void Entities::internal::string_serialize(stl::tree_string_map& data)
 {
-	OPTICK_EVENT("entities string serializer");
+	OPTICK_EVENT("Entities string serializer");
 
 	const auto& reg = get_registry().get();
 	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
@@ -392,12 +392,12 @@ void entities::internal::string_serialize(stl::tree_string_map& data)
 	}
 }
 
-void entities::internal::string_deserialize(const stl::tree_string_map& data)
+void Entities::internal::string_deserialize(const stl::tree_string_map& data)
 {
-	OPTICK_EVENT("entities string deserializer");
+	OPTICK_EVENT("Entities string deserializer");
 }
 
-void entities::deserialize(stl::stream_vector& data)
+void Entities::deserialize(stl::stream_vector& data)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [&data]() 
 	{
@@ -411,7 +411,7 @@ void entities::deserialize(stl::stream_vector& data)
 	});
 }
 
-void entities::string_serialize(stl::tree_string_map& data)
+void Entities::string_serialize(stl::tree_string_map& data)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [&data]() 
 	{
@@ -426,7 +426,7 @@ void entities::string_serialize(stl::tree_string_map& data)
 }
 
 void 
-entities::string_deserialize(const stl::tree_string_map& data)
+Entities::string_deserialize(const stl::tree_string_map& data)
 {
 	Scheduler::schedule(Scheduler::entity_serializator, [&data]() 
 	{

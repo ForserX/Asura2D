@@ -4,7 +4,7 @@ using namespace Asura;
 std::filesystem::path path_level = {};
 stl::vector<entity_view> ent_list = {};
 
-namespace Asura::level
+namespace Asura::Level::internal
 {
     CfgParser level_data = {};
 
@@ -20,10 +20,11 @@ namespace Asura::level
 		// сука, это нужно будет переделать
 		for (const auto &[section, kv] : level_data.get_data()) 
 		{
-			if (section == "background") {
-				auto background_ent = ent_list.emplace_back(entities::AddTexture(entities::Create(), level_data.get<stl::string_view>(section, "path")));
-				entities::add_field<entities::background_flag>(background_ent);
-                entities::add_field<entities::scene_component>(background_ent);
+			if (section == "background") 
+			{
+				auto background_ent = ent_list.emplace_back(Entities::AddTexture(Entities::Create(), level_data.get<stl::string_view>(section, "path")));
+				Entities::add_field<Entities::background_flag>(background_ent);
+                Entities::add_field<Entities::scene_component>(background_ent);
 				continue;
 			}
 			
@@ -44,8 +45,8 @@ namespace Asura::level
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
 			auto ent = ent_list.emplace_back(
-				entities::AddPhysBody(
-					entities::Create(),
+				Entities::AddPhysBody(
+					Entities::Create(),
 					{},
 					{ level_x, level_y },
 					{ level_w, level_h },
@@ -55,14 +56,15 @@ namespace Asura::level
 				)
 			);
 
-			if (is_drawable) {
-				entities::add_field<entities::drawable_flag>(ent);
+			if (is_drawable) 
+			{
+				Entities::add_field<Entities::drawable_flag>(ent);
 			}
 		}
 	};
 };
 
-void Asura::level::Init()
+void Asura::Level::Init()
 {
 	path_level = FileSystem::get_content_dir();
 	path_level.append("level");
@@ -71,14 +73,14 @@ void Asura::level::Init()
 
 	for (auto& dir_iter : std::filesystem::directory_iterator{ path_level })
 	{
-		load(dir_iter);
+		internal::load(dir_iter);
 	}
 }
 
-void Asura::level::Tick(float dt)
+void Asura::Level::Tick(float dt)
 {
 }
 
-void Asura::level::Destroy()
+void Asura::Level::Destroy()
 {
 }

@@ -10,13 +10,13 @@ void graphics::Init()
 	window_style = theme::style::dark;
 	theme::change();
 	
-	ui::Init();
+	UI::Init();
 	Camera::Init();
 }
 
 void graphics::Destroy()
 {
-	ui::Destroy();
+	UI::Destroy();
 }
 
 void graphics::draw_convex_poly_filled(
@@ -157,8 +157,8 @@ void graphics::draw_rect(
 void graphics::draw_background(ResourcesManager::id_t resource_id)
 {
 	OPTICK_EVENT("graphics draw background");
-	const int64_t width = ui::GetCmdInt("window_width");
-	const int64_t height = ui::GetCmdInt("window_height");
+	const int64_t width = UI::GetCmdInt("window_width");
+	const int64_t height = UI::GetCmdInt("window_height");
     const ImTextureID texture_id = Render::GetTexture(resource_id);
 
     if (texture_id != nullptr) 
@@ -209,18 +209,18 @@ void graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
 void graphics::Tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
-	ImGui::SetNextWindowSize({ static_cast<float>(ui::GetCmdInt("window_width")), static_cast<float>(ui::GetCmdInt("window_height")) });
+	ImGui::SetNextWindowSize({ static_cast<float>(UI::GetCmdInt("window_width")), static_cast<float>(UI::GetCmdInt("window_height")) });
 	
 	draw(dt);
 	
-	ui::Tick(dt);
+	UI::Tick(dt);
 	Camera::Tick(dt);
 }
 
 void graphics::draw(float dt)
 {
 	OPTICK_EVENT("scene draw")
-	systems::draw_tick(dt);
+	Systems::draw_tick(dt);
 }
 
 void graphics::theme::change()

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Asura::ui
+namespace Asura::UI
 {
     struct Console
     {

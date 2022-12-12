@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Asura::entities
+namespace Asura::Entities
 {
 	namespace internal
 	{
@@ -46,7 +46,7 @@ namespace Asura::entities
 
 		static void deserialize(physics_body_component& comp, stl::stream_vector& data)
 		{
-			comp.body = Physics::schedule_creation(Physics::body_parameters(data));
+			comp.body = Physics::SafeCreation(Physics::body_parameters(data));
 		}
 
 		static void string_serialize(const physics_body_component& comp, stl::string_map& data)
@@ -57,23 +57,23 @@ namespace Asura::entities
 
 		static void string_deserialize(physics_body_component& comp, stl::string_map& data)
 		{
-			comp.body = Physics::schedule_creation(Physics::body_parameters(data));
+			comp.body = Physics::SafeCreation(Physics::body_parameters(data));
 		}
 	};
 }
 
 #define DECLARE_SERIALIZABLE_FLAGS \
-    Asura::entities::background_flag, \
-    Asura::entities::drawable_flag, \
-    Asura::entities::level_flag, \
+    Asura::Entities::background_flag, \
+    Asura::Entities::drawable_flag, \
+    Asura::Entities::level_flag, \
 	DECLARE_GAME_SERIALIZABLE_FLAGS
 
 #define DECLARE_SERIALIZABLE_TYPES \
-    Asura::entities::draw_color_component, \
-    Asura::entities::draw_gradient_component, \
-    Asura::entities::draw_texture_component, \
-    Asura::entities::scene_component, \
-    Asura::entities::physics_body_component \
+    Asura::Entities::draw_color_component, \
+    Asura::Entities::draw_gradient_component, \
+    Asura::Entities::draw_texture_component, \
+    Asura::Entities::scene_component, \
+    Asura::Entities::physics_body_component \
 	DECLARE_GAME_SERIALIZABLE_TYPES
 
 #define DECLARE_SERIALIZABLE_ENTITY_TYPES \
@@ -81,9 +81,9 @@ namespace Asura::entities
     DECLARE_SERIALIZABLE_TYPES
 
 #define DECLARE_NON_SERIALIZABLE_TYPES \
-    Asura::entities::garbage_flag, \
-    Asura::entities::non_serializable_flag, \
-    Asura::entities::dont_free_after_reset_flag \
+    Asura::Entities::garbage_flag, \
+    Asura::Entities::non_serializable_flag, \
+    Asura::Entities::dont_free_after_reset_flag \
 	DECLARE_GAME_NON_SERIALIZABLE_ENTITY_TYPES
 
 #define DECLARE_ENTITIES_TYPES \

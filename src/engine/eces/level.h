@@ -1,6 +1,6 @@
 #pragma once 
 
-namespace Asura::level
+namespace Asura::Level
 {
 	void Init();
 	void Tick(float dt);

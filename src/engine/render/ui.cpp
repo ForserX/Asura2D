@@ -7,7 +7,7 @@ bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;
 
-void ui::Init()
+void UI::Init()
 {
     std::filesystem::path font_dir = FileSystem::get_content_dir();
     font_dir.append("fonts").append("RobotoMono-Regular.ttf");
@@ -16,13 +16,13 @@ void ui::Init()
     io.Fonts->AddFontFromFileTTF(font_dir.generic_string().c_str(), 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
 }
 
-void ui::Tick(float dt)
+void UI::Tick(float dt)
 {
-    OPTICK_EVENT("ui draw");
+    OPTICK_EVENT("UI draw");
 
     if (ark_editor_mode)
     {
-        editor::ui::Destroy();
+        editor::UI::Destroy();
         return;
     }
 
@@ -42,7 +42,7 @@ void ui::Tick(float dt)
     static bool stat_enable = false;
     Math::FVec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
     if (show_console) {
-		OPTICK_EVENT("ui Console draw")
+		OPTICK_EVENT("UI Console draw")
         ::console->draw(dt, "Arkane Console", &show_console);
     } 
     else 
@@ -69,7 +69,7 @@ void ui::Tick(float dt)
                 const float real_scheduler_tps = 1.f / scheduler_real_delta;
                 const float real_scheduler_ms = scheduler_real_delta * 1000.f;
                 
-                const auto& registry = entities::internal::get_registry().get();
+                const auto& registry = Entities::internal::get_registry().get();
                 ImGui::Checkbox("Engine statistics", &stat_enable);
                 ImGui::Checkbox("Debug draw", &physical_debug_draw);
                 ImGui::Checkbox("Paused", &paused);
@@ -166,36 +166,36 @@ void ui::Tick(float dt)
                 }
 
                 if (ImGui::BeginMenu("Entities")) {
-                    if (ImGui::MenuItem("Destroy all entities"))
+                    if (ImGui::MenuItem("Destroy all Entities"))
                     {
-                        entities::free();
+                        Entities::free();
                     }
 
-                    if (ImGui::MenuItem("Clear all entities")) 
+                    if (ImGui::MenuItem("Clear all Entities")) 
                     {
-                        entities::clear();
+                        Entities::clear();
                     }
 
                     ImGui::Separator();
 
                     if (ImGui::MenuItem("Serialize game state")) 
                     {
-                        entities::serialize_state("debug_game_state.bin");
+                        Entities::serialize_state("debug_game_state.bin");
                     }
 
                     if (ImGui::MenuItem("Deserialize game state")) 
                     {
-                        entities::deserialize_state("debug_game_state.bin");
+                        Entities::deserialize_state("debug_game_state.bin");
                     }
 
                     if (ImGui::MenuItem("String serialize game state")) 
                     {
-                        entities::string_serialize_state("string_debug_game_state.ini");
+                        Entities::string_serialize_state("string_debug_game_state.ini");
                     }
 
                     if (ImGui::MenuItem("String deserialize game state")) 
                     {
-                        entities::string_deserialize_state("string_debug_game_state.ini");
+                        Entities::string_deserialize_state("string_debug_game_state.ini");
                     }
 
                     ImGui::EndMenu();
@@ -227,11 +227,11 @@ void ui::Tick(float dt)
                  static entt::entity inspected_entity = entt::null;
                  if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
                  {
-                     auto phys_body = Physics::hit_test(Camera::screen_to_world(cursor_pos));
+                     auto phys_body = Physics::HitTest(Camera::screen_to_world(cursor_pos));
 
                      if (phys_body != nullptr) 
                      {
-                         inspected_entity = entities::GetEntityByBbody(phys_body->get_body()).get();
+                         inspected_entity = Entities::GetEntityByBbody(phys_body->get_body()).get();
                      } 
                      else 
                      {
@@ -245,7 +245,7 @@ void ui::Tick(float dt)
     }
 
     auto current_ms_time = std::chrono::steady_clock::now().time_since_epoch().count() / 1000000;
-    if (current_ms_time < (entities::get_last_serialize_time().count() / 1000000) + 2000) 
+    if (current_ms_time < (Entities::get_last_serialize_time().count() / 1000000) + 2000) 
     {
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 325, 8), ImColor(1.f, 1.f, 1.f), "Serialization/Deserialization complete");
     } 
@@ -256,7 +256,7 @@ void ui::Tick(float dt)
 #endif
 }
 
-int64_t ui::GetCmdInt(stl::string_view str)
+int64_t UI::GetCmdInt(stl::string_view str)
 {
     if (str == "window_fullscreen") 
     {
@@ -301,12 +301,12 @@ int64_t ui::GetCmdInt(stl::string_view str)
     return -1;
 }
 
-void ui::push_console_string(stl::string_view str)
+void UI::push_console_string(stl::string_view str)
 {
     ::console->push_log_item(str);
 }
 
-void ui::Destroy()
+void UI::Destroy()
 {
     ::console->flush();
     ::console->clear_log();

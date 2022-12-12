@@ -23,9 +23,9 @@ void scene::Tick(float dt)
 
 void scene::close_scene()
 {
-	auto scene_entities = entities::get_view<entities::scene_component>();
+	auto scene_entities = Entities::get_view<Entities::scene_component>();
 	for (auto ent : scene_entities) {
-		entities::MarkAsGarbage(ent);
+		Entities::MarkAsGarbage(ent);
 	}
 }
 
@@ -38,7 +38,7 @@ void scene::import_scene(std::string_view scene_name)
 	game_assert(std::filesystem::exists(scene_path), "Can't find scene", return);
 	section_parser.load(scene_path);
 
-	//entities::string_deserialize(section_parser.get_data());
+	//Entities::string_deserialize(section_parser.get_data());
 }
 
 void scene::export_scene(std::string_view scene_name)
@@ -48,7 +48,7 @@ void scene::export_scene(std::string_view scene_name)
 	scene_path.append(scene_name);
 
 	stl::tree_string_map scene_map;
-	//entities::string_serialize(scene_map);
+	//Entities::string_serialize(scene_map);
 
 	//section_parser = std::move(CfgParser(std::move(scene_map), section_parser.get_count()));
 	//section_parser.save(scene_path);

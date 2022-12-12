@@ -2,12 +2,12 @@
 
 using namespace Asura;
 
-Physics::world game_world = {};
+Physics::PhysicsWorld game_world = {};
 Physics::PhysicsBody* ground_base = nullptr;
 
-void Physics::start()
+void Physics::Start()
 {
-	game_world.start();
+	game_world.Start();
 }
 
 void Physics::Init()
@@ -30,34 +30,34 @@ void Physics::Tick(float dt)
 	game_world.Tick(dt);
 }
 
-Math::FRect Physics::get_body_rect(const PhysicsBody* body)
+Math::FRect Physics::GetBodyRect(const PhysicsBody* body)
 {
-	return game_world.get_body_rect(body);
+	return game_world.GetBodyRect(body);
 }
 
-Physics::PhysicsBody* Physics::schedule_creation(body_parameters parameters)
+Physics::PhysicsBody* Physics::SafeCreation(body_parameters parameters)
 {
-	return game_world.schedule_creation(parameters);
+	return game_world.SafeCreation(parameters);
 }
 
-Physics::PhysicsJoint* Asura::Physics::schedule_creation(joint_data&& parameters)
+Physics::PhysicsJoint* Asura::Physics::SafeCreation(joint_data&& parameters)
 {
-	return game_world.schedule_creation(std::move(parameters));
+	return game_world.SafeCreation(std::move(parameters));
 }
 
-Physics::PhysicsBody* Physics::get_ground()
+Physics::PhysicsBody* Physics::GetGround()
 {
 	if (ground_base == nullptr)
 	{
-		ground_base = new PhysicsBody(game_world.get_ground());
+		ground_base = new PhysicsBody(game_world.GetGround());
 	}
 
 	return ground_base;
 }
 
-void Physics::schedule_free(PhysicsBody* body)
+void Physics::SafeFree(PhysicsBody* body)
 {
-	game_world.schedule_free(body);
+	game_world.SafeFree(body);
 }
 
 class QueryCallback : public b2QueryCallback
@@ -82,7 +82,7 @@ public:
 	b2Fixture* m_fixture = nullptr;
 };
 
-Physics::PhysicsBody* Physics::hit_test(Math::FVec2 pos)
+Physics::PhysicsBody* Physics::HitTest(Math::FVec2 pos)
 {	
 	// Make a small box.
 	b2AABB aabb = {};
@@ -99,8 +99,8 @@ Physics::PhysicsBody* Physics::hit_test(Math::FVec2 pos)
 	if (callback.m_fixture)
 	{
 		const b2Body* phys_body = callback.m_fixture->GetBody();
-		const auto entity = entities::GetEntityByBbody(phys_body);
-		const auto phys_comp = entities::try_get<entities::physics_body_component>(entity);
+		const auto entity = Entities::GetEntityByBbody(phys_body);
+		const auto phys_comp = Entities::try_get<Entities::physics_body_component>(entity);
 		if (phys_comp != nullptr) 
 		{
 			return phys_comp->body;

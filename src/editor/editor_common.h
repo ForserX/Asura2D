@@ -12,7 +12,7 @@ namespace Asura::editor
 		void make_phys();
 	}
 
-	namespace ui
+	namespace UI
 	{
 		void Destroy();
 	}

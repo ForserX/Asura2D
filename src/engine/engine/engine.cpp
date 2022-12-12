@@ -8,14 +8,14 @@ std::atomic_bool engine_ticking_now = {};
 
 void engine::start()
 {
-	Physics::start();
+	Physics::Start();
 }
 
 void engine::Init(int argc, char** argv)
 {
 	OPTICK_THREAD("Main thread");
     
-    console = std::make_unique<ui::Console>();
+    console = std::make_unique<UI::Console>();
     
     FileSystem::Init();
     Debug::Init();
@@ -24,7 +24,7 @@ void engine::Init(int argc, char** argv)
 	Debug::msg("initializing input system");
 
     console->Init();
-    Debug::msg("base systems inited. intializing other systems");
+    Debug::msg("base Systems inited. intializing other Systems");
     
 	Threads::Init();
     Debug::msg("initializing Threads system");
@@ -35,7 +35,7 @@ void engine::Init(int argc, char** argv)
     ResourcesManager::Init();
     Debug::msg("initializing resource system");
     
-	event::Init();
+	Event::Init();
     Debug::msg("initializing event system");
     
 	Render::Init();
@@ -53,7 +53,7 @@ void engine::Destroy()
 	game::Destroy();
 	Render::Destroy();
 	input::Destroy();
-	event::Destroy();
+	Event::Destroy();
     ResourcesManager::Destroy();
 	Scheduler::Destroy();
 	Threads::Destroy();

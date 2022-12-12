@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Asura::event
+namespace Asura::Event
 {
 	using parameter = std::variant<
  		std::monostate,
@@ -90,10 +90,10 @@ namespace Asura::event
 	void Tick();
 	void Destroy();
 
-	void create(stl::string_view name, int64_t parameters_count);
-	void remove(stl::string_view name);
+	void Create(stl::string_view name, int64_t parameters_count);
+	void Remove(stl::string_view name);
 
-	bool exists(stl::string_view name);
+	bool Exists(stl::string_view name);
 
 	namespace internal
 	{
@@ -132,7 +132,7 @@ namespace Asura::event
 	}
 		
 	template<std::size_t args_count>
-	auto subscribe(stl::string_view name, auto&& functor)
+	auto Subscribe(stl::string_view name, auto&& functor)
 	{
 		auto callback_delegate = internal::make_callback<args_count>(functor);
 		internal::subscribe(name, callback_delegate);
@@ -140,7 +140,7 @@ namespace Asura::event
 	}
 	
 	template<class... Args>
-	void trigger(stl::string_view name, Args... arguments)
+	void Trigger(stl::string_view name, Args... arguments)
 	{
 		constexpr size_t args_count = sizeof...(arguments);
 		internal::trigger(name, arguments...);

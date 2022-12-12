@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Asura::systems
+namespace Asura::Systems
 {
 	class physics_mouse_joint_system final : public system
 	{

@@ -2,29 +2,29 @@
 
 using namespace Asura;
 
-event::internal::event_callback_storage events = {};
+Event::internal::event_callback_storage events = {};
 
-void event::Init()
+void Event::Init()
 {
 }
 
-void event::Tick()
+void Event::Tick()
 {
 }
 
-void event::Destroy()
+void Event::Destroy()
 {
 }
 
-void event::create(stl::string_view name, int64_t parameters_count)
+void Event::Create(stl::string_view name, int64_t parameters_count)
 {
 	game_assert(parameters_count >= 0 && parameters_count <= internal::max_parameters_count, "invalid parameters count", return);
-	game_assert(!exists(name), "event already exists", return);
+	game_assert(!Exists(name), "event already exists", return);
 	
 	events[name.data()] = {};
 }
 
-void event::remove(stl::string_view name)
+void Event::Remove(stl::string_view name)
 {
 	if (events.contains(name.data()))
 	{
@@ -34,25 +34,25 @@ void event::remove(stl::string_view name)
 	game_assert(false, "event doesn't exist", return);
 }
 
-bool event::exists(stl::string_view name)
+bool Event::Exists(stl::string_view name)
 {
 	return events.contains(name.data());
 }
 
-void event::internal::subscribe(stl::string_view name, const callback& sub_callback)
+void Event::internal::subscribe(stl::string_view name, const callback& sub_callback)
 {
 	auto& subscribers = events[name.data()];
 	game_assert(!subscribers.contains(sub_callback), "callback already subscribed", return);
 	subscribers.insert(sub_callback);
 }
 
-void event::internal::unsubscribe(stl::string_view name, const callback& sub_callback)
+void Event::internal::unsubscribe(stl::string_view name, const callback& sub_callback)
 {
 	auto& subscribers = events[name.data()];
 	subscribers.erase(sub_callback);
 }
 
-void event::internal::trigger(stl::string_view name, parameter callback_parameter_1, parameter callback_parameter_2)
+void Event::internal::trigger(stl::string_view name, parameter callback_parameter_1, parameter callback_parameter_2)
 {
 	game_assert(events.contains(name.data()), "event doesn't exists", return);
 	const auto& subscribers = events[name.data()];

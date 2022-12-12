@@ -19,7 +19,7 @@ extern bool fullscreen_mode;
 
 // Console code
 extern bool show_console;
-extern std::unique_ptr<Asura::ui::Console> console;
+extern std::unique_ptr<Asura::UI::Console> console;
 
 // Camera code
 extern float cam_zoom;
@@ -28,3 +28,6 @@ extern float cam_zoom;
 extern SDL_Renderer* renderer;
 extern Asura::graphics::theme::style window_style;
 extern bool show_fps_counter;
+
+// Holders
+extern Asura::gameplay::holder_mode holder_type;

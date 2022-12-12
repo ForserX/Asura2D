@@ -2,7 +2,7 @@
 
 namespace Asura::Physics
 {
-	void start();
+	void Start();
 	void Init();
 	void Tick(float dt);
 	void Destroy();
@@ -10,12 +10,12 @@ namespace Asura::Physics
 	void DestroyWorld();
 
 	b2World& GetWorld();
-	PhysicsBody* get_ground();
+	PhysicsBody* GetGround();
 	
-    Math::FRect get_body_rect(const PhysicsBody* body);
-	PhysicsBody* schedule_creation(body_parameters parameters);
-	PhysicsJoint* schedule_creation(joint_data&& parameters);
-	void schedule_free(PhysicsBody* body);
+    Math::FRect GetBodyRect(const PhysicsBody* body);
+	PhysicsBody* SafeCreation(body_parameters parameters);
+	PhysicsJoint* SafeCreation(joint_data&& parameters);
+	void SafeFree(PhysicsBody* body);
 	
-	PhysicsBody* hit_test(Math::FVec2 pos);
+	PhysicsBody* HitTest(Math::FVec2 pos);
 }

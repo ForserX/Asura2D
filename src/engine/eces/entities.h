@@ -36,7 +36,7 @@ namespace Asura
 	};
 }
 
-namespace Asura::entities
+namespace Asura::Entities
 {
 	void Init();
 	void Destroy();

@@ -22,5 +22,5 @@ void Core::Destroy()
 
 int64_t Core::GetCmdInt(stl::string_view key)
 {
-    return ui::GetCmdInt(key);
+    return UI::GetCmdInt(key);
 }

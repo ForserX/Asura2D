@@ -28,7 +28,7 @@
 #include "game_components.h"
 
 #include "engine/eces/reflection.h"
-#include "engine/eces/entities.h"
+#include "engine/eces/Entities.h"
 #include "engine/eces/entities_helpers.h"
 #include "engine/eces/entities_serializer.h"
 
@@ -36,16 +36,16 @@
 #include "engine/eces/level.h"
 #include "engine/eces/scene.h"
 
-#include "engine/systems/systems.h"
-#include "engine/systems/network_system.h"
-#include "engine/systems/physics_scene_system.h"
-#include "engine/systems/physics_system.h"
-#include "engine/systems/physics_mouse_joint_system.h"
-#include "engine/systems/draw_system.h"
+#include "engine/Systems/Systems.h"
+#include "engine/Systems/network_system.h"
+#include "engine/Systems/physics_scene_system.h"
+#include "engine/Systems/physics_system.h"
+#include "engine/Systems/physics_mouse_joint_system.h"
+#include "engine/Systems/draw_system.h"
 
 #include "engine/Render/camera.h"
 #include "engine/Render/window.h"
-#include "engine/Render/ui.h"
+#include "engine/Render/UI.h"
 #include "engine/Render/graphics.h"
 #include "engine/Render/Render.h"
 

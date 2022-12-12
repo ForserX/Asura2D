@@ -30,7 +30,7 @@ namespace Asura
 	};
 }
 
-namespace Asura::systems
+namespace Asura::Systems
 {
 	enum class update_type
 	{

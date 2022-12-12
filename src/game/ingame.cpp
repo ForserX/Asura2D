@@ -1,6 +1,6 @@
 #include "ingame.h"
 
-using namespace Asura::systems;
+using namespace Asura::Systems;
 
 Asura::stl::vector<std::unique_ptr<Asura::system>> pre_game_update_systems;
 Asura::stl::vector<std::unique_ptr<Asura::system>> game_update_systems;
@@ -17,28 +17,34 @@ void ingame::pre_init()
 {
 	init_systems();
 
-	for (auto& system : pre_game_update_systems) {
+	for (auto& system : pre_game_update_systems) 
+	{
 		add_system(system.get(), update_type::pre_update_schedule);
 	}
 	
-	for (auto& system : game_update_systems) {
+	for (auto& system : game_update_systems) 
+	{
 		add_system(system.get(), update_type::update_schedule);
 	}
 
-	for (auto& system : post_game_update_systems) {
+	for (auto& system : post_game_update_systems) 
+	{
 		add_system(system.get(), update_type::post_update_schedule);
 	}
 
-	for (auto& system : game_physics_systems) {
+	for (auto& system : game_physics_systems) 
+	{
 		add_system(system.get(), update_type::physics_schedule);
 	}
 	
-	for (auto& system : game_draw_systems) {
+	for (auto& system : game_draw_systems) 
+	{
 		add_system(system.get(), update_type::draw_schedule);
 	}
 }
 
-auto camera_mouse_key_change = [](int16_t scan_code, Asura::input::key_state state) {
+auto camera_mouse_key_change = [](int16_t scan_code, Asura::input::key_state state)
+{
 	switch (scan_code) {
 	case SDL_SCANCODE_MOUSE_LEFT: {
         if (Asura::input::is_key_pressed(SDL_SCANCODE_LCTRL)) {
@@ -68,18 +74,22 @@ auto camera_mouse_key_change = [](int16_t scan_code, Asura::input::key_state sta
 };
 
 static bool editor = false;
-auto editor_key_change = [](int16_t scan_code, Asura::input::key_state state) {
+auto editor_key_change = [](int16_t scan_code, Asura::input::key_state state) 
+{
 	if (scan_code == SDL_SCANCODE_X)
 	{
-		if (state == Asura::input::key_state::press) {
+		if (state == Asura::input::key_state::press)
+		{
 			editor = !editor;
 			Asura::game::editor(editor);
 		}
 	}
 };
 
-auto camera_mouse_wheel_change = [](int16_t scan_code, float state) {
-	switch (scan_code) {
+auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
+{
+	switch (scan_code) 
+	{
 	case SDL_SCANCODE_MOUSEWHEEL:
 		Asura::Camera::zoom((-1.f * state) * 2.f);
 		break;
@@ -100,11 +110,11 @@ Asura::stl::vector<Asura::entity_view> circles;
 void ingame::init()
 {
 	using namespace Asura;
-	using namespace entities;
+	using namespace Entities;
 	
-#if 0
-	TestObject = add_phys_body(create(), {}, { 50, 50 }, { 20, 10 });
-	TestObject2 = add_phys_body(create(), {}, { 350, 100 }, { 200, 10 });
+#if 1
+	TestObject = AddPhysBody(Create(), {}, { 50, 50 }, { 20, 10 });
+	TestObject2 = AddPhysBody(Create(), {}, { 350, 100 }, { 200, 10 });
 
 	add_field<drawable_flag>(TestObject);
 	add_field<drawable_flag>(TestObject2);
@@ -115,12 +125,12 @@ void ingame::init()
 		std::uniform_real_distribution width_dist(260., 1300.);
 		std::uniform_real_distribution height_dist(260., 1300.);
 		const auto& ent = circles.emplace_back(
-			add_phys_body(
-				create(),
+			AddPhysBody(
+				Create(),
 				{},
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
 				{ 25, 25 },
-				physics::body_type::dynamic_body,
+				Physics::body_type::ph_dynamic,
 				material::shape::circle,
 				material::type::rubber
 			)
@@ -129,9 +139,9 @@ void ingame::init()
 		add_field<drawable_flag>(ent);
 	}
 
-#endif
+#else
 	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
-
+#endif
 	editor_key_event = Asura::input::subscribe_key_event(editor_key_change);
 	camera_mouse_key_event = Asura::input::subscribe_key_event(camera_mouse_key_change);
 	camera_camera_mouse_wheel_event = Asura::input::subscribe_input_event(camera_mouse_wheel_change);

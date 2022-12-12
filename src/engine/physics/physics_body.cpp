@@ -75,7 +75,7 @@ Math::FVec2 Physics::PhysicsBody::get_position() const
 Math::FRect Physics::PhysicsBody::get_rect() const
 {
 	// #TODO: OPTIMIZE
-	return Physics::get_body_rect(this);
+	return Physics::GetBodyRect(this);
 }
 
 Math::FVec2 Physics::PhysicsBody::get_mass_center() const

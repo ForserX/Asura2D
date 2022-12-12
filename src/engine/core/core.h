@@ -18,8 +18,8 @@ extern std::atomic_uint8_t serialization_state;
 enum entities_state : uint8_t
 {
 	idle,				// entity system doesn't do any work right now
-	reading,			// entity system reading entities state
-	writing,			// entity system writing entities state
+	reading,			// entity system reading Entities state
+	writing,			// entity system writing Entities state
 	cleaning_up,		// entity system cleaning up all this shit
 	viewing				// entity system waiting until other thread is doing his job
 };

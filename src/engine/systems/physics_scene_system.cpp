@@ -1,6 +1,6 @@
 #include "pch.h"
 
-using namespace Asura::systems;
+using namespace Asura::Systems;
 
 void physics_scene_system::Init()
 {
@@ -12,13 +12,13 @@ void physics_scene_system::Reset()
 
 void physics_scene_system::Tick(float dt)
 {
-    entities::access_view([]()
+    Entities::access_view([]()
     {
-        auto view = entities::get_view<entities::physics_body_component, entities::scene_component>();
+        auto view = Entities::get_view<Entities::physics_body_component, Entities::scene_component>();
 
-        view.each([](const entt::entity ent, entities::physics_body_component& phys_comp, entities::scene_component& scene_comp) 
+        view.each([](const entt::entity ent, Entities::physics_body_component& phys_comp, Entities::scene_component& scene_comp) 
         {
-            if (entities::IsValid(ent)) 
+            if (Entities::IsValid(ent)) 
             {
                 if (phys_comp.body != nullptr) 
                 {
