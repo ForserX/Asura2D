@@ -46,7 +46,7 @@ void Audio::DeviceXAudio2::Load(ResourcesManager::id_t sound_src)
 	std::filesystem::path FullPath = FileSystem::ContentDir();
 	FullPath.append(Res.Name);
 	
-	Audio->LoadSound(FullPath.generic_string().c_str());
+	Audio->LoadSound(ExtractPath(FullPath).data());
 	Audio->Play(false);
 }
 

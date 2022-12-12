@@ -122,17 +122,16 @@ const std::chrono::nanoseconds& ResourcesManager::LastUpdateTime()
     return last_update_time;
 }
 
-ResourcesManager::id_t ResourcesManager::Load(stl::string_view file_name)
+ResourcesManager::id_t ResourcesManager::Load(FileSystem::Path file_name)
 {
-    id_t resource_id = GetID(file_name);
+    id_t resource_id = GetID(file_name.generic_string().c_str());
     if (Exists(resource_id)) 
     {
         return resource_id;
     }
     
-    auto path = FileSystem::ContentDir();
-    path.append(file_name);
-    
+    auto path = FileSystem::ContentDir() / file_name;
+
     resource_state state = {};
     
     std::error_code error;

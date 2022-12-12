@@ -65,7 +65,7 @@ void Audio::DeviceOpenAL::Load(ResourcesManager::id_t sound_src)
 	FullPath.append(Res.Name);
 
 	al_trash::stream_audio_data& ref_data = *AudioData.emplace_back(new al_trash::stream_audio_data);
-	al_trash::create_stream_from_file(FullPath.generic_string().c_str(), ref_data);
+	al_trash::create_stream_from_file(ExtractPath(FullPath).data(), ref_data);
 	
 	al_trash::play_stream(ref_data);
 }
