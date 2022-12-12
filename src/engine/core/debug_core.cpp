@@ -142,7 +142,7 @@ void Asura::Debug::dbg_print(stl::string_view msg)
 #else
     if (dbg_atttached())
     {
-        OutputDebugString(message.data());
+        OutputDebugString(msg.data());
     }
 #endif
 }
