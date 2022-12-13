@@ -257,7 +257,9 @@ namespace Asura::Physics
 		void set_velocity(const Math::FVec2& new_vel);
 		void set_position(const Math::FVec2& new_pos);
 
-		void apply_impulse(const Math::FVec2& impulse);
+		bool IsFlying();
+
+		void ApplyImpulse(const Math::FVec2& impulse);
 		void apply_angular_impulse(float impulse);
 
 	public:

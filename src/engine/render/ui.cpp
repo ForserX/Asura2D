@@ -236,7 +236,7 @@ void UI::Tick(float dt)
 
                      if (phys_body != nullptr) 
                      {
-                         inspected_entity = Entities::GetEntityByBbody(phys_body->get_body()).Get();
+                         inspected_entity = Entities::GetEntityByBbody(phys_body->get_body());
                      } 
                      else 
                      {

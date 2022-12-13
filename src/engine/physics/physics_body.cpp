@@ -166,11 +166,37 @@ void Physics::PhysicsBody::set_position(const Math::FVec2& new_pos)
 	parameters.pos = new_pos;
 }
 
-void Physics::PhysicsBody::apply_impulse(const Math::FVec2& impulse)
+bool Asura::Physics::PhysicsBody::IsFlying()
+{
+	for (int i = 0; i < body->GetContactCount(); i++)
+	{
+		b2Contact* contact = body->GetContact(i);
+
+		if (contact->IsTouching())
+		{
+			b2Body* BodyA = contact->GetFixtureA()->GetBody();
+			b2Body* BodyB = contact->GetFixtureB()->GetBody();
+
+			if (BodyA == body)
+			{
+				return BodyA->GetPosition().y < BodyB->GetPosition().y;
+			}
+			else
+			{
+				return BodyA->GetPosition().y > BodyB->GetPosition().y;
+			}
+		}
+	}
+
+	return true;
+}
+
+void Physics::PhysicsBody::ApplyImpulse(const Math::FVec2& impulse)
 {
 	if (body != nullptr) 
 	{
-		body->ApplyLinearImpulseToCenter(impulse);
+		body->SetAwake(true);
+		body->ApplyLinearImpulse(impulse, body->GetWorldCenter());
 	}
 }
 

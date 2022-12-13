@@ -195,7 +195,8 @@ void Physics::PhysicsWorld::PreTick()
 			for (int i = 0; i < phys_body->GetContactCount(); i++)
 			{
 				const auto contact = phys_body->GetContact(i);
-				if (contact != nullptr) {
+				if (contact != nullptr) 
+				{
 					contacts.insert(contact);
 				}
 			}

@@ -2,6 +2,8 @@
 
 namespace Asura
 {
+	using EntityBase = entt::entity;
+
 	class Registry
 	{
 	private:
@@ -17,7 +19,7 @@ namespace Asura
 	class EntityView
 	{
 	private:
-		entt::entity ent;
+		EntityBase ent;
 		
 	public:
 		EntityView(entt::entity in_ent) : ent(in_ent) {}
@@ -25,7 +27,7 @@ namespace Asura
 		EntityView() : ent(entt::null) {}
 		~EntityView() = default;
 
-		const entt::entity& Get() const { return ent; }
+		const EntityBase& Get() const { return ent; }
 	};
 
 	struct entity_desc
@@ -51,7 +53,7 @@ namespace Asura::Entities
 	EntityView Create();
 	void MarkAsGarbage(const EntityView& ent);
 
-	EntityView GetEntityByBbody(const b2Body* body);
+	EntityBase GetEntityByBbody(const b2Body* body);
     const Math::FVec2& get_position(const EntityView& ent);
 
 	const EntityView& AddTexture(

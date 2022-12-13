@@ -34,12 +34,15 @@ void Camera::Tick(float dt)
 		if (!Entities::IsValid(attached_entity)) 
 		{
 			detach();
-		} else {
+		} 
+		else
+		{
 			cam_center = Entities::get_position(attached_entity);
 		}
 	}
     
-    if constexpr (test_world_transform) {
+    if constexpr (test_world_transform) 
+	{
         auto mouse_vec = Math::FVec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
         mouse_vec = world_to_screen(screen_to_world(mouse_vec));
         Math::FRect Rect = { Math::FVec2(mouse_vec.x - 10.f, mouse_vec.y - 10.f), Math::FVec2(mouse_vec.x + 10.f, mouse_vec.y + 10.f) };

@@ -143,7 +143,7 @@ const Math::FVec2& Entities::get_position(const EntityView& ent)
 	return no_pos;
 }
 
-EntityView Entities::GetEntityByBbody(const b2Body* body)
+EntityBase Entities::GetEntityByBbody(const b2Body* body)
 {
 	const auto view = get_view<physics_body_component>();
 
