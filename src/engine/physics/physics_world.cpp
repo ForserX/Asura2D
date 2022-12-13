@@ -182,7 +182,7 @@ void Physics::PhysicsWorld::PreTick()
 		}
 	}
 
-#ifdef ARKANE_BOX2D_OPTIMIZED
+#ifdef ASURA_BOX2D_OPTIMIZED
 	stl::hash_set<b2Contact*> contacts;
 	for (const auto body : scheduled_to_delete_bodies)
 	{
@@ -247,15 +247,6 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 		return;
 	}
 
-	{
-		OPTICK_EVENT("Physics Debug joints Destroy");
-		
-		if (gameplay::holder_type == gameplay::holder_mode::free) 
-		{
-			gameplay::holder::free::Tick();
-		}
-	}
-
 	for (int i = 0; i < target_steps_count; i++) 
 	{
 		OPTICK_EVENT("Physics step");
@@ -270,6 +261,15 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 	{
 		OPTICK_EVENT("Physics Systems Destroy");
 		Systems::physics_tick(dt);
+	}
+
+	{
+		OPTICK_EVENT("Physics Debug joints Destroy");
+
+		if (gameplay::holder_type == gameplay::holder_mode::free)
+		{
+			gameplay::holder::free::Tick();
+		}
 	}
 
 	const auto end_real_time = std::chrono::steady_clock::now().time_since_epoch();

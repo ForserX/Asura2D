@@ -54,7 +54,7 @@ Audio::DeviceOpenAL::~DeviceOpenAL()
 
 void Audio::DeviceOpenAL::Load(ResourcesManager::id_t sound_src)
 {
-	if (!al_work) 
+	if (!al_work)
 	{
 		return;
 	}
