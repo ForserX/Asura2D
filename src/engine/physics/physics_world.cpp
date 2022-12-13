@@ -129,11 +129,11 @@ void Physics::PhysicsWorld::Init()
 							begin_physics_time = std::chrono::steady_clock::now().time_since_epoch();
 							if (milliseconds_to_end > 5.f) 
 							{
-								std::this_thread::sleep_for(std::chrono::milliseconds(2));
+								Threads::Wait();
 							} 
 							else 
 							{
-								Threads::switch_context();
+								Threads::SwitchContext();
 							}
 						}
 					}
@@ -152,7 +152,7 @@ void Physics::PhysicsWorld::Destroy()
 	DestroyWorld();
 }
 
-void Physics::PhysicsWorld::destroy_all_bodies()
+void Physics::PhysicsWorld::DestroyAllBodies()
 {
 	// At this stage, we're calling destructor in our proxy bodies
 	for (const auto body : bodies)
@@ -345,7 +345,7 @@ void Physics::PhysicsWorld::DestroyWorld()
     physics_thread->join();
 	physics_thread.reset();
 
-	destroy_all_bodies();
+	DestroyAllBodies();
 	world_holder.reset();
 }
 

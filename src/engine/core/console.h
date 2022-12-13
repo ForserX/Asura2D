@@ -18,11 +18,11 @@ namespace Asura::UI
 
         ~Console();
 
-        void clear_log();
+        void ClearLog();
 
-        void push_log_item(stl::string_view str);
+        void PushLogItem(stl::string_view str);
         void draw(float dt, const char* title, bool* p_open);
-        void flush();
+        void Flush();
         void Init();
 
         void ExecCommand(const char* command_line);

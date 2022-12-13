@@ -71,8 +71,8 @@ void Render::Init()
 
 	ImGui_ImplSDLRenderer_Init(renderer);
 
-	graphics::Init();
-	graphics::theme::change();
+	Graphics::Init();
+	Graphics::theme::change();
 }
 
 void Render::init_vulkan()
@@ -89,7 +89,7 @@ void Render::init_vulkan()
 
 void Render::Destroy()
 {
-	graphics::Destroy();
+	Graphics::Destroy();
     
     for (auto [resource, texture] : textures_list)
 	{
@@ -117,8 +117,8 @@ void Render::Tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("graphics Destroy");
-		graphics::Tick(dt);
+		OPTICK_EVENT("Graphics Destroy");
+		Graphics::Tick(dt);
 	}
 
 	{
@@ -129,7 +129,7 @@ void Render::Tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("graphics present");
+		OPTICK_EVENT("Graphics present");
 		SDL_SetRenderDrawColor(
 			renderer,
 			static_cast<Uint8>(clear_color[0] * 255),

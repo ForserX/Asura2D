@@ -12,9 +12,9 @@ void physics_scene_system::Reset()
 
 void physics_scene_system::Tick(float dt)
 {
-    Entities::access_view([]()
+    Entities::AccessView([]()
     {
-        auto view = Entities::get_view<Entities::physics_body_component, Entities::scene_component>();
+        auto view = Entities::GetView<Entities::physics_body_component, Entities::scene_component>();
 
         view.each([](const entt::entity ent, Entities::physics_body_component& phys_comp, Entities::scene_component& scene_comp) 
         {

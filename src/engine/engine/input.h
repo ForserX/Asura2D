@@ -7,7 +7,7 @@
 #define SDL_SCANCODE_MOUSE_X2 SDL_SCANCODE_ENDCALL + SDL_BUTTON_X2
 #define SDL_SCANCODE_MOUSEWHEEL SDL_SCANCODE_ENDCALL + SDL_SCANCODE_MOUSE_X2 + 1
 
-namespace Asura::input
+namespace Asura::Input
 {
 	enum class mouse_key : int16_t
 	{
@@ -28,23 +28,23 @@ namespace Asura::input
 	void Destroy();
 	void Tick(float dt);
 
-	bool is_focused_on_ui();
+	bool IsFocusedUI();
 
 	// event window listeners
-	void update_key(int16_t scan_code, float state);
-	void update_mouse_pos(Math::IVec2 pos);
+	void UpdateKey(int16_t scan_code, float state);
+	void UpdateMousePos(Math::IVec2 pos);
 
 	// state checkers
-	bool is_key_pressed(int16_t scan_code);
-	Math::IVec2& get_mouse_pos();
-	Math::FVec2& get_mouse_delta();
+	bool IsKeyPressed(int16_t scan_code);
+	Math::IVec2& GetMousePos();
+	Math::FVec2& GetMouseDelta();
 
 	using on_key_change = fu2::function<void(int16_t scan_code, key_state state) const>;
 	using on_input_change = fu2::function<void(int16_t scan_code, float new_state) const>;
 	
-	const on_key_change& subscribe_key_event(const on_key_change& input_callback);
-	void unsubscribe_key_event(const on_key_change& input_callback);
+	const on_key_change& SubscribeKeyEvent(const on_key_change& input_callback);
+	void UnsubscribeKeyEvent(const on_key_change& input_callback);
 	
-	const on_input_change& subscribe_input_event(const on_input_change& input_callback);
-	void unsubscribe_input_event(const on_input_change& input_callback);
+	const on_input_change& SubscribeInputEvent(const on_input_change& input_callback);
+	void UnsubscribeInputEvent(const on_input_change& input_callback);
 }

@@ -16,9 +16,9 @@ void physics_system::Tick(float dt)
 {
 	OPTICK_EVENT("engine Physics system Destroy");
 
-	Entities::access_view([]() 
+	Entities::AccessView([]() 
 	{
-		const auto view = Entities::get_view<Entities::physics_body_component, Entities::scene_component>();
+		const auto view = Entities::GetView<Entities::physics_body_component, Entities::scene_component>();
 		view.each([](const entt::entity ent, Entities::physics_body_component& phys_comp, Entities::scene_component& scene_comp) 
 		{
 			if (Entities::IsValid(ent)) 

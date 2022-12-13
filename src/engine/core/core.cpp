@@ -10,10 +10,10 @@ std::atomic_uint8_t serialization_state = 0;
 
 void Core::Init()
 {
-	std::filesystem::path log_path = FileSystem::UserdataDir();
+	FileSystem::Path log_path = FileSystem::UserdataDir();
 	log_path.append("user.ini");
 
-	FileSystem::create_file(log_path);
+	FileSystem::CreateFile(log_path);
 }
 
 void Core::Destroy()

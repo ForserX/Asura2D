@@ -19,7 +19,7 @@ namespace Asura::Physics
 		ph_preset
 	};
 
-	inline b2BodyType get_box2d_body_type(uint8_t type)
+	inline b2BodyType Asura2Box2DBodyType(uint8_t type)
 	{
 		switch (static_cast<body_type>(type)) 
 		{
@@ -40,7 +40,7 @@ namespace Asura::Physics
 		return b2_dynamicBody;
 	}
 
-	inline body_type get_ark_body_type(b2BodyType type)
+	inline body_type Box2D2AsuraBodyType(b2BodyType type)
 	{
 		switch (type) 
 		{
@@ -121,7 +121,7 @@ namespace Asura::Physics
 			body_def.angularVelocity = angular_vel;
                body_def.linearVelocity = b2Vec2(vel);
 			body_def.position = b2Vec2(pos);
-			body_def.type = get_box2d_body_type(packed_type.type);
+			body_def.type = Asura2Box2DBodyType(packed_type.type);
 			return body_def;
 		}
 
@@ -257,7 +257,9 @@ namespace Asura::Physics
 		void set_velocity(const Math::FVec2& new_vel);
 		void set_position(const Math::FVec2& new_pos);
 
-		bool IsFlying();
+		bool IsFlying() const;
+
+		void BlockRotation(bool Value);
 
 		void ApplyImpulse(const Math::FVec2& impulse);
 		void apply_angular_impulse(float impulse);

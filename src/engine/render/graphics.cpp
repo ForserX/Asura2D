@@ -3,9 +3,9 @@
 
 using namespace Asura;
 
-graphics::theme::style window_style = {};
+Graphics::theme::style window_style = {};
 
-void graphics::Init()
+void Graphics::Init()
 {
 	window_style = theme::style::dark;
 	theme::change();
@@ -14,17 +14,12 @@ void graphics::Init()
 	Camera::Init();
 }
 
-void graphics::Destroy()
+void Graphics::Destroy()
 {
 	UI::Destroy();
 }
 
-void graphics::draw_convex_poly_filled(
-    ImDrawList* draw_list,
-    const Math::FVec2* points,
-    const int points_count,
-    ImU32 col
-)
+void Graphics::DrawConvexFilled(ImDrawList* draw_list, const Math::FVec2* points, const int points_count, ImU32 col)
 {
     if (points_count < 3) return;
 
@@ -140,13 +135,9 @@ void graphics::draw_convex_poly_filled(
     }
 }
 
-void graphics::draw_rect(
-	ImColor color,
-    const Math::FRect& Rect,
-	bool filled
-)
+void Graphics::DrawRect(ImColor color, const Math::FRect& Rect, bool filled)
 {
-	OPTICK_EVENT("graphics draw Rect");
+	OPTICK_EVENT("Graphics draw Rect");
 	if (filled) {
 		ImGui::GetBackgroundDrawList()->AddRectFilled(Rect.min(), Rect.max(), color);
 	} else {
@@ -154,9 +145,9 @@ void graphics::draw_rect(
 	}
 }
 
-void graphics::draw_background(ResourcesManager::id_t resource_id)
+void Graphics::DrawBackground(ResourcesManager::id_t resource_id)
 {
-	OPTICK_EVENT("graphics draw background");
+	OPTICK_EVENT("Graphics draw background");
 	const int64_t width = UI::GetCmdInt("window_width");
 	const int64_t height = UI::GetCmdInt("window_height");
     const ImTextureID texture_id = Render::GetTexture(resource_id);
@@ -167,7 +158,7 @@ void graphics::draw_background(ResourcesManager::id_t resource_id)
     }
 }
 
-void graphics::draw_textured_rect(ResourcesManager::id_t resource_id, const Math::FRect& Rect)
+void Graphics::DrawTextureRect(ResourcesManager::id_t resource_id, const Math::FRect& Rect)
 {
 	const ImTextureID texture_id = Render::GetTexture(resource_id);
 
@@ -177,9 +168,9 @@ void graphics::draw_textured_rect(ResourcesManager::id_t resource_id, const Math
 	}
 }
 
-void graphics::draw_physical_object(b2Body* object, const ImColor& clr)
+void Graphics::DrawPhysObject(b2Body* object, const ImColor& clr)
 {
-	OPTICK_EVENT("graphics draw phys object");
+	OPTICK_EVENT("Graphics draw phys object");
 	const auto poly = dynamic_cast<b2PolygonShape*>(object->GetFixtureList()->GetShape());
 	game_assert(poly != nullptr, "Can't cast shape to polygon shape", return);
     
@@ -188,25 +179,25 @@ void graphics::draw_physical_object(b2Body* object, const ImColor& clr)
 	Math::FVec2 vertices[b2_maxPolygonVertices];
 
 	for (int32 i = 0; i < vertexCount; ++i) {
-		vertices[i] = Camera::world_to_screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
+		vertices[i] = Camera::World2Screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
 	}
 
-	draw_convex_poly_filled(ImGui::GetBackgroundDrawList(), vertices, vertexCount, clr);
+	DrawConvexFilled(ImGui::GetBackgroundDrawList(), vertices, vertexCount, clr);
 }
 
-void graphics::draw_physical_circle_object(b2Body* object, const ImColor& clr)
+void Graphics::DrawPhysObjectCircle(b2Body* object, const ImColor& clr)
 {
-	OPTICK_EVENT("graphics draw phys circle");
+	OPTICK_EVENT("Graphics draw phys circle");
 	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
 	b2Transform xf = object->GetTransform();
 
-	auto center = Camera::world_to_screen(b2Mul(xf, circle->m_p));
-	float radius = Camera::scale_factor(circle->m_radius);
+	auto center = Camera::World2Screen(b2Mul(xf, circle->m_p));
+	float radius = Camera::ScaleFactor(circle->m_radius);
 
 	ImGui::GetBackgroundDrawList()->AddCircle(center, radius, clr, 0, 0.3 * radius);
 }
 
-void graphics::Tick(float dt)
+void Graphics::Tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ static_cast<float>(UI::GetCmdInt("window_width")), static_cast<float>(UI::GetCmdInt("window_height")) });
@@ -217,13 +208,13 @@ void graphics::Tick(float dt)
 	Camera::Tick(dt);
 }
 
-void graphics::draw(float dt)
+void Graphics::draw(float dt)
 {
 	OPTICK_EVENT("Scene draw")
 	Systems::draw_tick(dt);
 }
 
-void graphics::theme::change()
+void Graphics::theme::change()
 {
 	switch (window_style) 
 	{
@@ -235,7 +226,7 @@ void graphics::theme::change()
 	}
 }
 
-void graphics::theme::dark()
+void Graphics::theme::dark()
 {
 	ImVec4* colors = ImGui::GetStyle().Colors;
 	colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -317,7 +308,7 @@ void graphics::theme::dark()
 	style.TabRounding = 4;
 }
 
-void graphics::theme::red()
+void Graphics::theme::red()
 {
 	auto& style = ImGui::GetStyle();
 	style.FrameRounding = 4.0f;

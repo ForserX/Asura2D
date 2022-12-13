@@ -4,16 +4,16 @@ using namespace Asura;
 static bool Attached = false;
 static EntityView* CurrentEntity = nullptr;
 
-static input::on_key_change hp_key_click_event;
+static Input::on_key_change hp_key_click_event;
 
 void GamePlay::Holder::player::Init()
 {
-	auto editor_key = [](int16_t scan_code, Asura::input::key_state state)
+	auto editor_key = [](int16_t scan_code, Asura::Input::key_state state)
 	{
 		if (!Attached || holder_type != holder_mode::player)
 			return;
 
-		auto TryEntt = Entities::get<Entities::physics_body_component>(CurrentEntity->Get());
+		auto TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get());
 		auto pBody = TryEntt.body;
 
 		if (scan_code == SDL_SCANCODE_W)
@@ -33,7 +33,7 @@ void GamePlay::Holder::player::Init()
 		}
 	};
 
-	hp_key_click_event = input::subscribe_key_event(editor_key);
+	hp_key_click_event = Input::SubscribeKeyEvent(editor_key);
 }
 
 void GamePlay::Holder::player::Tick()
@@ -51,14 +51,14 @@ void GamePlay::Holder::player::Destroy()
 		Detach();
 	}
 
-	input::unsubscribe_key_event(hp_key_click_event);
+	Input::UnsubscribeKeyEvent(hp_key_click_event);
 }
 
 void GamePlay::Holder::player::Attach(EntityBase entity)
 {
 	CurrentEntity = new EntityView(entity);
 	Attached = true;
-	Camera::attach(entity);
+	Camera::Attach(entity);
 }
 
 void Asura::GamePlay::Holder::player::Detach()
@@ -66,6 +66,6 @@ void Asura::GamePlay::Holder::player::Detach()
 	delete CurrentEntity;
 	CurrentEntity = nullptr;
 
-	Camera::detach();
+	Camera::Detach();
 	Attached = false;
 }

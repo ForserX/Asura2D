@@ -11,7 +11,7 @@ static float OldVolume = Volume;
 
 void UI::Init()
 {
-    std::filesystem::path font_dir = FileSystem::ContentDir();
+    FileSystem::Path font_dir = FileSystem::ContentDir();
     font_dir.append("fonts").append("RobotoMono-Regular.ttf");
 
     ImGuiIO& io = ImGui::GetIO();
@@ -43,7 +43,9 @@ void UI::Tick(float dt)
     float navigation_bar_size = 30.f;
     static bool stat_enable = false;
     Math::FVec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
-    if (show_console) {
+
+    if (show_console) 
+    {
 		OPTICK_EVENT("UI Console draw")
         ::console->draw(dt, "Arkane Console", &show_console);
     } 
@@ -57,7 +59,7 @@ void UI::Tick(float dt)
 
             if (ImGui::Begin("Debug draw", 0, ImGuiWindowFlags_NoDecoration))
             {
-                Math::FVec2 wcursor_pos = Camera::screen_to_world(cursor_pos);
+                Math::FVec2 wcursor_pos = Camera::Screen2World(cursor_pos);
 
                 const float draw_fps = 1.f / dt;
                 const float draw_ms = dt * 1000.f;
@@ -73,7 +75,7 @@ void UI::Tick(float dt)
                 const float real_scheduler_tps = 1.f / scheduler_real_delta;
                 const float real_scheduler_ms = scheduler_real_delta * 1000.f;
                 
-                const auto& registry = Entities::internal::get_registry().Get();
+                const auto& registry = Entities::internal::GetRegistry().Get();
                 ImGui::Checkbox("Engine statistics", &stat_enable);
                 ImGui::Checkbox("Debug draw", &physical_debug_draw);
                 ImGui::Checkbox("Paused", &paused);
@@ -110,7 +112,7 @@ void UI::Tick(float dt)
                     ImGui::Text("  Alive: %d", static_cast<int>(registry.alive()));
                     ImGui::Separator();
                     ImGui::Text("UI Info:");
-                    ImGui::Text("  Camera position: %.1f, %.1f", Camera::camera_position().x, Camera::camera_position().y);
+                    ImGui::Text("  Camera position: %.1f, %.1f", Camera::Position().x, Camera::Position().y);
                     ImGui::Text("  Cursor screen position: %.1f, %.1f", cursor_pos.x, cursor_pos.y);
                     ImGui::Text("  Cursor world position: %.1f, %.1f", wcursor_pos.x, wcursor_pos.y);
                 }
@@ -170,15 +172,16 @@ void UI::Tick(float dt)
                     ImGui::EndMenu();
                 }
 
-                if (ImGui::BeginMenu("Entities")) {
+                if (ImGui::BeginMenu("Entities")) 
+                {
                     if (ImGui::MenuItem("Destroy all Entities"))
                     {
-                        Entities::free();
+                        Entities::Free();
                     }
 
                     if (ImGui::MenuItem("Clear all Entities")) 
                     {
-                        Entities::clear();
+                        Entities::Clear();
                     }
 
                     ImGui::Separator();
@@ -232,7 +235,7 @@ void UI::Tick(float dt)
                  static entt::entity inspected_entity = entt::null;
                  if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
                  {
-                     auto phys_body = Physics::HitTest(Camera::screen_to_world(cursor_pos));
+                     auto phys_body = Physics::HitTest(Camera::Screen2World(cursor_pos));
 
                      if (phys_body != nullptr) 
                      {
@@ -327,9 +330,9 @@ stl::string Asura::UI::GetCmdStr(stl::string_view key)
     {
         switch (window_style)
         {
-        case graphics::theme::style::red:   return "red";
-        case graphics::theme::style::dark:  return "dark";
-        case graphics::theme::style::white: return "white";
+        case Graphics::theme::style::red:   return "red";
+        case Graphics::theme::style::dark:  return "dark";
+        case Graphics::theme::style::white: return "white";
         }
     }
 
@@ -338,11 +341,11 @@ stl::string Asura::UI::GetCmdStr(stl::string_view key)
 
 void UI::push_console_string(stl::string_view str)
 {
-    ::console->push_log_item(str);
+    ::console->PushLogItem(str);
 }
 
 void UI::Destroy()
 {
-    ::console->flush();
-    ::console->clear_log();
+    ::console->Flush();
+    ::console->ClearLog();
 }

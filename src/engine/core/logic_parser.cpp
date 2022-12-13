@@ -2,7 +2,7 @@
 
 using namespace Asura;
 
-void CfgParser::load(const std::filesystem::path& file_path)
+void CfgParser::Load(const FileSystem::Path& file_path)
 {
     std::ifstream file(file_path);
     game_assert(file.is_open(), "File not found", return);
@@ -51,7 +51,7 @@ void CfgParser::load(const std::filesystem::path& file_path)
     file.close();
 }
 
-void CfgParser::save(const std::filesystem::path& file_path) const
+void CfgParser::Save(const FileSystem::Path& file_path) const
 {
 	std::ofstream file(file_path, std::ios_base::out);
     
@@ -70,7 +70,7 @@ void CfgParser::save(const std::filesystem::path& file_path) const
 	file.close();
 }
 
-const stl::string& CfgParser::get(stl::string_view section, stl::string_view key) const
+const stl::string& CfgParser::Get(stl::string_view section, stl::string_view key) const
 {
     static const stl::string empty_string;
     auto& current_data = data.at(section.data());
@@ -86,7 +86,7 @@ const stl::string& CfgParser::get(stl::string_view section, stl::string_view key
     game_assert(false, "Not found", return empty_string);
 }
 
-int CfgParser::set_value(stl::string_view section, stl::string_view key, stl::string_view value)
+int CfgParser::SetValue(stl::string_view section, stl::string_view key, stl::string_view value)
 {
     game_assert(section.empty(), "section can't be null", return -1);
     game_assert(key.empty(), "key can't be null", return -2);
@@ -108,7 +108,7 @@ int CfgParser::set_value(stl::string_view section, stl::string_view key, stl::st
     return 0;
 }
 
-int CfgParser::add_section(stl::string_view section)
+int CfgParser::AddSection(stl::string_view section)
 {
     for (const auto& fIter : data) 
     {
@@ -119,7 +119,7 @@ int CfgParser::add_section(stl::string_view section)
     return 0;
 }
 
-int CfgParser::add_key_in_section(stl::string_view section, stl::string_view key)
+int CfgParser::PushKey(stl::string_view section, stl::string_view key)
 {
 	for (const auto& fIter : data) 
     {

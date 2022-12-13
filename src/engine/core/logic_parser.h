@@ -9,31 +9,31 @@ namespace Asura
         size_t section_count = 0;
 
     private:
-        const stl::string& get(stl::string_view section, stl::string_view value) const;
+        const stl::string& Get(stl::string_view section, stl::string_view value) const;
 
     public:
         CfgParser() noexcept = default;
         ~CfgParser() = default;
 
-        void load(const std::filesystem::path& file);
-        void save(const std::filesystem::path& file) const;
+        void Load(const std::filesystem::path& file);
+        void Save(const std::filesystem::path& file) const;
 
-        [[nodiscard]] size_t get_count() const { return section_count; }
-        [[nodiscard]] const data_type& get_data() const { return data; }
-        int set_value(stl::string_view section, stl::string_view key, stl::string_view value);
+        [[nodiscard]] size_t Count() const { return section_count; }
+        [[nodiscard]] const data_type& Data() const { return data; }
+        int SetValue(stl::string_view section, stl::string_view key, stl::string_view value);
 
-        int add_section(stl::string_view section);
-        int add_key_in_section(stl::string_view section, stl::string_view key);
+        int AddSection(stl::string_view section);
+        int PushKey(stl::string_view section, stl::string_view key);
 
-        void swap(data_type& data_to_swap)
+        inline void Swap(data_type& data_to_swap)
         {
             data.swap(data_to_swap);
         }
 
         template<typename T>
-        T get(stl::string_view section, stl::string_view value)
+        T Get(stl::string_view section, stl::string_view value)
         {
-            return stl::unstringify<T>(get(section, value));
+            return stl::unstringify<T>(Get(section, value));
         }
     };
 }

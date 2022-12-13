@@ -14,7 +14,7 @@ std::chrono::nanoseconds entities_serilaize_last_time = {};
 
 auto try_to_serialize = [](stl::string_view state_name)
 {
-	std::filesystem::path path = FileSystem::UserdataDir();
+	FileSystem::Path path = FileSystem::UserdataDir();
 	path.append(state_name);
 
 	entities_data.second.clear();
@@ -24,7 +24,7 @@ auto try_to_serialize = [](stl::string_view state_name)
 
 auto try_to_deserialize = [](stl::string_view state_name)
 {
-	std::filesystem::path path = FileSystem::UserdataDir();
+	FileSystem::Path path = FileSystem::UserdataDir();
 	path.append(state_name);
 
 	entities_data.second.clear();
@@ -34,27 +34,27 @@ auto try_to_deserialize = [](stl::string_view state_name)
 
 auto try_to_string_serialize = [](stl::string_view state_name)
 {
-	std::filesystem::path path = FileSystem::UserdataDir();
+	FileSystem::Path path = FileSystem::UserdataDir();
 	path.append(state_name);
 
 	entities_string_data.clear();
 	Entities::internal::string_serialize(entities_string_data);
 
 	CfgParser parser;
-	parser.swap(entities_string_data);
-	parser.save(path);
+	parser.Swap(entities_string_data);
+	parser.Save(path);
 };
 
 auto try_to_string_deserialize = [](stl::string_view state_name)
 {
-	std::filesystem::path path = FileSystem::UserdataDir();
+	FileSystem::Path path = FileSystem::UserdataDir();
 	path.append(state_name);
 
 	entities_string_data.clear();
 	CfgParser parser;
-	parser.load(path);
+	parser.Load(path);
 
-	Entities::internal::string_deserialize(parser.get_data());
+	Entities::internal::string_deserialize(parser.Data());
 };
 
 
@@ -90,7 +90,7 @@ void deserialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::
 	{
 		if (desc.flags & Component::flag)
 		{
-			Entities::add_field<Component>(ent);
+			Entities::AddField<Component>(ent);
 		}
 	}
 }
@@ -98,7 +98,7 @@ void deserialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::
 template<typename... Args>
 void deserialize_entity(stl::stream_vector& data)
 {
-	auto& reg = Entities::internal::get_registry().Get();
+	auto& reg = Entities::internal::GetRegistry().Get();
 	entity_desc desc = {};
 	stl::read_memory(data, desc);
 
@@ -163,7 +163,7 @@ void serialize_entity_flag(stl::stream_vector& data, entity_desc& desc, entt::re
 template<typename... Args>
 void serialize_entity(stl::stream_vector& data, entt::entity ent)
 {
-	auto& reg = Entities::internal::get_registry().Get();
+	auto& reg = Entities::internal::GetRegistry().Get();
 	if (!Entities::IsValid(ent) || !reg.any_of<Args...>(ent)) 
 	{
 		return;
@@ -187,7 +187,7 @@ void serialize_entity(stl::stream_vector& data, entt::entity ent)
 template<typename Component>
 void string_serialize_entity_component(stl::string_map& data, entity_desc& desc, stl::vector<entt::id_type>& components, entt::entity ent)
 {
-	const auto& reg = Entities::internal::get_registry().Get();
+	const auto& reg = Entities::internal::GetRegistry().Get();
 
 	if (reg.all_of<Component>(ent)) 
 	{
@@ -229,7 +229,7 @@ void string_serialize_entity_component(stl::string_map& data, entity_desc& desc,
 template<typename... Args>
 void string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 {
-	const auto& reg = Entities::internal::get_registry().Get();
+	const auto& reg = Entities::internal::GetRegistry().Get();
 	if (!Entities::IsValid(ent) || !reg.any_of<Args...>(ent)) 
 	{
 		return;
@@ -260,7 +260,7 @@ void string_serialize_entity(stl::tree_string_map& data, entt::entity ent)
 ///////////////////////////////////////////////////////////
 void Entities::deserialize_state(stl::string_view state_name)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [state_name]() 
+	Scheduler::Schedule(Scheduler::entity_serializator, [state_name]() 
 		{
 		internal::process_entities([state_name]() {
 			try_to_deserialize(state_name);
@@ -273,7 +273,7 @@ void Entities::deserialize_state(stl::string_view state_name)
 
 void Entities::serialize_state(stl::string_view state_name)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [state_name]()
+	Scheduler::Schedule(Scheduler::entity_serializator, [state_name]()
 	{
 		internal::process_entities([state_name]()
 			{
@@ -287,7 +287,7 @@ void Entities::serialize_state(stl::string_view state_name)
 
 void Entities::string_serialize_state(stl::string_view state_name)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [state_name]()
+	Scheduler::Schedule(Scheduler::entity_serializator, [state_name]()
 	{
 		internal::process_entities([state_name]() 
 		{
@@ -301,7 +301,7 @@ void Entities::string_serialize_state(stl::string_view state_name)
 
 void Entities::string_deserialize_state(stl::string_view state_name)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [state_name]()
+	Scheduler::Schedule(Scheduler::entity_serializator, [state_name]()
 	{
 		internal::process_entities([state_name]()
 		{
@@ -321,7 +321,7 @@ const std::chrono::nanoseconds& Entities::get_last_serialize_time()
 void Entities::internal::serialize(stl::stream_vector& data)
 {
 	OPTICK_EVENT("Entities serializer");
-	const auto& reg = get_registry().Get();
+	const auto& reg = GetRegistry().Get();
 	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
 	uint32_t entities_count = reg.size() - ent_view.size_hint();
 
@@ -343,7 +343,7 @@ void Entities::internal::serialize(stl::stream_vector& data)
 
 void Entities::serialize(stl::stream_vector& data)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [&data]()
+	Scheduler::Schedule(Scheduler::entity_serializator, [&data]()
 	{
 		internal::process_entities([&data]() 
 		{
@@ -359,8 +359,8 @@ void Entities::internal::deserialize(stl::stream_vector& data)
 {
 	OPTICK_EVENT("Entities deserializer");
 
-	free();
-	clear();
+	Free();
+	Clear();
 	shit_detector_tick();
 	data.first = 0;
 
@@ -377,7 +377,7 @@ void Entities::internal::string_serialize(stl::tree_string_map& data)
 {
 	OPTICK_EVENT("Entities string serializer");
 
-	const auto& reg = get_registry().Get();
+	const auto& reg = GetRegistry().Get();
 	const auto ent_view = reg.view<garbage_flag>() | reg.view<non_serializable_flag>() | reg.view<dont_free_after_reset_flag>();
 	uint32_t entities_count = reg.size() - ent_view.size_hint();
 
@@ -399,7 +399,7 @@ void Entities::internal::string_deserialize(const stl::tree_string_map& data)
 
 void Entities::deserialize(stl::stream_vector& data)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [&data]() 
+	Scheduler::Schedule(Scheduler::entity_serializator, [&data]()
 	{
 		internal::process_entities([&data]() 
 		{
@@ -413,7 +413,7 @@ void Entities::deserialize(stl::stream_vector& data)
 
 void Entities::string_serialize(stl::tree_string_map& data)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [&data]() 
+	Scheduler::Schedule(Scheduler::entity_serializator, [&data]()
 	{
 		internal::process_entities([&data]()
 		{
@@ -427,7 +427,7 @@ void Entities::string_serialize(stl::tree_string_map& data)
 
 void Entities::string_deserialize(const stl::tree_string_map& data)
 {
-	Scheduler::schedule(Scheduler::entity_serializator, [&data]() 
+	Scheduler::Schedule(Scheduler::entity_serializator, [&data]()
 	{
 		internal::process_entities([&data]() 
 		{

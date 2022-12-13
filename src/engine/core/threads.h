@@ -7,6 +7,7 @@ namespace Asura::Threads
 
 	void SetAffinity(void* handle, int64_t Core);
 
-	void sync_sleep();
-	void switch_context();
+	void SyncCurrentThread();
+	void Wait();
+	void SwitchContext();
 }

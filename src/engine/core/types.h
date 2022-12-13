@@ -23,12 +23,14 @@ namespace Asura::stl
 		constexpr ark_allocator(const ark_allocator<Other>&) noexcept {}
 
 		template <class Other>
-		ark_allocator& operator=(const ark_allocator<Other>&) {
+		ark_allocator& operator=(const ark_allocator<Other>&)
+		{
 			return *this;
 		}
 
 		template <class Other>
-		ark_allocator& operator=(const ark_allocator<Other>&&) {
+		ark_allocator& operator=(const ark_allocator<Other>&&)
+		{
 			return *this;
 		}
 
@@ -41,11 +43,13 @@ namespace Asura::stl
 		T* allocate(std::size_t n, const void* hint = nullptr)
 		{
 			
-			if (n > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
+			if (n > std::numeric_limits<std::size_t>::max() / sizeof(T))
+			{
 				return nullptr;
 			}
 
-			if (auto p = static_cast<T*>(ark_alloc(n * sizeof(T)))) {
+			if (auto p = static_cast<T*>(ark_alloc(n * sizeof(T)))) 
+			{
 				return p;
 			}
 
@@ -54,11 +58,13 @@ namespace Asura::stl
 
 		[[nodiscard]] constexpr T* allocate(std::size_t n) const
 		{
-			if (n > std::numeric_limits<std::size_t>::max() / sizeof(T)) {
+			if (n > std::numeric_limits<std::size_t>::max() / sizeof(T)) 
+			{
 				return nullptr;
 			}
 
-			if (auto p = static_cast<T*>(ark_alloc(n * sizeof(T)))) {
+			if (auto p = static_cast<T*>(ark_alloc(n * sizeof(T)))) 
+			{
 				return p;
 			}
 
@@ -165,24 +171,28 @@ namespace Asura::stl
 		return string(buf);
 	}
 
-	[[nodiscard]] inline uint64 stoull(const string_view& str, size_t* idx = nullptr, int base = 10) {
+	[[nodiscard]] inline uint64 stoull(const string_view& str, size_t* idx = nullptr, int base = 10) 
+	{
 		const char* str_ptr = str.data();
 		char* end_ptr;
 		const unsigned long long ans = std::strtoull(str_ptr, &end_ptr, base);
 
-		if (idx) {
+		if (idx) 
+		{
 			*idx = static_cast<size_t>(end_ptr - str_ptr);
 		}
 
 		return ans;
 	}
 
-	[[nodiscard]] inline int64_t stoll(const string_view& str, size_t* idx = nullptr, int base = 10) {
+	[[nodiscard]] inline int64_t stoll(const string_view& str, size_t* idx = nullptr, int base = 10) 
+	{
 		const char* str_ptr = str.data();
 		char* end_ptr;
 		const long long ans = std::strtoll(str_ptr, &end_ptr, base);
 
-		if (idx) {
+		if (idx) 
+		{
 			*idx = static_cast<size_t>(end_ptr - str_ptr);
 		}
 
@@ -201,7 +211,8 @@ namespace Asura::stl
 
 		const float ans = std::strtod(str_ptr, &end_ptr);
 
-		if (idx) {
+		if (idx)
+		{
 			*idx = static_cast<size_t>(end_ptr - str_ptr);
 		}
 
@@ -215,8 +226,6 @@ namespace Asura::stl
 
 	using string_map = stl::hash_map<stl::string, stl::string>;
 	using tree_string_map = stl::hash_map<stl::string, string_map>;
-
-	using path = std::filesystem::path;
 }
 
 #undef interface

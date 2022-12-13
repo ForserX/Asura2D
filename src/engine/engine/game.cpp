@@ -16,7 +16,7 @@ void game::Init()
 
 	Editor::Init();
 
-	Threads::sync_sleep();
+	Threads::SyncCurrentThread();
 }
 
 void game::Destroy()

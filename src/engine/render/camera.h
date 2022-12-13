@@ -14,19 +14,19 @@ namespace Asura::Camera
 	void Destroy();
 	void Tick(float dt);
 
-	void move(cam_move move, float point);
-	void zoom(float value);
+	void Move(cam_move move, float point);
+	void Zoom(float value);
 
-	bool is_attached();
-	void attach(EntityView entity);
-	void detach();
+	bool IsAttached();
+	void Attach(EntityView entity);
+	void Detach();
 	
-	void reset_view();
-	void reset_wh();
+	void ResetView();
+	void ResetHW();
 
-	const Math::FVec2& camera_position();
-    Math::FVec2 screen_to_world(const Math::FVec2& screenPoint);
-    Math::FVec2 world_to_screen(const Math::FVec2& worldPoint);
-	float scale_factor(float in);
+	const Math::FVec2& Position();
+    Math::FVec2 Screen2World(const Math::FVec2& screenPoint);
+    Math::FVec2 World2Screen(const Math::FVec2& worldPoint);
+	float ScaleFactor(float in);
 
 }

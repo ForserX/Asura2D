@@ -16,7 +16,7 @@ Physics::body_type Physics::PhysicsBody::get_body_type() const
 {
 	if (body != nullptr)
 	{
-		return get_ark_body_type(body->GetType());
+		return Box2D2AsuraBodyType(body->GetType());
 	}
 
 	return static_cast<Physics::body_type>(parameters.packed_type.type);
@@ -94,7 +94,7 @@ void Physics::PhysicsBody::set_body_type(body_type new_type)
 {
 	if (body != nullptr)
 	{
-		body->SetType(get_box2d_body_type(static_cast<uint8_t>(new_type)));
+		body->SetType(Asura2Box2DBodyType(static_cast<uint8_t>(new_type)));
 	}
 
 	parameters.packed_type.type = static_cast<uint8_t>(new_type);
@@ -166,7 +166,7 @@ void Physics::PhysicsBody::set_position(const Math::FVec2& new_pos)
 	parameters.pos = new_pos;
 }
 
-bool Asura::Physics::PhysicsBody::IsFlying()
+bool Asura::Physics::PhysicsBody::IsFlying() const
 {
 	for (int i = 0; i < body->GetContactCount(); i++)
 	{
@@ -189,6 +189,11 @@ bool Asura::Physics::PhysicsBody::IsFlying()
 	}
 
 	return true;
+}
+
+void Asura::Physics::PhysicsBody::BlockRotation(bool Value)
+{
+	body->SetFixedRotation(Value);
 }
 
 void Physics::PhysicsBody::ApplyImpulse(const Math::FVec2& impulse)

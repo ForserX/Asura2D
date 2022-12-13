@@ -43,30 +43,34 @@ void ingame::pre_init()
 	}
 }
 
-auto camera_mouse_key_change = [](int16_t scan_code, Asura::input::key_state state)
+auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state state)
 {
-	switch (scan_code) {
-	case SDL_SCANCODE_MOUSE_LEFT: {
-        if (Asura::input::is_key_pressed(SDL_SCANCODE_LCTRL)) {
-            if (state == Asura::input::key_state::hold) {
-                const auto& mouse_delta = Asura::input::get_mouse_delta();
-                Asura::Camera::move(Asura::Camera::cam_move::left, (mouse_delta.x * 0.05f));
-                Asura::Camera::move(Asura::Camera::cam_move::up, (mouse_delta.y * 0.05f));
+	switch (scan_code) 
+	{
+	case SDL_SCANCODE_MOUSE_LEFT:
+	{
+        if (Asura::Input::IsKeyPressed(SDL_SCANCODE_LCTRL))
+		{
+            if (state == Asura::Input::key_state::hold)
+			{
+                const auto& mouse_delta = Asura::Input::GetMouseDelta();
+                Asura::Camera::Move(Asura::Camera::cam_move::left, (mouse_delta.x * 0.05f));
+                Asura::Camera::Move(Asura::Camera::cam_move::up, (mouse_delta.y * 0.05f));
             }
         }
 		break;
 	}
 	case SDL_SCANCODE_LEFT:
-		Asura::Camera::move(Asura::Camera::cam_move::left, 1.f);
+		Asura::Camera::Move(Asura::Camera::cam_move::left, 1.f);
 		break;
 	case SDL_SCANCODE_RIGHT:
-		Asura::Camera::move(Asura::Camera::cam_move::right, 1.f);
+		Asura::Camera::Move(Asura::Camera::cam_move::right, 1.f);
 		break;
 	case SDL_SCANCODE_UP:
-		Asura::Camera::move(Asura::Camera::cam_move::up, 1.f);
+		Asura::Camera::Move(Asura::Camera::cam_move::up, 1.f);
 		break;
 	case SDL_SCANCODE_DOWN:
-		Asura::Camera::move(Asura::Camera::cam_move::down, 1.f);
+		Asura::Camera::Move(Asura::Camera::cam_move::down, 1.f);
 		break;
 	default:
 		break;
@@ -74,11 +78,11 @@ auto camera_mouse_key_change = [](int16_t scan_code, Asura::input::key_state sta
 };
 
 static bool editor = false;
-auto editor_key_change = [](int16_t scan_code, Asura::input::key_state state) 
+auto editor_key_change = [](int16_t scan_code, Asura::Input::key_state state)
 {
 	if (scan_code == SDL_SCANCODE_X)
 	{
-		if (state == Asura::input::key_state::press)
+		if (state == Asura::Input::key_state::press)
 		{
 			editor = !editor;
 			Asura::game::editor(editor);
@@ -91,16 +95,16 @@ auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
 	switch (scan_code) 
 	{
 	case SDL_SCANCODE_MOUSEWHEEL:
-		Asura::Camera::zoom((-1.f * state) * 2.f);
+		Asura::Camera::Zoom((-1.f * state) * 2.f);
 		break;
 	default:
 		break;
 	}
 };
 
-Asura::input::on_key_change camera_mouse_key_event;
-Asura::input::on_key_change editor_key_event;
-Asura::input::on_input_change camera_camera_mouse_wheel_event;
+Asura::Input::on_key_change camera_mouse_key_event;
+Asura::Input::on_key_change editor_key_event;
+Asura::Input::on_input_change camera_camera_mouse_wheel_event;
 
 Asura::EntityView TestObject;
 Asura::EntityView TestObject2;
@@ -116,9 +120,9 @@ void ingame::init()
 	TestObject = AddPhysBody(Create(), {}, { 50, 50 }, { 20, 10 });
 	TestObject2 = AddPhysBody(Create(), {}, { 350, 100 }, { 200, 10 });
 
-	add_field<drawable_flag>(TestObject);
-	add_field<drawable_flag>(TestObject2);
-	
+	AddField<drawable_flag>(TestObject);
+	AddField<drawable_flag>(TestObject2);
+#if 1
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
 	for (size_t i = 0; i < 2000; i++) {
@@ -136,20 +140,20 @@ void ingame::init()
 			)
 		);
 
-		add_field<drawable_flag>(ent);
+		AddField<drawable_flag>(ent);
 	}
-
+#endif
 #else
 	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
 #endif
-	editor_key_event = Asura::input::subscribe_key_event(editor_key_change);
-	camera_mouse_key_event = Asura::input::subscribe_key_event(camera_mouse_key_change);
-	camera_camera_mouse_wheel_event = Asura::input::subscribe_input_event(camera_mouse_wheel_change);
+	editor_key_event = Asura::Input::SubscribeKeyEvent(editor_key_change);
+	camera_mouse_key_event = Asura::Input::SubscribeKeyEvent(camera_mouse_key_change);
+	camera_camera_mouse_wheel_event = Asura::Input::SubscribeInputEvent(camera_mouse_wheel_change);
 }
 
 void ingame::destroy()
 {
-	Asura::input::unsubscribe_input_event(camera_camera_mouse_wheel_event);
-	Asura::input::unsubscribe_key_event(camera_mouse_key_event);
-	Asura::input::unsubscribe_key_event(editor_key_event);
+	Asura::Input::UnsubscribeInputEvent(camera_camera_mouse_wheel_event);
+	Asura::Input::UnsubscribeKeyEvent(camera_mouse_key_event);
+	Asura::Input::UnsubscribeKeyEvent(editor_key_event);
 }

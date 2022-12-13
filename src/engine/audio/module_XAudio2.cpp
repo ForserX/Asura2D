@@ -43,7 +43,7 @@ void Audio::DeviceXAudio2::Load(ResourcesManager::id_t sound_src)
 	CAudio* Audio = AudioData.emplace_back(new CAudio);
 	Resource Res = ResourcesManager::GetResource(sound_src);
 
-	std::filesystem::path FullPath = FileSystem::ContentDir();
+	FileSystem::Path FullPath = FileSystem::ContentDir();
 	FullPath.append(Res.Name);
 	
 	Audio->LoadSound(ExtractPath(FullPath).data());

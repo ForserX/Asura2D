@@ -44,8 +44,8 @@ namespace Asura::Entities
 	void Destroy();
 	void Tick(float dt);
 
-	void clear();
-	void free();
+	void Clear();
+	void Free();
 
 	bool IsValid(EntityView ent);
 	bool IsNull(EntityView ent);
@@ -54,7 +54,7 @@ namespace Asura::Entities
 	void MarkAsGarbage(const EntityView& ent);
 
 	EntityBase GetEntityByBbody(const b2Body* body);
-    const Math::FVec2& get_position(const EntityView& ent);
+    const Math::FVec2& GetPosition(const EntityView& ent);
 
 	const EntityView& AddTexture(
 		const EntityView& ent,

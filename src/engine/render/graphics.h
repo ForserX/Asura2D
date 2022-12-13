@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Asura::graphics
+namespace Asura::Graphics
 {
 	void Init();
 
@@ -8,13 +8,13 @@ namespace Asura::graphics
 	void Tick(float dt);
 	void draw(float dt);
 	
-	void draw_physical_object(b2Body* object, const ImColor& clr);
-	void draw_physical_circle_object(b2Body* object, const ImColor& clr);
-	void draw_convex_poly_filled(ImDrawList* draw_list, const Math::FVec2* points, const int points_count, ImU32 col);
+	void DrawPhysObject(b2Body* object, const ImColor& clr);
+	void DrawPhysObjectCircle(b2Body* object, const ImColor& clr);
+	void DrawConvexFilled(ImDrawList* draw_list, const Math::FVec2* points, const int points_count, ImU32 col);
 
-	void draw_rect(ImColor color, const Math::FRect& Rect, bool filled = true);
-	void draw_textured_rect(ResourcesManager::id_t resource_id, const Math::FRect& Rect);
-	void draw_background(ResourcesManager::id_t resource_id);
+	void DrawRect(ImColor color, const Math::FRect& Rect, bool filled = true);
+	void DrawTextureRect(ResourcesManager::id_t resource_id, const Math::FRect& Rect);
+	void DrawBackground(ResourcesManager::id_t resource_id);
 
 	namespace theme
 	{

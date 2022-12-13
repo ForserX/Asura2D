@@ -61,7 +61,7 @@ void Audio::DeviceOpenAL::Load(ResourcesManager::id_t sound_src)
 
 	Resource Res = ResourcesManager::GetResource(sound_src);
 
-	std::filesystem::path FullPath = FileSystem::ContentDir();
+	FileSystem::Path FullPath = FileSystem::ContentDir();
 	FullPath.append(Res.Name);
 
 	al_trash::stream_audio_data& ref_data = *AudioData.emplace_back(new al_trash::stream_audio_data);

@@ -15,8 +15,8 @@ constexpr bool test_world_transform = false;
 
 void Camera::Init()
 {
-	reset_wh();
-	reset_view();
+	ResetHW();
+	ResetView();
 }
 
 void Camera::Destroy()
@@ -33,26 +33,26 @@ void Camera::Tick(float dt)
 	{
 		if (!Entities::IsValid(attached_entity)) 
 		{
-			detach();
+			Detach();
 		} 
 		else
 		{
-			cam_center = Entities::get_position(attached_entity);
+			cam_center = Entities::GetPosition(attached_entity);
 		}
 	}
     
     if constexpr (test_world_transform) 
 	{
-        auto mouse_vec = Math::FVec2(input::get_mouse_pos().x, input::get_mouse_pos().y);
-        mouse_vec = world_to_screen(screen_to_world(mouse_vec));
+        auto mouse_vec = Math::FVec2(Input::GetMousePos().x, Input::GetMousePos().y);
+        mouse_vec = World2Screen(Screen2World(mouse_vec));
         Math::FRect Rect = { Math::FVec2(mouse_vec.x - 10.f, mouse_vec.y - 10.f), Math::FVec2(mouse_vec.x + 10.f, mouse_vec.y + 10.f) };
-        graphics::draw_rect(ImColor(1.f, 1.f, 1.f, 1.f), Rect);
+        Graphics::DrawRect(ImColor(1.f, 1.f, 1.f, 1.f), Rect);
     }
 }
 
-void Camera::move(cam_move move, float point)
+void Camera::Move(cam_move move, float point)
 {
-	detach();
+	Detach();
 	switch (move) 
 	{
 	case cam_move::left:
@@ -70,34 +70,35 @@ void Camera::move(cam_move move, float point)
 	}
 }
 
-void Camera::zoom(float value)
+void Camera::Zoom(float value)
 {
 	cam_zoom += value * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
 	cam_zoom = std::clamp(cam_zoom, 1.f, 100.f);
 }
 
-bool Camera::is_attached()
+bool Camera::IsAttached()
 {
 	return attached;
 }
 
-void Camera::attach(EntityView entity)
+void Camera::Attach(EntityView entity)
 {
-	if (attached) {
-		detach();
+	if (attached)
+	{
+		Detach();
 	}
 
 	attached_entity = entity;
 	attached = true;
 }
 
-void Camera::detach()
+void Camera::Detach()
 {
 	attached = false;
 	attached_entity = {};
 }
 
-void Camera::reset_view()
+void Camera::ResetView()
 {
 	cam_zoom = 30.f;
 	scaled_cam_zoom = 16;
@@ -105,18 +106,18 @@ void Camera::reset_view()
     cam_center = {496, 320};
 }
 
-void Camera::reset_wh()
+void Camera::ResetHW()
 {
 	cam_width = window_width;
 	cam_height = window_height;
 }
 
-const Math::FVec2& Camera::camera_position()
+const Math::FVec2& Camera::Position()
 {
 	return cam_center;
 }
 
-Math::FVec2 Camera::screen_to_world(const Math::FVec2& screenPoint)
+Math::FVec2 Camera::Screen2World(const Math::FVec2& screenPoint)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);
@@ -135,7 +136,7 @@ Math::FVec2 Camera::screen_to_world(const Math::FVec2& screenPoint)
     return pw;
 }
 
-Math::FVec2 Camera::world_to_screen(const Math::FVec2& worldPoint)
+Math::FVec2 Camera::World2Screen(const Math::FVec2& worldPoint)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);
@@ -154,7 +155,7 @@ Math::FVec2 Camera::world_to_screen(const Math::FVec2& worldPoint)
     return ps;
 }
 
-float Camera::scale_factor(float in)
+float Camera::ScaleFactor(float in)
 {
     const float w = static_cast<float>(cam_width);
     const float h = static_cast<float>(cam_height);

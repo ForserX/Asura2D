@@ -5,7 +5,7 @@ using namespace Asura;
 
 static EntityView current_entt_object;
 
-static input::on_key_change editor_key_click_event;
+static Input::on_key_change editor_key_click_event;
 
 static Math::FVec2 start_mouse_position_absolute = {};
 static Math::FVec2 last_mouse_position_absolute = {};
@@ -14,18 +14,18 @@ bool ark_editor_mode = false;
 
 void Editor::Init()
 {
-	auto editor_key = [](int16_t scan_code, Asura::input::key_state state)
+	auto editor_key = [](int16_t scan_code, Asura::Input::key_state state)
 	{
 		if (!ark_editor_mode)
 			return;
 
 		if (scan_code == SDL_SCANCODE_MOUSE_LEFT)
 		{
-			if (state == Asura::input::key_state::press) 
+			if (state == Asura::Input::key_state::press) 
 			{
 				Object::CreateFake();
 			}
-			else if (state == Asura::input::key_state::hold) 
+			else if (state == Asura::Input::key_state::hold) 
 			{
 				Object::UpdateFake();
 			}
@@ -36,12 +36,12 @@ void Editor::Init()
 		}
 	};
 
-	editor_key_click_event = input::subscribe_key_event(editor_key);
+	editor_key_click_event = Input::SubscribeKeyEvent(editor_key);
 }
 
 void Editor::Destroy()
 {
-	Asura::input::unsubscribe_key_event(editor_key_click_event);
+	Asura::Input::UnsubscribeKeyEvent(editor_key_click_event);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ void Editor::Object::CreateFake()
 void Editor::Object::UpdateFake()
 {
 	last_mouse_position_absolute = ImGui::GetMousePos();
-	auto ent = Entities::try_get<Entities::scene_component>(current_entt_object);
+	auto ent = Entities::TryGet<Entities::scene_component>(current_entt_object);
 	ent->size = start_mouse_position_absolute - last_mouse_position_absolute;
 
 	Math::FVec2 try_pos = start_mouse_position_absolute;
@@ -67,10 +67,10 @@ void Editor::Object::UpdateFake()
 
 void Editor::Object::MakeTry()
 {
-	auto ent = Entities::try_get<Entities::scene_component>(current_entt_object);
+	auto ent = Entities::TryGet<Entities::scene_component>(current_entt_object);
 
-	Math::FVec2 start_world = Camera::screen_to_world(start_mouse_position_absolute);
-	Math::FVec2 last_world = Camera::screen_to_world(last_mouse_position_absolute);
+	Math::FVec2 start_world = Camera::Screen2World(start_mouse_position_absolute);
+	Math::FVec2 last_world = Camera::Screen2World(last_mouse_position_absolute);
 
 	ent->size.x = std::max(start_world.x, last_world.x) - std::min(start_world.x, last_world.x);
 	ent->size.y = std::max(start_world.y, last_world.y) - std::min(start_world.y, last_world.y);
@@ -80,7 +80,7 @@ void Editor::Object::MakeTry()
 
 	world_pos.x = std::min(start_mouse_position_absolute.x, last_mouse_position_absolute.x);
 	world_pos.y = std::max(start_mouse_position_absolute.y, last_mouse_position_absolute.y);
-	world_pos = Camera::screen_to_world(world_pos);
+	world_pos = Camera::Screen2World(world_pos);
 
 	Entities::AddPhysBody(current_entt_object, {}, world_pos + half_size, half_size);
 }

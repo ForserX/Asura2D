@@ -2,13 +2,13 @@
 
 using namespace Asura;
 
-static std::filesystem::path working_dir = {};
-static std::filesystem::path content_dir = {};
-static std::filesystem::path userdata_dir = {};
+static FileSystem::Path working_dir = {};
+static FileSystem::Path content_dir = {};
+static FileSystem::Path userdata_dir = {};
 
 static stl::hash_set<std::string> file_list = {};
 
-const std::filesystem::path& FileSystem::WorkingDir()
+const FileSystem::Path& FileSystem::WorkingDir()
 {
 	return working_dir;
 }
@@ -26,7 +26,7 @@ void FileSystem::Init()
 
 	if (!std::filesystem::exists(userdata_dir)) 
 	{
-		create_dir(userdata_dir);
+		CreateDir(userdata_dir);
 	}
 
 }
@@ -39,17 +39,17 @@ void FileSystem::Destroy()
 	working_dir.clear();
 }
 
-const std::filesystem::path& FileSystem::ContentDir()
+const FileSystem::Path& FileSystem::ContentDir()
 {
 	return content_dir;
 }
 
-const std::filesystem::path& FileSystem::UserdataDir()
+const FileSystem::Path& FileSystem::UserdataDir()
 {
 	return userdata_dir;
 }
 
-void FileSystem::create_file(const std::filesystem::path& file_name)
+void FileSystem::CreateFile(const FileSystem::Path& file_name)
 {
 	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
@@ -62,7 +62,7 @@ void FileSystem::create_file(const std::filesystem::path& file_name)
 	outfile.close();
 }
 
-void FileSystem::create_dir(const std::filesystem::path& dir_name)
+void FileSystem::CreateDir(const FileSystem::Path& dir_name)
 {
 	const auto file_iter = file_list.find(dir_name.generic_string());
 	if (file_iter != file_list.end()) 
@@ -76,7 +76,7 @@ void FileSystem::create_dir(const std::filesystem::path& dir_name)
 	game_assert(can_create, "file creating error", std::terminate());
 }
 
-void FileSystem::write_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+void FileSystem::write_file(const FileSystem::Path& file_name, stl::stream_vector& stream_data)
 {
 	const auto file_iter = file_list.find(file_name.generic_string());
 	if (file_iter != file_list.end()) {
@@ -92,7 +92,7 @@ void FileSystem::write_file(const std::filesystem::path& file_name, stl::stream_
 	out_stream.close();
 }
 
-void FileSystem::read_file(const std::filesystem::path& file_name, stl::stream_vector& stream_data)
+void FileSystem::read_file(const FileSystem::Path& file_name, stl::stream_vector& stream_data)
 {
 	std::fstream in_stream(file_name, std::fstream::binary | std::fstream::in);
 	stream_data.second.resize(std::filesystem::file_size(file_name));

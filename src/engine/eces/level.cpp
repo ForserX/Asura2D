@@ -1,16 +1,16 @@
 #include "pch.h"
 
 using namespace Asura;
-std::filesystem::path path_level = {};
+FileSystem::Path path_level = {};
 stl::vector<EntityView> ent_list = {};
 
 namespace Asura::Level::internal
 {
     CfgParser level_data = {};
 
-	void load(const std::filesystem::path path)
+	void load(const FileSystem::Path path)
 	{
-		level_data.load(path);
+		level_data.Load(path);
 
 		float level_x = 0;
 		float level_y = 0;
@@ -18,25 +18,25 @@ namespace Asura::Level::internal
 		float level_h = 0;
 
 		// сука, это нужно будет переделать
-		for (const auto &[section, kv] : level_data.get_data()) 
+		for (const auto &[section, kv] : level_data.Data()) 
 		{
 			if (section == "background") 
 			{
-				auto background_ent = ent_list.emplace_back(Entities::AddTexture(Entities::Create(), level_data.get<stl::string_view>(section, "path")));
-				Entities::add_field<Entities::background_flag>(background_ent);
-                Entities::add_field<Entities::scene_component>(background_ent);
+				auto background_ent = ent_list.emplace_back(Entities::AddTexture(Entities::Create(), level_data.Get<stl::string_view>(section, "path")));
+				Entities::AddField<Entities::background_flag>(background_ent);
+                Entities::AddField<Entities::scene_component>(background_ent);
 				continue;
 			}
 			
-			const bool is_drawable = level_data.get<bool>(section, "drawable");
-			level_x = level_data.get<float>(section, "x");
-			level_y = level_data.get<float>(section, "y");
-			level_w = level_data.get<float>(section, "w");
-			level_h = level_data.get<float>(section, "h");
+			const bool is_drawable = level_data.Get<bool>(section, "drawable");
+			level_x = level_data.Get<float>(section, "x");
+			level_y = level_data.Get<float>(section, "y");
+			level_w = level_data.Get<float>(section, "w");
+			level_h = level_data.Get<float>(section, "h");
 					
-			const auto body_type = level_data.get<Physics::body_type>(section, "type");
-			const auto body_shape = level_data.get<Physics::Material::shape>(section, "shape");
-			const auto material_type = level_data.get<Physics::Material::type>(section, "material");
+			const auto body_type = level_data.Get<Physics::body_type>(section, "type");
+			const auto body_shape = level_data.Get<Physics::Material::shape>(section, "shape");
+			const auto material_type = level_data.Get<Physics::Material::type>(section, "material");
 			
 			level_w /= 2;
 			level_h /= 2;
@@ -58,7 +58,7 @@ namespace Asura::Level::internal
 
 			if (is_drawable) 
 			{
-				Entities::add_field<Entities::drawable_flag>(ent);
+				Entities::AddField<Entities::drawable_flag>(ent);
 			}
 		}
 	};

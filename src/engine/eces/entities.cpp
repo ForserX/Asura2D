@@ -7,11 +7,11 @@ EntityView invalid_entity = {};
 
 Math::FVec2 no_pos = { FLT_MAX, FLT_MAX };
 
-input::on_key_change entities_key_change_event = {};
+Input::on_key_change entities_key_change_event = {};
 bool clear_on_next_tick = false;
 bool free_on_next_tick = false;
 
-Registry& Entities::internal::get_registry()
+Registry& Entities::internal::GetRegistry()
 {
 	return global_registry;
 }
@@ -38,9 +38,9 @@ void shit_detector_tick()
 		while (ent_ptr != reg.data() + reg.size())
 		{	
 			entt::entity ent = *ent_ptr;
-			if (Entities::IsValid(ent) && !Entities::contains<Entities::garbage_flag>(ent))
+			if (Entities::IsValid(ent) && !Entities::Contains<Entities::garbage_flag>(ent))
 			{
-				Entities::add_field<Entities::garbage_flag>(ent);
+				Entities::AddField<Entities::garbage_flag>(ent);
 			}
 
 			ent_ptr++;
@@ -65,9 +65,9 @@ void shit_detector_tick()
 void Entities::Init()
 {
 #ifndef ASURA_SHIPPING
-	entities_key_change_event = input::subscribe_key_event([](int16_t scan_code, input::key_state state)
+	entities_key_change_event = Input::SubscribeKeyEvent([](int16_t scan_code, Input::key_state state)
 	{	
-		if (state == input::key_state::press) 
+		if (state == Input::key_state::press) 
 		{
 			switch (scan_code) 
 			{
@@ -86,7 +86,7 @@ void Entities::Init()
 	});
 #endif
 
-	Scheduler::schedule(Scheduler::garbage_collector, []() 
+	Scheduler::Schedule(Scheduler::garbage_collector, []() 
 	{
 		internal::process_entities([]() 
 		{
@@ -100,7 +100,7 @@ void Entities::Init()
 void Entities::Destroy()
 {
 #ifndef ASURA_SHIPPING
-	input::unsubscribe_key_event(entities_key_change_event);
+	Input::UnsubscribeKeyEvent(entities_key_change_event);
 #endif
 }
 
@@ -109,12 +109,12 @@ void Entities::Tick(float dt)
 
 }
 
-void Entities::clear()
+void Entities::Clear()
 {
 	clear_on_next_tick = true;
 }
 
-void Entities::free()
+void Entities::Free()
 {
 	free_on_next_tick = true;
 }
@@ -129,11 +129,11 @@ bool Entities::IsNull(EntityView ent)
 	return ent.Get() == entt::null;
 }
 
-const Math::FVec2& Entities::get_position(const EntityView& ent)
+const Math::FVec2& Entities::GetPosition(const EntityView& ent)
 {
-	if (contains<scene_component>(ent)) 
+	if (Contains<scene_component>(ent)) 
 	{
-		const auto scene_comp = try_get<scene_component>(ent.Get());
+		const auto scene_comp = TryGet<scene_component>(ent.Get());
 		if (scene_comp != nullptr) 
 		{
 			return scene_comp->Transform.position();
@@ -145,11 +145,11 @@ const Math::FVec2& Entities::get_position(const EntityView& ent)
 
 EntityBase Entities::GetEntityByBbody(const b2Body* body)
 {
-	const auto view = get_view<physics_body_component>();
+	const auto view = GetView<physics_body_component>();
 
 	for (const auto entity : view) 
 	{
-		const auto phys_comp = try_get<physics_body_component>(entity);
+		const auto phys_comp = TryGet<physics_body_component>(entity);
 		if (phys_comp != nullptr && phys_comp->body != nullptr && phys_comp->body->get_body() == body) 
 		{
 			return entity;
@@ -169,7 +169,7 @@ void Entities::MarkAsGarbage(const EntityView& ent)
 	const auto& registry = global_registry.Get();
 	if (!registry.all_of<dont_free_after_reset_flag>(ent.Get()) && !registry.all_of<garbage_flag>(ent.Get())) 
 	{
-		add_field<garbage_flag>(ent.Get());
+		AddField<garbage_flag>(ent.Get());
 	}
 }
 
@@ -179,7 +179,7 @@ const EntityView& Entities::AddTexture(const EntityView& ent, stl::string_view p
 	const ImTextureID texture_id = Render::LoadTexture(texture_resource);
 	game_assert(texture_id != nullptr, "can't load texture", return ent);
 
-	add_field<draw_texture_component>(ent, texture_resource);
+	AddField<draw_texture_component>(ent, texture_resource);
 	return ent;
 }
 
@@ -197,15 +197,15 @@ Entities::AddPhysBody(
 	const Physics::body_parameters phys_parameters(0.f, 0.f, vel, pos, size, type, shape, mat);
 	Physics::PhysicsBody* body = SafeCreation(phys_parameters);
 	
-	add_field<physics_body_component>(ent, body);
-	if (!contains<scene_component>(ent)) 
+	AddField<physics_body_component>(ent, body);
+	if (!Contains<scene_component>(ent)) 
 	{
-		add_field<scene_component>(ent);
+		AddField<scene_component>(ent);
 	}
 
-	if (contains<draw_color_component>(ent)) 
+	if (Contains<draw_color_component>(ent)) 
 	{
-		erase_field<draw_color_component>(ent);
+		EraseField<draw_color_component>(ent);
 	}
 
 	return ent;
@@ -213,13 +213,13 @@ Entities::AddPhysBody(
 
 const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset)
 {
-	stl::path preset_file = FileSystem::ContentDir();
+	FileSystem::Path preset_file = FileSystem::ContentDir();
 	preset_file.append("bodies").append(preset);
 
 	CfgParser reader;
-	reader.load(preset_file);
+	reader.Load(preset_file);
 
-	stl::tree_string_map parser_data = reader.get_data();
+	stl::tree_string_map parser_data = reader.Data();
 
 	stl::vector<Physics::PhysicsBody*> new_bodies;
 
@@ -242,9 +242,9 @@ const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math
 
 			const EntityView& ent_body = Create();
 
-			add_field<physics_body_component>(ent_body, body);
-			add_field<scene_component>(ent_body);
-			add_field<Entities::drawable_flag>(ent_body);
+			AddField<physics_body_component>(ent_body, body);
+			AddField<scene_component>(ent_body);
+			AddField<Entities::drawable_flag>(ent_body);
 		}
 		else if (sect.find("joint") != std::string::npos)
 		{
@@ -260,9 +260,9 @@ const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math
 
 			const EntityView& ent_body = Create();
 
-			add_field<physics_joint_component>(ent_body, joint);
-			add_field<scene_component>(ent_body);
-			add_field<Entities::drawable_flag>(ent_body);
+			AddField<physics_joint_component>(ent_body, joint);
+			AddField<scene_component>(ent_body);
+			AddField<Entities::drawable_flag>(ent_body);
 		}
 	}
 
@@ -273,10 +273,10 @@ const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math
 
 const EntityView& Entities::AddSceneComponent(const EntityView& ent)
 {
-	add_field<scene_component>(ent);
-	add_field<draw_color_component>(ent);
+	AddField<scene_component>(ent);
+	AddField<draw_color_component>(ent);
 
-	add_field<Entities::drawable_flag>(ent);
+	AddField<Entities::drawable_flag>(ent);
 
 	return ent;
 }

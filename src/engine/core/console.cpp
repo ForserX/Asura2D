@@ -3,13 +3,13 @@
 using namespace Asura;
 
 std::unique_ptr<UI::Console> console;
-input::on_key_change console_key_change;
+Input::on_key_change console_key_change;
 
 using UI::Console;
 
 Console::Console()
 {
-    clear_log();
+    ClearLog();
     memset(InputBuf, 0, sizeof(InputBuf));
     HistoryPos = -1;
 
@@ -36,28 +36,28 @@ Console::Console()
 
 Console::~Console()
 {
-    clear_log();
+    ClearLog();
 
     for (int i = 0; i < History.Size; i++)
     {
         free(History[i]);
     }
 
-    input::unsubscribe_key_event(console_key_change);
+    Input::UnsubscribeKeyEvent(console_key_change);
 }
 
 // Portable helpers
 int  strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
 void strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
-void Console::clear_log()
+void Console::ClearLog()
 {
     for (int i = 0; i < Items.Size; i++)
         free(Items[i]);
     Items.clear();
 }
 
-void Console::push_log_item(stl::string_view str)
+void Console::PushLogItem(stl::string_view str)
 {
     Items.push_back(strdup(str.data()));
 }
@@ -103,12 +103,12 @@ void Console::draw(float dt, const char* title, bool* p_open)
 
     ImGui::Separator();
 
-    // Reserve enough left-over height for 1 separator + 1 input text
+    // Reserve enough left-over height for 1 separator + 1 Input text
     const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
     ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
     if (ImGui::BeginPopupContextWindow())
     {
-        if (ImGui::Selectable("Clear")) clear_log();
+        if (ImGui::Selectable("Clear")) ClearLog();
         ImGui::EndPopup();
     }
 
@@ -280,7 +280,7 @@ void Console::ExecCommand(const char* command_line)
     // Process other command
     if (cmd == "clear")
     {
-        clear_log();
+        ClearLog();
     }
     else if (cmd == "hide")
     {
@@ -304,24 +304,24 @@ void Console::ExecCommand(const char* command_line)
         cmd = cmd.substr(12);
 
         if (cmd == "red") {
-            window_style = graphics::theme::style::red;
+            window_style = Graphics::theme::style::red;
         }
         else if (cmd == "dark") {
-            window_style = graphics::theme::style::dark;
+            window_style = Graphics::theme::style::dark;
         }
         else if (cmd == "white") {
-            window_style = graphics::theme::style::white;
+            window_style = Graphics::theme::style::white;
         }
         else {
-            window_style = graphics::theme::style::invalid;
+            window_style = Graphics::theme::style::invalid;
         }
 
         if (renderer != nullptr)
         {
-            graphics::theme::change();
+            Graphics::theme::change();
         }
     }
-    // On command input, we scroll to bottom even if AutoScroll==false
+    // On command Input, we scroll to bottom even if AutoScroll==false
     ScrollToBottom = true;
 }
 
@@ -428,7 +428,7 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
                     HistoryPos = -1;
         }
 
-        // A better implementation would preserve the data on the current input line along with cursor position.
+        // A better implementation would preserve the data on the current Input line along with cursor position.
         if (prev_history_pos != HistoryPos)
         {
             const char* history_str = (HistoryPos >= 0) ? History[HistoryPos] : "";
@@ -443,11 +443,11 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
     return 0;
 }
 
-void Console::flush()
+void Console::Flush()
 {
-	std::filesystem::path cfg_path = FileSystem::UserdataDir();
+	FileSystem::Path cfg_path = FileSystem::UserdataDir();
 	cfg_path = cfg_path.append("user.cfg");
-    FileSystem::create_file(cfg_path);
+    FileSystem::CreateFile(cfg_path);
     std::ofstream cfg(cfg_path);
 
     for (const auto& [cmd, hint] : cmd_hint)
@@ -472,17 +472,17 @@ void Console::flush()
 
 void Console::Init()
 {
-    console_key_change = input::subscribe_key_event(
-        [](int16_t scan_code, input::key_state state)
+    console_key_change = Input::SubscribeKeyEvent(
+        [](int16_t scan_code, Input::key_state state)
         {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == input::key_state::press) 
+            if (scan_code == SDL_SCANCODE_GRAVE && state == Input::key_state::press) 
             {
                 show_console = !show_console;
             }
         }
     );
 
-	std::filesystem::path cfg_path = FileSystem::UserdataDir();
+	FileSystem::Path cfg_path = FileSystem::UserdataDir();
     cfg_path = cfg_path.append("user.cfg");
     if (!std::filesystem::exists(cfg_path))
     {

@@ -25,7 +25,7 @@ namespace Asura
 			stl::hash_set<PhysicsJoint*> joints;
 
 		private:
-			void destroy_all_bodies();
+			void DestroyAllBodies();
 			void PreTick();
 			void InternalTick(float dt);
             Math::FRect GetRealBodyRect(b2Body* body);

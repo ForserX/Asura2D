@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#undef CreateFile
+
 namespace Asura::FileSystem
 {
 	using Path = std::filesystem::path;
@@ -11,8 +13,8 @@ namespace Asura::FileSystem
 	const Path& ContentDir();
 	const Path& UserdataDir();
 
-	void create_file(const Path& file_name);
-	void create_dir(const Path& dir_name);
+	void CreateFile(const Path& file_name);
+	void CreateDir(const Path& dir_name);
 
 	void write_file(const Path& file_name, stl::stream_vector& stream_data);
 	void read_file(const Path& file_name, stl::stream_vector& stream_data);

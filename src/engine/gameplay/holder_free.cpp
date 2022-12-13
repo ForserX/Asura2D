@@ -19,14 +19,14 @@ void GamePlay::Holder::free::Tick()
     if (holder_type != holder_mode::free)
         return;
 
-    if (input::is_focused_on_ui())
+    if (Input::IsFocusedUI())
     {
         return;
     }
 
-    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X1))
+    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_X1))
     {
-        Math::FVec2 mouse_position_absolute = Camera::screen_to_world(ImGui::GetMousePos());
+        Math::FVec2 mouse_position_absolute = Camera::Screen2World(ImGui::GetMousePos());
 
         if (joint_contact_body == nullptr)
         {
@@ -57,10 +57,10 @@ void GamePlay::Holder::free::Tick()
 
     static bool sound_started = false;
 
-    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT))
+    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = Camera::screen_to_world(mouse_position_absolute);
+        mouse_position_absolute = Camera::Screen2World(mouse_position_absolute);
 
         if (current_contol_joint == nullptr)
         {
@@ -110,7 +110,7 @@ void GamePlay::Holder::free::Tick()
         sound_started = false;
     }
 
-    if (current_contol_joint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT))
+    if (current_contol_joint != nullptr && !Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
     {
         Physics::GetWorld().DestroyJoint(current_contol_joint);
         current_contol_joint = nullptr;
@@ -118,10 +118,10 @@ void GamePlay::Holder::free::Tick()
     }
 
     // Test code
-    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X2))
+    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_X2))
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = Camera::screen_to_world(mouse_position_absolute);
+        mouse_position_absolute = Camera::Screen2World(mouse_position_absolute);
         auto Body = Physics::HitTest(mouse_position_absolute);
 
         if (Body != nullptr)

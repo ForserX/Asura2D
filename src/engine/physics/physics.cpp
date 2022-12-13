@@ -100,7 +100,7 @@ Physics::PhysicsBody* Physics::HitTest(Math::FVec2 pos)
 	{
 		const b2Body* phys_body = callback.m_fixture->GetBody();
 		const auto entity = Entities::GetEntityByBbody(phys_body);
-		const auto phys_comp = Entities::try_get<Entities::physics_body_component>(entity);
+		const auto phys_comp = Entities::TryGet<Entities::physics_body_component>(entity);
 		if (phys_comp != nullptr) 
 		{
 			return phys_comp->body;

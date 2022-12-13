@@ -21,7 +21,7 @@ namespace Asura::Scheduler
 	void Init();
 	void Destroy();
 
-	const void schedule(global_task_type task_type, auto&& func)
+	const void Schedule(global_task_type task_type, auto&& func)
 	{
 		internal::schedule(task_type, global_function(func));
 	}

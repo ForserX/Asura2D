@@ -25,7 +25,7 @@ void window::Init()
 	window_handle = SDL_CreateWindow("Asura 2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, window_flags);
 
 #ifdef ASURA_VULKAN
-	graphics::init_vulkan();
+	Graphics::init_vulkan();
 #endif
 }
 
@@ -44,8 +44,8 @@ void window::Tick()
 {
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-	// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+	// - When io.WantCaptureMouse is true, do not dispatch mouse Input data to your main application, or clear/overwrite your copy of the mouse data.
+	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard Input data to your main application, or clear/overwrite your copy of the keyboard data.
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 	SDL_Event event = {};
 	while (SDL_PollEvent(&event))
@@ -69,7 +69,7 @@ void window::Tick()
 				case SDL_WINDOWEVENT_RESIZED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
-					Camera::reset_wh();
+					Camera::ResetHW();
 #ifdef OS_WINDOWS
 					// Stupid bug on Windows
 					SDL_GetWindowPosition(window_handle, &tx, &ty);
@@ -80,7 +80,7 @@ void window::Tick()
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
 					window_width = event.window.data1;
 					window_height = event.window.data2;
-					Camera::reset_wh();
+					Camera::ResetHW();
 					break;
 				case SDL_WINDOWEVENT_RESTORED:
 					window_maximized = false;
@@ -96,23 +96,23 @@ void window::Tick()
 		case SDL_MOUSEMOTION: 
 		{
 			const auto pos = ImGui::GetMousePos();
-			input::update_mouse_pos({static_cast<short>(pos.x), static_cast<short>(pos.y)});
+			Input::UpdateMousePos({static_cast<short>(pos.x), static_cast<short>(pos.y)});
 		}
 		break;
 		case SDL_KEYDOWN:
-			input::update_key(event.key.keysym.scancode, 1.f);
+			Input::UpdateKey(event.key.keysym.scancode, 1.f);
 			break;
 		case SDL_KEYUP:
-			input::update_key(event.key.keysym.scancode, 0.f);
+			Input::UpdateKey(event.key.keysym.scancode, 0.f);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 1.f);
+			Input::UpdateKey(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 1.f);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			input::update_key(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 0.f);
+			Input::UpdateKey(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 0.f);
 			break;
 		case SDL_MOUSEWHEEL:
-			input::update_key(SDL_SCANCODE_MOUSEWHEEL, event.wheel.y);
+			Input::UpdateKey(SDL_SCANCODE_MOUSEWHEEL, event.wheel.y);
 			break;
 		default:
 			break;
@@ -142,8 +142,8 @@ void window::change_window_mode()
 void window::change_resolution()
 {
 	SDL_SetWindowSize(window_handle, window_width, window_height);
-	Camera::reset_wh();
-	Camera::reset_view();
+	Camera::ResetHW();
+	Camera::ResetView();
 }
 
 void window::loop()

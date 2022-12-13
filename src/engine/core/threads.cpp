@@ -36,12 +36,21 @@ inline void nop()
 #endif
 }
 
-void Asura::Threads::sync_sleep()
+void Asura::Threads::SyncCurrentThread()
 {
 	std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
-void Threads::switch_context()
+void Asura::Threads::Wait()
+{
+#ifdef OS_WINDOWS
+	_mm_pause();
+#else
+	std::this_thread::sleep_for(std::chrono::milliseconds(2));
+#endif
+}
+
+void Threads::SwitchContext()
 {
 	for (int i = 0; i < 256; i++)
 	{

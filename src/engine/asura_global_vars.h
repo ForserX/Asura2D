@@ -26,7 +26,7 @@ extern float cam_zoom;
 
 // Render 
 extern SDL_Renderer* renderer;
-extern Asura::graphics::theme::style window_style;
+extern Asura::Graphics::theme::style window_style;
 extern bool show_fps_counter;
 
 // Holders

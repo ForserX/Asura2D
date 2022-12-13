@@ -7,7 +7,7 @@ struct resource_state
 {
     bool load_state;
     mio::mmap_source handle;
-    std::filesystem::path file_path;
+    FileSystem::Path file_path;
 };
 
 struct resource_scheduled_task
@@ -87,7 +87,7 @@ auto resources_scheduled_worker = []()
 void ResourcesManager::Init()
 {
     resources_destroyed = false;
-    Scheduler::schedule(Scheduler::global_task_type::resource_manager, resources_scheduled_worker);
+    Scheduler::Schedule(Scheduler::global_task_type::resource_manager, resources_scheduled_worker);
     
     load_content_context();
     resources_inited = true;

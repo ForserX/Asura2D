@@ -30,6 +30,10 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <timeapi.h>
+
+// AVX/SSE trash
+#include <xmmintrin.h>
+
 #else
 #ifdef OS_LINUX
 #	include <sys/ptrace.h>
@@ -91,4 +95,6 @@
 #include <openal-soft/include/AL/al.h>
 #include <openal-soft/include/AL/alc.h>
 
+// Engine Base
 #include "asura_engine.h"
+#include "asura_global_vars.h"

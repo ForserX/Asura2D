@@ -20,8 +20,8 @@ void engine::Init(int argc, char** argv)
     FileSystem::Init();
     Debug::Init();
 
-	input::Init();
-	Debug::msg("initializing input system");
+	Input::Init();
+	Debug::msg("initializing Input system");
 
     console->Init();
     Debug::msg("base Systems inited. intializing other Systems");
@@ -52,7 +52,7 @@ void engine::Destroy()
 {
 	game::Destroy();
 	Render::Destroy();
-	input::Destroy();
+	Input::Destroy();
 	Event::Destroy();
     ResourcesManager::Destroy();
 	Scheduler::Destroy();
@@ -82,7 +82,7 @@ void engine::Tick()
 		dt = 0.06f;
 	}
 
-	input::Tick(dt);
+	Input::Tick(dt);
 
 	if (!paused) 
 	{
