@@ -4,7 +4,7 @@ using namespace Asura;
 
 bool paused = false;
 bool use_parallel = true;
-std::atomic_bool engine_ticking_now = {};
+static std::atomic_bool engine_ticking_now = {};
 
 void engine::start()
 {
@@ -19,33 +19,34 @@ void engine::Init(int argc, char** argv)
     
     FileSystem::Init();
     Debug::Init();
+	Debug::msg("Initializing started:");
 
 	Input::Init();
-	Debug::msg("initializing Input system");
+	Debug::msg("- Input: Done");
 
     console->Init();
-    Debug::msg("base Systems inited. intializing other Systems");
+    Debug::msg("- Console: : Done");
     
 	Threads::Init();
-    Debug::msg("initializing Threads system");
+    Debug::msg("- Threads: Done");
     
 	Scheduler::Init();
-    Debug::msg("initializing Scheduler system");
+    Debug::msg("- Scheduler: Done");
     
     ResourcesManager::Init();
-    Debug::msg("initializing resource system");
+    Debug::msg("- Resource Manager: Done");
     
 	Event::Init();
-    Debug::msg("initializing event system");
+    Debug::msg("- Event Manager: Done");
     
 	Render::Init();
-    Debug::msg("initializing Render system");
+    Debug::msg("- Render: Done");
     
 	game::Init();
-    Debug::msg("initializing game system");
+    Debug::msg("Game Space: Done");
 
 	Audio::Init();
-	Debug::msg("initializing audio system");
+	Debug::msg("Audio Manager: Done");
 }
 
 void engine::Destroy()
@@ -72,26 +73,30 @@ void engine::Tick()
 	OPTICK_FRAME("Engine");
 	OPTICK_EVENT("Engine Tick");
 
-	static auto current_time = std::chrono::steady_clock::now().time_since_epoch();
-	const auto new_time = std::chrono::steady_clock::now().time_since_epoch();
-	auto dt = static_cast<float>(static_cast<double>(new_time.count() - current_time.count()) / 1000000000.);
-	current_time = new_time;
+	static auto CurrentTime = std::chrono::steady_clock::now().time_since_epoch();
+	const auto& NewTime = std::chrono::steady_clock::now().time_since_epoch();
+
+	float DeltaTime = float(NewTime.count() - CurrentTime.count());
+	DeltaTime /= 1000000000.f;
+
+	// Sync time frame
+	CurrentTime = NewTime;
 	
-	if (dt > 1) 
+	if (DeltaTime > 1)
 	{
-		dt = 0.06f;
+		DeltaTime = 0.06f;
 	}
 
-	Input::Tick(dt);
+	Input::Tick(DeltaTime);
 
 	if (!paused) 
 	{
 		is_game_ticking = true;
-		game::Tick(dt);
+		game::Tick(DeltaTime);
 		is_game_ticking = false;
 	}
 	
-	Render::Tick(dt);
+	Render::Tick(DeltaTime);
 	
 	Audio::Tick();
 

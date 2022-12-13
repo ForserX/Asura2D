@@ -64,7 +64,7 @@ void Input::Tick(float dt)
 
 bool Input::IsFocusedUI()
 {
-	return ImGui::GetFocusID() != 0;
+	return paused || show_console || ImGui::GetFocusID() != 0;
 }
 
 void Input::UpdateKey(int16_t scan_code, float state)

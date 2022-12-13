@@ -84,6 +84,12 @@ public:
 
 Physics::PhysicsBody* Physics::HitTest(Math::FVec2 pos)
 {	
+	if (Input::IsFocusedUI())
+	{
+		// FX: Why the extra costs if we're stuck in the UI 
+		return nullptr;
+	}
+
 	// Make a small box.
 	b2AABB aabb = {};
 	b2Vec2 d = {};
