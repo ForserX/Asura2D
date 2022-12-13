@@ -11,6 +11,9 @@ void game::Init()
 	Entities::Init();
 	Level::Init();
 
+	GamePlay::Holder::free::Init();
+	GamePlay::Holder::player::Init();
+
 	Editor::Init();
 
 	Threads::sync_sleep();
@@ -19,6 +22,9 @@ void game::Init()
 void game::Destroy()
 {
 	Editor::Destroy();
+
+	GamePlay::Holder::free::Destroy();
+	GamePlay::Holder::player::Destroy();
 
 	Level::Destroy();
 	Entities::Destroy();

@@ -16,7 +16,10 @@ void GamePlay::Holder::free::Init()
 
 void GamePlay::Holder::free::Tick()
 {
-    if (input::is_focused_on_ui()) 
+    if (holder_type != holder_mode::free)
+        return;
+
+    if (input::is_focused_on_ui())
     {
         return;
     }
@@ -25,12 +28,12 @@ void GamePlay::Holder::free::Tick()
     {
         Math::FVec2 mouse_position_absolute = Camera::screen_to_world(ImGui::GetMousePos());
 
-        if (joint_contact_body == nullptr) 
+        if (joint_contact_body == nullptr)
         {
             joint_contact_body = Physics::HitTest(mouse_position_absolute);
             joint_contact_point = mouse_position_absolute;
-        } 
-        else 
+        }
+        else
         {
             const Physics::PhysicsBody* test_body = Physics::HitTest(mouse_position_absolute);
             if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != Physics::body_type::ph_static)
@@ -54,12 +57,12 @@ void GamePlay::Holder::free::Tick()
 
     static bool sound_started = false;
 
-    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) 
+    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT))
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = Camera::screen_to_world(mouse_position_absolute);
 
-        if (current_contol_joint == nullptr) 
+        if (current_contol_joint == nullptr)
         {
             current_contol_body = Physics::HitTest(mouse_position_absolute);
 
@@ -85,18 +88,18 @@ void GamePlay::Holder::free::Tick()
                 current_contol_joint = dynamic_cast<b2MouseJoint*>(Physics::GetWorld().CreateJoint(&jd));
                 current_contol_body->get_body()->SetAwake(true);
             }
-            else 
+            else
             {
                 current_contol_joint = nullptr;
             }
         }
-        else 
+        else
         {
             if (!current_contol_body->IsDestroyed())
             {
                 current_contol_joint->SetTarget(mouse_position_absolute);
             }
-            else 
+            else
             {
                 current_contol_joint = nullptr;
             }
@@ -107,11 +110,25 @@ void GamePlay::Holder::free::Tick()
         sound_started = false;
     }
 
-    if (current_contol_joint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT)) 
+    if (current_contol_joint != nullptr && !input::is_key_pressed(SDL_SCANCODE_MOUSE_LEFT))
     {
         Physics::GetWorld().DestroyJoint(current_contol_joint);
         current_contol_joint = nullptr;
         current_contol_body = nullptr;
+    }
+
+    // Test code
+    if (input::is_key_pressed(SDL_SCANCODE_MOUSE_X2))
+    {
+        Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
+        mouse_position_absolute = Camera::screen_to_world(mouse_position_absolute);
+        auto Body = Physics::HitTest(mouse_position_absolute);
+
+        if (Body != nullptr)
+        {
+            Holder::player::Attach(Entities::GetEntityByBbody(Body->get_body()));
+            holder_type = holder_mode::player;
+        }
     }
 }
 
