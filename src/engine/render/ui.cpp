@@ -2,6 +2,7 @@
 #include "../editor/editor_common.h"
 
 using namespace Asura;
+using namespace Asura::GamePlay;
 
 bool show_entity_inspector = false;
 bool show_console = false;
@@ -22,7 +23,7 @@ void UI::Tick(float dt)
 {
     OPTICK_EVENT("UI draw");
 
-    if (ark_editor_mode)
+    if (is_editor_mode)
     {
         Editor::UI::Destroy();
         return;

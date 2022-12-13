@@ -1,20 +1,12 @@
 #pragma once
 
-namespace Asura::Camera
+namespace Asura::GamePlay::Camera
 {
-	enum class cam_move : int8_t 
-	{
-		left,
-		right,
-		up,
-		down
-	};
-
 	void Init();
 	void Destroy();
 	void Tick(float dt);
 
-	void Move(cam_move move, float point);
+	void Move(MoveWays move, float point);
 	void Zoom(float value);
 
 	bool IsAttached();

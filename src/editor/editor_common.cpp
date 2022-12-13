@@ -2,6 +2,7 @@
 #include "editor_common.h"
 
 using namespace Asura;
+using namespace Asura::GamePlay;
 
 static EntityView current_entt_object;
 
@@ -10,13 +11,13 @@ static Input::on_key_change editor_key_click_event;
 static Math::FVec2 start_mouse_position_absolute = {};
 static Math::FVec2 last_mouse_position_absolute = {};
 
-bool ark_editor_mode = false;
+bool is_editor_mode = false;
 
 void Editor::Init()
 {
 	auto editor_key = [](int16_t scan_code, Asura::Input::key_state state)
 	{
-		if (!ark_editor_mode)
+		if (!is_editor_mode)
 			return;
 
 		if (scan_code == SDL_SCANCODE_MOUSE_LEFT)

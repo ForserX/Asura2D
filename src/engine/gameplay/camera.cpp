@@ -1,6 +1,7 @@
 #include "pch.h"
 
 using namespace Asura;
+using namespace Asura::GamePlay;
 
 static Math::FVec2 cam_center = {};
 float cam_zoom = 0.f;
@@ -13,15 +14,60 @@ static EntityView attached_entity = {};
 static bool attached = false;
 constexpr bool test_world_transform = false;
 
+auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state state)
+{
+	switch (scan_code)
+	{
+	case SDL_SCANCODE_MOUSE_LEFT:
+	{
+		if (Asura::Input::IsKeyPressed(SDL_SCANCODE_LCTRL))
+		{
+			if (state == Asura::Input::key_state::hold)
+			{
+				const auto& mouse_delta = Asura::Input::GetMouseDelta();
+				Camera::Move(GamePlay::MoveWays::left, (mouse_delta.x * 0.05f));
+				Camera::Move(GamePlay::MoveWays::up, (mouse_delta.y * 0.05f));
+			}
+		}
+		break;
+	}
+
+	case SDL_SCANCODE_LEFT:  Camera::Move(GamePlay::MoveWays::left, 1.f);  break;
+	case SDL_SCANCODE_RIGHT: Camera::Move(GamePlay::MoveWays::right, 1.f); break;
+	case SDL_SCANCODE_UP:	 Camera::Move(GamePlay::MoveWays::up, 1.f);	   break;
+	case SDL_SCANCODE_DOWN:  Camera::Move(GamePlay::MoveWays::down, 1.f);  break;
+	default:															   break;
+	}
+};
+
+auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
+{
+	switch (scan_code)
+	{
+	case SDL_SCANCODE_MOUSEWHEEL:
+		Camera::Zoom((-1.f * state) * 2.f);
+		break;
+	default:
+		break;
+	}
+};
+
+static Input::on_key_change camera_mouse_key_event;
+static Input::on_input_change camera_camera_mouse_wheel_event;
+
 void Camera::Init()
 {
+	camera_mouse_key_event = Asura::Input::SubscribeKeyEvent(camera_mouse_key_change);
+	camera_camera_mouse_wheel_event = Asura::Input::SubscribeInputEvent(camera_mouse_wheel_change);
+
 	ResetHW();
 	ResetView();
 }
 
 void Camera::Destroy()
 {
-
+	Asura::Input::UnsubscribeInputEvent(camera_camera_mouse_wheel_event);
+	Asura::Input::UnsubscribeKeyEvent(camera_mouse_key_event);
 }
 
 void Camera::Tick(float dt)
@@ -50,23 +96,16 @@ void Camera::Tick(float dt)
     }
 }
 
-void Camera::Move(cam_move move, float point)
+void Camera::Move(MoveWays move, float point)
 {
 	Detach();
+
 	switch (move) 
 	{
-	case cam_move::left:
-		cam_center[0] -= scaled_cam_zoom * point;
-		break;
-	case cam_move::right:
-		cam_center[0] += scaled_cam_zoom * point;
-		break;
-	case cam_move::up:
-		cam_center[1] += scaled_cam_zoom * point;
-		break;
-	case cam_move::down:
-		cam_center[1] -= scaled_cam_zoom * point;
-		break;
+	case MoveWays::left:  cam_center[0] -= scaled_cam_zoom * point; break;
+	case MoveWays::right: cam_center[0] += scaled_cam_zoom * point; break;
+	case MoveWays::up:    cam_center[1] += scaled_cam_zoom * point; break;
+	case MoveWays::down:  cam_center[1] -= scaled_cam_zoom * point; break;
 	}
 }
 
@@ -133,6 +172,7 @@ Math::FVec2 Camera::Screen2World(const Math::FVec2& screenPoint)
     Math::FVec2 pw;
     pw[0] = (1.0f - u) * lower.x + u * upper.x;
     pw[1] = (1.0f - v) * lower.y + v * upper.y;
+
     return pw;
 }
 

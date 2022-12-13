@@ -70,5 +70,5 @@ void game::Tick(float dt)
 
 void game::editor(bool state)
 {
-	ark_editor_mode = state;
+	is_editor_mode = state;
 }

@@ -2,6 +2,7 @@
 
 using namespace Asura::Systems;
 using namespace Asura::Entities;
+using namespace Asura::GamePlay;
 
 bool physical_debug_draw = false;
 

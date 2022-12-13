@@ -174,6 +174,8 @@ bool Asura::Physics::PhysicsBody::IsFlying() const
 
 		if (contact->IsTouching())
 		{
+#ifndef ASURA_BOX2D_OPTIMIZED
+			// FX: Contacts is broken
 			b2Body* BodyA = contact->GetFixtureA()->GetBody();
 			b2Body* BodyB = contact->GetFixtureB()->GetBody();
 
@@ -185,6 +187,9 @@ bool Asura::Physics::PhysicsBody::IsFlying() const
 			{
 				return BodyA->GetPosition().y > BodyB->GetPosition().y;
 			}
+#else
+			return false;
+#endif
 		}
 	}
 

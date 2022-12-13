@@ -1,7 +1,7 @@
 #pragma once
 
 // Editor code
-extern bool ark_editor_mode;
+extern bool is_editor_mode;
 
 // Physical code
 extern bool physical_debug_draw;

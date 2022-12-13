@@ -2,6 +2,7 @@
 #include <SDL_image/SDL_image.h>
 
 using namespace Asura;
+using namespace Asura::GamePlay;
 
 Graphics::theme::style window_style = {};
 

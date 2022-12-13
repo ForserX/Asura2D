@@ -10,6 +10,7 @@ int window_height = 900;
 bool window_maximized = false;
 
 using namespace Asura;
+using namespace Asura::GamePlay;
 
 void window::Init()
 {

@@ -243,7 +243,7 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 		PreTick();
 	}
 
-	if (ark_editor_mode)
+	if (is_editor_mode)
 	{
 		return;
 	}
@@ -313,7 +313,7 @@ Math::FRect Physics::PhysicsWorld::GetRealBodyRect(b2Body* body)
 
 void Physics::PhysicsWorld::Tick(float dt)
 {
-	if (!use_parallel && !ark_editor_mode)
+	if (!use_parallel && !is_editor_mode)
 	{
 		static float phys_accum = 0.f;
 		phys_accum += dt;
