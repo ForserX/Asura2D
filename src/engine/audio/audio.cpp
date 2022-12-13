@@ -8,6 +8,8 @@
 using namespace Asura;
 using Asura::Audio::Device;
 
+float Volume = 1.f;
+
 class DeviceDummy : public Device
 {
 public:
@@ -16,6 +18,8 @@ public:
 
 	virtual void Tick() override {}
 	virtual void Load(ResourcesManager::id_t File) override {}
+
+	virtual void SetVolume(float Volume) override {};
 };
 
 Device* pDevice = nullptr;
@@ -58,6 +62,14 @@ void Audio::Reset(DeviceMode Mode)
 #endif
 	default:					pDevice = new DeviceDummy;
 	}
+}
+
+void Asura::Audio::UpdateVolume()
+{
+	if (pDevice == nullptr)
+		return;
+
+	pDevice->SetVolume(Volume);
 }
 
 void Audio::Start(stl::string_view File)

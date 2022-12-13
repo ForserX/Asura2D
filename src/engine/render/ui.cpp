@@ -7,6 +7,8 @@ bool show_entity_inspector = false;
 bool show_console = false;
 bool show_fps_counter = true;
 
+static float OldVolume = Volume;
+
 void UI::Init()
 {
     std::filesystem::path font_dir = FileSystem::ContentDir();
@@ -77,6 +79,7 @@ void UI::Tick(float dt)
                 ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
                 ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
                 ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
+                ImGui::SliderFloat("Volume", &Volume, 0.f, 1.f);
                 ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
 
                 if (stat_enable) 
@@ -254,6 +257,11 @@ void UI::Tick(float dt)
         ImGui::GetForegroundDrawList()->AddText(ImVec2(static_cast<float>(window_width) - 220, 8), ImColor(1.f, 1.f, 1.f), "Engine directories update");
     }
 #endif
+
+    if (OldVolume != Volume)
+    {
+        Audio::UpdateVolume();
+    }
 }
 
 int64_t UI::GetCmdInt(stl::string_view str)
@@ -299,6 +307,31 @@ int64_t UI::GetCmdInt(stl::string_view str)
     }
     
     return -1;
+}
+
+float Asura::UI::GetCmdFlt(stl::string_view key)
+{
+    if (key == "volume")
+    {
+        return Volume;
+    }
+
+    return -1;
+}
+
+stl::string Asura::UI::GetCmdStr(stl::string_view key)
+{
+    if (key == "window_style")
+    {
+        switch (window_style)
+        {
+        case graphics::theme::style::red:   return "red";
+        case graphics::theme::style::dark:  return "dark";
+        case graphics::theme::style::white: return "white";
+        }
+    }
+
+    return stl::string("-1");
 }
 
 void UI::push_console_string(stl::string_view str)

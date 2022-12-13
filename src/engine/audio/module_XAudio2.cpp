@@ -48,6 +48,15 @@ void Audio::DeviceXAudio2::Load(ResourcesManager::id_t sound_src)
 	
 	Audio->LoadSound(ExtractPath(FullPath).data());
 	Audio->Play(false);
+	Audio->AlterVolume(Volume);
+}
+
+void Asura::Audio::DeviceXAudio2::SetVolume(float InVolume)
+{
+	for (CAudio* pData : AudioData)
+	{
+		pData->AlterVolume(InVolume);
+	}
 }
 
 #endif

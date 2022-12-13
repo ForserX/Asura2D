@@ -251,6 +251,7 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
     audio_data.duration = ov_time_total(&audio_data.ogg_vorbis_file, -1);
 
     alCall(alGenSources, 1, &audio_data.source);
+    alCall(alSourcef, audio_data.source, AL_GAIN, Volume);
     alCall(alSourcef, audio_data.source, AL_PITCH, 1);
     alCall(alSource3f, audio_data.source, AL_POSITION, 0, 0, 0);
     alCall(alSource3f, audio_data.source, AL_VELOCITY, 0, 0, 0);

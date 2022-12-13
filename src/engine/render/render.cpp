@@ -72,6 +72,7 @@ void Render::Init()
 	ImGui_ImplSDLRenderer_Init(renderer);
 
 	graphics::Init();
+	graphics::theme::change();
 }
 
 void Render::init_vulkan()

@@ -28,6 +28,7 @@ Console::Console()
     cmd_hint["window_fullscreen"] = "1, 0";
     cmd_hint["window_width"] = "int";
     cmd_hint["window_height"] = "int";
+    cmd_hint["volume"] = "float 0 1";
 
     AutoScroll = true;
     ScrollToBottom = false;
@@ -265,6 +266,7 @@ void Console::ExecCommand(const char* command_line)
 
     CHECK_FROM_CMD("physics_hertz",         target_physics_hertz);
     CHECK_FROM_CMD("physics_tps",           target_physics_tps);
+    CHECK_FROM_CMD("volume",                Volume);
     CHECK_FROM_CMD("draw_fps",              show_fps_counter);
     CHECK_FROM_CMD("physical_debug_draw",   physical_debug_draw);
     CHECK_FROM_CMD("use_parallel",          use_parallel);
@@ -314,7 +316,10 @@ void Console::ExecCommand(const char* command_line)
             window_style = graphics::theme::style::invalid;
         }
 
-        graphics::theme::change();
+        if (renderer != nullptr)
+        {
+            graphics::theme::change();
+        }
     }
     // On command input, we scroll to bottom even if AutoScroll==false
     ScrollToBottom = true;
@@ -445,12 +450,22 @@ void Console::flush()
     FileSystem::create_file(cfg_path);
     std::ofstream cfg(cfg_path);
 
-
     for (const auto& [cmd, hint] : cmd_hint)
     {
         if (hint.length() > 0)
         {
-            cfg << cmd << " " << UI::GetCmdInt(cmd) << std::endl;
+            if (UI::GetCmdInt(cmd) != -1)
+            {
+                cfg << cmd << " " << UI::GetCmdInt(cmd) << std::endl;
+            }
+            else if (UI::GetCmdFlt(cmd) != -1)
+            {
+                cfg << cmd << " " << UI::GetCmdFlt(cmd) << std::endl;
+            }
+            else if (UI::GetCmdStr(cmd) != "-1")
+            {
+                cfg << cmd << " " << UI::GetCmdStr(cmd) << std::endl;
+            }
         }
     }
 }

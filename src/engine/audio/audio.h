@@ -7,6 +7,8 @@ namespace Asura::Audio
 	public:
 		virtual void Load(ResourcesManager::id_t File) = 0;
 		virtual void Tick() = 0;
+
+		virtual void SetVolume(float Volume) = 0;
 	};
 
 	enum class DeviceMode
@@ -21,4 +23,5 @@ namespace Asura::Audio
 
 	void Start(stl::string_view File);
 	void Reset(DeviceMode Mode = DeviceMode::eOpenAL);
+	void UpdateVolume();
 }

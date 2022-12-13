@@ -22,7 +22,7 @@ public:
 	bool Play(bool loop = true);
 	bool LoadSound(const char* szSoundFilePath);
 	void AlterVolume(float fltVolume);
-	void GetVolume(float& fltVolume);
+	float GetVolume();
 	void Pause();
 	void Update();
 
@@ -259,13 +259,15 @@ void CAudio::AlterVolume(float fltVolume)
 }
 
 //Return the current volume
-void CAudio::GetVolume(float& fltVolume)
+float CAudio::GetVolume()
 {
-	if (pSourceVoice == nullptr)
-		return;
+	float Base = 0.f;
 
-	pSourceVoice->GetVolume(&fltVolume);
-	//pMasteringVoice->GetVolume(&fltVolume);
+	if (pSourceVoice == nullptr)
+		return Base;
+
+	pSourceVoice->GetVolume(&Base);
+	return Base;
 }
 
 void CAudio::Pause()

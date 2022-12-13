@@ -69,3 +69,8 @@ void Audio::DeviceOpenAL::Load(ResourcesManager::id_t sound_src)
 	
 	al_trash::play_stream(ref_data);
 }
+
+void Asura::Audio::DeviceOpenAL::SetVolume(float Volume)
+{
+	// Use global value into Update call
+}

@@ -31,3 +31,6 @@ extern bool show_fps_counter;
 
 // Holders
 extern Asura::gameplay::holder_mode holder_type;
+
+// Audio
+extern float Volume;
