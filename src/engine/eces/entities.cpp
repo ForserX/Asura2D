@@ -183,19 +183,9 @@ const EntityView& Entities::AddTexture(const EntityView& ent, stl::string_view p
 	return ent;
 }
 
-const EntityView&
-Entities::AddPhysBody(
-	const EntityView& ent,
-	Math::FVec2 vel,
-	Math::FVec2 pos,
-	Math::FVec2 size,
-	Physics::body_type type,
-	Physics::Material::shape shape,
-	Physics::Material::type mat
-)
+const EntityView& Entities::AddPhysBody(const EntityView& ent, const Physics::body_parameters& ParamRef)
 {
-	const Physics::body_parameters phys_parameters(0.f, 0.f, vel, pos, size, type, shape, mat);
-	Physics::PhysicsBody* body = SafeCreation(phys_parameters);
+	Physics::PhysicsBody* body = SafeCreation(ParamRef);
 	
 	AddField<physics_body_component>(ent, body);
 	if (!Contains<scene_component>(ent)) 

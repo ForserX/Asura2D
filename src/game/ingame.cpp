@@ -117,29 +117,34 @@ void ingame::init()
 	using namespace Entities;
 	
 #if 1
-	TestObject = AddPhysBody(Create(), {}, { 50, 50 }, { 20, 10 });
-	TestObject2 = AddPhysBody(Create(), {}, { 350, 100 }, { 200, 10 });
+
+	TestObject = AddPhysBody(Create(), Physics::body_parameters(0.f, 0.f, {}, { 50, 50 }, { 20, 10 }));
+	TestObject2 = AddPhysBody(Create(), Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 200, 10 }));
 
 	AddField<drawable_flag>(TestObject);
 	AddField<drawable_flag>(TestObject2);
+
 #if 1
 	std::random_device r_device;
 	std::mt19937 gen(r_device());
-	for (size_t i = 0; i < 2000; i++) {
+
+	for (size_t i = 0; i < 2000; i++)
+	{
 		std::uniform_real_distribution width_dist(260., 1300.);
 		std::uniform_real_distribution height_dist(260., 1300.);
-		const auto& ent = circles.emplace_back(
-			AddPhysBody(
-				Create(),
-				{},
-				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
-				{ 25, 25 },
-				Physics::body_type::ph_dynamic,
-				Physics::Material::shape::circle,
-				Physics::Material::type::rubber
-			)
+
+		Physics::body_parameters RandGenParam
+		(
+			0.f, 0.f, {},
+			{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
+			{ 25, 25 },
+			Physics::body_type::ph_dynamic,
+			Physics::Material::shape::circle,
+			Physics::Material::type::rubber
 		);
 
+
+		const auto& ent = circles.emplace_back(AddPhysBody(Create(), RandGenParam));
 		AddField<drawable_flag>(ent);
 	}
 #endif

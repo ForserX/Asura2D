@@ -71,14 +71,14 @@ namespace Asura::Physics
 			uint8_t shape : 4;
 			uint8_t mat;
 		} packed_type;
-		
+
 		float mass = 0.f;
 		float angle = 0.f;
 		float angular_vel = 0.f;
 		Math::FVec2 vel;
-           Math::FVec2 pos;
-           Math::FVec2 size;
-           Math::FVec2 mass_center;
+		Math::FVec2 pos;
+		Math::FVec2 size;
+		Math::FVec2 mass_center;
 
 		body_parameters() = default;
 		body_parameters(
@@ -87,19 +87,21 @@ namespace Asura::Physics
 			Math::FVec2 in_vel,
 			Math::FVec2 in_pos,
 			Math::FVec2 in_size,
-			body_type in_type,
-			Material::shape in_shape,
-			Material::type in_mat,
+			body_type in_type = body_type::ph_dynamic,
+			Material::shape in_shape = Material::shape::box,
+			Material::type in_mat = Material::type::solid,
 			float in_mass = 0.f,
 			Math::FVec2 in_mass_center = {}
 		) :
-		angle(in_angle), angular_vel(in_vel_angle),
-		vel(in_vel), pos(in_pos), size(in_size), mass(in_mass),
-		packed_type(static_cast<uint8_t>(in_type), static_cast<uint8_t>(in_shape), static_cast<uint8_t>(in_mat))
+			angle(in_angle), angular_vel(in_vel_angle),
+			vel(in_vel), pos(in_pos), size(in_size), mass(in_mass),
+			packed_type(static_cast<uint8_t>(in_type), static_cast<uint8_t>(in_shape), static_cast<uint8_t>(in_mat))
 		{
-			if (in_mass_center.empty()) {
+			if (in_mass_center.empty())
+			{
 				mass_center = { size.x / 2, size.y / 2 };
-			} else {
+			}
+			else {
 				mass_center = in_mass_center;
 			}
 		}
@@ -119,7 +121,7 @@ namespace Asura::Physics
 			b2BodyDef body_def = {};
 			body_def.angle = angle;
 			body_def.angularVelocity = angular_vel;
-               body_def.linearVelocity = b2Vec2(vel);
+			body_def.linearVelocity = b2Vec2(vel);
 			body_def.position = b2Vec2(pos);
 			body_def.type = Asura2Box2DBodyType(packed_type.type);
 			return body_def;
@@ -180,7 +182,7 @@ namespace Asura::Physics
 
 		void string_deserialize(stl::string_map& data)
 		{
-			auto read_on_existing = [&data]<typename T>(const char* name, T& out_value)
+			auto read_on_existing = [&data]<typename T>(const char* name, T & out_value)
 			{
 				if (data.contains(name)) {
 					out_value = stl::unstringify<T>(data[name]);
@@ -201,7 +203,7 @@ namespace Asura::Physics
 				packed_type.mat = stl::unstringify<uint8_t>(data["i_mat"]);
 			}
 
-			if (data.contains("i_shape")) 
+			if (data.contains("i_shape"))
 			{
 				packed_type.mat = stl::unstringify<uint8_t>(data["i_shape"]);
 			}

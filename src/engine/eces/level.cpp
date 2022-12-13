@@ -44,17 +44,14 @@ namespace Asura::Level::internal
 			level_x = std::max(level_w, level_x) - std::min(level_w, level_x);
 			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
 
-			auto ent = ent_list.emplace_back(
-				Entities::AddPhysBody(
-					Entities::Create(),
-					{},
-					{ level_x, level_y },
-					{ level_w, level_h },
-					body_type,
-					body_shape,
-					material_type
-				)
+			Physics::body_parameters CurrentBody
+			(
+				0, 0, {}, // Velocity
+				{ level_x, level_y }, { level_w, level_h }, // xy hw
+				body_type, body_shape, material_type // ph info
 			);
+
+			auto ent = ent_list.emplace_back(Entities::AddPhysBody(Entities::Create(), CurrentBody));
 
 			if (is_drawable) 
 			{

@@ -56,28 +56,11 @@ namespace Asura::Entities
 	EntityBase GetEntityByBbody(const b2Body* body);
     const Math::FVec2& GetPosition(const EntityView& ent);
 
-	const EntityView& AddTexture(
-		const EntityView& ent,
-		stl::string_view path
-	);
+	const EntityView& AddTexture(const EntityView& ent, stl::string_view path);
 	
-	const EntityView& AddPhysBody(
-		const EntityView& ent,
-		Math::FVec2 vel,
-        Math::FVec2 pos,
-        Math::FVec2 size,
-		Physics::body_type type = Physics::body_type::ph_dynamic,
-		Physics::Material::shape shape = Physics::Material::shape::box,
-		Physics::Material::type mat = Physics::Material::type::solid
-	);
+	const EntityView& AddPhysBody(const EntityView& ent, const Physics::body_parameters& BodyParams);
 
-	const EntityView& AddPhysBodyPreset(
-		const EntityView& ent,
-		Math::FVec2 pos,
-		stl::string_view preset
-	);
+	const EntityView& AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset);
 
-	const EntityView& AddSceneComponent(
-		const EntityView& ent
-	);
+	const EntityView& AddSceneComponent(const EntityView& ent);
 }

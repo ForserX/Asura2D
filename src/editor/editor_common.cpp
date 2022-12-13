@@ -82,5 +82,11 @@ void Editor::Object::MakeTry()
 	world_pos.y = std::max(start_mouse_position_absolute.y, last_mouse_position_absolute.y);
 	world_pos = Camera::Screen2World(world_pos);
 
-	Entities::AddPhysBody(current_entt_object, {}, world_pos + half_size, half_size);
+	Physics::body_parameters CurrentBody
+	(
+		0, 0, {}, // Velocity
+		world_pos + half_size, half_size // xy hw
+	);
+
+	Entities::AddPhysBody(current_entt_object, CurrentBody);
 }
