@@ -2,20 +2,20 @@
 
 using namespace Asura;
 
-static material::data material_data[static_cast<uint8_t>(material::type::out_of)] = {};
+static Physics::Material::data material_data[static_cast<uint8_t>(Physics::Material::type::out_of)] = {};
 
-void material::Init()
+void Physics::Material::Init()
 {
 	material_data[static_cast<uint8_t>(type::rubber)].friction = 0.1f;
 	material_data[static_cast<uint8_t>(type::rubber)].density = 1.f;
 	material_data[static_cast<uint8_t>(type::rubber)].restitution = 0.9f;
 }							  
 
-void material::Destroy()
+void Physics::Material::Destroy()
 {
 }
 
-const material::data& material::get(type type)
+const Physics::Material::data& Physics::Material::get(type type)
 {
 	return material_data[static_cast<uint8_t>(type)];
 }

@@ -2,14 +2,14 @@
 
 using namespace Asura;
 
-void gameplay::holder::player::Init()
+void GamePlay::Holder::player::Init()
 {
 }
 
-void gameplay::holder::player::Tick()
+void GamePlay::Holder::player::Tick()
 {
 }
 
-void gameplay::holder::player::Destroy()
+void GamePlay::Holder::player::Destroy()
 {
 }

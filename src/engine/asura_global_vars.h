@@ -30,7 +30,7 @@ extern Asura::graphics::theme::style window_style;
 extern bool show_fps_counter;
 
 // Holders
-extern Asura::gameplay::holder_mode holder_type;
+extern Asura::GamePlay::holder_mode holder_type;
 
 // Audio
 extern float Volume;

@@ -2,7 +2,8 @@
 
 namespace Asura::Camera
 {
-	enum class cam_move : int64_t {
+	enum class cam_move : int8_t 
+	{
 		left,
 		right,
 		up,
@@ -17,7 +18,7 @@ namespace Asura::Camera
 	void zoom(float value);
 
 	bool is_attached();
-	void attach(entity_view entity);
+	void attach(EntityView entity);
 	void detach();
 	
 	void reset_view();

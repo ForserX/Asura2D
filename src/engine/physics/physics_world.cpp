@@ -266,9 +266,9 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 	{
 		OPTICK_EVENT("Physics Debug joints Destroy");
 
-		if (gameplay::holder_type == gameplay::holder_mode::free)
+		if (holder_type == GamePlay::holder_mode::free)
 		{
-			gameplay::holder::free::Tick();
+			GamePlay::Holder::free::Tick();
 		}
 	}
 

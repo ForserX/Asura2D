@@ -219,7 +219,7 @@ void graphics::Tick(float dt)
 
 void graphics::draw(float dt)
 {
-	OPTICK_EVENT("scene draw")
+	OPTICK_EVENT("Scene draw")
 	Systems::draw_tick(dt);
 }
 

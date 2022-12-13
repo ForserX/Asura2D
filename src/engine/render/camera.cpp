@@ -9,7 +9,7 @@ static float scaled_cam_zoom = {};
 static int64_t cam_width = {};
 static int64_t cam_height = {};
 
-static entity_view attached_entity = {};
+static EntityView attached_entity = {};
 static bool attached = false;
 constexpr bool test_world_transform = false;
 
@@ -78,7 +78,7 @@ bool Camera::is_attached()
 	return attached;
 }
 
-void Camera::attach(entity_view entity)
+void Camera::attach(EntityView entity)
 {
 	if (attached) {
 		detach();

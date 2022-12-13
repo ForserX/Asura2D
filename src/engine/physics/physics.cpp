@@ -12,14 +12,14 @@ void Physics::Start()
 
 void Physics::Init()
 {
-	material::Init();
+	Physics::Material::Init();
 	game_world.Init();
 }
 
 void Physics::Destroy()
 {
 	game_world.Destroy();
-	material::Destroy();
+	Physics::Material::Destroy();
 
 	// Auto deleted into World
 	ground_base = nullptr;

@@ -1,15 +1,15 @@
 #pragma once
 
-namespace Asura::editor
+namespace Asura::Editor
 {
 	void Init();
 	void Destroy();
 
-	namespace object
+	namespace Object
 	{
-		void create_fake();
-		void update_fake();
-		void make_phys();
+		void CreateFake();
+		void UpdateFake();
+		void MakeTry();
 	}
 
 	namespace UI

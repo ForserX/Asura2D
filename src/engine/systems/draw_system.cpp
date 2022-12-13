@@ -108,9 +108,9 @@ void draw_system::Tick(float dt)
 					}
 
 					const auto phys_body_id = reinterpret_cast<ptrdiff_t>(physical_body);
-					switch (static_cast<material::shape>(physical_body->get_parameters().packed_type.shape)) 
+					switch (static_cast<Physics::Material::shape>(physical_body->get_parameters().packed_type.shape))
 					{
-						case material::shape::circle:
+						case Physics::Material::shape::circle:
 							graphics::draw_physical_circle_object(physical_body->get_body(), color_map[phys_body_id % 4096]);
 							break;
 						default:

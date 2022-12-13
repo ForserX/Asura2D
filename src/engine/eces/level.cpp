@@ -2,7 +2,7 @@
 
 using namespace Asura;
 std::filesystem::path path_level = {};
-stl::vector<entity_view> ent_list = {};
+stl::vector<EntityView> ent_list = {};
 
 namespace Asura::Level::internal
 {
@@ -35,8 +35,8 @@ namespace Asura::Level::internal
 			level_h = level_data.get<float>(section, "h");
 					
 			const auto body_type = level_data.get<Physics::body_type>(section, "type");
-			const auto body_shape = level_data.get<material::shape>(section, "shape");
-			const auto material_type = level_data.get<material::type>(section, "material");
+			const auto body_shape = level_data.get<Physics::Material::shape>(section, "shape");
+			const auto material_type = level_data.get<Physics::Material::type>(section, "material");
 			
 			level_w /= 2;
 			level_h /= 2;

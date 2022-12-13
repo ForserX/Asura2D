@@ -3,7 +3,7 @@
 
 using namespace Asura;
 
-static entity_view current_entt_object;
+static EntityView current_entt_object;
 
 static input::on_key_change editor_key_click_event;
 
@@ -12,7 +12,7 @@ static Math::FVec2 last_mouse_position_absolute = {};
 
 bool ark_editor_mode = false;
 
-void editor::Init()
+void Editor::Init()
 {
 	auto editor_key = [](int16_t scan_code, Asura::input::key_state state)
 	{
@@ -23,14 +23,15 @@ void editor::Init()
 		{
 			if (state == Asura::input::key_state::press) 
 			{
-				object::create_fake();
+				Object::CreateFake();
 			}
 			else if (state == Asura::input::key_state::hold) 
 			{
-				object::update_fake();
+				Object::UpdateFake();
 			}
-			else {
-				object::make_phys();
+			else
+			{
+				Object::MakeTry();
 			}
 		}
 	};
@@ -38,7 +39,7 @@ void editor::Init()
 	editor_key_click_event = input::subscribe_key_event(editor_key);
 }
 
-void editor::Destroy()
+void Editor::Destroy()
 {
 	Asura::input::unsubscribe_key_event(editor_key_click_event);
 }
@@ -46,13 +47,13 @@ void editor::Destroy()
 //////////////////////////////////////////////////////////////////////////////////////
 // Object working code
 
-void editor::object::create_fake()
+void Editor::Object::CreateFake()
 {
 	start_mouse_position_absolute = ImGui::GetMousePos();
 	current_entt_object = Entities::AddSceneComponent(Entities::Create());
 }
 
-void editor::object::update_fake()
+void Editor::Object::UpdateFake()
 {
 	last_mouse_position_absolute = ImGui::GetMousePos();
 	auto ent = Entities::try_get<Entities::scene_component>(current_entt_object);
@@ -64,7 +65,7 @@ void editor::object::update_fake()
 	ent->Transform.set_position(try_pos);
 }
 
-void editor::object::make_phys()
+void Editor::Object::MakeTry()
 {
 	auto ent = Entities::try_get<Entities::scene_component>(current_entt_object);
 

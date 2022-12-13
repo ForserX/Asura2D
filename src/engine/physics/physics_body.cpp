@@ -206,13 +206,13 @@ void Physics::PhysicsBody::Create()
 	b2PolygonShape poly_shape = {};
 	b2CircleShape circle_shape = {};
 
-	switch (static_cast<material::shape>(parameters.packed_type.shape))
+	switch (static_cast<Material::shape>(parameters.packed_type.shape))
 	{
-		case material::shape::box:
+		case Material::shape::box:
 			poly_shape.SetAsBox(parameters.size.x, parameters.size.y);
 			fixtureDef.shape = &poly_shape;
 			break;
-		case material::shape::circle:
+		case Material::shape::circle:
 			circle_shape.m_p.Set(parameters.size.x, parameters.size.y);
 			circle_shape.m_radius = parameters.size.x / 2;
 			fixtureDef.shape = &circle_shape;
@@ -221,7 +221,7 @@ void Physics::PhysicsBody::Create()
 			break;
 	}
 
-	const auto& [friction, restitution, density, ignore_collision] = material::get(static_cast<material::type>(parameters.packed_type.mat));
+	const auto& [friction, restitution, density, ignore_collision] = Material::get(static_cast<Material::type>(parameters.packed_type.mat));
 	fixtureDef.density = density;
 	fixtureDef.friction = friction;
 	fixtureDef.restitution = restitution;

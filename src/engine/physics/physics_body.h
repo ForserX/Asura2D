@@ -19,9 +19,7 @@ namespace Asura::Physics
 		ph_preset
 	};
 
-	inline
-	b2BodyType 
-	get_box2d_body_type(uint8_t type)
+	inline b2BodyType get_box2d_body_type(uint8_t type)
 	{
 		switch (static_cast<body_type>(type)) 
 		{
@@ -42,9 +40,7 @@ namespace Asura::Physics
 		return b2_dynamicBody;
 	}
 
-	inline
-	body_type 
-	get_ark_body_type(b2BodyType type)
+	inline body_type get_ark_body_type(b2BodyType type)
 	{
 		switch (type) 
 		{
@@ -92,8 +88,8 @@ namespace Asura::Physics
 			Math::FVec2 in_pos,
 			Math::FVec2 in_size,
 			body_type in_type,
-			material::shape in_shape,
-			material::type in_mat,
+			Material::shape in_shape,
+			Material::type in_mat,
 			float in_mass = 0.f,
 			Math::FVec2 in_mass_center = {}
 		) :

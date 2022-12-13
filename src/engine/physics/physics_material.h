@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Asura::material
+namespace Asura::Physics::Material
 {
 	struct data
 	{

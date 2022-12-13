@@ -5,7 +5,7 @@ namespace Asura::Event
 	using parameter = std::variant<
  		std::monostate,
  		stl::string_view,
- 		entity_view,
+ 		EntityView,
  		int64_t,
  		Math::IVec2,
  		Math::FVec2,

@@ -102,10 +102,10 @@ Asura::input::on_key_change camera_mouse_key_event;
 Asura::input::on_key_change editor_key_event;
 Asura::input::on_input_change camera_camera_mouse_wheel_event;
 
-Asura::entity_view TestObject;
-Asura::entity_view TestObject2;
+Asura::EntityView TestObject;
+Asura::EntityView TestObject2;
 
-Asura::stl::vector<Asura::entity_view> circles;
+Asura::stl::vector<Asura::EntityView> circles;
 
 void ingame::init()
 {
@@ -131,8 +131,8 @@ void ingame::init()
 				{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
 				{ 25, 25 },
 				Physics::body_type::ph_dynamic,
-				material::shape::circle,
-				material::type::rubber
+				Physics::Material::shape::circle,
+				Physics::Material::type::rubber
 			)
 		);
 

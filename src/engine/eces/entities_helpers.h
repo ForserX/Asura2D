@@ -4,7 +4,7 @@ namespace Asura::Entities
 {
 	namespace internal
 	{
-		registry& get_registry();
+		Registry& get_registry();
 
 		void process_entities(auto&& func, uint8_t state)
 		{
@@ -68,79 +68,80 @@ namespace Asura::Entities
 	template<typename Type, typename... Args>
 	void add_field(const entt::entity& entt, Args &&...args)
 	{
-		internal::get_registry().get().emplace<Type>(entt, std::forward<Args>(args)...);
+		internal::get_registry().Get().emplace<Type>(entt, std::forward<Args>(args)...);
 	}
 
 	template<typename Type, typename... Args>
-	void add_field(const entity_view& entt, Args &&...args)
+	void add_field(const EntityView& entt, Args &&...args)
 	{
-		add_field<Type, Args...>(entt.get(), std::forward<Args>(args)...);
+		add_field<Type, Args...>(entt.Get(), std::forward<Args>(args)...);
 	}
 
 	template<typename Type>
 	void erase_field(const entt::entity& entt)
 	{
-		internal::get_registry().get().remove<Type>(entt);
+		internal::get_registry().Get().remove<Type>(entt);
 	}
 
 	template<typename Type>
-	void erase_field(const entity_view& entt)
+	void erase_field(const EntityView& entt)
 	{
-		erase_field<Type>(entt.get());
+		erase_field<Type>(entt.Get());
 	}
 
 	template<typename... Args>
 	auto get_view()
 	{
-		auto view = internal::get_registry().get().view<Args...>(entt::exclude<garbage_flag>);
+		auto view = internal::get_registry().Get().view<Args...>(entt::exclude<garbage_flag>);
 		return view;
 	}
 
 	template<typename Type>
 	auto try_get(const entt::entity ent)
 	{
-		return internal::get_registry().get().try_get<Type>(ent);
+		return internal::get_registry().Get().try_get<Type>(ent);
 	}
 
 	template<typename Type>
-	auto try_get(const entity_view& ent)
+	auto try_get(const EntityView& ent)
 	{
-		return try_get<Type>(ent.get());
+		return try_get<Type>(ent.Get());
 	}
 
 	template<typename Type>
 	auto get(entt::entity ent)
 	{
-		return internal::get_registry().get().get<Type>(ent);
+		return internal::get_registry().Get().get<Type>(ent);
 	}
 
 	template<typename Type>
-	auto get(const entity_view& ent)
+	auto get(const EntityView& ent)
 	{
-		return get<Type>(ent.get());
+		return get<Type>(ent.Get());
 	}
 
 	template<typename... Args>
 	bool contains(const entt::entity ent)
 	{
-		return internal::get_registry().get().all_of<Args...>(ent);
+		return internal::get_registry().Get().all_of<Args...>(ent);
 	}
 
 	template<typename... Args>
-	bool contains(const entity_view& ent)
+	bool contains(const EntityView& ent)
 	{
-		return contains<Args...>(ent.get());
+		return contains<Args...>(ent.Get());
 	}
 
 	template<typename... Args>
 	bool contains_any(const entt::entity ent)
 	{
-		return internal::get_registry().get().any_of<Args...>(ent);
+		return internal::get_registry().Get().any_of<Args...>(ent);
 	}
 
 	template<typename... Args>
-	bool contains_any(const entity_view& ent)
+	bool contains_any(const EntityView& ent)
 	{
-		return contains_any<Args...>(ent.get());
+		return contains_any<Args...>(ent.Get());
 	}
 }
+	

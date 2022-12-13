@@ -24,7 +24,7 @@ void UI::Tick(float dt)
 
     if (ark_editor_mode)
     {
-        editor::UI::Destroy();
+        Editor::UI::Destroy();
         return;
     }
 
@@ -54,7 +54,9 @@ void UI::Tick(float dt)
             fps_counter_size = stat_enable ? 700 : 240;
             ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), navigation_bar_size });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
-            if (ImGui::Begin("Debug draw", 0, ImGuiWindowFlags_NoDecoration)) {
+
+            if (ImGui::Begin("Debug draw", 0, ImGuiWindowFlags_NoDecoration))
+            {
                 Math::FVec2 wcursor_pos = Camera::screen_to_world(cursor_pos);
 
                 const float draw_fps = 1.f / dt;
@@ -71,7 +73,7 @@ void UI::Tick(float dt)
                 const float real_scheduler_tps = 1.f / scheduler_real_delta;
                 const float real_scheduler_ms = scheduler_real_delta * 1000.f;
                 
-                const auto& registry = Entities::internal::get_registry().get();
+                const auto& registry = Entities::internal::get_registry().Get();
                 ImGui::Checkbox("Engine statistics", &stat_enable);
                 ImGui::Checkbox("Debug draw", &physical_debug_draw);
                 ImGui::Checkbox("Paused", &paused);
@@ -150,19 +152,19 @@ void UI::Tick(float dt)
                 
                 if (ImGui::BeginMenu("Scene")) 
                 {
-                    if (ImGui::MenuItem("Import scene", "Ctrl + O")) 
+                    if (ImGui::MenuItem("Import Scene", "Ctrl + O")) 
                     {
                         
                     }
 
-                    if (ImGui::MenuItem("Export scene", "Ctrl + S")) 
+                    if (ImGui::MenuItem("Export Scene", "Ctrl + S")) 
                     {
 
                     }
 
-                    if (ImGui::MenuItem("Close scene")) 
+                    if (ImGui::MenuItem("Close Scene")) 
                     {
-                        scene::close_scene();
+                        Scene::Close();
                     }
                     
                     ImGui::EndMenu();
@@ -234,7 +236,7 @@ void UI::Tick(float dt)
 
                      if (phys_body != nullptr) 
                      {
-                         inspected_entity = Entities::GetEntityByBbody(phys_body->get_body()).get();
+                         inspected_entity = Entities::GetEntityByBbody(phys_body->get_body()).Get();
                      } 
                      else 
                      {

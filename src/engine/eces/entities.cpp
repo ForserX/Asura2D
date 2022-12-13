@@ -2,8 +2,8 @@
 
 using namespace Asura;
 
-registry global_registry = {};
-entity_view invalid_entity = {};
+Registry global_registry = {};
+EntityView invalid_entity = {};
 
 Math::FVec2 no_pos = { FLT_MAX, FLT_MAX };
 
@@ -11,15 +11,14 @@ input::on_key_change entities_key_change_event = {};
 bool clear_on_next_tick = false;
 bool free_on_next_tick = false;
 
-registry&
-Entities::internal::get_registry()
+Registry& Entities::internal::get_registry()
 {
 	return global_registry;
 }
 
 void shit_detector_tick() 
 {
-	auto& reg = global_registry.get();
+	auto& reg = global_registry.Get();
 	auto destroy_ent = [&reg](entt::entity ent)
 	{
 		if (Entities::IsValid(ent)) 
@@ -120,21 +119,21 @@ void Entities::free()
 	free_on_next_tick = true;
 }
 
-bool Entities::IsValid(entity_view ent)
+bool Entities::IsValid(EntityView ent)
 {
-	return !IsNull(ent) && ent.get() != entt::tombstone && global_registry.get().valid(ent.get());
+	return !IsNull(ent) && ent.Get() != entt::tombstone && global_registry.Get().valid(ent.Get());
 }
 
-bool Entities::IsNull(entity_view ent)
+bool Entities::IsNull(EntityView ent)
 {
-	return ent.get() == entt::null;
+	return ent.Get() == entt::null;
 }
 
-const Math::FVec2& Entities::get_position(const entity_view& ent)
+const Math::FVec2& Entities::get_position(const EntityView& ent)
 {
 	if (contains<scene_component>(ent)) 
 	{
-		const auto scene_comp = try_get<scene_component>(ent.get());
+		const auto scene_comp = try_get<scene_component>(ent.Get());
 		if (scene_comp != nullptr) 
 		{
 			return scene_comp->Transform.position();
@@ -144,7 +143,7 @@ const Math::FVec2& Entities::get_position(const entity_view& ent)
 	return no_pos;
 }
 
-entity_view Entities::GetEntityByBbody(const b2Body* body)
+EntityView Entities::GetEntityByBbody(const b2Body* body)
 {
 	const auto view = get_view<physics_body_component>();
 
@@ -160,21 +159,21 @@ entity_view Entities::GetEntityByBbody(const b2Body* body)
 	return {};
 }
 
-entity_view Entities::Create()
+EntityView Entities::Create()
 {
-	return global_registry.create();
+	return global_registry.Create();
 }
 
-void Entities::MarkAsGarbage(const entity_view& ent)
+void Entities::MarkAsGarbage(const EntityView& ent)
 {
-	const auto& registry = global_registry.get();
-	if (!registry.all_of<dont_free_after_reset_flag>(ent.get()) && !registry.all_of<garbage_flag>(ent.get())) 
+	const auto& registry = global_registry.Get();
+	if (!registry.all_of<dont_free_after_reset_flag>(ent.Get()) && !registry.all_of<garbage_flag>(ent.Get())) 
 	{
-		add_field<garbage_flag>(ent.get());
+		add_field<garbage_flag>(ent.Get());
 	}
 }
 
-const entity_view& Entities::AddTexture(const entity_view& ent, stl::string_view path)
+const EntityView& Entities::AddTexture(const EntityView& ent, stl::string_view path)
 {
     const ResourcesManager::id_t texture_resource = ResourcesManager::Load(path);
 	const ImTextureID texture_id = Render::LoadTexture(texture_resource);
@@ -184,15 +183,15 @@ const entity_view& Entities::AddTexture(const entity_view& ent, stl::string_view
 	return ent;
 }
 
-const entity_view&
+const EntityView&
 Entities::AddPhysBody(
-	const entity_view& ent,
+	const EntityView& ent,
 	Math::FVec2 vel,
 	Math::FVec2 pos,
 	Math::FVec2 size,
 	Physics::body_type type,
-	material::shape shape,
-	material::type mat
+	Physics::Material::shape shape,
+	Physics::Material::type mat
 )
 {
 	const Physics::body_parameters phys_parameters(0.f, 0.f, vel, pos, size, type, shape, mat);
@@ -212,7 +211,7 @@ Entities::AddPhysBody(
 	return ent;
 }
 
-const entity_view& Asura::Entities::AddPhysBodyPreset(const entity_view& ent, Math::FVec2 pos, stl::string_view preset)
+const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset)
 {
 	stl::path preset_file = FileSystem::ContentDir();
 	preset_file.append("bodies").append(preset);
@@ -241,7 +240,7 @@ const entity_view& Asura::Entities::AddPhysBodyPreset(const entity_view& ent, Ma
 
 			auto body = new_bodies.emplace_back(SafeCreation(phys_parameters));
 
-			const entity_view& ent_body = Create();
+			const EntityView& ent_body = Create();
 
 			add_field<physics_body_component>(ent_body, body);
 			add_field<scene_component>(ent_body);
@@ -259,7 +258,7 @@ const entity_view& Asura::Entities::AddPhysBodyPreset(const entity_view& ent, Ma
 
 			auto joint = SafeCreation(std::move(jdata));
 
-			const entity_view& ent_body = Create();
+			const EntityView& ent_body = Create();
 
 			add_field<physics_joint_component>(ent_body, joint);
 			add_field<scene_component>(ent_body);
@@ -272,7 +271,7 @@ const entity_view& Asura::Entities::AddPhysBodyPreset(const entity_view& ent, Ma
 	return ent;
 }
 
-const entity_view& Entities::AddSceneComponent(const entity_view& ent)
+const EntityView& Entities::AddSceneComponent(const EntityView& ent)
 {
 	add_field<scene_component>(ent);
 	add_field<draw_color_component>(ent);

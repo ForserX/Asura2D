@@ -11,14 +11,14 @@ void game::Init()
 	Entities::Init();
 	Level::Init();
 
-	editor::Init();
+	Editor::Init();
 
 	Threads::sync_sleep();
 }
 
 void game::Destroy()
 {
-	editor::Destroy();
+	Editor::Destroy();
 
 	Level::Destroy();
 	Entities::Destroy();
@@ -42,8 +42,8 @@ void game::Tick(float dt)
 	}
 
 	{
-		OPTICK_EVENT("scene Destroy");
-		scene::Tick(dt);
+		OPTICK_EVENT("Scene Destroy");
+		Scene::Tick(dt);
 	}
 
 	{

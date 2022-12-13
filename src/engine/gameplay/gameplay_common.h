@@ -1,14 +1,12 @@
 #pragma once
 
-namespace Asura::gameplay
+namespace Asura::GamePlay
 {
 	enum class holder_mode
 	{
 		free,
 		player
 	};
-
-	extern holder_mode holder_type;
 }
 
 #include "holder_free.h"

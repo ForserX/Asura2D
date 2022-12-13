@@ -2,30 +2,30 @@
 
 namespace Asura
 {
-	class registry
+	class Registry
 	{
 	private:
 		entt::registry base_registry;
 
 	public:
-		entt::registry& get() { return base_registry; }
+		entt::registry& Get() { return base_registry; }
 		
-		entt::entity create() { return base_registry.create(); }
+		entt::entity Create() { return base_registry.create(); }
 		void Destroy(const entt::entity& entity) { base_registry.destroy(entity); }
 	};
 	
-	class entity_view
+	class EntityView
 	{
 	private:
 		entt::entity ent;
 		
 	public:
-		entity_view(entt::entity in_ent) : ent(in_ent) {}
-		entity_view(entity_view const&) = default;
-        entity_view() : ent(entt::null) {}
-		~entity_view() = default;
+		EntityView(entt::entity in_ent) : ent(in_ent) {}
+		EntityView(EntityView const&) = default;
+		EntityView() : ent(entt::null) {}
+		~EntityView() = default;
 
-		const entt::entity& get() const { return ent; }
+		const entt::entity& Get() const { return ent; }
 	};
 
 	struct entity_desc
@@ -45,37 +45,37 @@ namespace Asura::Entities
 	void clear();
 	void free();
 
-	bool IsValid(entity_view ent);
-	bool IsNull(entity_view ent);
+	bool IsValid(EntityView ent);
+	bool IsNull(EntityView ent);
 	
-	entity_view Create();
-	void MarkAsGarbage(const entity_view& ent);
+	EntityView Create();
+	void MarkAsGarbage(const EntityView& ent);
 
-	entity_view GetEntityByBbody(const b2Body* body);
-    const Math::FVec2& get_position(const entity_view& ent);
+	EntityView GetEntityByBbody(const b2Body* body);
+    const Math::FVec2& get_position(const EntityView& ent);
 
-	const entity_view& AddTexture(
-		const entity_view& ent,
+	const EntityView& AddTexture(
+		const EntityView& ent,
 		stl::string_view path
 	);
 	
-	const entity_view& AddPhysBody(
-		const entity_view& ent,
+	const EntityView& AddPhysBody(
+		const EntityView& ent,
 		Math::FVec2 vel,
         Math::FVec2 pos,
         Math::FVec2 size,
 		Physics::body_type type = Physics::body_type::ph_dynamic,
-		material::shape shape = material::shape::box,
-		material::type mat = material::type::solid
+		Physics::Material::shape shape = Physics::Material::shape::box,
+		Physics::Material::type mat = Physics::Material::type::solid
 	);
 
-	const entity_view& AddPhysBodyPreset(
-		const entity_view& ent,
+	const EntityView& AddPhysBodyPreset(
+		const EntityView& ent,
 		Math::FVec2 pos,
 		stl::string_view preset
 	);
 
-	const entity_view& AddSceneComponent(
-		const entity_view& ent
+	const EntityView& AddSceneComponent(
+		const EntityView& ent
 	);
 }

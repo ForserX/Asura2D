@@ -2,7 +2,7 @@
 
 using namespace Asura;
 
-gameplay::holder_mode gameplay::holder_type = {};
+GamePlay::holder_mode holder_type = {};
 
 static b2MouseJoint* current_contol_joint = nullptr;
 static Physics::PhysicsBody* current_contol_body = nullptr;
@@ -10,11 +10,11 @@ static Physics::PhysicsBody* current_contol_body = nullptr;
 static Physics::PhysicsBody* joint_contact_body = nullptr;
 static Math::FVec2 joint_contact_point = {};
 
-void gameplay::holder::free::Init()
+void GamePlay::Holder::free::Init()
 {
 }
 
-void gameplay::holder::free::Tick()
+void GamePlay::Holder::free::Tick()
 {
     if (input::is_focused_on_ui()) 
     {
@@ -115,6 +115,6 @@ void gameplay::holder::free::Tick()
     }
 }
 
-void gameplay::holder::free::Destroy()
+void GamePlay::Holder::free::Destroy()
 {
 }
