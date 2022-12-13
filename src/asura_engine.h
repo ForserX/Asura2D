@@ -34,7 +34,7 @@
 
 #include "engine/eces/event.h"
 #include "engine/eces/level.h"
-#include "engine/eces/Scene.h"
+#include "engine/eces/scene.h"
 
 #include "engine/systems/systems.h"
 #include "engine/systems/network_system.h"
