@@ -22,8 +22,7 @@ void Threads::SetAffinity(std::thread& handle, int64_t Core)
 #ifdef OS_WINDOWS
 	auto mask = (static_cast<DWORD_PTR>(1) << Core); 
 	SetThreadAffinityMask(handle.native_handle(), mask);
-
-#elif OS_LINUX
+#elif defined(OS_LINUX)
 	//sched_setaffinity(/* need get pid */, sizeof(cpu_set_t), &mask);
 #endif
 	
@@ -40,11 +39,11 @@ void Asura::Threads::SetName(stl::string_view Name)
 	mbstowcs(wc, Name.data(), cSize);
 
 	SetThreadDescription(GetCurrentThread(), wc);
-#elif OS_LINUX
+#elif defined(OS_LINUX)
 	pthread_setname_np(pthread_self(), Name.data());
-#elif OS_MACOS
+#elif defined(OS_MACOS)
 	pthread_setname_np(Name.data());
-#elif OS_FREEBSD
+#elif defined(OS_FREEBSD)
 	pthread_set_name_np(pthread_self(), Name.data());
 #endif
 }
