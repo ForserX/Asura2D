@@ -216,7 +216,7 @@ void Graphics::DrawPhysObjectCircle(b2Body* object, const ImColor& clr)
 void Graphics::Tick(float dt)
 {
 	ImGui::SetNextWindowPos({ 0, 0 });
-	ImGui::SetNextWindowSize({ static_cast<float>(UI::GetCmdInt("window_width")), static_cast<float>(UI::GetCmdInt("window_height")) });
+	ImGui::SetNextWindowSize({ fwindow_width, fwindow_height });
 	
 	draw(dt);
 	

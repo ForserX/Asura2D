@@ -7,7 +7,7 @@ EntityView invalid_entity = {};
 
 Math::FVec2 no_pos = { FLT_MAX, FLT_MAX };
 
-Input::on_key_change entities_key_change_event = {};
+static int64_t EnttInputID = 0;
 bool clear_on_next_tick = false;
 bool free_on_next_tick = false;
 
@@ -65,7 +65,7 @@ void shit_detector_tick()
 void Entities::Init()
 {
 #ifndef ASURA_SHIPPING
-	entities_key_change_event = Input::SubscribeKeyEvent([](int16_t scan_code, Input::key_state state)
+	EnttInputID = Input::Emplace([](int16_t scan_code, Input::key_state state)
 	{	
 		if (state == Input::key_state::press) 
 		{
@@ -100,7 +100,7 @@ void Entities::Init()
 void Entities::Destroy()
 {
 #ifndef ASURA_SHIPPING
-	Input::UnsubscribeKeyEvent(entities_key_change_event);
+	Input::Erase(EnttInputID);
 #endif
 }
 

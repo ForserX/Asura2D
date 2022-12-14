@@ -3,7 +3,7 @@
 using namespace Asura;
 
 std::unique_ptr<UI::Console> console;
-Input::on_key_change console_key_change;
+static int64_t ConsoleInputID = 0;
 
 using UI::Console;
 
@@ -43,7 +43,37 @@ Console::~Console()
         free(History[i]);
     }
 
-    Input::UnsubscribeKeyEvent(console_key_change);
+    Input::Erase(ConsoleInputID);
+}
+
+void Console::Init()
+{
+    ConsoleInputID = Input::Emplace
+    (
+        [](int16_t scan_code, Input::key_state state)
+        {
+            if (scan_code == SDL_SCANCODE_GRAVE && state == Input::key_state::press)
+            {
+                show_console = !show_console;
+            }
+        }
+    );
+
+    FileSystem::Path cfg_path = FileSystem::UserdataDir();
+    cfg_path = cfg_path.append("user.cfg");
+    if (!std::filesystem::exists(cfg_path))
+    {
+        return;
+    }
+
+    std::ifstream cfg(cfg_path);
+
+    stl::string line;
+
+    while (std::getline(cfg, line))
+    {
+        ExecCommand(line.c_str());
+    }
 }
 
 // Portable helpers
@@ -467,34 +497,5 @@ void Console::Flush()
                 cfg << cmd << " " << UI::GetCmdStr(cmd) << std::endl;
             }
         }
-    }
-}
-
-void Console::Init()
-{
-    console_key_change = Input::SubscribeKeyEvent(
-        [](int16_t scan_code, Input::key_state state)
-        {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == Input::key_state::press) 
-            {
-                show_console = !show_console;
-            }
-        }
-    );
-
-	FileSystem::Path cfg_path = FileSystem::UserdataDir();
-    cfg_path = cfg_path.append("user.cfg");
-    if (!std::filesystem::exists(cfg_path))
-    {
-        return;
-    }
-
-    std::ifstream cfg(cfg_path);
-
-    stl::string line;
-
-    while (std::getline(cfg, line))
-    {
-        ExecCommand(line.c_str());
     }
 }

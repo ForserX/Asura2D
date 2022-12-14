@@ -3,6 +3,7 @@
 using namespace Asura;
 using namespace Asura::GamePlay;
 
+// Base camera data
 static Math::FVec2 cam_center = {};
 float cam_zoom = 0.f;
 float cam_rotation = 0.f;
@@ -14,7 +15,12 @@ static EntityView attached_entity = {};
 static bool attached = false;
 constexpr bool test_world_transform = false;
 
+// For parallax background
 static Math::IRect OffsetMove = { 0, 0, 0, 0};
+
+// For Input system
+static int64_t CameraInputKeyID = 0;
+static int64_t CameraInputWheelID = 0;
 
 auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state state)
 {
@@ -46,21 +52,15 @@ auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
 {
 	switch (scan_code)
 	{
-	case SDL_SCANCODE_MOUSEWHEEL:
-		Camera::Zoom((-1.f * state) * 2.f);
-		break;
-	default:
-		break;
+	case SDL_SCANCODE_MOUSEWHEEL: Camera::Zoom((-1.f * state) * 2.f); break;
+	default:					  break;
 	}
 };
 
-static Input::on_key_change camera_mouse_key_event;
-static Input::on_input_change camera_camera_mouse_wheel_event;
-
 void Camera::Init()
 {
-	camera_mouse_key_event = Asura::Input::SubscribeKeyEvent(camera_mouse_key_change);
-	camera_camera_mouse_wheel_event = Asura::Input::SubscribeInputEvent(camera_mouse_wheel_change);
+	CameraInputKeyID = Input::Emplace(camera_mouse_key_change);
+	CameraInputWheelID = Input::Emplace(camera_mouse_wheel_change);
 
 	ResetHW();
 	ResetView();
@@ -68,8 +68,8 @@ void Camera::Init()
 
 void Camera::Destroy()
 {
-	Asura::Input::UnsubscribeInputEvent(camera_camera_mouse_wheel_event);
-	Asura::Input::UnsubscribeKeyEvent(camera_mouse_key_event);
+	Asura::Input::Erase(CameraInputWheelID);
+	Asura::Input::Erase(CameraInputKeyID);
 }
 
 void Camera::Tick(float dt)

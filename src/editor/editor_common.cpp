@@ -6,7 +6,7 @@ using namespace Asura::GamePlay;
 
 static EntityView current_entt_object;
 
-static Input::on_key_change editor_key_click_event;
+static int64_t EditorInputID = 0;
 
 static Math::FVec2 start_mouse_position_absolute = {};
 static Math::FVec2 last_mouse_position_absolute = {};
@@ -37,12 +37,12 @@ void Editor::Init()
 		}
 	};
 
-	editor_key_click_event = Input::SubscribeKeyEvent(editor_key);
+	EditorInputID = Input::Emplace(editor_key);
 }
 
 void Editor::Destroy()
 {
-	Asura::Input::UnsubscribeKeyEvent(editor_key_click_event);
+	Asura::Input::Erase(EditorInputID);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

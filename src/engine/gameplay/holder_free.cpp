@@ -10,57 +10,23 @@ static Physics::PhysicsBody* current_contol_body = nullptr;
 static Physics::PhysicsBody* joint_contact_body = nullptr;
 static Math::FVec2 joint_contact_point = {};
 
+// Input
+static int64_t HFKeyID = 0;
+void HFKeyCallback(int16_t scan_code, Input::key_state state);
+
 void GamePlay::Holder::free::Init()
 {
+    HFKeyID = Input::Emplace(HFKeyCallback);
 }
 
 void GamePlay::Holder::free::Tick()
 {
-    if (holder_type != holder_mode::free)
-        return;
-
-    if (Input::IsFocusedUI())
-    {
-        return;
-    }
-
-    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_X1))
-    {
-        Math::FVec2 mouse_position_absolute = Camera::Screen2World(ImGui::GetMousePos());
-
-        if (joint_contact_body == nullptr)
-        {
-            joint_contact_body = Physics::HitTest(mouse_position_absolute);
-            joint_contact_point = mouse_position_absolute;
-        }
-        else
-        {
-            const Physics::PhysicsBody* test_body = Physics::HitTest(mouse_position_absolute);
-            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != Physics::body_type::ph_static)
-            {
-                constexpr float frequency_hz = 5.0f;
-                constexpr float damping_ratio = 0.7f;
-
-                b2DistanceJointDef jointDef;
-                jointDef.Initialize(joint_contact_body->get_body(), test_body->get_body(), joint_contact_point, mouse_position_absolute);
-
-                jointDef.collideConnected = true;
-                b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
-
-                Physics::GetWorld().CreateJoint(&jointDef);
-                test_body->get_body()->SetAwake(true);
-            }
-
-            joint_contact_body = nullptr;
-        }
-    }
-
     static bool sound_started = false;
 
     if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = Camera::Screen2World(mouse_position_absolute);
+        mouse_position_absolute = GamePlay::Camera::Screen2World(mouse_position_absolute);
 
         if (current_contol_joint == nullptr)
         {
@@ -110,6 +76,7 @@ void GamePlay::Holder::free::Tick()
         sound_started = false;
     }
 
+
     if (current_contol_joint != nullptr && !Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
     {
         Physics::GetWorld().DestroyJoint(current_contol_joint);
@@ -117,21 +84,60 @@ void GamePlay::Holder::free::Tick()
         current_contol_body = nullptr;
     }
 
-    // Test code
-    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_X2))
-    {
-        Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
-        mouse_position_absolute = Camera::Screen2World(mouse_position_absolute);
-        auto Body = Physics::HitTest(mouse_position_absolute);
-
-        if (Body != nullptr)
-        {
-            Holder::player::Attach(Entities::GetEntityByBbody(Body->get_body()));
-            holder_type = holder_mode::player;
-        }
-    }
 }
 
 void GamePlay::Holder::free::Destroy()
 {
+    Input::Erase(HFKeyID);
+}
+
+void HFKeyCallback(int16_t scan_code, Input::key_state state)
+{
+    if (holder_type != GamePlay::holder_mode::free)
+        return;
+
+    if (scan_code == SDL_SCANCODE_MOUSE_X1 && state == Input::key_state::press)
+    {
+        Math::FVec2 mouse_position_absolute = GamePlay::Camera::Screen2World(ImGui::GetMousePos());
+
+        if (joint_contact_body == nullptr)
+        {
+            joint_contact_body = Physics::HitTest(mouse_position_absolute);
+            joint_contact_point = mouse_position_absolute;
+        }
+        else
+        {
+            const Physics::PhysicsBody* test_body = Physics::HitTest(mouse_position_absolute);
+            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != Physics::body_type::ph_static)
+            {
+                constexpr float frequency_hz = 5.0f;
+                constexpr float damping_ratio = 0.7f;
+
+                b2DistanceJointDef jointDef;
+                jointDef.Initialize(joint_contact_body->get_body(), test_body->get_body(), joint_contact_point, mouse_position_absolute);
+
+                jointDef.collideConnected = true;
+                b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
+
+                Physics::GetWorld().CreateJoint(&jointDef);
+                test_body->get_body()->SetAwake(true);
+            }
+
+            joint_contact_body = nullptr;
+        }
+    }
+
+    // Test code
+    if (scan_code == SDL_SCANCODE_MOUSE_X2 && state == Input::key_state::press)
+    {
+        Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
+        mouse_position_absolute = GamePlay::Camera::Screen2World(mouse_position_absolute);
+        auto Body = Physics::HitTest(mouse_position_absolute);
+
+        if (Body != nullptr)
+        {
+            GamePlay::Holder::player::Attach(Entities::GetEntityByBbody(Body->get_body()));
+            holder_type = GamePlay::holder_mode::player;
+        }
+    }
 }

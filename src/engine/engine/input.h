@@ -42,9 +42,7 @@ namespace Asura::Input
 	using on_key_change = fu2::function<void(int16_t scan_code, key_state state) const>;
 	using on_input_change = fu2::function<void(int16_t scan_code, float new_state) const>;
 	
-	const on_key_change& SubscribeKeyEvent(const on_key_change& input_callback);
-	void UnsubscribeKeyEvent(const on_key_change& input_callback);
-	
-	const on_input_change& SubscribeInputEvent(const on_input_change& input_callback);
-	void UnsubscribeInputEvent(const on_input_change& input_callback);
+	int64_t Emplace(const on_key_change& input_callback);
+	int64_t Emplace(const on_input_change& input_callback);
+	void Erase(int64_t input_callback);
 }

@@ -56,7 +56,7 @@ auto editor_key_change = [](int16_t scan_code, Asura::Input::key_state state)
 	}
 };
 
-Asura::Input::on_key_change editor_key_event;
+int64_t editor_key_event;
 
 Asura::EntityView TestObject;
 Asura::EntityView TestObject2;
@@ -103,10 +103,10 @@ void ingame::init()
 #else
 	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
 #endif
-	editor_key_event = Asura::Input::SubscribeKeyEvent(editor_key_change);
+	editor_key_event = Asura::Input::Emplace(editor_key_change);
 }
 
 void ingame::destroy()
 {
-	Asura::Input::UnsubscribeKeyEvent(editor_key_event);
+	Asura::Input::Erase(editor_key_event);
 }

@@ -9,8 +9,8 @@ Math::IVec2 current_mouse_pos = {};
 Math::FVec2 delta_mouse_pos = {};
 
 stl::hash_map<int16_t, float> changed_keys;
-stl::function_set<Input::on_key_change> key_change_callbacks;
-stl::function_set<Input::on_input_change> input_change_callbacks;
+stl::vector<Input::on_key_change> key_change_callbacks;
+stl::vector<Input::on_input_change> input_change_callbacks;
 
 Input::key_state get_enum_from_state(int16_t scan_code)
 {
@@ -94,24 +94,26 @@ Math::FVec2& Input::GetMouseDelta()
 	return delta_mouse_pos;
 }
 
-const Input::on_key_change& Input::SubscribeKeyEvent(const on_key_change& input_callback)
+int64_t Input::Emplace(const on_key_change& input_callback)
 {
-    key_change_callbacks.emplace(input_callback);
-	return input_callback;
+    key_change_callbacks.emplace_back(input_callback);
+	return 0ll - int64_t(key_change_callbacks.size() - 1);
 }
 
-void Input::UnsubscribeKeyEvent(const on_key_change& input_callback)
+int64_t Input::Emplace(const on_input_change& input_callback)
 {
-	key_change_callbacks.erase(input_callback);
+	input_change_callbacks.emplace_back(input_callback);
+	return int64_t(input_change_callbacks.size() - 1);
 }
 
-const Input::on_input_change& Input::SubscribeInputEvent(const on_input_change& input_callback)
+void Input::Erase(int64_t input_callback)
 {
-	input_change_callbacks.emplace(input_callback);
-	return input_callback;
-}
-
-void Input::UnsubscribeInputEvent(const on_input_change& input_callback)
-{
-	input_change_callbacks.erase(input_callback);
+	if (input_callback > 0)
+	{
+		input_change_callbacks.erase(input_change_callbacks.begin() + input_callback);
+	}
+	else
+	{
+		key_change_callbacks.erase(key_change_callbacks.begin() + std::abs(input_callback));
+	}
 }

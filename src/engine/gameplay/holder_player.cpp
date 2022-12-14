@@ -4,11 +4,11 @@ using namespace Asura;
 static bool Attached = false;
 static EntityView* CurrentEntity = nullptr;
 
-static Input::on_key_change hp_key_click_event;
+static int64_t HPInputID = 0;
 
 void GamePlay::Holder::player::Init()
 {
-	auto editor_key = [](int16_t scan_code, Asura::Input::key_state state)
+	auto KeyCallback = [](int16_t scan_code, Asura::Input::key_state state)
 	{
 		if (!Attached || holder_type != holder_mode::player)
 			return;
@@ -33,7 +33,7 @@ void GamePlay::Holder::player::Init()
 		}
 	};
 
-	hp_key_click_event = Input::SubscribeKeyEvent(editor_key);
+	HPInputID = Input::Emplace(KeyCallback);
 }
 
 void GamePlay::Holder::player::Tick()
@@ -51,7 +51,7 @@ void GamePlay::Holder::player::Destroy()
 		Detach();
 	}
 
-	Input::UnsubscribeKeyEvent(hp_key_click_event);
+	Input::Erase(HPInputID);
 }
 
 void GamePlay::Holder::player::Attach(EntityBase entity)
