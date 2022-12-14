@@ -292,6 +292,22 @@ namespace Asura::Math
         {
             
         }
+
+        void operator+=(const Rect& Left)
+        {
+            values[0] += Left.values[0];
+            values[1] += Left.values[1];
+            values[2] += Left.values[2];
+            values[3] += Left.values[3];
+        }
+
+        void operator-=(const Rect& Left)
+        {
+            values[0] -= Left.values[0];
+            values[1] -= Left.values[1];
+            values[2] -= Left.values[2];
+            values[3] -= Left.values[3];
+        }
     };
 
     using IRect = Rect<int16_t>;

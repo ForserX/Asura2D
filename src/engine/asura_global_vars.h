@@ -28,6 +28,7 @@ extern float cam_zoom;
 extern SDL_Renderer* renderer;
 extern Asura::Graphics::theme::style window_style;
 extern bool show_fps_counter;
+extern Asura::Math::IRect BackgroundSpace;
 
 // Holders
 extern Asura::GamePlay::holder_mode holder_type;

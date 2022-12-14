@@ -160,9 +160,9 @@ void Physics::PhysicsWorld::Destroy()
 void Physics::PhysicsWorld::DestroyAllBodies()
 {
 	// At this stage, we're calling destructor in our proxy bodies
-	for (const auto body : bodies)
+	for (PhysicsBody* Body : bodies)
 	{
-		delete body;
+		delete Body;
 	}
 	
 	bodies.clear();
@@ -171,7 +171,7 @@ void Physics::PhysicsWorld::DestroyAllBodies()
 void Physics::PhysicsWorld::PreTick()
 {
 	std::scoped_lock<std::mutex> scope_lock(physics_lock);
-	for (const auto body : bodies) 
+	for (PhysicsBody* body : bodies)
 	{
 		if (!body->IsCreated()) 
 		{
@@ -179,7 +179,7 @@ void Physics::PhysicsWorld::PreTick()
 		}
 	}
 
-	for (const auto joint : joints)
+	for (PhysicsJoint* joint : joints)
 	{
 		if (!joint->IsCreated())
 		{
@@ -213,13 +213,13 @@ void Physics::PhysicsWorld::PreTick()
 
 	// Yep, this is most interesting part: we're deleting all founded by iterating
 	// contacts and free it after processing
-	for	(const auto contact : contacts)
+	for	(auto contact : contacts)
 	{
 		world_holder->GetContactManager().Destroy(contact);
 	}
 #endif
 	
-	for (const auto body : scheduled_to_delete_bodies) 
+	for (PhysicsBody* body : scheduled_to_delete_bodies)
 	{
 		body->get_body()->ClearContacts();
 		body->Destroy();
@@ -253,10 +253,13 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 		return;
 	}
 
-	for (int i = 0; i < target_steps_count; i++) 
 	{
 		OPTICK_EVENT("Physics step");
-		world_holder->Step(dt, 6, 2);
+
+		for (int i = 0; i < target_steps_count; i++)
+		{
+			world_holder->Step(dt, 6, 2);
+		}
 	}
 
 	{
@@ -356,7 +359,8 @@ void Physics::PhysicsWorld::DestroyWorld()
 
 Math::FRect Physics::PhysicsWorld::GetBodyRect(const PhysicsBody* body)
 {
-	if (body != nullptr) {
+	if (body != nullptr)
+	{
 		return GetRealBodyRect(body->get_body());
 	}
 

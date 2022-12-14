@@ -5,6 +5,7 @@ using namespace Asura;
 using namespace Asura::GamePlay;
 
 Graphics::theme::style window_style = {};
+Math::IRect BackgroundSpace = {};
 
 void Graphics::Init()
 {
@@ -13,6 +14,8 @@ void Graphics::Init()
 	
 	UI::Init();
 	Camera::Init();
+
+	BackgroundSpace = { -50, -50, window_width + 50, window_height + 50 };
 }
 
 void Graphics::Destroy()
@@ -22,7 +25,8 @@ void Graphics::Destroy()
 
 void Graphics::DrawConvexFilled(ImDrawList* draw_list, const Math::FVec2* points, const int points_count, ImU32 col)
 {
-    if (points_count < 3) return;
+    if (points_count < 3) 
+		return;
 
     const ImVec2 uv = draw_list->_Data->TexUvWhitePixel;
 
@@ -117,7 +121,8 @@ void Graphics::DrawConvexFilled(ImDrawList* draw_list, const Math::FVec2* points
         const int vtx_count = points_count;
         draw_list->PrimReserve(idx_count, vtx_count);
         
-        for (int i = 0; i < vtx_count; i++) {
+        for (int i = 0; i < vtx_count; i++)
+		{
             draw_list->_VtxWritePtr[0].pos.x = points[i].x;
             draw_list->_VtxWritePtr[0].pos.y = points[i].y;
             draw_list->_VtxWritePtr[0].uv = uv;
@@ -125,7 +130,8 @@ void Graphics::DrawConvexFilled(ImDrawList* draw_list, const Math::FVec2* points
             draw_list->_VtxWritePtr++;
         }
         
-        for (int i = 2; i < points_count; i++) {
+        for (int i = 2; i < points_count; i++) 
+		{
             draw_list->_IdxWritePtr[0] = static_cast<ImDrawIdx>(draw_list->_VtxCurrentIdx);
             draw_list->_IdxWritePtr[1] = static_cast<ImDrawIdx>(draw_list->_VtxCurrentIdx + i - 1);
             draw_list->_IdxWritePtr[2] = static_cast<ImDrawIdx>(draw_list->_VtxCurrentIdx + i);
@@ -149,13 +155,11 @@ void Graphics::DrawRect(ImColor color, const Math::FRect& Rect, bool filled)
 void Graphics::DrawBackground(ResourcesManager::id_t resource_id)
 {
 	OPTICK_EVENT("Graphics draw background");
-	const int64_t width = UI::GetCmdInt("window_width");
-	const int64_t height = UI::GetCmdInt("window_height");
     const ImTextureID texture_id = Render::GetTexture(resource_id);
 
     if (texture_id != nullptr) 
 	{
-        ImGui::GetBackgroundDrawList()->AddImage(texture_id, {0,0}, {static_cast<float>(width), static_cast<float>(height)});
+        ImGui::GetBackgroundDrawList()->AddImage(texture_id, BackgroundSpace.min(), BackgroundSpace.max());
     }
 }
 

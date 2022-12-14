@@ -14,6 +14,8 @@ static EntityView attached_entity = {};
 static bool attached = false;
 constexpr bool test_world_transform = false;
 
+static Math::IRect OffsetMove = { 0, 0, 0, 0};
+
 auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state state)
 {
 	switch (scan_code)
@@ -102,11 +104,28 @@ void Camera::Move(MoveWays move, float point)
 
 	switch (move) 
 	{
-	case MoveWays::left:  cam_center[0] -= scaled_cam_zoom * point; break;
-	case MoveWays::right: cam_center[0] += scaled_cam_zoom * point; break;
-	case MoveWays::up:    cam_center[1] += scaled_cam_zoom * point; break;
-	case MoveWays::down:  cam_center[1] -= scaled_cam_zoom * point; break;
+	case MoveWays::left:  cam_center[0] -= scaled_cam_zoom * point; OffsetMove.values[0] += 5; OffsetMove.values[2] += 5; break;
+	case MoveWays::right: cam_center[0] += scaled_cam_zoom * point; OffsetMove.values[0] -= 5; OffsetMove.values[2] -= 5; break;
+	case MoveWays::up:    cam_center[1] += scaled_cam_zoom * point; OffsetMove.values[1] += 5; OffsetMove.values[3] += 5; break;
+	case MoveWays::down:  cam_center[1] -= scaled_cam_zoom * point; OffsetMove.values[1] -= 5; OffsetMove.values[3] -= 5; break;
 	}
+
+	auto ValidOffset = [](int16_t& Data)
+	{
+		if (Data > 50)
+			Data = 50;
+
+		if (Data < -50)
+			Data = -50;
+	};
+
+	ValidOffset(OffsetMove.values[0]);
+	ValidOffset(OffsetMove.values[1]);
+	ValidOffset(OffsetMove.values[2]);
+	ValidOffset(OffsetMove.values[3]);
+
+	BackgroundSpace = { -50, -50, window_width + 50, window_height + 50 };
+	BackgroundSpace += OffsetMove;
 }
 
 void Camera::Zoom(float value)
