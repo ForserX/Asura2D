@@ -3,9 +3,10 @@ Asura Engine using CMake build system.
 
 ![example workflow](https://github.com/ForserX/Asura2D/actions/workflows/cmake.yml/badge.svg)
 
-|Windows|MacOS|Linux|
-|---|---|---|
-| Yes | Yes | Ubuntu |
+|__OS__|Windows|MacOS|Linux|FreeBSD|
+|---|---|---|---|---|
+|__Support__| *Yes* | *Yes* | *Ubuntu* | |
+|__Compiler__| *MVSC* | *Clang* | *GCC*, *Clang*| |
 # Asura Engine 
 Asura Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives or textures.
 
@@ -22,4 +23,4 @@ Asura Engine is a 2D game engine that focuses on physical objects, rendering wit
 * [MiMalloc](https://github.com/microsoft/mimalloc)
 * [Marl](https://github.com/google/marl)
 * [OpenAL Soft](https://github.com/kcat/openal-soft) | XAudio2 (Windows only)
-* vorbis + ogg 
+* [vorbis](https://github.com/xiph/vorbis) + [ogg](https://github.com/xiph/ogg) 
