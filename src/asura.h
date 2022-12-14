@@ -35,7 +35,7 @@
 #include <xmmintrin.h>
 
 #else
-#ifdef OS_LINUX
+#if defined(OS_LINUX) || defined(OS_BSD)
 #	include <sys/ptrace.h>
 #	include <sys/wait.h>
 #endif

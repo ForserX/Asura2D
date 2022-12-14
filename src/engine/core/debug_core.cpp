@@ -36,7 +36,7 @@ void OutputDebugString(const char* data)
 }
 
 
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_BSD)
 
 bool GDBDebuggerPresent()
 {

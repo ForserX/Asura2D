@@ -11,7 +11,7 @@ void Render::InitialSDLDevice()
 	stl::string render_list;
 #if defined(OS_WINDOWS)
 	stl::string mode = "direct3d11";
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || defined(OS_BSD)
 	stl::string mode = "opengl";
 #elif defined(OS_ANDROID)
 	stl::string mode = "opengles2";
