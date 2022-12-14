@@ -100,11 +100,12 @@ void Physics::PhysicsWorld::Init()
 			OPTICK_THREAD("Physics thread")
 
 			// Setup affinity to second thread
-			Threads::SetAffinity((void*)physics_thread->native_handle(), 1);
-			
+			Threads::SetAffinity(*physics_thread.get(), 1);
+			Threads::SetName("Asura: Physics Step");
+
 			while (!enable_thread) 
 			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				Threads::Wait();
 			}
 
 			enable_thread = false;

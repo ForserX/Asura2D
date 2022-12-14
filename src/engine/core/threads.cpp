@@ -4,6 +4,7 @@ using namespace Asura;
 
 void Threads::Init()
 {
+	Threads::SetName("Asura: Primary Thread");
 #ifdef OS_WINDOWS
 	timeBeginPeriod(1);
 #endif
@@ -16,15 +17,36 @@ void Threads::Destroy()
 #endif
 }
 
-void Threads::SetAffinity(void* handle, int64_t Core)
+void Threads::SetAffinity(std::thread& handle, int64_t Core)
 {
 #ifdef OS_WINDOWS
 	auto mask = (static_cast<DWORD_PTR>(1) << Core); 
-	SetThreadAffinityMask(handle, mask);
-#else
-	//sched_setaffinity
+	SetThreadAffinityMask(handle.native_handle(), mask);
+
+#elif OS_LINUX
+	//sched_setaffinity(/* need get pid */, sizeof(cpu_set_t), &mask);
 #endif
 	
+}
+
+void Asura::Threads::SetName(stl::string_view Name)
+{
+	if (!Debug::dbg_atttached())
+		return;
+
+#ifdef OS_WINDOWS
+	constexpr size_t cSize = 64;
+	wchar_t wc[cSize];
+	mbstowcs(wc, Name.data(), cSize);
+
+	SetThreadDescription(GetCurrentThread(), wc);
+#elif OS_LINUX
+	pthread_setname_np(pthread_self(), Name.data());
+#elif OS_MACOS
+	pthread_setname_np(Name.data());
+#elif OS_FREEBSD
+	pthread_set_name_np(pthread_self(), Name.data());
+#endif
 }
 
 inline void nop()

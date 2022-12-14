@@ -5,7 +5,8 @@ namespace Asura::Threads
 	void Init();
 	void Destroy();
 
-	void SetAffinity(void* handle, int64_t Core);
+	void SetAffinity(std::thread& handle, int64_t Core);
+	void SetName(stl::string_view Name);
 
 	void SyncCurrentThread();
 	void Wait();
