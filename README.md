@@ -10,8 +10,8 @@ Asura Engine using CMake build system.
 Asura Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives or textures.
 
 
-![image](https://user-images.githubusercontent.com/13867290/192002058-8ea97db7-ccf3-4d9a-b2a7-659104f998af.png)
-![image](https://user-images.githubusercontent.com/13867290/192002206-b3128a99-0a99-49b0-96b6-ebf198f1d349.png)
+![image](https://user-images.githubusercontent.com/13867290/207478418-378ec620-3c3b-404a-af47-7f04a5aa87c5.png)
+![image](https://user-images.githubusercontent.com/13867290/207478441-6e969ea9-9b2c-483b-860e-f062bf82ab17.png)
 
 # 3rd Party
 * [SDL2](https://www.libsdl.org) + [SDL Image](https://github.com/libsdl-org/SDL_image)
