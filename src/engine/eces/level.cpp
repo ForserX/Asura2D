@@ -22,9 +22,11 @@ namespace Asura::Level::internal
 		{
 			if (section == "background") 
 			{
-				auto background_ent = ent_list.emplace_back(Entities::AddTexture(Entities::Create(), level_data.Get<stl::string_view>(section, "path")));
-				Entities::AddField<Entities::background_flag>(background_ent);
-                Entities::AddField<Entities::scene_component>(background_ent);
+				auto Entt = Entities::AddTexture(Entities::Create(), level_data.Get<stl::string_view>(section, "path"), level_data.Get<bool>(section, "parallax"));
+				Entities::AddField<Entities::background_flag>(Entt);
+                Entities::AddField<Entities::scene_component>(Entt);
+
+				ent_list.push_back(std::move(Entt));
 				continue;
 			}
 			

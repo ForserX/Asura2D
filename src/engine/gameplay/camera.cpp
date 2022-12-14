@@ -124,8 +124,8 @@ void Camera::Move(MoveWays move, float point)
 	ValidOffset(OffsetMove.values[2]);
 	ValidOffset(OffsetMove.values[3]);
 
-	BackgroundSpace = { -50, -50, window_width + 50, window_height + 50 };
-	BackgroundSpace += OffsetMove;
+	BackgroundParallax = { -50, -50, window_width + 50, window_height + 50 };
+	BackgroundParallax += OffsetMove;
 }
 
 void Camera::Zoom(float value)

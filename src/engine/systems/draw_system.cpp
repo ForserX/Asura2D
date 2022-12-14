@@ -62,7 +62,7 @@ void draw_system::Tick(float dt)
 					const auto draw_texture_comp = Entities::TryGet<draw_texture_component>(entity);
 					if (draw_texture_comp != nullptr) 
 					{
-						Graphics::DrawBackground(draw_texture_comp->texture_resource);
+						Graphics::DrawBackground(draw_texture_comp->texture_resource, draw_texture_comp->use_parallax);
 						return;
 					}
 				}

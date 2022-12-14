@@ -57,12 +57,19 @@ void GamePlay::Holder::player::Destroy()
 void GamePlay::Holder::player::Attach(EntityBase entity)
 {
 	CurrentEntity = new EntityView(entity);
+
+	Physics::PhysicsBody* TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get()).body;
+	TryEntt->BlockRotation(true);
+
 	Attached = true;
 	Camera::Attach(entity);
 }
 
-void Asura::GamePlay::Holder::player::Detach()
+void GamePlay::Holder::player::Detach()
 {
+	Physics::PhysicsBody* TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get()).body;
+	TryEntt->BlockRotation(false);
+
 	delete CurrentEntity;
 	CurrentEntity = nullptr;
 

@@ -56,7 +56,7 @@ namespace Asura::Entities
 	EntityBase GetEntityByBbody(const b2Body* body);
     const Math::FVec2& GetPosition(const EntityView& ent);
 
-	const EntityView& AddTexture(const EntityView& ent, stl::string_view path);
+	const EntityView& AddTexture(const EntityView& ent, stl::string_view path, bool Parallax = false);
 	
 	const EntityView& AddPhysBody(const EntityView& ent, const Physics::body_parameters& BodyParams);
 

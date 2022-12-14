@@ -54,6 +54,7 @@ namespace Asura::Entities
 	struct draw_texture_component
 	{
         ResourcesManager::id_t texture_resource;
+		bool use_parallax = false;
 	};
 
 	struct scene_component

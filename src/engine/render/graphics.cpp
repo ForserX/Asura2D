@@ -5,7 +5,7 @@ using namespace Asura;
 using namespace Asura::GamePlay;
 
 Graphics::theme::style window_style = {};
-Math::IRect BackgroundSpace = {};
+Math::IRect BackgroundParallax = {};
 
 void Graphics::Init()
 {
@@ -15,7 +15,7 @@ void Graphics::Init()
 	UI::Init();
 	Camera::Init();
 
-	BackgroundSpace = { -50, -50, window_width + 50, window_height + 50 };
+	BackgroundParallax = { -50, -50, window_width + 50, window_height + 50 };
 }
 
 void Graphics::Destroy()
@@ -145,21 +145,31 @@ void Graphics::DrawConvexFilled(ImDrawList* draw_list, const Math::FVec2* points
 void Graphics::DrawRect(ImColor color, const Math::FRect& Rect, bool filled)
 {
 	OPTICK_EVENT("Graphics draw Rect");
-	if (filled) {
+	if (filled) 
+	{
 		ImGui::GetBackgroundDrawList()->AddRectFilled(Rect.min(), Rect.max(), color);
-	} else {
+	} 
+	else 
+	{
 		ImGui::GetBackgroundDrawList()->AddRect(Rect.min(), Rect.max(), color);
 	}
 }
 
-void Graphics::DrawBackground(ResourcesManager::id_t resource_id)
+void Graphics::DrawBackground(ResourcesManager::id_t resource_id, bool UseParallax)
 {
 	OPTICK_EVENT("Graphics draw background");
     const ImTextureID texture_id = Render::GetTexture(resource_id);
 
     if (texture_id != nullptr) 
 	{
-        ImGui::GetBackgroundDrawList()->AddImage(texture_id, BackgroundSpace.min(), BackgroundSpace.max());
+		if (UseParallax)
+		{
+			ImGui::GetBackgroundDrawList()->AddImage(texture_id, BackgroundParallax.min(), BackgroundParallax.max());
+		}
+		else
+		{
+			ImGui::GetBackgroundDrawList()->AddImage(texture_id, { 0, 0}, { fwindow_width + 50.f, fwindow_height + 50.f });
+		}
     }
 }
 
@@ -183,7 +193,8 @@ void Graphics::DrawPhysObject(b2Body* object, const ImColor& clr)
 	game_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
 	Math::FVec2 vertices[b2_maxPolygonVertices];
 
-	for (int32 i = 0; i < vertexCount; ++i) {
+	for (int32 i = 0; i < vertexCount; ++i)
+	{
 		vertices[i] = Camera::World2Screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
 	}
 

@@ -173,13 +173,13 @@ void Entities::MarkAsGarbage(const EntityView& ent)
 	}
 }
 
-const EntityView& Entities::AddTexture(const EntityView& ent, stl::string_view path)
+const EntityView& Entities::AddTexture(const EntityView& ent, stl::string_view path, bool Parallax)
 {
     const ResourcesManager::id_t texture_resource = ResourcesManager::Load(path);
 	const ImTextureID texture_id = Render::LoadTexture(texture_resource);
 	game_assert(texture_id != nullptr, "can't load texture", return ent);
 
-	AddField<draw_texture_component>(ent, texture_resource);
+	AddField<draw_texture_component>(ent, texture_resource, Parallax);
 	return ent;
 }
 

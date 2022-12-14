@@ -14,6 +14,9 @@ extern SDL_Window* window_handle;
 extern int window_width;
 extern int window_height;
 
+#define fwindow_width (float)window_width
+#define fwindow_height (float)window_height
+
 extern bool window_maximized;
 extern bool fullscreen_mode;
 
@@ -28,7 +31,7 @@ extern float cam_zoom;
 extern SDL_Renderer* renderer;
 extern Asura::Graphics::theme::style window_style;
 extern bool show_fps_counter;
-extern Asura::Math::IRect BackgroundSpace;
+extern Asura::Math::IRect BackgroundParallax;
 
 // Holders
 extern Asura::GamePlay::holder_mode holder_type;
