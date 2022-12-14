@@ -22,7 +22,7 @@ void Threads::SetAffinity(void* handle, int64_t Core)
 	auto mask = (static_cast<DWORD_PTR>(1) << Core); 
 	SetThreadAffinityMask(handle, mask);
 #else
-
+	//sched_setaffinity
 #endif
 	
 }

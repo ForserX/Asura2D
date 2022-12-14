@@ -57,23 +57,28 @@ auto load_content_context = []()
 
 auto resources_scheduled_worker = []()
 {
-    while (!resources_inited) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    while (!resources_inited)
+    {
+        Threads::Wait();
     }
     
     for (const auto& [resource_id, scheduled_task] : resource_scheduled_tasks) 
     {
-        bool processed = false;
+        bool Processed = false;
         if (scheduled_task.task_id == lock_task) 
         {
-            processed = ResourcesManager::Lock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
-        } else if (scheduled_task.task_id == unlock_task) {
-            processed = ResourcesManager::Unlock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
-        } else if (scheduled_task.task_id == update_dirs_task) {
+            Processed = ResourcesManager::Lock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
+        } 
+        else if (scheduled_task.task_id == unlock_task)
+        {
+            Processed = ResourcesManager::Unlock(resource_id, scheduled_task.begin_offset, scheduled_task.end_offset);
+        } 
+        else if (scheduled_task.task_id == update_dirs_task) 
+        {
             load_content_context();
         }
         
-        game_assert(processed, "Can't process resource scheduled work", continue;)
+        game_assert(Processed, "Can't process resource scheduled work", continue;)
     }
 
     {
