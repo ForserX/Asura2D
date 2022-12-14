@@ -41,9 +41,13 @@ option(BOX2D_BUILD_TESTBED "Build the Box2D testbed and benchmarks" ON)
 set(BOX2D_BUILD_UNIT_TESTS OFF CACHE BOOL "shared libraries" FORCE)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "shared libraries" FORCE)
 set(BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
-#set(SDL2IMAGE_BUILD_SHARED_LIBS FALSE CACHE BOOL "shared libraries" FORCE)
 set(OPTICK_ENABLED ${ASURA_OPTICK} CACHE BOOL "optick enabled" FORCE)
-set(MIMALLOC_ENABLED ${ASURA_MIMALLOC} CACHE BOOL "mimalloc enabled" FORCE)
+
+if (NOT ASURA_ASAN)
+	set(MIMALLOC_ENABLED ${ASURA_MIMALLOC} CACHE BOOL "mimalloc enabled" FORCE)
+else()
+	set(MIMALLOC_ENABLED OFF CACHE BOOL "mimalloc enabled" FORCE)
+endif()
 
 set(BUILD_TESTING OFF CACHE BOOL "shared libraries" FORCE)
 
