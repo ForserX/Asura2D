@@ -16,10 +16,9 @@ set(ASURA_FOLDER_PROFILR FOLDER "profiler")
 set(ASURA_FOLDER_ENGINE FOLDER "Engine")
 set(ASURA_FOLDER_GAME FOLDER "Game")
 
-# OPTICK_ENABLED
 option(ASURA_SHIPPING "Shipping build of asura" OFF)
 option(ASURA_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
-option(ASURA_OPTICK "Enable optick profiler" ON)
+option(ASURA_OPTICK "Enable optick profiler" OFF)
 option(ASURA_ASAN "Enable address sanitizer" OFF)
 option(ASURA_MIMALLOC "Enable mimalloc" ON)
 
@@ -28,6 +27,8 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SAFESEH:NO")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SAFESEH:NO")
 endif()
+
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
 if (ASURA_ASAN)
 	set(MARL_ASAN ON CACHE BOOL "marl asan" FORCE)
@@ -108,7 +109,10 @@ FILE(WRITE libs/imgui/CMakeLists.txt
 "target_include_directories(\"imgui\" PUBLIC \"backends\")\n"
 )
 
-add_subdirectory("libs/optick")
+if (OPTICK_ENABLED)
+	add_subdirectory("libs/optick")
+endif()
+
 add_subdirectory("libs/mimalloc")
 add_subdirectory("libs/SDL")
 add_subdirectory("libs/SDL_image")

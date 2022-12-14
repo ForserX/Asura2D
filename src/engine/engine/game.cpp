@@ -35,8 +35,9 @@ void game::Destroy()
 void game::Tick(float dt)
 {
 	OPTICK_EVENT("game Destroy");
+#ifdef OPTICK_ENABLED
 	OPTICK_CATEGORY("Systems Destroy", Optick::Category::GameLogic);
-	
+#endif
 	{
 		OPTICK_EVENT("Systems pre Destroy");
 		Systems::pre_tick(dt);

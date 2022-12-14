@@ -105,7 +105,11 @@ list(APPEND LIBRARIES_TO_LINK "imgui")
 list(APPEND LIBRARIES_TO_LINK "EnTT::EnTT")
 #list(APPEND LIBRARIES_TO_LINK "marl")
 list(APPEND LIBRARIES_TO_LINK "box2d")
-list(APPEND LIBRARIES_TO_LINK "OptickCore")
+
+if (OPTICK_ENABLED)
+	list(APPEND LIBRARIES_TO_LINK "OptickCore")
+endif()
+
 list(APPEND LIBRARIES_TO_LINK "SDL2-static")
 list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
@@ -206,7 +210,10 @@ if (UNIX)
 endif()
 
 set_target_properties("mimalloc-static" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
-set_target_properties("OptickCore" PROPERTIES ${ASURA_FOLDER_PROFILR})
+
+if (OPTICK_ENABLED)
+	set_target_properties("OptickCore" PROPERTIES ${ASURA_FOLDER_PROFILR})
+endif()
 
 set_target_properties("sdl_headers_copy" PROPERTIES ${ASURA_FOLDER_PREGEN})
 set_target_properties("uninstall" PROPERTIES ${ASURA_FOLDER_PREGEN})

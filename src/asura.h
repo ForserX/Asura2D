@@ -77,7 +77,13 @@
 #include <box2d/box2d.h>
 #include <box2d/b2_math.h>
 
+#ifdef OPTICK_ENABLED
 #include <optick.h>
+#else
+#define OPTICK_EVENT(a)
+#define OPTICK_THREAD(a)
+#define OPTICK_FRAME(a)
+#endif
 
 #ifdef ASURA_VULKAN
 #include <vulkan.hpp>
