@@ -1,0 +1,10 @@
+language: cpp
+
+os: freebsd
+  compiler: clang
+
+before_script:
+  - cmake -B build
+  
+script:
+  - cmake --build build
