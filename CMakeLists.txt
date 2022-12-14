@@ -62,6 +62,7 @@ set(ALSOFT_EXAMPLES OFF CACHE BOOL "shared libraries" FORCE)
 set(ALSOFT_UTILS OFF CACHE BOOL "shared libraries" FORCE)
 set(ALSOFT_UPDATE_BUILD_VERSION OFF CACHE BOOL "shared libraries" FORCE)
 set(AL_LIBTYPE_STATIC ON CACHE BOOL "shared libraries" FORCE)
+set(SDL_TEST OFF CACHE BOOL "shared libraries" FORCE)
 
 add_compile_definitions("ENTT_USE_ATOMIC")
 
