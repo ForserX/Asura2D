@@ -70,8 +70,8 @@ void ingame::init()
 	
 #if 1
 
-	TestObject = AddPhysBody(Create(), Physics::body_parameters(0.f, 0.f, {}, { 50, 50 }, { 20, 10 }));
-	TestObject2 = AddPhysBody(Create(), Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 200, 10 }));
+	TestObject = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 50, 50 }, { 20, 10 }));
+	TestObject2 = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 200, 10 }));
 
 	AddField<drawable_flag>(TestObject);
 	AddField<drawable_flag>(TestObject2);
@@ -96,7 +96,7 @@ void ingame::init()
 		);
 
 
-		const auto& ent = circles.emplace_back(AddPhysBody(Create(), RandGenParam));
+		const auto& ent = circles.emplace_back(CreatePhysBody(RandGenParam));
 		AddField<drawable_flag>(ent);
 	}
 #endif

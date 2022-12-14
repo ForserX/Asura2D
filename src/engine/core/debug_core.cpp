@@ -25,6 +25,8 @@ bool XCodeDebuggerPresent()
     return ((info.kp_proc.p_flag & P_TRACED) != 0);
 }
 
+#define IsDebuggerPresent XCodeDebuggerPresent
+
 void OutputDebugString(const char* data)
 {
     if (!IsDebuggerPresent())
@@ -33,7 +35,6 @@ void OutputDebugString(const char* data)
 	std::cout << "Asura Engine: " << data << std::endl;
 }
 
-#define IsDebuggerPresent XCodeDebuggerPresent
 
 #elif defined(OS_LINUX)
 

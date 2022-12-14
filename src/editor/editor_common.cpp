@@ -51,7 +51,7 @@ void Editor::Destroy()
 void Editor::Object::CreateFake()
 {
 	start_mouse_position_absolute = ImGui::GetMousePos();
-	current_entt_object = Entities::AddSceneComponent(Entities::Create());
+	current_entt_object = Entities::CreateSceneComponent();
 }
 
 void Editor::Object::UpdateFake()

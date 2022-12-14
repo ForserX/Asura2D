@@ -22,7 +22,7 @@ namespace Asura::Level::internal
 		{
 			if (section == "background") 
 			{
-				auto Entt = Entities::AddTexture(Entities::Create(), level_data.Get<stl::string_view>(section, "path"), level_data.Get<bool>(section, "parallax"));
+				auto Entt = Entities::CreateTexture(level_data.Get<stl::string_view>(section, "path"), level_data.Get<bool>(section, "parallax"));
 				Entities::AddField<Entities::background_flag>(Entt);
                 Entities::AddField<Entities::scene_component>(Entt);
 
@@ -53,7 +53,7 @@ namespace Asura::Level::internal
 				body_type, body_shape, material_type // ph info
 			);
 
-			auto ent = ent_list.emplace_back(Entities::AddPhysBody(Entities::Create(), CurrentBody));
+			auto ent = ent_list.emplace_back(Entities::CreatePhysBody(CurrentBody));
 
 			if (is_drawable) 
 			{

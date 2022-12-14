@@ -56,11 +56,44 @@ namespace Asura::Entities
 	EntityBase GetEntityByBbody(const b2Body* body);
     const Math::FVec2& GetPosition(const EntityView& ent);
 
-	const EntityView& AddTexture(const EntityView& ent, stl::string_view path, bool Parallax = false);
-	
-	const EntityView& AddPhysBody(const EntityView& ent, const Physics::body_parameters& BodyParams);
+	void AddTexture(const EntityView& ent, stl::string_view path, bool Parallax = false);
+	void AddPhysBody(const EntityView& ent, const Physics::body_parameters& BodyParams);
+	void AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset);
+	void AddSceneComponent(const EntityView& ent);
 
-	const EntityView& AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset);
+	inline EntityView& CreateTexture(stl::string_view path, bool Parallax = false)
+	{
+		static EntityView Entt;
 
-	const EntityView& AddSceneComponent(const EntityView& ent);
+		Entt = Create();
+		AddTexture(Entt, path, Parallax);
+		return Entt;
+	}
+
+	inline EntityView& CreatePhysBody(const Physics::body_parameters& BodyParams)
+	{
+		static EntityView Entt;
+
+		Entt = Create();
+		AddPhysBody(Entt, BodyParams);
+		return Entt;
+	}
+
+	inline EntityView& CreatePhysBodyPreset(Math::FVec2 pos, stl::string_view preset) 
+	{
+		static EntityView Entt;
+
+		Entt = Create();
+		AddPhysBodyPreset(Entt, pos, preset);
+		return Entt;
+	}
+
+	inline EntityView& CreateSceneComponent()
+	{
+		static EntityView Entt;
+
+		Entt = Create();
+		AddSceneComponent(Entt);
+		return Entt;
+	}
 }

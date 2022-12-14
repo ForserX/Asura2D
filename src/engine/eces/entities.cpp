@@ -173,17 +173,16 @@ void Entities::MarkAsGarbage(const EntityView& ent)
 	}
 }
 
-const EntityView& Entities::AddTexture(const EntityView& ent, stl::string_view path, bool Parallax)
+void Entities::AddTexture(const EntityView& ent, stl::string_view path, bool Parallax)
 {
     const ResourcesManager::id_t texture_resource = ResourcesManager::Load(path);
 	const ImTextureID texture_id = Render::LoadTexture(texture_resource);
-	game_assert(texture_id != nullptr, "can't load texture", return ent);
+	game_assert(texture_id != nullptr, "can't load texture", return);
 
 	AddField<draw_texture_component>(ent, texture_resource, Parallax);
-	return ent;
 }
 
-const EntityView& Entities::AddPhysBody(const EntityView& ent, const Physics::body_parameters& ParamRef)
+void Entities::AddPhysBody(const EntityView& ent, const Physics::body_parameters& ParamRef)
 {
 	Physics::PhysicsBody* body = SafeCreation(ParamRef);
 	
@@ -197,11 +196,9 @@ const EntityView& Entities::AddPhysBody(const EntityView& ent, const Physics::bo
 	{
 		EraseField<draw_color_component>(ent);
 	}
-
-	return ent;
 }
 
-const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset)
+void Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset)
 {
 	FileSystem::Path preset_file = FileSystem::ContentDir();
 	preset_file.append("bodies").append(preset);
@@ -257,16 +254,12 @@ const EntityView& Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math
 	}
 
 	new_bodies.clear();
-
-	return ent;
 }
 
-const EntityView& Entities::AddSceneComponent(const EntityView& ent)
+void Entities::AddSceneComponent(const EntityView& ent)
 {
 	AddField<scene_component>(ent);
 	AddField<draw_color_component>(ent);
 
 	AddField<Entities::drawable_flag>(ent);
-
-	return ent;
 }
