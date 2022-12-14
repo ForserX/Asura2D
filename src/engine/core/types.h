@@ -106,9 +106,6 @@ namespace Asura::stl
     using hash_set = entt::dense_set<K, Hash, Equal, ark_allocator<K>>;
 #endif
 
-	template<typename T>
-	using function_set = hash_set<T, function_hasher<T>, function_equal<T>>;
-	
 	template<typename K>
 	using vector = std::vector<K, ark_allocator<K>>;
 

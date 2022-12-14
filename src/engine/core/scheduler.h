@@ -15,18 +15,18 @@ namespace Asura::Scheduler
 
 	namespace internal
 	{
-		const global_function& schedule(global_task_type task_type, const global_function& func);
+		size_t Schedule(global_task_type task_type, const global_function& func);
 	}
 
 	void Init();
 	void Destroy();
 
-	const void Schedule(global_task_type task_type, auto&& func)
+	inline size_t Schedule(global_task_type task_type, auto&& func)
 	{
-		internal::schedule(task_type, global_function(func));
+		return internal::Schedule(task_type, global_function(func));
 	}
 
-	void Unschedule(global_task_type task_type, const global_function& func);
+	void Unschedule(global_task_type task_type, size_t func);
 }
 
 constexpr float target_scheduler_tps = 50.f;

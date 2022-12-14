@@ -42,29 +42,44 @@ namespace Asura::stl
 
 		auto stringify_type = []<typename CT>(CT value) -> stl::string
 		{
-			if constexpr (std::is_same_v<CT, Math::Transform>) {
+			if constexpr (std::is_same_v<CT, Math::Transform>) 
+			{
 				return value.to_string();
-			} else if constexpr (std::is_same_v<CT, Math::FVec2>) {
+			}
+			else if constexpr (std::is_same_v<CT, Math::FVec2>) 
+			{
 				return value.to_string();
-			} else if constexpr (std::is_same_v<U, ImColor>) {
+			} 
+			else if constexpr (std::is_same_v<U, ImColor>) 
+			{
 				return stl::to_string(static_cast<uint32_t>(value));
-			} else if constexpr (std::is_same_v<U, bool>) {
+			} 
+			else if constexpr (std::is_same_v<U, bool>)
+			{
 				return stl::string(value == true ? "true" : "false");
-			} else if constexpr (std::is_enum_v<U>) {
+			} 
+			else if constexpr (std::is_enum_v<U>) 
+			{
 				return stl::to_string(static_cast<int64_t>(value));
-			} else if constexpr (std::is_integral_v<U>) {
+			} 
+			else if constexpr (std::is_integral_v<U>)
+			{
 				return stl::to_string(static_cast<int64_t>(value));
-			} else {
+			} 
+			else
+			{
 				return stl::to_string(value);
 			}
 		};
 
-		if constexpr (is_stl_vector<U>::value) {
+		if constexpr (is_stl_vector<U>::value) 
+		{
 			using vec_elem_type = typename U::value_type;
 
 			stl::string vector_string;
 			vector_string += "{ ";
-			for (const vec_elem_type& elem : value) {
+			for (const vec_elem_type& elem : value) 
+			{
 				vector_string += stringify_type(elem);
 				vector_string += " ";
 			}
@@ -81,32 +96,51 @@ namespace Asura::stl
 	{
 		auto unstrigify_type = []<typename CT>(CT& val, const stl::string_view& string_value)
 		{
-			if constexpr (std::is_same_v<CT, Math::vec2<float>>) {
+			if constexpr (std::is_same_v<CT, Math::vec2<float>>)
+			{
 				val.from_string(string_value);
-			} else if constexpr (std::is_floating_point_v<CT>) {
+			} 
+			else if constexpr (std::is_floating_point_v<CT>)
+			{
 				val = static_cast<CT>(stl::stod(string_value));
-			} else if constexpr (std::is_same_v<CT, ImColor>) {
+			} 
+			else if constexpr (std::is_same_v<CT, ImColor>) {
 				val = CT(stl::stoul(string_value));
-			} else if constexpr (stl::is_string_serialize_v<CT>) {
+			} 
+			else if constexpr (stl::is_string_serialize_v<CT>)
+			{
 				val = CT::unstrigify(string_value);
-			} else if constexpr (std::is_same_v<CT, bool>) {
+			} 
+			else if constexpr (std::is_same_v<CT, bool>)
+			{
 				val = !string_value.compare("true");
-			} else if constexpr (std::is_integral_v<CT>) {
-				if constexpr (std::is_unsigned_v<CT>) {
+			} 
+			else if constexpr (std::is_integral_v<CT>) 
+			{
+				if constexpr (std::is_unsigned_v<CT>) 
+				{
 					val = static_cast<CT>(stl::stoull(string_value));
-				} else {
+				} 
+				else 
+				{
 					val = static_cast<CT>(stl::stoll(string_value));
 				}
-			} else if constexpr (std::is_enum_v<CT>) {
+			} 
+			else if constexpr (std::is_enum_v<CT>) 
+			{
 				val = static_cast<CT>(stl::stoll(string_value));
-			} else {
+			} 
+			else 
+			{
 				val = string_value.data();
 			}
 		};
 
-		if constexpr (is_stl_vector<U>::value) {
+		if constexpr (is_stl_vector<U>::value) 
+		{
 			size_t offset = value.find_first_of('{');
-			if (offset == size_t(-1)) {
+			if (offset == size_t(-1))
+			{
 				// #TODO: parsing error
 				return {};
 			}
@@ -121,7 +155,8 @@ namespace Asura::stl
 			stl::vector<vec_elem_type> values_vector;
 
 			const size_t offset_end = value.find_first_of('}');
-			while (offset != size_t(-1) && offset < offset_end) {
+			while (offset != size_t(-1) && offset < offset_end) 
+			{
 				const size_t begin_offset = value.find_first_not_of(' ', offset);
 				const size_t end_offset = value.find_first_of(' ', begin_offset);
 				offset = end_offset;
@@ -132,7 +167,9 @@ namespace Asura::stl
 			}
 
 			return values_vector;
-		} else {
+		} 
+		else
+		{
 			U ret_val;
 			unstrigify_type(ret_val, value);
 			return ret_val;
@@ -142,23 +179,40 @@ namespace Asura::stl
 	template<typename T>
 	constexpr stl::string_view get_type_string()
 	{
-		if constexpr (is_stl_vector<T>::value) {
+		if constexpr (is_stl_vector<T>::value) 
+		{
 			return "arr_";
-		} else if constexpr (std::is_same_v<T, Math::vec2<float>>) {
+		} 
+		else if constexpr (std::is_same_v<T, Math::vec2<float>>) 
+		{
 			return "vecf_";
-		} else if constexpr (std::is_floating_point_v<T>) {
+		}
+		else if constexpr (std::is_floating_point_v<T>)
+		{
 			return "f_";
-		} else if constexpr (std::is_same_v<T, ImColor>) {
+		} 
+		else if constexpr (std::is_same_v<T, ImColor>)
+		{
 			return "c_";
-		} else if constexpr (std::is_same_v<T, Math::Transform>) {
+		} 
+		else if constexpr (std::is_same_v<T, Math::Transform>)
+		{
 			return "t_"; 
-		} else if constexpr (std::is_same_v<T, Math::FVec2>) {
+		} 
+		else if constexpr (std::is_same_v<T, Math::FVec2>) 
+		{
 			return "v_";
-		} else if constexpr (std::is_same_v<T, bool>) {
+		} 
+		else if constexpr (std::is_same_v<T, bool>) 
+		{
 			return "b_";
-		} else if constexpr (std::is_integral_v<T>) {
+		}
+		else if constexpr (std::is_integral_v<T>)
+		{
 			return "i_";
-		} else if constexpr (std::is_enum_v<T>) {
+		} 
+		else if constexpr (std::is_enum_v<T>) 
+		{
 			return "i_";
 		}
 		

@@ -56,31 +56,4 @@ namespace Asura::stl
 
 	template <typename T>
 	constexpr bool is_string_serialize_v = stl::meta::is_detected<detect_string_serialize, T>::value;
-
-	template<typename T>
-	void hash_combine(std::int64_t& s, const T& v)
-	{
-		std::hash<T> h;
-		s ^= h(v) + 0x9e3779b9 + (s << 6) + (s >> 2);
-	}
-
-	template<typename T>
-	struct function_equal
-	{
-		constexpr bool operator()(const T& left, const T& right) const
-		{
-			return left.get_id() == right.get_id();
-		}
-	};
-
-	template<typename T>
-	struct function_hasher
-	{
-		std::int64_t operator()(const T& s) const
-		{
-			std::int64_t res = 0;
-			hash_combine(res, s.get_id());
-			return res;
-		}
-	};
 }

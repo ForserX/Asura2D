@@ -32,7 +32,6 @@
 #include "engine/eces/entities_helpers.h"
 #include "engine/eces/entities_serializer.h"
 
-#include "engine/eces/event.h"
 #include "engine/eces/level.h"
 #include "engine/eces/scene.h"
 

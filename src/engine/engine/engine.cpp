@@ -36,9 +36,6 @@ void engine::Init(int argc, char** argv)
     ResourcesManager::Init();
     Debug::msg("- Resource Manager: Done");
     
-	Event::Init();
-    Debug::msg("- Event Manager: Done");
-    
 	Render::Init();
     Debug::msg("- Render: Done");
     
@@ -54,7 +51,6 @@ void engine::Destroy()
 	game::Destroy();
 	Render::Destroy();
 	Input::Destroy();
-	Event::Destroy();
     ResourcesManager::Destroy();
 	Scheduler::Destroy();
 	Threads::Destroy();

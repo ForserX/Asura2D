@@ -6,7 +6,7 @@ constexpr auto scheduler_period = std::chrono::milliseconds(static_cast<int>(tar
 
 std::mutex scheduler_mutex = {};
 std::unique_ptr<std::thread> scheduler_thread = {};
-std::array<stl::function_set<Scheduler::global_function>, Scheduler::global_task_type::count_of_elems> global_func_map;
+std::array<stl::vector<Scheduler::global_function>, Scheduler::global_task_type::count_of_elems> global_func_map;
 bool scheduler_destroyed = false;
 
 float scheduler_delta = 0.f;
@@ -26,12 +26,12 @@ void Scheduler::Init()
 			OPTICK_EVENT("Scheduler Destroy");
 			auto trigger = [](bool parallel, global_task_type task_type) 
 			{
-				stl::function_set<Scheduler::global_function> funcs_to_delete;
+				stl::vector<Scheduler::global_function> funcs_to_delete;
 				auto trigger_all = [&](const Scheduler::global_function& func) 
 				{
 					if (!func()) 
 					{
-						funcs_to_delete.insert(func);
+						funcs_to_delete.push_back(func);
 					}
 				};
 
@@ -45,10 +45,12 @@ void Scheduler::Init()
 					}
 
 					{
+						size_t Iter = 0;
 						std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
 						for (const auto& elem : funcs_to_delete) 
 						{
-							current_map.erase(elem);
+							current_map.erase(current_map.begin() + Iter);
+							Iter++;
 						}
 					}
 				}
@@ -100,13 +102,14 @@ void Scheduler::Destroy()
 	scheduler_thread.reset();
 }
 
-const Scheduler::global_function& Scheduler::internal::schedule(global_task_type task_type, const global_function& func)
+size_t Scheduler::internal::Schedule(global_task_type task_type, const global_function& func)
 {
     std::scoped_lock<std::mutex> scope_lock(scheduler_mutex);
-	return *global_func_map[task_type].insert(func).first;
+	global_func_map[task_type].emplace_back(func);
+	return global_func_map[task_type].size() - 1;
 }
 
-void Scheduler::Unschedule(global_task_type task_type, const global_function& func)
+void Scheduler::Unschedule(global_task_type task_type, size_t func)
 {
-	global_func_map[task_type].erase(func);
+	global_func_map[task_type].erase(global_func_map[task_type].begin() + func);
 }
