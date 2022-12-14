@@ -92,7 +92,7 @@ void UI::Tick(float dt)
                     ImGui::Separator();
                     ImGui::Text("UI:");
                     ImGui::Text("  FocusId: %i", ImGui::GetFocusID());
-                    ImGui::Text("  FocusScope: %i", ImGui::GetFocusScope());
+                    ImGui::Text("  FocusScope: %i", ImGui::GetCurrentFocusScope());
                     ImGui::Separator();
                     ImGui::Text("Game:");
                     ImGui::Text("  TPS/dt: %.4f/%3.3fms", draw_fps, draw_ms);
