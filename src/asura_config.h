@@ -29,6 +29,7 @@
 
 #if defined(__FREEBSD__)
 #define OS_BSD
+#define OS_UNIX
 #endif
 
 #if !defined(OS_LINUX) || !defined(OS_BSD)
