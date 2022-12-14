@@ -16,6 +16,11 @@ file(GLOB ASURA_ENGINE_ECES_SRC
 file(GLOB ASURA_ENGINE_ENGINE_SRC
 	"engine/engine/*.cpp"
 	"engine/engine/*.h"
+	"engine/asura_global_vars.h"
+	"pch.h"
+	"asura.h"
+	"asura_config.h"
+	"asura_engine.h"
 )
 
 file(GLOB ASURA_ENGINE_NET_SRC
@@ -64,15 +69,15 @@ file(GLOB_RECURSE ASURA_GAME_SRC
 #
 ################################################
 source_group("editor" FILES ${ASURA_EDITOR_SRC})
-source_group("engine" FILES ${ASURA_ENGINE_ENGINE_SRC})
+source_group("kernel" FILES ${ASURA_ENGINE_ENGINE_SRC})
 source_group("engine\\core" FILES ${ASURA_ENGINE_CORE_SRC})
-source_group("gameplay" FILES ${ASURA_ENGINE_GAMEPLAY_SRC})
 source_group("engine\\audio" FILES ${ASURA_ENGINE_AUDIO_SRC})
 source_group("engine\\eces" FILES ${ASURA_ENGINE_ECES_SRC})
 source_group("engine\\network" FILES ${ASURA_ENGINE_NET_SRC})
 source_group("engine\\physics" FILES ${ASURA_ENGINE_PHYSICS_SRC})
 source_group("engine\\render" FILES ${ASURA_ENGINE_RENDER_SRC})
 source_group("engine\\systems" FILES ${ASURA_ENGINE_SYSTEMS_SRC})
+source_group("gameplay" FILES ${ASURA_ENGINE_GAMEPLAY_SRC})
 
 set(ENGINE_SRC_FILES)
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_ENGINE_SRC})
