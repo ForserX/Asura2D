@@ -18,24 +18,25 @@ Registry& Entities::internal::GetRegistry()
 
 void shit_detector_tick() 
 {
-	auto& reg = global_registry.Get();
-	auto destroy_ent = [&reg](entt::entity ent)
+	auto& Reg = global_registry.Get();
+	auto destroy_ent = [&Reg](entt::entity ent)
 	{
 		if (Entities::IsValid(ent)) 
 		{
-			if (const auto phys_comp = reg.try_get<Entities::physics_body_component>(ent))
+			if (auto phys_comp = Reg.try_get<Entities::physics_body_component>(ent))
 			{
+				phys_comp->body->SetAsGarbage();
 				Physics::SafeFree(phys_comp->body);
 			}
 
-			reg.destroy(ent);
+			Reg.destroy(ent);
 		}
 	};
 
 	if (free_on_next_tick)
 	{
-		const entt::entity* ent_ptr = reg.data();
-		while (ent_ptr != reg.data() + reg.size())
+		const entt::entity* ent_ptr = Reg.data();
+		while (ent_ptr != Reg.data() + Reg.size())
 		{	
 			entt::entity ent = *ent_ptr;
 			if (Entities::IsValid(ent) && !Entities::Contains<Entities::garbage_flag>(ent))
@@ -49,15 +50,15 @@ void shit_detector_tick()
 		free_on_next_tick = false;
 	}
 	
-	const auto view = reg.view<Entities::garbage_flag>();
-	view.each([&reg, &destroy_ent](entt::entity ent)
+	const auto view = Reg.view<Entities::garbage_flag>();
+	view.each([&Reg, &destroy_ent](entt::entity ent)
 	{
 		destroy_ent(ent);
 	});
 
 	if (clear_on_next_tick) 
 	{
-		reg.clear();
+		Reg.clear();
 		clear_on_next_tick = false;
 	}
 };

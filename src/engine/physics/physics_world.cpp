@@ -28,7 +28,31 @@ class Asura::CollisionLister final : public b2ContactListener
 	int32 m_pointCount = 0;
 	ContactPoint m_points[k_maxContactPoints] = {};
 
-	void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override
+	virtual void BeginContact(b2Contact* Contact) override
+	{
+		Physics::GetWorld().GetContactLister()->BeginContact(Contact);
+
+		if (Contact->GetFixtureA() && Contact->GetFixtureA()->GetBody())
+		{
+			auto PhBody = new Physics::PhysicsBody(Contact->GetFixtureA()->GetBody());
+			Physics::GetWorld().GetContactLister()->BeginContact(PhBody);
+			delete PhBody;
+		}
+	}
+
+	virtual void EndContact(b2Contact* Contact) override
+	{
+		Physics::GetWorld().GetContactLister()->EndContact(Contact);
+
+		if (Contact->GetFixtureA() && Contact->GetFixtureA()->GetBody())
+		{
+			auto PhBody = new Physics::PhysicsBody(Contact->GetFixtureA()->GetBody());
+			Physics::GetWorld().GetContactLister()->EndContact(PhBody);
+			delete PhBody;
+		}
+	}
+
+	virtual void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override
 	{
 		const b2Manifold* manifold = contact->GetManifold();
 
@@ -64,12 +88,13 @@ class Asura::CollisionLister final : public b2ContactListener
 	}
 };
 
-Physics::PhysicsWorld::PhysicsWorld()
+Physics::PhysicsWorld::PhysicsWorld() : AsuraListerInterface(new Physics::ContatctListerBase)
 {
 }
 
 Physics::PhysicsWorld::~PhysicsWorld()
 {
+	delete AsuraListerInterface;
 }
 
 void Physics::PhysicsWorld::Start()
@@ -222,6 +247,12 @@ void Physics::PhysicsWorld::PreTick()
 	
 	for (PhysicsBody* body : scheduled_to_delete_bodies)
 	{
+		if (!body->IsGarbage())
+		{
+			auto Entt = Entities::GetEntityByBbody(body->get_body());
+			Entities::internal::GetRegistry().Destroy(Entt);
+		}
+
 		body->get_body()->ClearContacts();
 		body->Destroy();
 

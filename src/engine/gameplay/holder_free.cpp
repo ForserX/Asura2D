@@ -32,7 +32,7 @@ void GamePlay::Holder::free::Tick()
         {
             current_contol_body = Physics::HitTest(mouse_position_absolute);
 
-            if (current_contol_body != nullptr && current_contol_body->get_body_type() != Physics::body_type::ph_static)
+            if (current_contol_body != nullptr && current_contol_body->GetType() != Physics::body_type::ph_static)
             {
                 if (!sound_started)
                 {
@@ -51,7 +51,7 @@ void GamePlay::Holder::free::Tick()
                 jd.maxForce = 1000.0f * current_contol_body->get_body()->GetMass();
                 b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
-                current_contol_joint = dynamic_cast<b2MouseJoint*>(Physics::GetWorld().CreateJoint(&jd));
+                current_contol_joint = dynamic_cast<b2MouseJoint*>(Physics::GetWorld().GetWorld().CreateJoint(&jd));
                 current_contol_body->get_body()->SetAwake(true);
             }
             else
@@ -79,7 +79,7 @@ void GamePlay::Holder::free::Tick()
 
     if (current_contol_joint != nullptr && !Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
     {
-        Physics::GetWorld().DestroyJoint(current_contol_joint);
+        Physics::GetWorld().GetWorld().DestroyJoint(current_contol_joint);
         current_contol_joint = nullptr;
         current_contol_body = nullptr;
     }
@@ -108,7 +108,7 @@ void HFKeyCallback(int16_t scan_code, Input::key_state state)
         else
         {
             const Physics::PhysicsBody* test_body = Physics::HitTest(mouse_position_absolute);
-            if (test_body != nullptr && test_body != joint_contact_body && test_body->get_body_type() != Physics::body_type::ph_static)
+            if (test_body != nullptr && test_body != joint_contact_body && test_body->GetType() != Physics::body_type::ph_static)
             {
                 constexpr float frequency_hz = 5.0f;
                 constexpr float damping_ratio = 0.7f;
@@ -119,7 +119,7 @@ void HFKeyCallback(int16_t scan_code, Input::key_state state)
                 jointDef.collideConnected = true;
                 b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
 
-                Physics::GetWorld().CreateJoint(&jointDef);
+                Physics::GetWorld().GetWorld().CreateJoint(&jointDef);
                 test_body->get_body()->SetAwake(true);
             }
 

@@ -154,6 +154,6 @@ void draw_system::Tick(float dt)
 
 	if (physical_debug_draw) 
 	{
-		Physics::GetWorld().DebugDraw();
+		Physics::GetWorld().GetWorld().DebugDraw();
 	}
 }

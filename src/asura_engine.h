@@ -18,6 +18,7 @@
 #include "engine/physics/physics_material.h"
 #include "engine/physics/physics_body.h"
 #include "engine/physics/physics_joint.h"
+#include "engine/physics/physics_contact_lister.h"
 #include "engine/physics/physics_world.h"
 #include "engine/physics/physics.h"
 

@@ -1,16 +1,17 @@
 #include "ingame.h"
 
+using namespace Asura;
 using namespace Asura::Systems;
 
-Asura::stl::vector<std::unique_ptr<Asura::system>> pre_game_update_systems;
-Asura::stl::vector<std::unique_ptr<Asura::system>> game_update_systems;
-Asura::stl::vector<std::unique_ptr<Asura::system>> post_game_update_systems;
-Asura::stl::vector<std::unique_ptr<Asura::system>> game_physics_systems;
-Asura::stl::vector<std::unique_ptr<Asura::system>> game_draw_systems;
+stl::vector<std::unique_ptr<Asura::system>> pre_game_update_systems;
+stl::vector<std::unique_ptr<Asura::system>> game_update_systems;
+stl::vector<std::unique_ptr<Asura::system>> post_game_update_systems;
+stl::vector<std::unique_ptr<Asura::system>> game_physics_systems;
+stl::vector<std::unique_ptr<Asura::system>> game_draw_systems;
 
 void init_systems()
 {
-	game_physics_systems.push_back(std::make_unique<ingame::movement_system>());
+//	game_physics_systems.push_back(std::make_unique<ingame::movement_system>());
 }
 
 void ingame::pre_init()
@@ -44,36 +45,70 @@ void ingame::pre_init()
 }
 
 static bool editor = false;
-auto editor_key_change = [](int16_t scan_code, Asura::Input::key_state state)
+auto editor_key_change = [](int16_t scan_code, Input::key_state state)
 {
 	if (scan_code == SDL_SCANCODE_X)
 	{
-		if (state == Asura::Input::key_state::press)
+		if (state == Input::key_state::press)
 		{
 			editor = !editor;
-			Asura::game::editor(editor);
+			game::editor(editor);
 		}
 	}
 };
 
 int64_t editor_key_event;
 
-Asura::EntityView TestObject;
-Asura::EntityView TestObject2;
+EntityView TestObject2;
 
-Asura::stl::vector<Asura::EntityView> circles;
+stl::vector<EntityView> circles;
+
+class ContactLister : public Physics::ContatctListerBase
+{
+public:
+	virtual void BeginContact(b2Contact* Contact) override
+	{
+		auto BodyA = Physics::PhysicsBody(Contact->GetFixtureA()->GetBody());
+		auto BodyB = Physics::PhysicsBody(Contact->GetFixtureB()->GetBody());
+
+		auto TryEntt = Entities::TryGet<Entities::physics_body_component>(TestObject2.Get());
+		if (TryEntt == nullptr)
+			return;
+
+		auto& TryEnttBody = *TryEntt->body;
+		if (BodyA == TryEnttBody)
+		{
+			// Destroy dynamic objects only
+			if (BodyB.GetType() == Physics::body_type::ph_dynamic)
+			{
+				//auto DestEntt = Entities::GetEntityByBbody(BodyB.get_body());
+				//Entities::AddField<Entities::garbage_flag>(DestEntt);
+				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyB)));
+			}
+		}
+		else if (BodyB == TryEnttBody)
+		{
+			// Destroy dynamic objects only
+			if (BodyA.GetType() == Physics::body_type::ph_dynamic)
+			{
+				//auto DestEntt = Entities::GetEntityByBbody(BodyA.get_body());
+				//Entities::AddField<Entities::garbage_flag>(DestEntt);
+				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyA)));
+			}
+		}
+	}
+};
 
 void ingame::init()
 {
 	using namespace Asura;
 	using namespace Entities;
 	
+	Physics::GetWorld().SetContactLister(new ContactLister);
 #if 1
 
-	TestObject = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 50, 50 }, { 20, 10 }));
 	TestObject2 = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 200, 10 }));
 
-	AddField<drawable_flag>(TestObject);
 	AddField<drawable_flag>(TestObject2);
 
 #if 1
@@ -103,10 +138,10 @@ void ingame::init()
 #else
 	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
 #endif
-	editor_key_event = Asura::Input::Emplace(editor_key_change);
+	editor_key_event = Input::Emplace(editor_key_change);
 }
 
 void ingame::destroy()
 {
-	Asura::Input::Erase(editor_key_event);
+	Input::Erase(editor_key_event);
 }

@@ -9,7 +9,7 @@ namespace Asura::Physics
 
 	void DestroyWorld();
 
-	b2World& GetWorld();
+	PhysicsWorld& GetWorld();
 	PhysicsBody* GetGround();
 	
     Math::FRect GetBodyRect(const PhysicsBody* body);

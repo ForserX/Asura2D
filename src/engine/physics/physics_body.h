@@ -221,24 +221,32 @@ namespace Asura::Physics
 	private:
 		bool created = false;
 		bool destroyed = false;
+		bool garbage_destroyed = false;
 		b2Body* body = nullptr;
 		body_parameters parameters;
-		
+
 	public:
 		PhysicsBody() = delete;
+		PhysicsBody(const PhysicsBody&) = delete;
+
+		PhysicsBody(PhysicsBody&& OldData) noexcept : body(std::move(OldData.body)) {};
 		PhysicsBody(b2Body* copy_body) : body(copy_body) {};
 		PhysicsBody(body_parameters in_parameters);
+
 		~PhysicsBody();
-		
+
 		inline bool IsCreated() const { return created; }
+		inline bool IsGarbage() const { return garbage_destroyed; }
 		inline bool IsDestroyed() const { return destroyed; }
 		inline bool is_enabled() const { return (body ? body->IsEnabled() : false); }
 		
 		b2Body* get_body() const { return body; }
 		const body_parameters& get_parameters() const { return parameters; }
 
+		void SetAsGarbage();
+
 	public:
-		body_type get_body_type() const;
+		body_type GetType() const;
 		
 		float get_mass() const;
 		float get_angle() const;
@@ -250,6 +258,10 @@ namespace Asura::Physics
 
 		Math::FRect get_rect() const;
 
+		bool operator==(const PhysicsBody& LeftBody) const
+		{
+			return this->body == LeftBody.body;
+		}
 	public:
 		void set_body_type(body_type new_type);
 		void set_mass(float new_mass);

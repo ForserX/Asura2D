@@ -30,5 +30,3 @@ namespace Asura::Scheduler
 }
 
 constexpr float target_scheduler_tps = 50.f;
-extern float scheduler_delta;
-extern float scheduler_real_delta;

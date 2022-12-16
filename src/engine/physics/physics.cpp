@@ -121,7 +121,7 @@ void Physics::DestroyWorld()
 	game_world.DestroyWorld();
 }
 
-b2World& Physics::GetWorld()
+Physics::PhysicsWorld& Physics::GetWorld()
 {
-	return game_world.GetWorld();
+	return game_world;
 }

@@ -7,6 +7,13 @@ extern bool is_editor_mode;
 extern bool physical_debug_draw;
 extern float target_physics_tps;
 extern float target_physics_hertz;
+extern float physics_delta;
+extern float physics_real_delta;
+extern int target_steps_count;
+
+// Scheduler
+extern float scheduler_delta;
+extern float scheduler_real_delta;
 
 // Windows code
 extern SDL_Window* window_handle;

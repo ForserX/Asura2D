@@ -25,7 +25,7 @@ void Asura::Physics::PhysicsJoint::Create()
 			jdata.enableLimit = data.limit;
 
 			jdata.Initialize(data.body_first->get_body(), data.body_second->get_body(), data.body_second->get_body()->GetPosition());
-			try_joint = Physics::GetWorld().CreateJoint(&jdata);
+			try_joint = Physics::GetWorld().GetWorld().CreateJoint(&jdata);
 			break;
 		}
 		default:
@@ -40,6 +40,6 @@ void Asura::Physics::PhysicsJoint::Destroy()
 	if (destroyed)
 		return;
 
-	GetWorld().DestroyJoint(try_joint);
+	GetWorld().GetWorld().DestroyJoint(try_joint);
 	destroyed = true;
 }

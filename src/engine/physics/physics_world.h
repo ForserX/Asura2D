@@ -1,5 +1,4 @@
 #pragma once
-#include <box2d/box2d.h>
 
 namespace Asura
 {
@@ -21,6 +20,7 @@ namespace Asura
 			b2Body* ground = nullptr;
 
 			std::unique_ptr<CollisionLister> cl;
+			ContatctListerBase* AsuraListerInterface = nullptr;
 
 			stl::hash_set<PhysicsBody*> scheduled_to_delete_bodies;
 			stl::hash_set<PhysicsBody*> bodies;
@@ -53,10 +53,9 @@ namespace Asura
 			PhysicsBody* SafeCreation(body_parameters parameters);
 			PhysicsJoint* SafeCreation(joint_data&& parameters);
 			void SafeFree(PhysicsBody* body);
+
+			inline void SetContactLister(ContatctListerBase* NewLister) { delete AsuraListerInterface; AsuraListerInterface = NewLister; };
+			inline ContatctListerBase* GetContactLister() const { return AsuraListerInterface; }
 		};
 	}
 }
-
-extern float physics_delta;
-extern float physics_real_delta;
-extern int target_steps_count;

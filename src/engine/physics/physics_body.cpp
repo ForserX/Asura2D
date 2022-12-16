@@ -12,7 +12,12 @@ Physics::PhysicsBody::~PhysicsBody()
 
 }
 
-Physics::body_type Physics::PhysicsBody::get_body_type() const
+void Asura::Physics::PhysicsBody::SetAsGarbage()
+{
+	garbage_destroyed = true;
+}
+
+Physics::body_type Physics::PhysicsBody::GetType() const
 {
 	if (body != nullptr)
 	{
@@ -236,7 +241,7 @@ void Physics::PhysicsBody::Create()
 {
 	const b2BodyDef body_def = parameters;
 	const b2MassData mass_data = parameters;
-	body = GetWorld().CreateBody(&body_def);
+	body = GetWorld().GetWorld().CreateBody(&body_def);
 
 	b2FixtureDef fixtureDef;
 	b2PolygonShape poly_shape = {};
@@ -282,11 +287,11 @@ void Physics::PhysicsBody::Destroy()
 		for (auto joint = body->GetJointList(); joint != nullptr; )
 		{
 			const auto next_joint = joint->next;
-			GetWorld().DestroyJoint(joint->joint);
+			GetWorld().GetWorld().DestroyJoint(joint->joint);
 			joint = next_joint;
 		}
 
-		GetWorld().DestroyBody(body);
+		GetWorld().GetWorld().DestroyBody(body);
 		body = nullptr;
 	}
 }

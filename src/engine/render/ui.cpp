@@ -106,7 +106,7 @@ void UI::Tick(float dt)
                     ImGui::Text("  Real TPS/dt: %.4f/%3.3fms", phys_real_tps, phys_real_dt);
                     ImGui::Text("  Physics thread load: %3.0f%%", phys_load_percent * 100.f);
                     ImGui::ProgressBar(phys_load_percent);
-                    ImGui::Text("  Bodies count: %i", Physics::GetWorld().GetBodyCount());
+                    ImGui::Text("  Bodies count: %i", Physics::GetWorld().GetWorld().GetBodyCount());
                     ImGui::Separator();
                     ImGui::Text("Entities");
                     ImGui::Text("  Allocated: %d", static_cast<int>(registry.capacity()));
