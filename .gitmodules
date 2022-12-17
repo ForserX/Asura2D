@@ -28,12 +28,15 @@
 [submodule "libs/openal-soft"]
 	path = libs/openal-soft
 	url = https://github.com/kcat/openal-soft.git
-[submodule "libs/vorbis"]
-	path = libs/vorbis
-	url = https://github.com/xiph/vorbis
 [submodule "libs/ogg"]
 	path = libs/ogg
 	url = https://github.com/xiph/ogg
 [submodule "libs/imgui"]
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "libs/opus"]
+	path = libs/opus
+	url = https://github.com/xiph/opus.git
+[submodule "libs/opusfile"]
+	path = libs/opusfile
+	url = https://github.com/xiph/opusfile

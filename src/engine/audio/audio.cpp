@@ -27,7 +27,7 @@ Device* pDevice = nullptr;
 void Audio::Init()
 {
 #ifdef OS_WINDOWS
-	pDevice = new DeviceXAudio2;
+	pDevice = new DeviceOpenAL;
 #else 
 	pDevice = new DeviceOpenAL;
 #endif

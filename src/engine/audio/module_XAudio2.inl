@@ -11,6 +11,23 @@ void SafeRelease(T pInterface)
 	}
 }
 
+int cb_read(void* stream, unsigned char* ptr, int nbytes) 
+{
+	std::fstream* in = (std::fstream*)stream;
+	//nassertr(in != nullptr, -1);
+
+	in->read((char*)ptr, nbytes);
+
+	if (in->eof())
+	{
+		// Gracefully handle EOF.
+		in->clear();
+	}
+
+	return in->gcount();
+}
+
+
 class CAudio final
 {
 public:
@@ -35,9 +52,9 @@ private:
 	IXAudio2SourceVoice* pSourceVoice;
 
 	UINT32 flags;
-	char buffers[MAX_BUFFER_COUNT][STREAMING_BUFFER_SIZE];
+	opus_int16 buffers[MAX_BUFFER_COUNT][STREAMING_BUFFER_SIZE];
 	bool bFileOpened;
-	OggVorbis_File vf;
+	OggOpusFile* vf;
 	bool isRunning;
 	bool boolIsPaused;
 	bool bAlmostDone;
@@ -90,7 +107,7 @@ CAudio::~CAudio(void)
 	SafeRelease(pXAudio2);
 
 	if (bFileOpened)
-		ov_clear(&vf);
+		op_free(vf);
 
 	CoUninitialize();
 }
@@ -115,7 +132,7 @@ bool CAudio::LoadSound(const char* strSoundPath)
 		pSourceVoice->Stop(0);
 		pSourceVoice->DestroyVoice();
 
-		ov_clear(&vf);
+		op_free(vf);
 
 		resetParams();
 	}
@@ -123,37 +140,38 @@ bool CAudio::LoadSound(const char* strSoundPath)
 	FILE* f = nullptr;
 	errno_t err;
 
-	if ((err = fopen_s(&f, strSoundPath, "rb")) != 0)
-	{
-		Asura::Debug::msg("Failed to open audio: {}", strSoundPath);
+	std::fstream File(strSoundPath);
 
-		char szBuffer[MAX_PATH];
-		_strerror_s(szBuffer, MAX_PATH, nullptr);
-		Asura::Debug::msg("Reason: {}", szBuffer);
-		return false;
-	}
+	//if ((err = fopen_s(&f, strSoundPath, "rb")) != 0)
+	//{
+	//	Asura::Debug::msg("Failed to open audio: {}", strSoundPath);
+	//
+	//	char szBuffer[MAX_PATH];
+	//	_strerror_s(szBuffer, MAX_PATH, nullptr);
+	//	Asura::Debug::msg("Reason: {}", szBuffer);
+	//	return false;
+	//}
 
-	if (ov_open_callbacks(f, &vf, nullptr, 0, OV_CALLBACKS_DEFAULT) < 0)
-	{
-		fclose(f);
-		return false;
-	}
-	else
+	OpusFileCallbacks cb = { cb_read, NULL, NULL, NULL };
+	int serr = 0;
+	vf = op_open_file(strSoundPath, &serr);
+
 	{
 		bFileOpened = true;
 	}
 
 	//The vorbis_info struct keeps the most of the interesting format info
-	vorbis_info* vi = ov_info(&vf, -1);
+	int li = op_current_link(vf);
+	const OpusHead* head = op_head(vf, li);
 
 	//Set the wave format
 	WAVEFORMATEX wfm;
 	memset(&wfm, 0, sizeof(wfm));
 
 	wfm.cbSize = sizeof(wfm);
-	wfm.nChannels = vi->channels;
+	wfm.nChannels = head->channel_count;
 	wfm.wBitsPerSample = 16;                    //Ogg vorbis is always 16 bit
-	wfm.nSamplesPerSec = vi->rate;
+	wfm.nSamplesPerSec = head->input_sample_rate;
 	wfm.nAvgBytesPerSec = wfm.nSamplesPerSec * wfm.nChannels * 2;
 	wfm.nBlockAlign = 2 * wfm.nChannels;
 	wfm.wFormatTag = 1;
@@ -167,7 +185,7 @@ bool CAudio::LoadSound(const char* strSoundPath)
 	//Read in the bits
 	while (ret && pos < STREAMING_BUFFER_SIZE)
 	{
-		ret = ov_read(&vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, 0, 2, 1, &sec);
+		ret = op_read(vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, &sec);
 		pos += ret;
 	}
 
@@ -176,6 +194,7 @@ bool CAudio::LoadSound(const char* strSoundPath)
 	//Create the source voice
 	if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &wfm)))
 	{
+		Asura::Debug::msg(">Error %#X creating source voice");
 		//LogError("<li>Error %#X creating source voice", hr);
 		return false;
 	}
@@ -187,6 +206,7 @@ bool CAudio::LoadSound(const char* strSoundPath)
 
 	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 	{
+		Asura::Debug::msg("Error %#X submitting source buffer");
 		//LogError("<li>Error %#X submitting source buffer", hr);
 		return false;
 	}
@@ -317,7 +337,7 @@ void CAudio::Update()
 
 		while (ret && pos < STREAMING_BUFFER_SIZE)
 		{
-			ret = ov_read(&vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, 0, 2, 1, &sec);
+			ret = op_read(vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, &sec);
 			pos += ret;
 		}
 
@@ -328,10 +348,10 @@ void CAudio::Update()
 			//NOTE: sound with sizes smaller than BUFSIZE may be cut off
 
 			ret = 1;
-			ov_pcm_seek(&vf, 0);
+			op_pcm_seek(vf, 0);
 			while (ret && pos < STREAMING_BUFFER_SIZE)
 			{
-				ret = ov_read(&vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, 0, 2, 1, &sec);
+				ret = op_read(vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, &sec);
 				pos += ret;
 			}
 		}

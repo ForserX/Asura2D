@@ -114,14 +114,9 @@ list(APPEND LIBRARIES_TO_LINK "SDL2-static")
 list(APPEND LIBRARIES_TO_LINK "SDL2main")
 list(APPEND LIBRARIES_TO_LINK "SDL2_image")
 list(APPEND LIBRARIES_TO_LINK "OpenAL")
-list(APPEND LIBRARIES_TO_LINK "vorbis")
-list(APPEND LIBRARIES_TO_LINK "vorbisfile")
 list(APPEND LIBRARIES_TO_LINK "ogg")
-
-target_include_directories("vorbis" PUBLIC  
-    $<BUILD_INTERFACE:${ASURA_ROOT}/libs/ogg/include>  
-    $<INSTALL_INTERFACE:/libs/ogg/include>  # <prefix>/include/mylib
-)
+list(APPEND LIBRARIES_TO_LINK "opus")
+list(APPEND LIBRARIES_TO_LINK "opusfile")
 
 if (UNIX) 
 	list(APPEND LIBRARIES_TO_LINK "fmt")
@@ -197,9 +192,8 @@ set_target_properties("SDL2main" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
 #set_target_properties("marl" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
 set_target_properties("box2d" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
 set_target_properties("ogg" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
-set_target_properties("vorbis" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
-set_target_properties("vorbisenc" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
-set_target_properties("vorbisfile" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
+set_target_properties("opus" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
+set_target_properties("opusfile" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
 set_target_properties("OpenAL" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
 set_target_properties("common" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})
 set_target_properties("ex-common" PROPERTIES ${ASURA_FOLDER_THIRD_PARTY})

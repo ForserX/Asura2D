@@ -94,7 +94,13 @@
 #endif
 
 // Audio trash
-#include <vorbis/include/vorbis/vorbisfile.h>
+#ifdef ASURA_USE_VORBIS
+#	include <vorbis/include/vorbis/vorbisfile.h>
+#else
+#include <opusfile.h>
+#endif
+
+#include <opus.h>
 #include <ogg/include/ogg/os_types.h>
 #include <ogg/include/ogg/ogg.h>
 

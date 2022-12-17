@@ -36,7 +36,7 @@ void GamePlay::Holder::free::Tick()
             {
                 if (!sound_started)
                 {
-                    Audio::Start("click.ogg");
+                    Audio::Start("click.opus");
 
                     sound_started = true;
                 }
