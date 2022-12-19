@@ -86,18 +86,24 @@ void draw_system::Tick(float dt)
 					{
 						if (const auto texture_comp = Entities::TryGet<draw_texture_component>(entity)) 
 						{
-							const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
-							const auto begin_pos = scene_comp->Transform.position() - half_size;
-							const auto end_pos = scene_comp->Transform.position() + half_size;
-							Graphics::DrawTextureRect(texture_comp->texture_resource, { begin_pos, end_pos });
+							if (Camera::CanSee(scene_comp->Transform.position()))
+							{
+								const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
+								const auto begin_pos = scene_comp->Transform.position() - half_size;
+								const auto end_pos = scene_comp->Transform.position() + half_size;
+								Graphics::DrawTextureRect(texture_comp->texture_resource, { begin_pos, end_pos });
+							}
 						}
 						else if (const auto color_comp = Entities::TryGet<draw_color_component>(entity)) 
 						{
-							const auto entt_id = reinterpret_cast<ptrdiff_t>(color_comp);
-							const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
-							const auto begin_pos = scene_comp->Transform.position() - half_size;
-							const auto end_pos = scene_comp->Transform.position() + half_size;
-							Graphics::DrawRect(color_map[entt_id % 4096], { begin_pos, end_pos });
+							if (Camera::CanSee(scene_comp->Transform.position()))
+							{
+								const auto entt_id = reinterpret_cast<ptrdiff_t>(color_comp);
+								const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
+								const auto begin_pos = scene_comp->Transform.position() - half_size;
+								const auto end_pos = scene_comp->Transform.position() + half_size;
+								Graphics::DrawRect(color_map[entt_id % 4096], { begin_pos, end_pos });
+							}
 						}
 					}
 				}
@@ -106,6 +112,11 @@ void draw_system::Tick(float dt)
 					const auto physical_body = phys_comp->body;
 
 					if (!physical_body->is_enabled()) 
+					{
+						return;
+					}
+
+					if (!Camera::CanSee(physical_body->get_position()))
 					{
 						return;
 					}

@@ -21,4 +21,5 @@ namespace Asura::GamePlay::Camera
     Math::FVec2 World2Screen(const Math::FVec2& worldPoint);
 	float ScaleFactor(float in);
 
+	bool CanSee(Math::FVec2 Pos);
 }

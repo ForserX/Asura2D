@@ -229,3 +229,19 @@ float Camera::ScaleFactor(float in)
 
     return in * ws;
 }
+
+bool Asura::GamePlay::Camera::CanSee(Math::FVec2 Pos)
+{
+	float dx = (float)cam_width / 2;
+	float dy = (float)cam_height / 2;
+
+	float x = cam_center.x - dx;
+	float y = cam_center.y - dy;
+	float h = cam_center.x + dx;
+	float w = cam_center.y + dy;
+
+	bool SeeX = (ScaleFactor(Pos.x) < w) && (ScaleFactor(Pos.x) > x);
+	bool SeeY = (ScaleFactor(Pos.y) < h) && (ScaleFactor(Pos.y) > y);
+
+	return SeeX && SeeY;
+}
