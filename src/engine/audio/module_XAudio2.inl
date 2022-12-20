@@ -1,4 +1,4 @@
-constexpr size_t STREAMING_BUFFER_SIZE = 65536 * 10;
+constexpr size_t STREAMING_BUFFER_SIZE = 65536;
 constexpr size_t MAX_BUFFER_COUNT = 3;
 
 template <class T>
@@ -27,6 +27,7 @@ int cb_read(void* stream, unsigned char* ptr, int nbytes)
 	return in->gcount();
 }
 
+using Asura::Audio::Decoder::OpusDecoderInfo;
 
 class CAudio final
 {
@@ -37,7 +38,7 @@ public:
 	bool IsPlaying();
 	void Stop();
 	bool Play(bool loop = true);
-	bool LoadSound(const char* szSoundFilePath);
+	bool LoadSound(OpusDecoderInfo& DecInfo);
 	void AlterVolume(float fltVolume);
 	float GetVolume();
 	void Pause();
@@ -52,14 +53,12 @@ private:
 	IXAudio2SourceVoice* pSourceVoice;
 
 	UINT32 flags;
-	opus_int16 buffers[MAX_BUFFER_COUNT][STREAMING_BUFFER_SIZE];
-	bool bFileOpened;
-	OggOpusFile* vf;
+	OpusDecoderInfo DecInfo;
+
 	bool isRunning;
 	bool boolIsPaused;
 	bool bAlmostDone;
 	bool bLoop;
-	DWORD currentDiskReadBuffer;
 
 	void resetParams();
 };
@@ -72,11 +71,9 @@ CAudio::CAudio(void)
 
 	resetParams();
 
-#ifdef _DEBUG
+#ifdef ASURA_XAUDIO_DEBUG
 	flags |= XAUDIO2_DEBUG_ENGINE;
 #endif
-
-	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
 	HRESULT hr = S_OK;
 
@@ -105,89 +102,34 @@ CAudio::~CAudio(void)
 		pMasteringVoice->DestroyVoice();
 
 	SafeRelease(pXAudio2);
-
-	if (bFileOpened)
-		op_free(vf);
-
-	CoUninitialize();
 }
 
 void CAudio::resetParams()
 {
-	bFileOpened = false;
 	isRunning = false;
 	boolIsPaused = false;
 	bLoop = false;
 	bDone = false;
 	bAlmostDone = false;
-	currentDiskReadBuffer = 0;
 	flags = 0;
 }
 
-bool CAudio::LoadSound(const char* strSoundPath)
+bool CAudio::LoadSound(Asura::Audio::Decoder::OpusDecoderInfo& InDecInfo)
 {
-	//If we already have a file open then kill the current voice setup
-	if (bFileOpened)
-	{
-		pSourceVoice->Stop(0);
-		pSourceVoice->DestroyVoice();
-
-		op_free(vf);
-
-		resetParams();
-	}
-
-	FILE* f = nullptr;
 	errno_t err;
 
-	std::fstream File(strSoundPath);
-
-	//if ((err = fopen_s(&f, strSoundPath, "rb")) != 0)
-	//{
-	//	Asura::Debug::msg("Failed to open audio: {}", strSoundPath);
-	//
-	//	char szBuffer[MAX_PATH];
-	//	_strerror_s(szBuffer, MAX_PATH, nullptr);
-	//	Asura::Debug::msg("Reason: {}", szBuffer);
-	//	return false;
-	//}
-
-	OpusFileCallbacks cb = { cb_read, NULL, NULL, NULL };
-	int serr = 0;
-	vf = op_open_file(strSoundPath, &serr);
-
-	{
-		bFileOpened = true;
-	}
-
-	//The vorbis_info struct keeps the most of the interesting format info
-	int li = op_current_link(vf);
-	const OpusHead* head = op_head(vf, li);
+	memcpy(&DecInfo, &InDecInfo, sizeof(OpusDecoderInfo));
 
 	//Set the wave format
-	WAVEFORMATEX wfm;
-	memset(&wfm, 0, sizeof(wfm));
+	static WAVEFORMATEX wfm;
 
 	wfm.cbSize = sizeof(wfm);
-	wfm.nChannels = head->channel_count;
-	wfm.wBitsPerSample = 16;                    //Ogg vorbis is always 16 bit
-	wfm.nSamplesPerSec = head->input_sample_rate;
+	wfm.nChannels = DecInfo.ChannelsCount;
+	wfm.wBitsPerSample = 16;
+	wfm.nSamplesPerSec = DecInfo.Rate;
 	wfm.nAvgBytesPerSec = wfm.nSamplesPerSec * wfm.nChannels * 2;
 	wfm.nBlockAlign = 2 * wfm.nChannels;
 	wfm.wFormatTag = 1;
-
-	DWORD pos = 0;
-	int sec = 0;
-	int ret = 1;
-
-	memset(&buffers[currentDiskReadBuffer], 0, sizeof(buffers[currentDiskReadBuffer]));
-
-	//Read in the bits
-	while (ret && pos < STREAMING_BUFFER_SIZE)
-	{
-		ret = op_read(vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, &sec);
-		pos += ret;
-	}
 
 	HRESULT hr;
 
@@ -200,18 +142,15 @@ bool CAudio::LoadSound(const char* strSoundPath)
 	}
 
 	//Submit the wave sample data using an XAUDIO2_BUFFER structure
-	XAUDIO2_BUFFER buffer = { 0 };
-	buffer.pAudioData = (BYTE*)&buffers[currentDiskReadBuffer];
+	static XAUDIO2_BUFFER buffer = { 0 };
+	buffer.pAudioData = (BYTE*)&DecInfo.buffers;
 	buffer.AudioBytes = STREAMING_BUFFER_SIZE;
 
 	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 	{
 		Asura::Debug::msg("Error %#X submitting source buffer");
-		//LogError("<li>Error %#X submitting source buffer", hr);
 		return false;
 	}
-
-	currentDiskReadBuffer++;
 
 	return true;
 }
@@ -248,10 +187,6 @@ void CAudio::Stop()
 	if (pSourceVoice == nullptr)
 		return;
 
-	//XAUDIO2_FLUSH_BUFFERS according to MSDN is meant to flush the buffers after the voice is stopped
-	//unfortunately the March 2008 release of the SDK does not include this parameter in the xaudio files
-	//and I have been unable to ascertain what its value is
-	//pSourceVoice->Stop(XAUDIO2_FLUSH_BUFFERS);
 	pSourceVoice->Stop(0);
 
 	boolIsPaused = false;
@@ -260,25 +195,17 @@ void CAudio::Stop()
 
 bool CAudio::IsPlaying()
 {
-	/*XAUDIO2_VOICE_STATE state;
-	pSourceVoice->GetState(&state);
-	return (state.BuffersQueued > 0) != 0;*/
-
 	return isRunning;
 }
 
-
-//Alter the volume up and down
 void CAudio::AlterVolume(float fltVolume)
 {
 	if (pSourceVoice == nullptr)
 		return;
 
-	pSourceVoice->SetVolume(fltVolume);			//Current voice volume
-	//pMasteringVoice->SetVolume(fltVolume);	//Playback device volume
+	pSourceVoice->SetVolume(fltVolume);
 }
 
-//Return the current volume
 float CAudio::GetVolume()
 {
 	float Base = 0.f;
@@ -297,7 +224,7 @@ void CAudio::Pause()
 
 	if (boolIsPaused)
 	{
-		pSourceVoice->Start(0);	//Unless we tell it otherwise the voice resumes playback from its last position
+		pSourceVoice->Start(0);
 		boolIsPaused = false;
 	}
 	else
@@ -325,11 +252,10 @@ void CAudio::Update()
 			pSourceVoice->Stop(0);
 		}
 
-		//Got to use this trick because otherwise all the bits wont play
-		if (bAlmostDone && !bLoop)
+		if(bAlmostDone)
 			bDone = true;
 
-		memset(&buffers[currentDiskReadBuffer], 0, sizeof(buffers[currentDiskReadBuffer]));
+		memset(&DecInfo.buffers, 0, sizeof(DecInfo.buffers));
 
 		DWORD pos = 0;
 		int sec = 0;
@@ -337,7 +263,7 @@ void CAudio::Update()
 
 		while (ret && pos < STREAMING_BUFFER_SIZE)
 		{
-			ret = op_read(vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, &sec);
+			ret = op_read(DecInfo.vf, DecInfo.buffers + pos, STREAMING_BUFFER_SIZE - pos, &sec);
 			pos += ret;
 		}
 
@@ -348,25 +274,20 @@ void CAudio::Update()
 			//NOTE: sound with sizes smaller than BUFSIZE may be cut off
 
 			ret = 1;
-			op_pcm_seek(vf, 0);
+			op_pcm_seek(DecInfo.vf, 0);
 			while (ret && pos < STREAMING_BUFFER_SIZE)
 			{
-				ret = op_read(vf, buffers[currentDiskReadBuffer] + pos, STREAMING_BUFFER_SIZE - pos, &sec);
+				ret = op_read(DecInfo.vf, DecInfo.buffers + pos, STREAMING_BUFFER_SIZE - pos, &sec);
 				pos += ret;
 			}
 		}
 		else if (!ret && !(bLoop))
 		{
-			//Not looping so fill the rest with 0
-			//while(pos<size)
-			//    *(buffers[currentDiskReadBuffer]+pos)=0; pos ++;
-
-			//And say that after the current section no other section follows
 			bAlmostDone = true;
 		}
 
 		XAUDIO2_BUFFER buffer = { 0 };
-		buffer.pAudioData = (BYTE*)&buffers[currentDiskReadBuffer];
+		buffer.pAudioData = (BYTE*)&DecInfo.buffers;
 		if (bAlmostDone)
 			buffer.Flags = XAUDIO2_END_OF_STREAM;	//Tell the source voice not to expect any data after this buffer
 		buffer.AudioBytes = STREAMING_BUFFER_SIZE;
@@ -377,8 +298,5 @@ void CAudio::Update()
 			//LogError("<li>Error %#X submitting source buffer\n", hr );
 			return;
 		}
-
-		currentDiskReadBuffer++;
-		currentDiskReadBuffer %= MAX_BUFFER_COUNT;
 	}
 }

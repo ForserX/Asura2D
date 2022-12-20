@@ -14,6 +14,7 @@ namespace Asura::Audio
 		~DeviceOpenAL();
 
 		virtual void Tick() override;
+		virtual void PreTick() override {};
 		virtual void Load(ResourcesManager::id_t File) override;
 
 		virtual void SetVolume(float Volume);

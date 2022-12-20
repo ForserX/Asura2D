@@ -8,47 +8,9 @@
 
 using namespace Asura;
 
-std::recursive_mutex SafeLock;
-std::recursive_mutex SafeLoadLock;
-std::unique_ptr<std::thread> LoadThread;
-
 Audio::DeviceXAudio2::DeviceXAudio2()
 {
-	LoadThread = std::make_unique<std::thread>([this]
-	{
-		Threads::SetName("Asura Audio: Locader");
-		while (true)
-		{
-			if (IdRes.empty())
-				Threads::Wait();
-
-			for (auto SoundSrc : GetSafe())
-			{
-				Resource Res = ResourcesManager::GetResource(SoundSrc);
-				FileSystem::Path FullPath = FileSystem::ContentDir();
-				FullPath.append(Res.Name);
-
-				SafeLock.lock();
-				CAudio* Audio = AudioData.emplace_back(new CAudio);
-
-				Audio->LoadSound(ExtractPath(FullPath).data());
-				Audio->Play(false);
-				Audio->AlterVolume(Volume);
-				SafeLock.unlock();
-			}
-
-			std::lock_guard Lock(SafeLoadLock);
-			IdRes.clear();
-		}
-	});
-
-	Threads::SetAffinity(*LoadThread.get(), 4);
-}
-
-stl::vector<ResourcesManager::id_t>& Audio::DeviceXAudio2::GetSafe()
-{
-	std::lock_guard Lock(SafeLoadLock);
-	return IdRes;
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 }
 
 Audio::DeviceXAudio2::~DeviceXAudio2()
@@ -60,10 +22,39 @@ Audio::DeviceXAudio2::~DeviceXAudio2()
 	}
 
 	AudioData.clear();
+
+	CoUninitialize();
+}
+
+void Audio::DeviceXAudio2::PreTick()
+{
 }
 
 void Audio::DeviceXAudio2::Tick()
 {
+	if (!IdRes.empty())
+	{
+		CAudio* Audio = nullptr;
+
+		SafeLoaderLock.lock();
+
+		for (const ResourcesManager::id_t& ID : IdRes)
+		{
+			auto DecInfo = Decoder::Get(ID);
+
+			Audio = new CAudio;
+			Audio->LoadSound(DecInfo);
+			Audio->AlterVolume(Volume);
+			Audio->Play(false);
+
+			Threads::Wait();
+			AudioData.emplace_back(Audio);
+		}
+
+		IdRes.clear();
+		SafeLoaderLock.unlock();
+	}
+
 	std::lock_guard Lock(SafeLock);
 
 	for (CAudio* Audio : AudioData)
@@ -79,16 +70,14 @@ void Audio::DeviceXAudio2::Tick()
 	}
 }
 
-void Audio::DeviceXAudio2::Load(ResourcesManager::id_t sound_src)
+void Audio::DeviceXAudio2::Load(ResourcesManager::id_t SoundSrc)
 {
-	std::lock_guard Lock(SafeLoadLock);
-	IdRes.push_back(sound_src);
+	std::lock_guard Lock(SafeLoaderLock);
+	IdRes.push_back(SoundSrc);
 }
 
 void Asura::Audio::DeviceXAudio2::SetVolume(float InVolume)
 {
-	std::lock_guard Lock(SafeLock);
-
 	for (CAudio* pData : AudioData)
 	{
 		pData->AlterVolume(InVolume);

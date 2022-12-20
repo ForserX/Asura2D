@@ -6,6 +6,7 @@ namespace Asura::Audio
 	{
 	public:
 		virtual void Load(ResourcesManager::id_t File) = 0;
+		virtual void PreTick() = 0;
 		virtual void Tick() = 0;
 
 		virtual void SetVolume(float Volume) = 0;

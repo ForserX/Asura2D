@@ -9,6 +9,6 @@ namespace Asura::Threads
 	void SetName(stl::string_view Name);
 
 	void SyncCurrentThread();
-	void Wait();
+	void Wait(size_t time = 1);
 	void SwitchContext();
 }

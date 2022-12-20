@@ -85,7 +85,7 @@ public:
 			// Destroy dynamic objects only
 			if (BodyB.GetType() == Physics::body_type::ph_dynamic)
 			{
-			//	Audio::Start("ball\\ball_blob_rr_01.opus");
+				Audio::Start("ball\\ball_blob_rr_01.opus");
 				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyB)));
 			}
 		}
@@ -94,7 +94,7 @@ public:
 			// Destroy dynamic objects only
 			if (BodyA.GetType() == Physics::body_type::ph_dynamic)
 			{
-			//	Audio::Start("ball\\ball_blob_rr_04.opus");
+				Audio::Start("ball\\ball_blob_rr_04.opus");
 				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyA)));
 			}
 		}

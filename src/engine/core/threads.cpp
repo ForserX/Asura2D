@@ -60,12 +60,19 @@ void Asura::Threads::SyncCurrentThread()
 	std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
 
-void Asura::Threads::Wait()
+void Asura::Threads::Wait(size_t Time)
 {
 #ifdef OS_WINDOWS
-	_mm_pause();
+	if (Time == 1)
+	{
+		_mm_pause();
+	}
+	else
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(Time));
+	}
 #else
-	std::this_thread::sleep_for(std::chrono::milliseconds(2));
+	std::this_thread::sleep_for(std::chrono::milliseconds(Time));
 #endif
 }
 

@@ -17,12 +17,14 @@ public:
 	~DeviceDummy() = default;
 
 	virtual void Tick() override {}
+	virtual void PreTick() override {};
 	virtual void Load(ResourcesManager::id_t File) override {}
 
 	virtual void SetVolume(float Volume) override {};
 };
 
 std::unique_ptr<std::thread> TickInternal = {};
+std::unique_ptr<std::thread> PreTickInternal = {};
 
 Device* pDevice = nullptr;
 
@@ -33,21 +35,45 @@ void Audio::Init()
 #else 
 	pDevice = new DeviceOpenAL;
 #endif
-
-	TickInternal = std::make_unique<std::thread>([]()
+#if 0
+	PreTickInternal = std::make_unique<std::thread>([]()
 	{
-		Threads::SetName("Asura Audio: Tick");
+		Threads::SetName("Asura Audio: Befor Tick");
+		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
 		while (true)
 		{
 			if (pDevice == nullptr)
+			{
+				CoUninitialize();
 				return;
+			}
 
-			pDevice->Tick();
-
-			//Threads::Wait();
+			pDevice->PreTick();
 		}
 	});
-	Threads::SetAffinity(*TickInternal.get(), 6);
+#endif
+	TickInternal = std::make_unique<std::thread>([]()
+	{
+		Threads::SetName("Asura Audio: Tick");
+		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+		while (true)
+		{
+			Threads::Wait();
+
+			if (pDevice == nullptr)
+			{
+				CoUninitialize();
+				return;
+			}
+
+			pDevice->Tick();
+		}
+	});
+
+//	Threads::SetAffinity(*PreTickInternal.get(), 3);
+	Threads::SetAffinity(*TickInternal.get(), 4);
 }
 
 void Audio::Tick()
@@ -56,6 +82,8 @@ void Audio::Tick()
 
 void Audio::Destroy()
 {
+	TickInternal->detach();
+
 	if (pDevice == nullptr)
 		return;
 
@@ -93,5 +121,5 @@ void Audio::Start(stl::string_view File)
 	FileSystem::Path FilePath = "sound";
 	FilePath.append(File);
 
-	pDevice->Load(ResourcesManager::Load(FilePath));
+	pDevice->Load(ResourcesManager::Load(std::move(FilePath)));
 }
