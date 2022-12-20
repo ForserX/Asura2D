@@ -22,6 +22,8 @@ public:
 	virtual void SetVolume(float Volume) override {};
 };
 
+std::unique_ptr<std::thread> TickInternal = {};
+
 Device* pDevice = nullptr;
 
 void Audio::Init()
@@ -31,14 +33,25 @@ void Audio::Init()
 #else 
 	pDevice = new DeviceOpenAL;
 #endif
+
+	TickInternal = std::make_unique<std::thread>([]()
+	{
+		Threads::SetName("Asura Audio: Tick");
+		while (true)
+		{
+			if (pDevice == nullptr)
+				return;
+
+			pDevice->Tick();
+
+			//Threads::Wait();
+		}
+	});
+	Threads::SetAffinity(*TickInternal.get(), 6);
 }
 
 void Audio::Tick()
 {
-	if (pDevice == nullptr)
-		return;
-
-	pDevice->Tick();
 }
 
 void Audio::Destroy()
@@ -80,5 +93,5 @@ void Audio::Start(stl::string_view File)
 	FileSystem::Path FilePath = "sound";
 	FilePath.append(File);
 
-	pDevice->Load(ResourcesManager::Load(FilePath.generic_string().c_str()));
+	pDevice->Load(ResourcesManager::Load(FilePath));
 }

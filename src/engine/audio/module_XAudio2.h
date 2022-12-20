@@ -7,6 +7,9 @@ namespace Asura::Audio
 	class DeviceXAudio2 final : public Device
 	{
 		stl::vector<CAudio*> AudioData;
+		stl::vector<ResourcesManager::id_t> IdRes;
+	private:
+		stl::vector<ResourcesManager::id_t>& GetSafe();
 	public:
 		DeviceXAudio2();
 		~DeviceXAudio2();

@@ -63,6 +63,10 @@ EntityView TestObject2;
 
 stl::vector<EntityView> circles;
 
+std::random_device r_device;
+std::mt19937 gen(r_device());
+std::uniform_real_distribution r_dist(0.f, 10.f);
+
 class ContactLister : public Physics::ContatctListerBase
 {
 public:
@@ -81,8 +85,7 @@ public:
 			// Destroy dynamic objects only
 			if (BodyB.GetType() == Physics::body_type::ph_dynamic)
 			{
-				//auto DestEntt = Entities::GetEntityByBbody(BodyB.get_body());
-				//Entities::AddField<Entities::garbage_flag>(DestEntt);
+			//	Audio::Start("ball\\ball_blob_rr_01.opus");
 				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyB)));
 			}
 		}
@@ -91,8 +94,7 @@ public:
 			// Destroy dynamic objects only
 			if (BodyA.GetType() == Physics::body_type::ph_dynamic)
 			{
-				//auto DestEntt = Entities::GetEntityByBbody(BodyA.get_body());
-				//Entities::AddField<Entities::garbage_flag>(DestEntt);
+			//	Audio::Start("ball\\ball_blob_rr_04.opus");
 				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyA)));
 			}
 		}
@@ -107,13 +109,11 @@ void ingame::init()
 	Physics::GetWorld().SetContactLister(new ContactLister);
 #if 1
 
-	TestObject2 = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 200, 10 }));
+	TestObject2 = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 100, 10 }));
 
 	AddField<drawable_flag>(TestObject2);
 
 #if 1
-	std::random_device r_device;
-	std::mt19937 gen(r_device());
 
 	for (size_t i = 0; i < 2000; i++)
 	{

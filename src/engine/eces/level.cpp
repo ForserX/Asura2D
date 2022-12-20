@@ -52,8 +52,7 @@ namespace Asura::Level::internal
 				body_type, body_shape, material_type // ph info
 			);
 
-			stl::string NonConstName = section;
-			auto FindResult = NonConstName.find("ground_", NonConstName.length());
+			auto FindResult = section.find("ground_", section.length());
 
 			auto ent = ent_list.emplace_back(Entities::CreatePhysBody(CurrentBody, FindResult != stl::npos));
 
