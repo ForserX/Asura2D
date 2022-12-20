@@ -1,4 +1,6 @@
+#pragma once
 #include "pch.h"
+#include "engine/KeyBinder.h"
 
 using namespace Asura;
 using namespace Asura::GamePlay;
@@ -24,8 +26,15 @@ static int64_t CameraInputWheelID = 0;
 
 auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state state)
 {
-	switch (scan_code)
+
+	auto action = Asura::Input::GetActionFromPair(scan_code, state);
+
+
+	
+	switch (action)
 	{
+
+	/*
 	case SDL_SCANCODE_MOUSE_LEFT:
 	{
 		if (Asura::Input::IsKeyPressed(SDL_SCANCODE_LCTRL))
@@ -39,13 +48,17 @@ auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state sta
 		}
 		break;
 	}
+	*/
 
-	case SDL_SCANCODE_LEFT:  Camera::Move(GamePlay::MoveWays::left, 1.f);  break;
-	case SDL_SCANCODE_RIGHT: Camera::Move(GamePlay::MoveWays::right, 1.f); break;
-	case SDL_SCANCODE_UP:	 Camera::Move(GamePlay::MoveWays::up, 1.f);	   break;
-	case SDL_SCANCODE_DOWN:  Camera::Move(GamePlay::MoveWays::down, 1.f);  break;
-	default:															   break;
+	case Asura::Input::eActions::CameraMoveLeft:  Camera::Move(GamePlay::MoveWays::left, 1.f);  break;
+	case Asura::Input::eActions::CameraMoveRight: Camera::Move(GamePlay::MoveWays::right, 1.f); break;
+	case Asura::Input::eActions::CameraMoveUp:	  Camera::Move(GamePlay::MoveWays::up, 1.f);	  break;
+	case Asura::Input::eActions::CameraMoveDown:  Camera::Move(GamePlay::MoveWays::down, 1.f);  break;
+	default:	
+		break;
 	}
+
+
 };
 
 auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
@@ -59,6 +72,15 @@ auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
 
 void Camera::Init()
 {
+
+	for (int i = 0; i < 4; i++)
+	{
+		Asura::Input::BindNewAction(SDL_SCANCODE_RIGHT + i, Input::key_state::hold, (Asura::Input::eActions)((int)Asura::Input::eActions::CameraMoveRight+i));
+	}
+
+	
+
+
 	CameraInputKeyID = Input::Emplace(camera_mouse_key_change);
 	CameraInputWheelID = Input::Emplace(camera_mouse_wheel_change);
 
