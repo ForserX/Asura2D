@@ -120,6 +120,7 @@ namespace Asura::stl
 
 	using string = std::basic_string<char, std::char_traits<char>, ark_allocator<char>>;
 	using string_view = std::basic_string_view<char>;
+	constexpr size_t npos = std::string::npos;
 
 	template<typename T>
 	inline string to_string(T Value)

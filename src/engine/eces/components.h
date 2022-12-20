@@ -78,6 +78,7 @@ namespace Asura::Entities
 	{
 		static constexpr bool custom_serialize = true;
 		Physics::PhysicsBody* body = nullptr;
+		bool IgnoreTest = false;
 	};
 
 	struct physics_joint_component

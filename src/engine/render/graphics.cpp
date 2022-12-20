@@ -191,14 +191,15 @@ void Graphics::DrawPhysObject(b2Body* object, const ImColor& clr)
     
 	const int32 vertexCount = poly->m_count;
 	game_assert(vertexCount <= b2_maxPolygonVertices, "Vertices count overflow", return);
-	Math::FVec2 vertices[b2_maxPolygonVertices];
+	Math::FVec2* vertices= new Math::FVec2[vertexCount];
 
 	for (int32 i = 0; i < vertexCount; ++i)
 	{
 		vertices[i] = Camera::World2Screen(b2Mul(object->GetTransform(), poly->m_vertices[i]));
 	}
-
 	DrawConvexFilled(ImGui::GetBackgroundDrawList(), vertices, vertexCount, clr);
+
+	delete[] vertices;
 }
 
 void Graphics::DrawPhysObjectCircle(b2Body* object, const ImColor& clr)
