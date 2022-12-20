@@ -83,7 +83,7 @@ void UI::Tick(float dt)
                 ImGui::Checkbox("Use parallel", &use_parallel);
                 ImGui::SliderFloat("Physics TPS", &target_physics_tps, 1.f, 120.f);
                 ImGui::SliderFloat("Physics Hertz", &target_physics_hertz, 1.f, 120.f);
-                ImGui::SliderFloat("Camera zoom", &cam_zoom, 1.f, 120.f);
+                ImGui::SliderFloat("Camera zoom", &cam_zoom, 15.f, 40.f);
                 ImGui::SliderFloat("Volume", &Volume, 0.f, 1.f);
                 ImGui::SliderInt("Steps count", &target_steps_count, 1, 4);
 
