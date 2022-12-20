@@ -183,11 +183,11 @@ void Entities::AddTexture(const EntityView& ent, stl::string_view path, bool Par
 	AddField<draw_texture_component>(ent, texture_resource, Parallax);
 }
 
-void Entities::AddPhysBody(const EntityView& ent, const Physics::body_parameters& ParamRef)
+void Entities::AddPhysBody(const EntityView& ent, const Physics::body_parameters& ParamRef, bool IgnoreTest)
 {
 	Physics::PhysicsBody* body = SafeCreation(ParamRef);
 	
-	AddField<physics_body_component>(ent, body);
+	AddField<physics_body_component>(ent, body, IgnoreTest);
 	if (!Contains<scene_component>(ent)) 
 	{
 		AddField<scene_component>(ent);

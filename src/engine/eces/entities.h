@@ -57,7 +57,7 @@ namespace Asura::Entities
     const Math::FVec2& GetPosition(const EntityView& ent);
 
 	void AddTexture(const EntityView& ent, stl::string_view path, bool Parallax = false);
-	void AddPhysBody(const EntityView& ent, const Physics::body_parameters& BodyParams);
+	void AddPhysBody(const EntityView& ent, const Physics::body_parameters& BodyParams, bool IgnoreTest = false);
 	void AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, stl::string_view preset);
 	void AddSceneComponent(const EntityView& ent);
 
@@ -70,12 +70,12 @@ namespace Asura::Entities
 		return Entt;
 	}
 
-	inline EntityView& CreatePhysBody(const Physics::body_parameters& BodyParams)
+	inline EntityView& CreatePhysBody(const Physics::body_parameters& BodyParams, bool IgnoreTest = false)
 	{
 		static EntityView Entt;
 
 		Entt = Create();
-		AddPhysBody(Entt, BodyParams);
+		AddPhysBody(Entt, BodyParams, IgnoreTest);
 		return Entt;
 	}
 

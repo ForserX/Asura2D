@@ -17,7 +17,6 @@ namespace Asura::Level::internal
 		float level_w = 0;
 		float level_h = 0;
 
-		// сука, это нужно будет переделать
 		for (const auto &[section, kv] : level_data.Data()) 
 		{
 			if (section == "background") 
@@ -53,7 +52,10 @@ namespace Asura::Level::internal
 				body_type, body_shape, material_type // ph info
 			);
 
-			auto ent = ent_list.emplace_back(Entities::CreatePhysBody(CurrentBody));
+			stl::string NonConstName = section;
+			auto FindResult = NonConstName.find("ground_", NonConstName.length());
+
+			auto ent = ent_list.emplace_back(Entities::CreatePhysBody(CurrentBody, FindResult != stl::npos));
 
 			if (is_drawable) 
 			{

@@ -235,13 +235,10 @@ bool Asura::GamePlay::Camera::CanSee(Math::FVec2 Pos)
 	float dx = (float)cam_width;
 	float dy = (float)cam_height;
 
-	float x = cam_center.x - dx;
-	float y = cam_center.y - dy;
-	float h = cam_center.x + dx;
-	float w = cam_center.y + dy;
+	auto ScreenPos = World2Screen(Pos);
 
-	bool SeeX = (ScaleFactor(Pos.x) < w) && (ScaleFactor(Pos.x) > x);
-	bool SeeY = (ScaleFactor(Pos.y) < h) && (ScaleFactor(Pos.y) > y);
+	bool SeeX = ScreenPos.x < fwindow_width && ScreenPos.x > 0;
+	bool SeeY = ScreenPos.y < fwindow_height && ScreenPos.y > 0;
 
 	return SeeX && SeeY;
 }

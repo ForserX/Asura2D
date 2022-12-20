@@ -116,7 +116,7 @@ void draw_system::Tick(float dt)
 						return;
 					}
 
-					if (!Camera::CanSee(physical_body->get_position()))
+					if (phys_comp->IgnoreTest && !Camera::CanSee(physical_body->get_position()))
 					{
 						return;
 					}
