@@ -15,9 +15,33 @@ const FileSystem::Path& FileSystem::WorkingDir()
 
 void FileSystem::Init()
 {
-	working_dir = std::filesystem::current_path();
-	content_dir = std::filesystem::current_path().append("content");
-	userdata_dir = std::filesystem::current_path().append("userdata");
+	auto CurPath = std::filesystem::current_path();
+
+	auto Check = [&CurPath]()
+	{
+		if (!std::filesystem::exists(CurPath.generic_string() + ("/content")))
+		{
+			CurPath = CurPath.parent_path();
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	};
+
+	for (int It = 0; It < 5; It++)
+	{
+		if (Check())
+			break;
+	}
+
+	working_dir = CurPath;
+	content_dir = CurPath;
+	userdata_dir = CurPath;
+
+	content_dir = content_dir / ("content");
+	userdata_dir = userdata_dir / ("userdata");
 
 	for (const std::filesystem::directory_entry& dir : std::filesystem::recursive_directory_iterator{ working_dir }) 
 	{

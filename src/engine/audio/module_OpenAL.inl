@@ -1,5 +1,5 @@
 
-constexpr size_t NUM_BUFFERS = 4;
+constexpr size_t NUM_BUFFERS = 1;
 constexpr ALsizei BUFFER_SIZE = 65536;
 using Asura::Audio::Decoder::OpusDecoderInfo;
 
@@ -166,11 +166,10 @@ bool update_stream(stream_audio_data& audio_data)
         std::memset(data, 0, BUFFER_SIZE);
 
         ALsizei dataSizeToBuffer = 0;
-        std::int32_t sizeRead = 0;
 
-        while (sizeRead < BUFFER_SIZE - 1)
+        while (dataSizeToBuffer < (BUFFER_SIZE - 1))
         {
-            std::int32_t result = op_read(audio_data.DecInfo.vf, &data[sizeRead], BUFFER_SIZE - sizeRead, &audio_data.ogg_current_section);
+            std::int32_t result = op_read(audio_data.DecInfo.vf, &data[dataSizeToBuffer], BUFFER_SIZE - dataSizeToBuffer, &audio_data.ogg_current_section);
             if (result == OP_HOLE)
             {
                 // std::cerr << "ERROR: OV_HOLE found in update of buffer " << std::endl;
@@ -178,7 +177,7 @@ bool update_stream(stream_audio_data& audio_data)
             }
             else if (result == OP_EBADLINK)
             {
-                Asura::Debug::msg("ERROR: OV_EBADLINK found in update of buffer {}", sizeRead);
+                Asura::Debug::msg("ERROR: OV_EBADLINK found in update of buffer {}", dataSizeToBuffer);
                 //  std::cerr << "ERROR: OV_EBADLINK found in update of buffer " << std::endl;
                 break;
             }
@@ -189,7 +188,7 @@ bool update_stream(stream_audio_data& audio_data)
             }
             else if (result == 0)
             {
-                std::int32_t seekResult = op_raw_seek(audio_data.DecInfo.vf, 0);
+                std::int32_t seekResult = op_pcm_seek(audio_data.DecInfo.vf, 0);
 
                 //if (seekResult == OV_ENOSEEK)
                 //    std::cerr << "ERROR: OV_ENOSEEK found when trying to loop" << std::endl;
@@ -210,14 +209,13 @@ bool update_stream(stream_audio_data& audio_data)
                     return false;
                 }
             }
-            sizeRead += result;
+            dataSizeToBuffer += result;
         }
-        dataSizeToBuffer = sizeRead;
 
         if (dataSizeToBuffer > 0)
         {
-            alCall(alBufferData, buffer, audio_data.format, data, dataSizeToBuffer, audio_data.sampleRate);
-            alCall(alSourceQueueBuffers, audio_data.source, 1, &buffer);
+            //alBufferData(buffer, audio_data.format, data, dataSizeToBuffer, audio_data.sampleRate);
+            //alSourceQueueBuffers(audio_data.source, 1, &buffer);
         }
 
         if (dataSizeToBuffer < BUFFER_SIZE)
