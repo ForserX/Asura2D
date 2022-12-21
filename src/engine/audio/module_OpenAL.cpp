@@ -24,6 +24,26 @@ void Audio::DeviceOpenAL::Tick()
 		return;
 	}
 
+	if (!IdRes.empty())
+	{
+		std::lock_guard Lock(SafeLoaderLock);
+
+		for (const ResourcesManager::id_t& SoundSrc : IdRes)
+		{
+			auto DecInfo = Decoder::Get(SoundSrc);
+
+			al_trash::stream_audio_data& ref_data = *AudioData.emplace_back(new al_trash::stream_audio_data);
+			al_trash::create_stream_from_file(DecInfo, ref_data);
+
+			al_trash::play_stream(ref_data);
+			Threads::Wait();
+		}
+
+		IdRes.clear();
+	}
+
+	std::lock_guard Lock(SafeLock);
+
 	for (al_trash::stream_audio_data* it : AudioData)
 	{
 		bool playing = al_trash::update_stream(*it);
@@ -53,22 +73,15 @@ Audio::DeviceOpenAL::~DeviceOpenAL()
 	al_trash::CloseAL();
 }
 
-void Audio::DeviceOpenAL::Load(ResourcesManager::id_t sound_src)
+void Audio::DeviceOpenAL::Load(ResourcesManager::id_t SoundSrc)
 {
 	if (!al_work)
 	{
 		return;
 	}
 
-	Resource Res = ResourcesManager::GetResource(sound_src);
-
-	FileSystem::Path FullPath = FileSystem::ContentDir();
-	FullPath.append(Res.Name);
-
-	al_trash::stream_audio_data& ref_data = *AudioData.emplace_back(new al_trash::stream_audio_data);
-	al_trash::create_stream_from_file(ExtractPath(FullPath).data(), ref_data);
-	
-	al_trash::play_stream(ref_data);
+	std::lock_guard Lock(SafeLoaderLock);
+	IdRes.push_back(SoundSrc);
 }
 
 void Asura::Audio::DeviceOpenAL::SetVolume(float Volume)

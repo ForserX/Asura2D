@@ -1,12 +1,11 @@
 
 constexpr size_t NUM_BUFFERS = 4;
 constexpr ALsizei BUFFER_SIZE = 65536;
+using Asura::Audio::Decoder::OpusDecoderInfo;
 
 struct stream_audio_data
 {
     ALuint buffers[NUM_BUFFERS];
-    stl::string filename;
-    std::ifstream file;
     uint8 channels;
     int32 sampleRate;
     uint8 bitsPerSample;
@@ -14,7 +13,9 @@ struct stream_audio_data
     ALuint source;
     ALsizei size_consumed = 0;
     ALenum format;
-    OggOpusFile *ogg_vorbis_file;
+
+    OpusDecoderInfo DecInfo;
+
     int ogg_current_section = 0;
     size_t duration;
 };
@@ -121,33 +122,16 @@ auto alCallImpl(const char* filename, const std::uint_fast32_t line, alFunction 
     return ret;
 }
 
-bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio_data)
+bool create_stream_from_file(OpusDecoderInfo Dec, stream_audio_data& audio_data)
 {
-    audio_data.filename = filename;
-    audio_data.file.open(filename.data(), std::ios::binary);
-    if (!audio_data.file.is_open())
-    {
-        Debug::msg("AL ERROR: couldn't open file");
-        return 0;
-    }
-
-    audio_data.file.seekg(0, std::ios_base::beg);
-    audio_data.file.ignore(std::numeric_limits<std::streamsize>::max());
-    audio_data.size = audio_data.file.gcount();
-    audio_data.file.clear();
-    audio_data.file.seekg(0, std::ios_base::beg);
     audio_data.size_consumed = 0;
-    audio_data.file.close();
 
-    audio_data.ogg_vorbis_file = op_open_file(filename.data(), {});
+    memcpy(&audio_data.DecInfo, &Dec, sizeof(OpusDecoderInfo));
 
-    int CL = op_current_link(audio_data.ogg_vorbis_file);
-    auto vorbisInfo = op_head(audio_data.ogg_vorbis_file, CL);
-
-    audio_data.channels = vorbisInfo->channel_count;
+    audio_data.channels = Dec.ChannelsCount;
     audio_data.bitsPerSample = 16;
-    audio_data.sampleRate = vorbisInfo->input_sample_rate;
-    audio_data.duration = op_pcm_total(audio_data.ogg_vorbis_file, CL);
+    audio_data.sampleRate = Dec.Rate;
+    audio_data.duration = op_pcm_total(Dec.vf, -1);
 
     alCall(alGenSources, 1, &audio_data.source);
     alCall(alSourcef, audio_data.source, AL_GAIN, Volume);
@@ -156,77 +140,11 @@ bool create_stream_from_file(stl::string_view filename, stream_audio_data& audio
     alCall(alSource3f, audio_data.source, AL_VELOCITY, 0, 0, 0);
     alCall(alSourcei, audio_data.source, AL_LOOPING, AL_FALSE);
 
-    alCall(alGenBuffers, NUM_BUFFERS, &audio_data.buffers[0]);
+    alCall(alGenBuffers, 1, &audio_data.buffers[0]);
+    audio_data.format = AL_FORMAT_STEREO16;
 
-    if (audio_data.file.eof())
-    {
-        Debug::msg("AL ERROR: Already reached EOF without loading data");
-        return false;
-    }
-    else if (audio_data.file.fail())
-    {
-        Debug::msg("AL ERROR: Fail bit set");
-        return false;
-    }
-    else if (!audio_data.file)
-    {
-        Debug::msg("AL ERROR: file is false");
-        return false;
-    }
-
-    opus_int16* data = new opus_int16[BUFFER_SIZE];
-
-    for (std::uint8_t i = 0; i < NUM_BUFFERS; ++i)
-    {
-        std::int32_t dataSoFar = 0;
-        while (dataSoFar < BUFFER_SIZE)
-        {
-            std::int32_t result = op_read(audio_data.ogg_vorbis_file, &data[dataSoFar], BUFFER_SIZE, &audio_data.ogg_current_section);
-            if (result == OP_HOLE)
-            {
-                Debug::msg("AL ERROR: OV_HOLE found in initial read of buffer {}", i);
-                break;
-            }
-            else if (result == OP_EBADLINK)
-            {
-                Debug::msg("AL ERROR:  OV_EBADLINK found in initial read of buffer {}", i);
-                break;
-            }
-            else if (result == OP_EINVAL)
-            {
-                Debug::msg("AL ERROR: OV_EINVAL found in initial read of buffer {}", i);
-                break;
-            }
-            else if (result == 0)
-            {
-                Debug::msg("AL ERROR: EOF found in initial read of buffer {}", i);
-                break;
-            }
-
-            dataSoFar += result;
-        }
-
-        if (audio_data.channels == 1 && audio_data.bitsPerSample == 8)
-            audio_data.format = AL_FORMAT_MONO8;
-        else if (audio_data.channels == 1 && audio_data.bitsPerSample == 16)
-            audio_data.format = AL_FORMAT_MONO16;
-        else if (audio_data.channels == 2 && audio_data.bitsPerSample == 8)
-            audio_data.format = AL_FORMAT_STEREO8;
-        else if (audio_data.channels == 2 && audio_data.bitsPerSample == 16)
-            audio_data.format = AL_FORMAT_STEREO16;
-        else
-        {
-            Debug::msg("AL ERROR: unrecognised ogg format: {} channels, {} bps", audio_data.channels, audio_data.bitsPerSample);
-            delete[] data;
-            return false;
-        }
-
-        alCall(alBufferData, audio_data.buffers[i], audio_data.format, data, dataSoFar, audio_data.sampleRate);
-    }
-
-    alCall(alSourceQueueBuffers, audio_data.source, NUM_BUFFERS, &audio_data.buffers[0]);
-
-    delete[] data;
+    alCall(alBufferData, audio_data.buffers[0], audio_data.format, &audio_data.DecInfo.buffers, audio_data.DecInfo.Pos, audio_data.sampleRate);
+    alCall(alSourceQueueBuffers, audio_data.source, 1, &audio_data.buffers[0]);
 
     return true;
 }
@@ -252,7 +170,7 @@ bool update_stream(stream_audio_data& audio_data)
 
         while (sizeRead < BUFFER_SIZE - 1)
         {
-            std::int32_t result = op_read(audio_data.ogg_vorbis_file, &data[sizeRead], BUFFER_SIZE - sizeRead, &audio_data.ogg_current_section);
+            std::int32_t result = op_read(audio_data.DecInfo.vf, &data[sizeRead], BUFFER_SIZE - sizeRead, &audio_data.ogg_current_section);
             if (result == OP_HOLE)
             {
                 // std::cerr << "ERROR: OV_HOLE found in update of buffer " << std::endl;
@@ -271,7 +189,7 @@ bool update_stream(stream_audio_data& audio_data)
             }
             else if (result == 0)
             {
-                std::int32_t seekResult = op_raw_seek(audio_data.ogg_vorbis_file, 0);
+                std::int32_t seekResult = op_raw_seek(audio_data.DecInfo.vf, 0);
 
                 //if (seekResult == OV_ENOSEEK)
                 //    std::cerr << "ERROR: OV_ENOSEEK found when trying to loop" << std::endl;
@@ -314,7 +232,7 @@ bool update_stream(stream_audio_data& audio_data)
 
         if (state == AL_STOPPED)
         {
-            op_free(audio_data.ogg_vorbis_file);
+           // op_free(audio_data.DecInfo.vf);
             return false;
         }
 

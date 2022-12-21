@@ -34,7 +34,6 @@ void Audio::Decoder::Load(ResourcesManager::id_t ResID)
 
 	DecInfo->vf = op_open_file(FullPath.generic_string().c_str(), {});
 
-	DWORD pos = 0;
 	int sec = 0;
 	int ret = 1;
 
@@ -47,10 +46,10 @@ void Audio::Decoder::Load(ResourcesManager::id_t ResID)
 	DecInfo->ChannelsCount = (uint16)head->channel_count;
 
 	//Read in the bits
-	while (ret && pos < 65536)
+	while (ret && DecInfo->Pos < 65536)
 	{
-		ret = op_read(DecInfo->vf, DecInfo->buffers + pos, 65536 - pos, &sec);
-		pos += ret;
+		ret = op_read(DecInfo->vf, DecInfo->buffers + DecInfo->Pos, 65536 - DecInfo->Pos, &sec);
+		DecInfo->Pos += ret;
 	}
 
 	ODList[ResID] = DecInfo;

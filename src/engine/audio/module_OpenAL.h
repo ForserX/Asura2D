@@ -9,6 +9,10 @@ namespace Asura::Audio
 	class DeviceOpenAL final : public Device
 	{
 		stl::vector<al_trash::stream_audio_data*> AudioData;
+		stl::vector<ResourcesManager::id_t> IdRes;
+
+		std::recursive_mutex SafeLock;
+		std::recursive_mutex SafeLoaderLock;
 	public:
 		DeviceOpenAL();
 		~DeviceOpenAL();

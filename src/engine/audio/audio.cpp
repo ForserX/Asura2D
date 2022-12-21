@@ -35,24 +35,7 @@ void Audio::Init()
 #else 
 	pDevice = new DeviceOpenAL;
 #endif
-#if 0
-	PreTickInternal = std::make_unique<std::thread>([]()
-	{
-		Threads::SetName("Asura Audio: Befor Tick");
-		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 
-		while (true)
-		{
-			if (pDevice == nullptr)
-			{
-				CoUninitialize();
-				return;
-			}
-
-			pDevice->PreTick();
-		}
-	});
-#endif
 	TickInternal = std::make_unique<std::thread>([]()
 	{
 		Threads::SetName("Asura Audio: Tick");
@@ -72,7 +55,6 @@ void Audio::Init()
 		}
 	});
 
-//	Threads::SetAffinity(*PreTickInternal.get(), 3);
 	Threads::SetAffinity(*TickInternal.get(), 4);
 }
 

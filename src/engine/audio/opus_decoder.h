@@ -6,6 +6,7 @@ namespace Asura::Audio::Decoder
 	{
 		OggOpusFile* vf = nullptr;
 		opus_int16 buffers[65536];
+		DWORD Pos = 0;
 
 		std::uint16_t ChannelsCount = 0;
 		std::uint32_t Rate = 44000;

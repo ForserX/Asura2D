@@ -11,7 +11,6 @@ namespace Asura::Audio
 
 		std::recursive_mutex SafeLock;
 		std::recursive_mutex SafeLoaderLock;
-		std::recursive_mutex SafeTempLoaderLock;
 
 	private:
 		inline stl::vector<ResourcesManager::id_t>& GetSafe() { std::lock_guard lock(SafeLoaderLock); return IdRes; };
