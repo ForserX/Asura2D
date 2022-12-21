@@ -9,10 +9,50 @@ stl::vector<std::unique_ptr<Asura::system>> post_game_update_systems;
 stl::vector<std::unique_ptr<Asura::system>> game_physics_systems;
 stl::vector<std::unique_ptr<Asura::system>> game_draw_systems;
 
+stl::vector<EntityView> circles;
+std::random_device r_device;
+static std::mt19937 gen(r_device());
+
+using namespace Entities;
+
+class random final : public Asura::system
+{
+
+public:
+	random() = default;
+
+	virtual void Init() override {};
+	virtual void Reset() override {};
+	virtual void Tick(float) override
+	{
+		static std::uniform_real_distribution r_dist(0.f, 50.f);
+		static std::uniform_real_distribution width_dist(260., 1300.);
+		static std::uniform_real_distribution height_dist(260., 1300.);
+
+		if ((float)r_dist(gen) < 47)
+			return;
+
+		Physics::body_parameters RandGenParam
+		(
+			0.f, 0.f, {},
+			{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
+			{ 25, 25 },
+			Physics::body_type::ph_dynamic,
+			Physics::Material::shape::circle,
+			Physics::Material::type::rubber
+		);
+
+
+		const auto& ent = circles.emplace_back(CreatePhysBody(RandGenParam));
+		AddField<drawable_flag>(ent);
+	};
+};
+
 void init_systems()
 {
-//	game_physics_systems.push_back(std::make_unique<ingame::movement_system>());
+	game_update_systems.push_back(std::make_unique<random>());
 }
+
 
 void ingame::pre_init()
 {
@@ -61,17 +101,13 @@ int64_t editor_key_event;
 
 EntityView TestObject2;
 
-stl::vector<EntityView> circles;
-
-std::random_device r_device;
-std::mt19937 gen(r_device());
-std::uniform_real_distribution r_dist(0.f, 10.f);
-
 class ContactLister : public Physics::ContatctListerBase
 {
 public:
 	virtual void BeginContact(b2Contact* Contact) override
 	{
+		static std::uniform_real_distribution r_dist(1.f, 7.f);
+
 		auto BodyA = Physics::PhysicsBody(Contact->GetFixtureA()->GetBody());
 		auto BodyB = Physics::PhysicsBody(Contact->GetFixtureB()->GetBody());
 
@@ -85,7 +121,10 @@ public:
 			// Destroy dynamic objects only
 			if (BodyB.GetType() == Physics::body_type::ph_dynamic)
 			{
-				Audio::Start("ball\\ball_blob_rr_01.opus");
+				std::string Name = "ball\\ball_blob_rr_0" + std::to_string((int)r_dist(gen));
+				Name += ".opus";
+
+				Audio::Start(Name);
 				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyB)));
 			}
 		}
@@ -94,7 +133,11 @@ public:
 			// Destroy dynamic objects only
 			if (BodyA.GetType() == Physics::body_type::ph_dynamic)
 			{
-				Audio::Start("ball\\ball_blob_rr_04.opus");
+				std::string Name = "ball\\ball_blob_rr_0" + std::to_string((int)r_dist(gen));
+				Name += ".opus";
+
+				Audio::Start(Name);
+
 				Physics::SafeFree(new Physics::PhysicsBody(std::move(BodyA)));
 			}
 		}
@@ -113,28 +156,6 @@ void ingame::init()
 
 	AddField<drawable_flag>(TestObject2);
 
-#if 1
-
-	for (size_t i = 0; i < 2000; i++)
-	{
-		std::uniform_real_distribution width_dist(260., 1300.);
-		std::uniform_real_distribution height_dist(260., 1300.);
-
-		Physics::body_parameters RandGenParam
-		(
-			0.f, 0.f, {},
-			{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
-			{ 25, 25 },
-			Physics::body_type::ph_dynamic,
-			Physics::Material::shape::circle,
-			Physics::Material::type::rubber
-		);
-
-
-		const auto& ent = circles.emplace_back(CreatePhysBody(RandGenParam));
-		AddField<drawable_flag>(ent);
-	}
-#endif
 #else
 	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
 #endif

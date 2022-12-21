@@ -78,6 +78,8 @@ void Audio::DeviceXAudio2::Load(ResourcesManager::id_t SoundSrc)
 
 void Asura::Audio::DeviceXAudio2::SetVolume(float InVolume)
 {
+	std::lock_guard Lock(SafeLock);
+
 	for (CAudio* pData : AudioData)
 	{
 		pData->AlterVolume(InVolume);
