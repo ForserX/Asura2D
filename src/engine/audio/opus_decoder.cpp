@@ -33,6 +33,7 @@ void Audio::Decoder::Load(ResourcesManager::id_t ResID)
 	OpusDecoderInfo* DecInfo = new OpusDecoderInfo;
 
 	DecInfo->vf = op_open_file(FullPath.generic_string().c_str(), {});
+	game_assert(DecInfo->vf, FullPath.generic_string(), return);
 
 	int sec = 0;
 	int ret = 1;

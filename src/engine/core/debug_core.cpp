@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <csignal>
 
 static std::ofstream log_file;
 
@@ -94,6 +95,27 @@ void OutputDebugString(const char* data)
 }
 #endif
 
+void MemHandler()
+{
+    game_assert(false, "Memory allocation failed, terminating\n", {});
+    std::set_new_handler(nullptr);
+}
+
+static void abort_handler(int signal)
+{
+    game_assert(false, "application is aborting", {});
+}
+
+static void floating_point_handler(int signal)
+{
+    game_assert(false, "floating point error", {});
+}
+
+static void illegal_instruction_handler(int signal)
+{
+    game_assert(false, "illegal instruction", {});
+}
+
 void Debug::Init()
 {
 	FileSystem::Path log_path = FileSystem::UserdataDir();
@@ -102,6 +124,13 @@ void Debug::Init()
 	FileSystem::CreateFile(log_path);
 
 	log_file.open(log_path);
+
+    std::signal(SIGABRT, abort_handler);
+    std::signal(SIGABRT_COMPAT, abort_handler);
+    std::signal(SIGFPE, floating_point_handler);
+    std::signal(SIGILL, illegal_instruction_handler);
+
+    std::set_new_handler(MemHandler);
 }
 
 void Debug::Destroy()
