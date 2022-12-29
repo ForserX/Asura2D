@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Asura::GamePlay::Holder::free
+namespace Asura::GamePlay::Holder::Free
 {
 	void Init();
 	void Tick();

@@ -10,7 +10,7 @@ void GamePlay::Holder::player::Init()
 {
 	auto KeyCallback = [](int16_t scan_code, Asura::Input::key_state state)
 	{
-		if (!Attached || holder_type != holder_mode::player)
+		if (!Attached || holder_type != holder_mode::Player)
 			return;
 
 		auto TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get());

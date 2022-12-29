@@ -6,7 +6,7 @@ bool paused = false;
 bool use_parallel = true;
 static std::atomic_bool engine_ticking_now = {};
 
-void engine::start()
+void engine::Start()
 {
 	Physics::Start();
 }

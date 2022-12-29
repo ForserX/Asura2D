@@ -159,6 +159,11 @@ void ingame::init()
 #else
 	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
 #endif
+
+	holder_type = GamePlay::holder_mode::PlayerFree;
+
+	GamePlay::Holder::PlayerFree::Bind(TestObject2.Get());
+
 	editor_key_event = Input::Emplace(editor_key_change);
 }
 

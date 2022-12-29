@@ -12,10 +12,12 @@ namespace Asura::GamePlay
 
 	enum class holder_mode
 	{
-		free,
-		player
+		Free,
+		Player,
+		PlayerFree
 	};
 }
 
 #include "holder_free.h"
 #include "holder_player.h"
+#include "holder_player_free.h"

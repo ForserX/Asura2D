@@ -307,10 +307,14 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 	{
 		OPTICK_EVENT("Physics Debug joints Destroy");
 
-		if (holder_type == GamePlay::holder_mode::free)
+		switch (holder_type)
 		{
-			GamePlay::Holder::free::Tick();
+		case GamePlay::holder_mode::Free:		GamePlay::Holder::Free::Tick(); break;
+		case GamePlay::holder_mode::PlayerFree:	GamePlay::Holder::PlayerFree::Tick(); break;
+
+		default: break;
 		}
+
 	}
 
 	const auto end_real_time = std::chrono::steady_clock::now().time_since_epoch();

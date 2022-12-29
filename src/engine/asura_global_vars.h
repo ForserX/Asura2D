@@ -32,7 +32,7 @@ extern bool show_console;
 extern std::unique_ptr<Asura::UI::Console> console;
 
 // Camera code
-extern float cam_zoom;
+extern float CamZoom;
 
 // Render 
 extern SDL_Renderer* renderer;

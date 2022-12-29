@@ -3,11 +3,9 @@
 
 namespace Asura::Input
 {
-	enum class eActions :int
+	enum eActions : uint8_t
 	{
-		DoNothing = 0,
 		Default = 0,
-
 
 		CameraMoveRight,
 		CameraMoveLeft,
@@ -20,33 +18,26 @@ namespace Asura::Input
 		PersonMoveDown,
 
 		HolderAttachToCam,
-		EditorSwitchMode
+		EditorSwitchMode,
+
+		// For game library. Use first value for your new enum: ReservedValue + 1
+		ReservedValue,
+
+		DoNothing = std::numeric_limits<uint8_t>::max()
 	};
 	
 	// Есть action, scan_code, key_state.
 	// Есть у нас для scan_code и key_state назначен экшн, то мы его выполняем.
 	
-	
-	static std::map<std::pair<int16_t, Asura::Input::key_state>, Asura::Input::eActions> ActionMap;
+	extern std::map<std::pair<int16_t, key_state>, eActions> ActionMap;
 
-	void BindNewAction(int16_t scan_code, Asura::Input::key_state state, Asura::Input::eActions action)
+	inline void Bind(int16_t scan_code, key_state state, eActions action)
 	{
 		ActionMap[std::make_pair(scan_code, state)] = action;
 	}
 
-	Asura::Input::eActions GetActionFromPair(int16_t scan_code, Asura::Input::key_state state)
+	inline eActions Get(int16_t scan_code, key_state state)
 	{
 		return ActionMap[std::make_pair(scan_code, state)];
 	}
-
-	//void Callback(Asura::Input::eActions eAction);
-		
-	
-
-
-
-
-
-
-
 }

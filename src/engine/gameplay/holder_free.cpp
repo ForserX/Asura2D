@@ -14,12 +14,12 @@ static Math::FVec2 joint_contact_point = {};
 static int64_t HFKeyID = 0;
 void HFKeyCallback(int16_t scan_code, Input::key_state state);
 
-void GamePlay::Holder::free::Init()
+void GamePlay::Holder::Free::Init()
 {
     HFKeyID = Input::Emplace(HFKeyCallback);
 }
 
-void GamePlay::Holder::free::Tick()
+void GamePlay::Holder::Free::Tick()
 {
     static bool sound_started = false;
 
@@ -86,14 +86,14 @@ void GamePlay::Holder::free::Tick()
 
 }
 
-void GamePlay::Holder::free::Destroy()
+void GamePlay::Holder::Free::Destroy()
 {
     Input::Erase(HFKeyID);
 }
 
 void HFKeyCallback(int16_t scan_code, Input::key_state state)
 {
-    if (holder_type != GamePlay::holder_mode::free)
+    if (holder_type != GamePlay::holder_mode::Free)
         return;
 
     if (scan_code == SDL_SCANCODE_MOUSE_X1 && state == Input::key_state::press)
@@ -137,7 +137,7 @@ void HFKeyCallback(int16_t scan_code, Input::key_state state)
         if (Body != nullptr)
         {
             GamePlay::Holder::player::Attach(Entities::GetEntityByBbody(Body->get_body()));
-            holder_type = GamePlay::holder_mode::player;
+            holder_type = GamePlay::holder_mode::Player;
         }
     }
 }

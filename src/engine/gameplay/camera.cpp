@@ -1,17 +1,16 @@
 #pragma once
 #include "pch.h"
-#include "engine/KeyBinder.h"
 
 using namespace Asura;
 using namespace Asura::GamePlay;
 
 // Base camera data
-static Math::FVec2 cam_center = {};
-float cam_zoom = 0.f;
-float cam_rotation = 0.f;
-static float scaled_cam_zoom = {};
-static int64_t cam_width = {};
-static int64_t cam_height = {};
+float CamZoom = 0.f;
+
+static Math::FVec2 CamCenter = {};
+static float CamScaledZoom = 0.f;
+static int64_t cam_width = 0;
+static int64_t cam_height = 0;
 
 static EntityView attached_entity = {};
 static bool attached = false;
@@ -24,12 +23,9 @@ static Math::IRect OffsetMove = { 0, 0, 0, 0};
 static int64_t CameraInputKeyID = 0;
 static int64_t CameraInputWheelID = 0;
 
-auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state state)
+auto CameraMouseKeyChange = [](int16_t scan_code, Input::key_state state)
 {
-
-	auto action = Asura::Input::GetActionFromPair(scan_code, state);
-
-
+	auto action = Asura::Input::Get(scan_code, state);
 	
 	switch (action)
 	{
@@ -50,18 +46,17 @@ auto camera_mouse_key_change = [](int16_t scan_code, Asura::Input::key_state sta
 	}
 	*/
 
-	case Asura::Input::eActions::CameraMoveLeft:  Camera::Move(GamePlay::MoveWays::left, 1.f);  break;
-	case Asura::Input::eActions::CameraMoveRight: Camera::Move(GamePlay::MoveWays::right, 1.f); break;
-	case Asura::Input::eActions::CameraMoveUp:	  Camera::Move(GamePlay::MoveWays::up, 1.f);	  break;
-	case Asura::Input::eActions::CameraMoveDown:  Camera::Move(GamePlay::MoveWays::down, 1.f);  break;
-	default:	
-		break;
+	case Input::eActions::CameraMoveLeft:  Camera::Move(GamePlay::MoveWays::left, 1.f);  break;
+	case Input::eActions::CameraMoveRight: Camera::Move(GamePlay::MoveWays::right, 1.f); break;
+	case Input::eActions::CameraMoveUp:	   Camera::Move(GamePlay::MoveWays::up, 1.f);	  break;
+	case Input::eActions::CameraMoveDown:  Camera::Move(GamePlay::MoveWays::down, 1.f);  break;
+	default: break;
 	}
 
 
 };
 
-auto camera_mouse_wheel_change = [](int16_t scan_code, float state)
+auto CameraMouseWheelChange = [](int16_t scan_code, float state)
 {
 	switch (scan_code)
 	{
@@ -75,14 +70,11 @@ void Camera::Init()
 
 	for (int i = 0; i < 4; i++)
 	{
-		Asura::Input::BindNewAction(SDL_SCANCODE_RIGHT + i, Input::key_state::hold, (Asura::Input::eActions)((int)Asura::Input::eActions::CameraMoveRight+i));
+		Input::Bind(SDL_SCANCODE_RIGHT + i, Input::key_state::hold, (Input::eActions)((int)Input::eActions::CameraMoveRight + i));
 	}
 
-	
-
-
-	CameraInputKeyID = Input::Emplace(camera_mouse_key_change);
-	CameraInputWheelID = Input::Emplace(camera_mouse_wheel_change);
+	CameraInputKeyID = Input::Emplace(CameraMouseKeyChange);
+	CameraInputWheelID = Input::Emplace(CameraMouseWheelChange);
 
 	ResetHW();
 	ResetView();
@@ -90,14 +82,14 @@ void Camera::Init()
 
 void Camera::Destroy()
 {
-	Asura::Input::Erase(CameraInputWheelID);
-	Asura::Input::Erase(CameraInputKeyID);
+	Input::Erase(CameraInputWheelID);
+	Input::Erase(CameraInputKeyID);
 }
 
 void Camera::Tick(float dt)
 {
 	const float delta_size =  static_cast<float>(cam_height) / static_cast<float>(cam_width);
-	scaled_cam_zoom = cam_zoom * delta_size;
+	CamScaledZoom = CamZoom * delta_size;
 	
 	if (attached) 
 	{
@@ -107,7 +99,7 @@ void Camera::Tick(float dt)
 		} 
 		else
 		{
-			cam_center = Entities::GetPosition(attached_entity);
+			CamCenter = Entities::GetPosition(attached_entity);
 		}
 	}
     
@@ -126,10 +118,10 @@ void Camera::Move(MoveWays move, float point)
 
 	switch (move) 
 	{
-	case MoveWays::left:  cam_center[0] -= scaled_cam_zoom * point; OffsetMove.values[0] += 5; OffsetMove.values[2] += 5; break;
-	case MoveWays::right: cam_center[0] += scaled_cam_zoom * point; OffsetMove.values[0] -= 5; OffsetMove.values[2] -= 5; break;
-	case MoveWays::up:    cam_center[1] += scaled_cam_zoom * point; OffsetMove.values[1] += 5; OffsetMove.values[3] += 5; break;
-	case MoveWays::down:  cam_center[1] -= scaled_cam_zoom * point; OffsetMove.values[1] -= 5; OffsetMove.values[3] -= 5; break;
+	case MoveWays::left:  CamCenter[0] -= CamScaledZoom * point; OffsetMove.values[0] += 5; OffsetMove.values[2] += 5; break;
+	case MoveWays::right: CamCenter[0] += CamScaledZoom * point; OffsetMove.values[0] -= 5; OffsetMove.values[2] -= 5; break;
+	case MoveWays::up:    CamCenter[1] += CamScaledZoom * point; OffsetMove.values[1] += 5; OffsetMove.values[3] += 5; break;
+	case MoveWays::down:  CamCenter[1] -= CamScaledZoom * point; OffsetMove.values[1] -= 5; OffsetMove.values[3] -= 5; break;
 	}
 
 	auto ValidOffset = [](int16_t& Data)
@@ -152,8 +144,8 @@ void Camera::Move(MoveWays move, float point)
 
 void Camera::Zoom(float value)
 {
-	cam_zoom += value * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
-	cam_zoom = std::clamp(cam_zoom, 15.f, 40.f);
+	CamZoom += value * static_cast<float>(cam_height) / (static_cast<float>(cam_width));
+	CamZoom = std::clamp(CamZoom, 15.f, 40.f);
 }
 
 bool Camera::IsAttached()
@@ -180,10 +172,10 @@ void Camera::Detach()
 
 void Camera::ResetView()
 {
-	cam_zoom = 30.f;
-	scaled_cam_zoom = 16;
+	CamZoom = 30.f;
+	CamScaledZoom = 16;
 
-    cam_center = {496, 320};
+    CamCenter = {496, 320};
 }
 
 void Camera::ResetHW()
@@ -194,7 +186,7 @@ void Camera::ResetHW()
 
 const Math::FVec2& Camera::Position()
 {
-	return cam_center;
+	return CamCenter;
 }
 
 Math::FVec2 Camera::Screen2World(const Math::FVec2& screenPoint)
@@ -205,10 +197,10 @@ Math::FVec2 Camera::Screen2World(const Math::FVec2& screenPoint)
     const float v = (h - screenPoint.y) / h;
     const float ratio = w / h;
     Math::FVec2 extents(ratio * 25.0f, 25.0f);
-    extents *= scaled_cam_zoom;
+    extents *= CamScaledZoom;
 
-    const Math::FVec2 lower = cam_center - extents;
-    const Math::FVec2 upper = cam_center + extents;
+    const Math::FVec2 lower = CamCenter - extents;
+    const Math::FVec2 upper = CamCenter + extents;
 
     Math::FVec2 pw;
     pw[0] = (1.0f - u) * lower.x + u * upper.x;
@@ -223,10 +215,10 @@ Math::FVec2 Camera::World2Screen(const Math::FVec2& worldPoint)
     const float h = static_cast<float>(cam_height);
     const float ratio = w / h;
     Math::FVec2 extents(ratio * 25.0f, 25.0f);
-    extents *= scaled_cam_zoom;
+    extents *= CamScaledZoom;
 
-    const Math::FVec2 lower = cam_center - extents;
-    const Math::FVec2 upper = cam_center + extents;
+    const Math::FVec2 lower = CamCenter - extents;
+    const Math::FVec2 upper = CamCenter + extents;
     const float u = (worldPoint.x - lower.x) / (upper.x - lower.x);
     const float v = (worldPoint.y - lower.y) / (upper.y - lower.y);
 
@@ -246,7 +238,7 @@ float Camera::ScaleFactor(float in)
     const float u = (in - lower) / (w + extents - lower);
 
     float ws = std::abs(u);
-    ws *= 1.f / scaled_cam_zoom;
+    ws *= 1.f / CamScaledZoom;
     ws *= 1.066f; // magic number
 
     return in * ws;

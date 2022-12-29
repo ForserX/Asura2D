@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 	Asura::engine::Init(argc, argv);
 	ingame::init();
 
-	Asura::engine::start();
+	Asura::engine::Start();
 	Asura::window::loop();
 
 	Asura::engine::Destroy();
