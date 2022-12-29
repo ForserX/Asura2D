@@ -49,7 +49,7 @@ void Audio::Decoder::Load(ResourcesManager::id_t ResID)
 	while (ret && DecInfo->Pos < 65536)
 	{
 		ret = op_read(DecInfo->vf, DecInfo->buffers + DecInfo->Pos, 65536 - DecInfo->Pos, &sec);
-		DecInfo->Pos += ret;
+		DecInfo->Pos += ret * DecInfo->ChannelsCount;
 	}
 
 	ODList[ResID] = DecInfo;

@@ -143,7 +143,7 @@ bool create_stream_from_file(OpusDecoderInfo Dec, stream_audio_data& audio_data)
     alCall(alGenBuffers, 1, &audio_data.buffers[0]);
     audio_data.format = AL_FORMAT_STEREO16;
 
-    alCall(alBufferData, audio_data.buffers[0], audio_data.format, &audio_data.DecInfo.buffers, audio_data.DecInfo.Pos, audio_data.sampleRate);
+    alBufferData(audio_data.buffers[0], audio_data.format, &audio_data.DecInfo.buffers, audio_data.DecInfo.Pos * sizeof(int16_t), audio_data.sampleRate);
     alCall(alSourceQueueBuffers, audio_data.source, 1, &audio_data.buffers[0]);
 
     return true;

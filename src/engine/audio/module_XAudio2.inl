@@ -144,7 +144,7 @@ bool CAudio::LoadSound(Asura::Audio::Decoder::OpusDecoderInfo& InDecInfo)
 	//Submit the wave sample data using an XAUDIO2_BUFFER structure
 	static XAUDIO2_BUFFER buffer = { 0 };
 	buffer.pAudioData = (BYTE*)&DecInfo.buffers;
-	buffer.AudioBytes = STREAMING_BUFFER_SIZE;
+	buffer.AudioBytes = STREAMING_BUFFER_SIZE * sizeof(int16_t);
 
 	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 	{
