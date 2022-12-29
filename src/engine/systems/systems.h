@@ -6,6 +6,8 @@ namespace Asura
 	{
 	public:
 		virtual ~system() = default;
+		system(system&&) = default;
+		system() = default;
 
 	public:
 		virtual void Init() = 0;

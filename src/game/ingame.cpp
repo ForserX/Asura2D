@@ -15,11 +15,12 @@ static std::mt19937 gen(r_device());
 
 using namespace Entities;
 
-class random final : public Asura::system
+class random_a final : public Asura::system
 {
 
 public:
-	random() = default;
+	random_a() = default;
+	random_a(random_a&&) = default;
 
 	virtual void Init() override {};
 	virtual void Reset() override {};
@@ -50,7 +51,7 @@ public:
 
 void init_systems()
 {
-	game_update_systems.push_back(std::make_unique<random>());
+	game_update_systems.emplace_back(std::make_unique<random_a>());
 }
 
 

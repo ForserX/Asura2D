@@ -33,13 +33,16 @@ void Audio::Init()
 #ifdef OS_WINDOWS
 	pDevice = new DeviceXAudio2;
 #else 
-	pDevice = new DeviceOpenAL;
+	pDevice = new DeviceDummy;
 #endif
 
 	TickInternal = std::make_unique<std::thread>([]()
 	{
 		Threads::SetName("Asura Audio: Tick");
+
+		#ifdef OS_WINDOWS
 		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+		#endif
 
 		while (true)
 		{
@@ -47,7 +50,10 @@ void Audio::Init()
 
 			if (pDevice == nullptr)
 			{
+				#ifdef OS_WINDOWS
 				CoUninitialize();
+				#endif
+
 				return;
 			}
 
