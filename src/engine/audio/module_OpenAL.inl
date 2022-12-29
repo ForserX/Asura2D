@@ -149,6 +149,12 @@ bool create_stream_from_file(OpusDecoderInfo Dec, stream_audio_data& audio_data)
     return true;
 }
 
+void ALDestroyStream(stream_audio_data& audio_data)
+{
+    alDeleteSources(1, &audio_data.source);
+    alDeleteBuffers(1, &audio_data.buffers[0]);
+}
+
 bool update_stream(stream_audio_data& audio_data)
 {
     ALint buffersProcessed = 0;
@@ -163,11 +169,11 @@ bool update_stream(stream_audio_data& audio_data)
         alCall(alSourceUnqueueBuffers, audio_data.source, 1, &buffer);
 
         opus_int16* data = new opus_int16[BUFFER_SIZE];
-        std::memset(data, 0, BUFFER_SIZE);
+        std::memset(data, 0, BUFFER_SIZE * sizeof(opus_int16));
 
         ALsizei dataSizeToBuffer = 0;
 
-        while (dataSizeToBuffer < (BUFFER_SIZE - 1))
+        while (dataSizeToBuffer < BUFFER_SIZE)
         {
             std::int32_t result = op_read(audio_data.DecInfo.vf, &data[dataSizeToBuffer], BUFFER_SIZE - dataSizeToBuffer, &audio_data.ogg_current_section);
             if (result == OP_HOLE)
@@ -209,7 +215,7 @@ bool update_stream(stream_audio_data& audio_data)
                     return false;
                 }
             }
-            dataSizeToBuffer += result;
+            dataSizeToBuffer += result * audio_data.channels;
         }
 
         if (dataSizeToBuffer > 0)

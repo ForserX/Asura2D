@@ -52,6 +52,7 @@ void Audio::DeviceOpenAL::Tick()
 		{
 			auto iter = std::find(AudioData.begin(), AudioData.end(), it);
 			AudioData.erase(iter);
+			ALDestroyStream(*it);
 			delete it;
 		}
 	}
