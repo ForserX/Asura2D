@@ -86,3 +86,17 @@ void Threads::SwitchContext()
 		nop(); nop(); nop(); nop(); nop(); nop(); nop(); nop();
 	}
 }
+
+Threads::ScopeCOThread::ScopeCOThread()
+{
+#ifdef OS_WINDOWS
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+#endif
+}
+
+Threads::ScopeCOThread::~ScopeCOThread()
+{
+#ifdef OS_WINDOWS
+	CoUninitialize();
+#endif
+}

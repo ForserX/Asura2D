@@ -22,7 +22,7 @@ namespace Asura::Debug
 	void print_message(stl::string_view message);
 
 	template <typename... Args>
-	inline void msg(stl::string_view rt_fmt_str, Args&&... args)
+	inline void Msg(stl::string_view rt_fmt_str, Args&&... args)
 	{
 #ifdef OS_WINDOWS
 		print_message(std::vformat(rt_fmt_str.data(), std::make_format_args(args...)));
@@ -32,7 +32,7 @@ namespace Asura::Debug
 	}
 
 	template<>
-	inline void msg(stl::string_view message)
+	inline void Msg(stl::string_view message)
 	{
 		print_message(message);
 	}

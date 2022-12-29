@@ -79,13 +79,13 @@ CAudio::CAudio(void)
 
 	if (FAILED(hr = XAudio2Create(&pXAudio2, flags)))
 	{
-		Asura::Debug::msg("Failed to init XAudio2 engine: {}", hr);
+		Asura::Debug::Msg("Failed to init XAudio2 engine: {}", hr);
 		return;
 	}
 
 	if (FAILED(hr = pXAudio2->CreateMasteringVoice(&pMasteringVoice)))
 	{
-		Asura::Debug::msg("Failed creating mastering voice : {}", hr);
+		Asura::Debug::Msg("Failed creating mastering voice : {}", hr);
 		return;
 	}
 }
@@ -136,7 +136,7 @@ bool CAudio::LoadSound(Asura::Audio::Decoder::OpusDecoderInfo& InDecInfo)
 	//Create the source voice
 	if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &wfm)))
 	{
-		Asura::Debug::msg(">Error %#X creating source voice");
+		Asura::Debug::Msg(">Error %#X creating source voice");
 		//LogError("<li>Error %#X creating source voice", hr);
 		return false;
 	}
@@ -148,7 +148,7 @@ bool CAudio::LoadSound(Asura::Audio::Decoder::OpusDecoderInfo& InDecInfo)
 
 	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 	{
-		Asura::Debug::msg("Error %#X submitting source buffer");
+		Asura::Debug::Msg("Error %#X submitting source buffer");
 		return false;
 	}
 

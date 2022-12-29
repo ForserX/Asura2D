@@ -11,4 +11,12 @@ namespace Asura::Threads
 	void SyncCurrentThread();
 	void Wait(size_t time = 1);
 	void SwitchContext();
+
+	// Windows Only
+	class ScopeCOThread
+	{
+	public:
+		ScopeCOThread();
+		~ScopeCOThread();
+	};
 }

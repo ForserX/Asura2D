@@ -35,7 +35,7 @@ void Render::InitialSDLDevice()
 		render_list += ", ";
 	}
 
-	Debug::msg("SDL Render mode support: {}", render_list);
+	Debug::Msg("SDL Render mode support: {}", render_list);
 #if defined(OS_APPLE_SERIES)
     SDL_setenv("METAL_DEVICE_WRAPPER_TYPE", "1", 0);
 #endif
@@ -52,7 +52,7 @@ void Render::Init()
 	
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
-	Debug::msg("Current SDL_Renderer: {}", info.name);
+	Debug::Msg("Current SDL_Renderer: {}", info.name);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();

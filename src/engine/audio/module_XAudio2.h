@@ -6,6 +6,8 @@ namespace Asura::Audio
 {
 	class DeviceXAudio2 final : public Device
 	{
+		Threads::ScopeCOThread COData;
+
 		stl::vector<CAudio*> AudioData;
 		stl::vector<ResourcesManager::id_t> IdRes;
 

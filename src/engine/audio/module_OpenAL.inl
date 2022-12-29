@@ -26,11 +26,13 @@ int init_al()
     ALCdevice* device;
     ALCcontext* ctx;
 
+    Debug::Msg("Audio Device: OpenAL Soft");
+
     /* Open and initialize a device */
     device = alcOpenDevice(nullptr);
     if (!device)
     {
-        Debug::msg("Could not open a device!");
+        Debug::Msg("Could not open a device!");
         return 1;
     }
 
@@ -41,7 +43,7 @@ int init_al()
             alcDestroyContext(ctx);
 
         alcCloseDevice(device);
-        Debug::msg("Could not set a context!");
+        Debug::Msg("Could not set a context!");
         return 1;
     }
 
@@ -52,7 +54,7 @@ int init_al()
     if (!name || alcGetError(device) != AL_NO_ERROR)
         name = alcGetString(device, ALC_DEVICE_SPECIFIER);
 
-    Debug::msg("Opened {}", name);
+    Debug::Msg("Opened {}", name);
 
     return 0;
 }
@@ -81,26 +83,26 @@ void check_al_errors(const stl::string_view filename, const std::uint_fast32_t l
     ALCenum error = alGetError();
     if (error != AL_NO_ERROR)
     {
-        Debug::msg("AL: {} {}", filename, line);
+        Debug::Msg("AL: {} {}", filename, line);
         switch (error)
         {
         case AL_INVALID_NAME:
-            Debug::msg("AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function");
+            Debug::Msg("AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function");
             break;
         case AL_INVALID_ENUM:
-            Debug::msg("AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function");
+            Debug::Msg("AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function");
             break;
         case AL_INVALID_VALUE:
-            Debug::msg("AL_INVALID_VALUE: an invalid value was passed to an OpenAL function");
+            Debug::Msg("AL_INVALID_VALUE: an invalid value was passed to an OpenAL function");
             break;
         case AL_INVALID_OPERATION:
-            Debug::msg("AL_INVALID_OPERATION: the requested operation is not valid");
+            Debug::Msg("AL_INVALID_OPERATION: the requested operation is not valid");
             break;
         case AL_OUT_OF_MEMORY:
-            Debug::msg("AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory");
+            Debug::Msg("AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory");
             break;
         default:
-            Debug::msg("UNKNOWN AL ERROR: {} ", error);
+            Debug::Msg("UNKNOWN AL ERROR: {} ", error);
         }
     }
 }
@@ -183,7 +185,7 @@ bool update_stream(stream_audio_data& audio_data)
             }
             else if (result == OP_EBADLINK)
             {
-                Asura::Debug::msg("ERROR: OV_EBADLINK found in update of buffer {}", dataSizeToBuffer);
+                Asura::Debug::Msg("ERROR: OV_EBADLINK found in update of buffer {}", dataSizeToBuffer);
                 //  std::cerr << "ERROR: OV_EBADLINK found in update of buffer " << std::endl;
                 break;
             }

@@ -19,31 +19,31 @@ void engine::Init(int argc, char** argv)
     
     FileSystem::Init();
     Debug::Init();
-	Debug::msg("Initializing started:");
+	Debug::Msg("Initializing started:");
 
 	Input::Init();
-	Debug::msg("- Input: Done");
+	Debug::Msg("- Input: Done");
 
     console->Init();
-    Debug::msg("- Console: : Done");
+    Debug::Msg("- Console: : Done");
     
 	Threads::Init();
-    Debug::msg("- Threads: Done");
+    Debug::Msg("- Threads: Done");
     
 	Scheduler::Init();
-    Debug::msg("- Scheduler: Done");
+    Debug::Msg("- Scheduler: Done");
     
     ResourcesManager::Init();
-    Debug::msg("- Resource Manager: Done");
+    Debug::Msg("- Resource Manager: Done");
     
 	Render::Init();
-    Debug::msg("- Render: Done");
+    Debug::Msg("- Render: Done");
     
 	game::Init();
-    Debug::msg("Game Space: Done");
+    Debug::Msg("Game Space: Done");
 
 	Audio::Init();
-	Debug::msg("Audio Manager: Done");
+	Debug::Msg("Audio Manager: Done");
 }
 
 void engine::Destroy()

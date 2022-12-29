@@ -10,7 +10,7 @@ using namespace Asura;
 
 Audio::DeviceXAudio2::DeviceXAudio2()
 {
-	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	Debug::Msg("- Audio Device: XAudio2");
 }
 
 Audio::DeviceXAudio2::~DeviceXAudio2()
@@ -22,8 +22,6 @@ Audio::DeviceXAudio2::~DeviceXAudio2()
 	}
 
 	AudioData.clear();
-
-	CoUninitialize();
 }
 
 void Audio::DeviceXAudio2::PreTick()

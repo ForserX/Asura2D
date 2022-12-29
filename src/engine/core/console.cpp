@@ -260,7 +260,7 @@ void Console::draw(float dt, const char* title, bool* p_open)
         if (!cmd.empty()) { \
             output = (decltype(output))stl::stof(cmd); \
         } else { \
-            Debug::msg("Invalid parameter: '{}'\n", command_line); \
+            Debug::Msg("Invalid parameter: '{}'\n", command_line); \
         } \
     }
 
@@ -271,13 +271,13 @@ void Console::draw(float dt, const char* title, bool* p_open)
             output = (decltype(output))stl::stof(cmd); \
             callback(); \
         } else { \
-            Debug::msg("Invalid parameter: '{}'\n", command_line); \
+            Debug::Msg("Invalid parameter: '{}'\n", command_line); \
         } \
     }
 
 void Console::ExecCommand(const char* command_line)
 {
-    Debug::msg("# {} \n", command_line);
+    Debug::Msg("# {} \n", command_line);
 
     // Insert into history. First find match and delete it so it can be pushed to the back.
     // This isn't trying to be smart or optimal.
@@ -318,17 +318,17 @@ void Console::ExecCommand(const char* command_line)
     }
     else if (cmd == "help")
     {
-        Debug::msg("Commands:");
+        Debug::Msg("Commands:");
         for (const auto& [key, tip] : cmd_hint)
         {
-            Debug::msg("- {} : {}", key, tip);
+            Debug::Msg("- {} : {}", key, tip);
         }
     }
     else if (cmd == "history")
     {
         const int first = History.Size - 10;
         for (int i = first > 0 ? first : 0; i < History.Size; i++)
-            Debug::msg("{}: {}\n", i, History[i]);
+            Debug::Msg("{}: {}\n", i, History[i]);
     }
     else if (strstr(command_line, "window_style")) {
         cmd = cmd.substr(12);
@@ -393,7 +393,7 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
         if (candidates.Size == 0)
         {
             // No match
-            Debug::msg("No match for \"{}\"!\n", (int)(word_end - word_start), word_start);
+            Debug::Msg("No match for \"{}\"!\n", (int)(word_end - word_start), word_start);
         }
         else if (candidates.Size == 1)
         {
@@ -433,9 +433,9 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
             }
 
             // List matches
-            Debug::msg("Possible matches: \n");
+            Debug::Msg("Possible matches: \n");
             for (int i = 0; i < candidates.Size; i++)
-                Debug::msg("- {}\n", candidates[i]);
+                Debug::Msg("- {}\n", candidates[i]);
         }
 
         break;

@@ -9,6 +9,7 @@ using namespace Asura;
 using Asura::Audio::Device;
 
 float Volume = 1.f;
+volatile bool bDestroy = false;
 
 class DeviceDummy : public Device
 {
@@ -39,26 +40,25 @@ void Audio::Init()
 	TickInternal = std::make_unique<std::thread>([]()
 	{
 		Threads::SetName("Asura Audio: Tick");
-
-		#ifdef OS_WINDOWS
-		CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-		#endif
+		
+		volatile Threads::ScopeCOThread COData;
 
 		while (true)
 		{
 			Threads::Wait();
 
-			if (pDevice == nullptr)
+			if (bDestroy)
 			{
-				#ifdef OS_WINDOWS
-				CoUninitialize();
-				#endif
-
-				return;
+				break;
 			}
 
 			pDevice->Tick();
 		}
+
+		delete pDevice;
+		pDevice = nullptr;
+
+		bDestroy = false;
 	});
 
 	Threads::SetAffinity(*TickInternal.get(), 4);
@@ -70,13 +70,16 @@ void Audio::Tick()
 
 void Audio::Destroy()
 {
-	TickInternal->detach();
-
 	if (pDevice == nullptr)
 		return;
 
-	delete pDevice;
-	pDevice = nullptr;
+	bDestroy = true;
+	TickInternal->detach();
+
+	while (bDestroy)
+	{
+		Threads::Wait();
+	}
 }
 
 void Audio::Reset(DeviceMode Mode)
