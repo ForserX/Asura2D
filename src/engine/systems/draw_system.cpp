@@ -111,7 +111,7 @@ void draw_system::Tick(float dt)
 				{
 					const auto physical_body = phys_comp->body;
 
-					if (!physical_body->is_enabled()) 
+					if (physical_body->IsDestroyed() || !physical_body->is_enabled())
 					{
 						return;
 					}
