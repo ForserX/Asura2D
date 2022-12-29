@@ -1,6 +1,11 @@
 # Build
+### CMake
 Asura Engine using CMake build system.
-
+```cmd 
+cmake -B build
+cmake --build build
+```
+### CI 
 ![example workflow](https://github.com/ForserX/Asura2D/actions/workflows/cmake.yml/badge.svg)
 
 |__OS__|Windows|MacOS|Linux|FreeBSD|
