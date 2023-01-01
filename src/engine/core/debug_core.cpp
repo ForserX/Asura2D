@@ -152,7 +152,7 @@ void Debug::show_error(stl::string_view message)
 void Debug::print_message(stl::string_view message)
 {
 	log_file << message << std::endl;
-	UI::push_console_string(message);
+	UI::PushString(message);
     dbg_print(message);
 }
 

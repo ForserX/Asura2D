@@ -60,11 +60,10 @@ namespace Asura::FileSystem
 		void Push(T ValueData)
 		{
 			constexpr size_t ValueSize = sizeof(T);
+			size_t OldSize = Data.size();
 
-			for (size_t Iter = 0; Iter < ValueSize; Iter++)
-			{
-				Data.push_back(ValueData >> (Iter * 8));
-			}
+			Data.resize(OldSize + ValueSize);
+			memcpy(Data.data() + OldSize, &ValueData, ValueSize);
 		}
 
 		void Save(stl::string_view FileName);

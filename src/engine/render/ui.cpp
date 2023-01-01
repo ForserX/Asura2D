@@ -340,7 +340,7 @@ stl::string Asura::UI::GetCmdStr(stl::string_view key)
     return stl::string("-1");
 }
 
-void UI::push_console_string(stl::string_view str)
+void UI::PushString(stl::string_view str)
 {
     ::console->PushLogItem(str);
 }

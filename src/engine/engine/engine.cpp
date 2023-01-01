@@ -47,13 +47,13 @@ void engine::Init(int argc, char** argv)
 
 #if 0
 	// File stream tests
-	Writer WData;
+	FileSystem::Writer WData;
 	WData.Push(32);
 	WData.Push(false);
 	WData.Push(-22ll);
 	WData.Save("temp.bin");
 
-	Reader RData("temp.bin");
+	FileSystem::Reader RData("temp.bin");
 
 	int IntTest = RData.Get<int>();
 	bool BoolTest = RData.Get<bool>();
