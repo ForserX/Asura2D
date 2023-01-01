@@ -44,21 +44,6 @@ void engine::Init(int argc, char** argv)
 
 	Audio::Init();
 	Debug::Msg("Audio Manager: Done");
-
-#if 0
-	// File stream tests
-	FileSystem::Writer WData;
-	WData.Push(32);
-	WData.Push(false);
-	WData.Push(-22ll);
-	WData.Save("temp.bin");
-
-	FileSystem::Reader RData("temp.bin");
-
-	int IntTest = RData.Get<int>();
-	bool BoolTest = RData.Get<bool>();
-	long long LLTest = RData.Get<long long>();
-#endif
 }
 
 void engine::Destroy()

@@ -25,16 +25,16 @@ namespace Asura::FileSystem
 		{
 			static_assert(!std::is_pointer_v<T>, "Not supported!");
 
-			T Result = 0;
+			T Result = {};
 
 			constexpr size_t TypeSize = sizeof(std::remove_reference<T>::type);
 
 			memcpy(&Result, Data + Pos, TypeSize);
 
 			Pos += TypeSize;
-			game_assert(!eof(), "File is end...", Debug::dbg_break());
+			game_assert(!Eof(), "File is end...", Debug::dbg_break());
 
-			return Result;
+			return std::move(Result);
 		}
 
 		inline void Seek(size_t NewPos)
@@ -47,7 +47,7 @@ namespace Asura::FileSystem
 			Pos += Offset;
 		}
 
-		inline bool eof() const
+		inline bool Eof() const
 		{
 			return Pos > Size;
 		}
