@@ -83,7 +83,7 @@ void Scheduler::Init()
 			}
         
             auto real_delta_time = std::chrono::steady_clock::now().time_since_epoch() - last_scheduler_time;
-            scheduler_real_delta = static_cast<double>(real_delta_time.count()) / 1000000000.;
+            scheduler_real_delta = static_cast<double>(real_delta_time.count()) / 1000000000.0;
 
 			{
 				OPTICK_EVENT("Scheduler wait");

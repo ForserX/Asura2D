@@ -7,7 +7,7 @@
 
 #include "engine/core/debug_core.h"
 #include "engine/core/core.h"
-#include "engine/core/file_reader.h"
+#include "engine/core/file_stream.h"
 #include "engine/core/logic_parser.h"
 #include "engine/core/threads.h"
 #include "engine/core/filesystem.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Asura
+namespace Asura::FileSystem
 {
 	class Reader
 	{
@@ -27,7 +27,7 @@ namespace Asura
 
 			constexpr size_t TypeSize = sizeof(T);
 
-			memcpy(&Result, Data[Pos], TypeSize);
+			memcpy(&Result, Data + Pos, TypeSize);
 
 			Pos += TypeSize;
 			game_assert(!eof(), "File is end...", Debug::dbg_break());
@@ -49,5 +49,24 @@ namespace Asura
 		{
 			return Pos > Size;
 		}
+	};
+
+	class Writer
+	{
+		stl::vector<char> Data;
+	public:
+
+		template <typename T>
+		void Push(T ValueData)
+		{
+			constexpr size_t ValueSize = sizeof(T);
+
+			for (size_t Iter = 0; Iter < ValueSize; Iter++)
+			{
+				Data.push_back(ValueData >> (Iter * 8));
+			}
+		}
+
+		void Save(stl::string_view FileName);
 	};
 }
