@@ -12,6 +12,7 @@ cmake --build build
 |---|---|---|---|---|
 |__Support__| *__Win10__* | *__10.15 "Catalina"__* | *__Ubuntu 20.04__* | WIP |
 |__Compiler__| *MVSC, Clang* | *Clang* | *GCC*, *Clang*| |
+|__C++__| Latest, 20 | 20 | 20 | 20 |
 
 # Asura Engine 
 Asura Engine is a 2D game engine that focuses on physical objects, rendering with geometric primitives or textures.
