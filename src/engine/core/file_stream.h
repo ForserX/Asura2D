@@ -23,9 +23,11 @@ namespace Asura::FileSystem
 		template<typename T>
 		T Get()
 		{
+			static_assert(!std::is_pointer_v<T>, "Not supported!");
+
 			T Result = 0;
 
-			constexpr size_t TypeSize = sizeof(T);
+			constexpr size_t TypeSize = sizeof(std::remove_reference<T>::type);
 
 			memcpy(&Result, Data + Pos, TypeSize);
 
@@ -59,11 +61,13 @@ namespace Asura::FileSystem
 		template <typename T>
 		void Push(T ValueData)
 		{
-			constexpr size_t ValueSize = sizeof(T);
+			static_assert(!std::is_pointer_v<T>, "Not supported!");
+
+			constexpr size_t TypeSize = sizeof(std::remove_reference<T>::type);
 			size_t OldSize = Data.size();
 
-			Data.resize(OldSize + ValueSize);
-			memcpy(Data.data() + OldSize, &ValueData, ValueSize);
+			Data.resize(OldSize + TypeSize);
+			memcpy(Data.data() + OldSize, &ValueData, TypeSize);
 		}
 
 		void Save(stl::string_view FileName);
