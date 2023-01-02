@@ -30,7 +30,7 @@ namespace Asura::Audio::Internal
 	int DecRead(void* datasource, unsigned char* ptr, int nmemb)
 	{
 		Reader* F = (Reader*)datasource;
-		size_t exist_block = std::max(0ull, F->Elapsed());
+		size_t exist_block = std::max(size_t(0), F->Elapsed());
 		size_t read_block = std::min(exist_block, (size_t)nmemb);
 
 		if (read_block > 0)

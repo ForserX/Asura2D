@@ -126,7 +126,7 @@ void Debug::Init()
 	log_file.open(log_path);
 
     std::signal(SIGABRT, abort_handler);
-#ifndef OS_APPLE_SERIES
+#ifdef OS_WINDOWS
     std::signal(SIGABRT_COMPAT, abort_handler);
 #endif
     std::signal(SIGFPE, floating_point_handler);
