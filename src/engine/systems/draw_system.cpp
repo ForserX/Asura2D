@@ -26,6 +26,9 @@ void draw_system::Reset()
 
 void draw_system::Tick(float dt)
 {
+	if (show_console)
+		return;
+
 	OPTICK_EVENT("engine draw system Destroy");
 
 	Entities::AccessView([this]()
