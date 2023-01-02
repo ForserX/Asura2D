@@ -32,7 +32,7 @@
 #define OS_UNIX
 #endif
 
-#if !defined(OS_LINUX) || !defined(OS_BSD)
+#if !defined(OS_LINUX) && !defined(OS_BSD)
     #define ASURA_ALLOCATOR_USE
 #endif
 
