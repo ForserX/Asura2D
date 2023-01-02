@@ -246,9 +246,6 @@ float Camera::ScaleFactor(float in)
 
 bool Asura::GamePlay::Camera::CanSee(Math::FVec2 Pos)
 {
-	float dx = (float)cam_width;
-	float dy = (float)cam_height;
-
 	auto ScreenPos = World2Screen(Pos);
 
 	bool SeeX = ScreenPos.x < fwindow_width && ScreenPos.x > 0;

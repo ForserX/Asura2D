@@ -51,7 +51,7 @@ void shit_detector_tick()
 	}
 	
 	const auto view = Reg.view<Entities::garbage_flag>();
-	view.each([&Reg, &destroy_ent](entt::entity ent)
+	view.each([&destroy_ent](entt::entity ent)
 	{
 		destroy_ent(ent);
 	});
