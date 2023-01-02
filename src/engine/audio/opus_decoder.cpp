@@ -4,6 +4,56 @@ using namespace Asura;
 
 stl::hash_map<ResourcesManager::id_t, Audio::Decoder::OpusDecoderInfo*> ODList;
 
+namespace Asura::Audio::Internal
+{
+	using FileSystem::Reader;
+
+	int DecSeak(void* datasource, int64_t offset, int whence)
+	{
+		Reader* Data = ((Reader*)datasource);
+
+		switch (whence)
+		{
+		case SEEK_SET:
+			Data->Seek(offset);
+			break;
+		case SEEK_CUR:
+			Data->Move(offset);
+			break;
+		case SEEK_END:
+			Data->Seek((size_t)offset + Data->Lenght());
+			break;
+		}
+		return 0;
+	}
+
+	int DecRead(void* datasource, unsigned char* ptr, int nmemb)
+	{
+		Reader* F = (Reader*)datasource;
+		size_t exist_block = std::max(0ull, F->Elapsed());
+		size_t read_block = std::min(exist_block, (size_t)nmemb);
+
+		if (read_block > 0)
+		{
+			F->Get(ptr, read_block);
+		}
+		return read_block;
+	}
+
+	int DecClose(void* datasource)
+	{
+		delete((Reader*)datasource);
+
+		return 0;
+	}
+
+	int64_t DecTell(void* datasource)
+	{
+		return ((Reader*)datasource)->Tell();
+	}
+}
+
+
 void Audio::Decoder::Init()
 {
 }
@@ -30,9 +80,14 @@ void Audio::Decoder::Load(ResourcesManager::id_t ResID)
 	FileSystem::Path FullPath = FileSystem::ContentDir();
 	FullPath.append(Res.Name);
 
+	OpusFileCallbacks ovc = { Internal::DecRead, Internal::DecSeak, Internal::DecTell , Internal::DecClose };
 	OpusDecoderInfo* DecInfo = new OpusDecoderInfo;
 
-	DecInfo->vf = op_open_file(FullPath.generic_string().c_str(), {});
+	FileSystem::Reader* pReader = new FileSystem::Reader(FullPath.generic_string().c_str());
+
+	int ErrorCode = 0;
+
+	DecInfo->vf = op_open_callbacks(pReader, &ovc, nullptr, 0, &ErrorCode);
 	game_assert(DecInfo->vf, FullPath.generic_string(), return);
 
 	int sec = 0;

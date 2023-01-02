@@ -19,6 +19,7 @@ namespace Asura::FileSystem
 		~Reader();
 
 		Reader Extract(size_t Offset);
+		void Get(void* Buffer, size_t Offset);
 
 		template<typename T>
 		T Get()
@@ -42,15 +43,16 @@ namespace Asura::FileSystem
 			Pos = NewPos;
 		}
 		
+		inline size_t Tell()	const { return Pos; }
+		inline size_t Elapsed() const { return Size - Pos; }
+		inline size_t Lenght()	const { return Pos; }
+		inline bool   Eof()		const { return Pos >= Size; }
+
 		inline void Move(size_t Offset)
 		{
 			Pos += Offset;
 		}
 
-		inline bool Eof() const
-		{
-			return Pos > Size;
-		}
 	};
 
 	class Writer
