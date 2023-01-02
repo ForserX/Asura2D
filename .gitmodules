@@ -34,3 +34,6 @@
 [submodule "libs/opus"]
 	path = libs/opus
 	url = https://github.com/xiph/opus.git
+[submodule "libs/opusfile"]
+	path = libs/opusfile
+	url = https://github.com/ForserX/opusfile.git
