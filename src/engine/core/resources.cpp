@@ -272,8 +272,7 @@ const char* ResourcesManager::GetPtr(id_t resource_id)
 
 ResourcesManager::id_t ResourcesManager::GetID(std::string_view file_path)
 {
-    std::hash<std::string_view> hasher;
-    return hasher(file_path);
+    return int64_t(file_path.data());
 }
 
 uint64_t ResourcesManager::GetSize(id_t resource_id)

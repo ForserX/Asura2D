@@ -23,7 +23,7 @@ namespace Asura
 
 namespace Asura::ResourcesManager
 {
-    using id_t = ptrdiff_t;
+    using id_t = int64_t;
 
 	void Init();
     void Destroy();
