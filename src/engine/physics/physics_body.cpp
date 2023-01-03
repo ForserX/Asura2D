@@ -87,8 +87,12 @@ Math::FVec2 Physics::PhysicsBody::get_mass_center() const
 {
 	if (body != nullptr)
 	{
+#ifdef ASURA_BOX2D_OPTIMIZED
 		b2MassData mass_data = {};
 		body->GetMassData(&mass_data);
+#else
+		b2MassData mass_data = body->GetMassData();
+#endif
 		return { mass_data.center.x, mass_data.center.y };
 	}
 
@@ -109,10 +113,14 @@ void Physics::PhysicsBody::set_mass(float new_mass)
 {
 	if (body != nullptr)
 	{
-		b2MassData mass_data = {};
-		body->GetMassData(&mass_data);
-		mass_data.mass = new_mass;
-		body->SetMassData(&mass_data);
+#ifdef ASURA_BOX2D_OPTIMIZED
+		b2MassData MassData = {};
+		body->GetMassData(&MassData);
+#else
+		b2MassData MassData = body->GetMassData();
+#endif
+		MassData.mass = new_mass;
+		body->SetMassData(&MassData);
 	}
 
 	parameters.mass = new_mass;
@@ -122,10 +130,14 @@ void Physics::PhysicsBody::set_mass_center(const Math::FVec2& new_center)
 {
 	if (body != nullptr)
 	{
-		b2MassData massData = {};
-		body->GetMassData(&massData);
-		massData.center = b2Vec2(new_center);
-		body->SetMassData(&massData);
+#ifdef ASURA_BOX2D_OPTIMIZED
+		b2MassData MassData = {};
+		body->GetMassData(&MassData);
+#else
+		b2MassData MassData = body->GetMassData();
+#endif
+		MassData.center = b2Vec2(new_center);
+		body->SetMassData(&MassData);
 	}
 
 	parameters.mass_center = new_center;
@@ -173,30 +185,27 @@ void Physics::PhysicsBody::set_position(const Math::FVec2& new_pos)
 
 bool Asura::Physics::PhysicsBody::IsFlying() const
 {
+#ifdef ASURA_BOX2D_OPTIMIZED
 	for (int i = 0; i < body->GetContactCount(); i++)
 	{
 		b2Contact* contact = body->GetContact(i);
 
 		if (contact->IsTouching())
 		{
-#ifndef ASURA_BOX2D_OPTIMIZED
-			// FX: Contacts is broken
-			b2Body* BodyA = contact->GetFixtureA()->GetBody();
-			b2Body* BodyB = contact->GetFixtureB()->GetBody();
-
-			if (BodyA == body)
-			{
-				return BodyA->GetPosition().y < BodyB->GetPosition().y;
-			}
-			else
-			{
-				return BodyA->GetPosition().y > BodyB->GetPosition().y;
-			}
-#else
 			return false;
-#endif
 		}
 	}
+#else
+	for (auto ContactPtr = body->GetContactList(); ContactPtr; ContactPtr = ContactPtr->next)
+	{
+		b2Contact* contact = ContactPtr->contact;
+
+		if (contact->IsTouching())
+		{
+			return false;
+		}
+	}
+#endif
 
 	return true;
 }
@@ -210,8 +219,12 @@ void Physics::PhysicsBody::ApplyImpulse(const Math::FVec2& impulse)
 {
 	if (body != nullptr) 
 	{
+#ifdef ASURA_BOX2D_OPTIMIZED
 		body->SetAwake(true);
 		body->ApplyLinearImpulse(impulse, body->GetWorldCenter());
+#else
+		body->ApplyLinearImpulse(impulse, body->GetWorldCenter(), true);
+#endif
 	}
 }
 
@@ -219,7 +232,11 @@ void Physics::PhysicsBody::apply_angular_impulse(float impulse)
 {
 	if (body != nullptr) 
 	{
+#ifdef ASURA_BOX2D_OPTIMIZED
 		body->ApplyAngularImpulse(impulse);
+#else
+		body->ApplyAngularImpulse(impulse, true);
+#endif
 	}
 }
 
@@ -284,7 +301,7 @@ void Physics::PhysicsBody::Destroy()
 
 	if (body != nullptr)
 	{
-#if 0
+#if 1
 		for (auto joint = body->GetJointList(); joint != nullptr; )
 		{
 			const auto next_joint = joint->next;

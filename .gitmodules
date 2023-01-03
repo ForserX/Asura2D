@@ -12,7 +12,7 @@
 	url = https://github.com/microsoft/mimalloc
 [submodule "libs/box2d"]
 	path = libs/box2d
-	url = https://github.com/Vertver/box2d
+	url = https://github.com/erincatto/box2d.git
 [submodule "libs/SDL_image"]
 	path = libs/SDL_image
 	url = https://github.com/libsdl-org/SDL_image

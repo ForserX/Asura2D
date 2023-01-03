@@ -205,7 +205,14 @@ void Graphics::DrawPhysObject(b2Body* object, const ImColor& clr)
 void Graphics::DrawPhysObjectCircle(b2Body* object, const ImColor& clr)
 {
 	OPTICK_EVENT("Graphics draw phys circle");
-	b2CircleShape* circle = (b2CircleShape*)object->GetFixtureList()->GetShape();
+	auto Fixture = object->GetFixtureList();
+	
+	if (!Fixture)
+	{
+		return;
+	}
+
+	b2CircleShape* circle = (b2CircleShape*)Fixture->GetShape();
 	b2Transform xf = object->GetTransform();
 
 	auto center = Camera::World2Screen(b2Mul(xf, circle->m_p));

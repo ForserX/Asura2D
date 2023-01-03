@@ -157,7 +157,7 @@ namespace Asura::stl
 		{
 			sprintf(buf, "%f", Value);
 		}
-		else if constexpr (std::is_same_v<T, uint64>)
+		else if constexpr (std::is_same_v<T, uint64_t>)
 		{
 			sprintf(buf, "%llu", Value);
 		}
@@ -169,7 +169,7 @@ namespace Asura::stl
 		return string(buf);
 	}
 
-	[[nodiscard]] inline uint64 stoull(const string_view& str, size_t* idx = nullptr, int base = 10) 
+	[[nodiscard]] inline uint64_t stoull(const string_view& str, size_t* idx = nullptr, int base = 10) 
 	{
 		const char* str_ptr = str.data();
 		char* end_ptr;

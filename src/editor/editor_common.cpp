@@ -61,7 +61,7 @@ void Editor::Object::UpdateFake()
 	ent->size = start_mouse_position_absolute - last_mouse_position_absolute;
 
 	Math::FVec2 try_pos = start_mouse_position_absolute;
-	try_pos -= ent->size / 2;
+	try_pos -= ent->size / Math::FVec2{ 2.f, 2.f};
 
 	ent->Transform.set_position(try_pos);
 }
@@ -76,7 +76,7 @@ void Editor::Object::MakeTry()
 	ent->size.x = std::max(start_world.x, last_world.x) - std::min(start_world.x, last_world.x);
 	ent->size.y = std::max(start_world.y, last_world.y) - std::min(start_world.y, last_world.y);
 
-	Math::FVec2 half_size = ent->size / 2;
+	Math::FVec2 half_size = ent->size / Math::FVec2{ 2.f, 2.f };
 	Math::FVec2 world_pos = {};
 
 	world_pos.x = std::min(start_mouse_position_absolute.x, last_mouse_position_absolute.x);

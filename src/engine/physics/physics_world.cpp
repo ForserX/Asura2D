@@ -253,7 +253,6 @@ void Physics::PhysicsWorld::PreTick()
 			Entities::internal::GetRegistry().Destroy(Entt);
 		}
 
-		body->get_body()->ClearContacts();
 		body->Destroy();
 
 		if (bodies.contains(body))

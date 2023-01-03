@@ -17,7 +17,7 @@ set(ASURA_FOLDER_ENGINE FOLDER "Engine")
 set(ASURA_FOLDER_GAME FOLDER "Game")
 
 option(ASURA_SHIPPING "Shipping build of asura" OFF)
-option(ASURA_BOX2D_OPTIMIZED "Enable optimized version of Box2D" ON)
+option(ASURA_BOX2D_OPTIMIZED "Enable optimized version of Box2D" OFF)
 option(ASURA_OPTICK "Enable optick profiler" OFF)
 option(ASURA_ASAN "Enable address sanitizer" OFF)
 option(ASURA_MIMALLOC "Enable mimalloc" ON)

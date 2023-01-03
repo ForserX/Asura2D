@@ -23,7 +23,8 @@ namespace Asura::Physics
 		void DrawPoint(const b2Vec2& p, float size, const b2Color& color) override;
 
 		void DrawAABB(b2AABB* aabb, const b2Color& color);
-
+#ifdef ASURA_BOX2D_OPTIMIZED
 		void DrawParticles(const b2Vec2* centers, float32 radius, const b2ParticleColor* colors, int32 count) override {};
+#endif
 	};
 }
