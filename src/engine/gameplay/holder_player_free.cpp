@@ -27,7 +27,7 @@ void GamePlay::Holder::PlayerFree::Tick()
                 return;
             }
 
-            if (ContolBody != nullptr && ContolBody->GetType() != Physics::body_type::ph_static)
+            if (ContolBody != nullptr && ContolBody->GetType() != Physics::BodyType::Static)
             {
                 constexpr float frequency_hz = 60.0f;
                 constexpr float damping_ratio = 1.f;

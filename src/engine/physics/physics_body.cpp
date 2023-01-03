@@ -17,14 +17,14 @@ void Asura::Physics::PhysicsBody::SetAsGarbage()
 	garbage_destroyed = true;
 }
 
-Physics::body_type Physics::PhysicsBody::GetType() const
+Physics::BodyType Physics::PhysicsBody::GetType() const
 {
 	if (body != nullptr)
 	{
 		return Box2D2AsuraBodyType(body->GetType());
 	}
 
-	return static_cast<Physics::body_type>(parameters.packed_type.type);
+	return static_cast<Physics::BodyType>(parameters.packed_type.type);
 }
 
 float Physics::PhysicsBody::get_mass() const
@@ -99,7 +99,7 @@ Math::FVec2 Physics::PhysicsBody::get_mass_center() const
 	return parameters.pos;
 }
 
-void Physics::PhysicsBody::set_body_type(body_type new_type)
+void Physics::PhysicsBody::set_body_type(BodyType new_type)
 {
 	if (body != nullptr)
 	{

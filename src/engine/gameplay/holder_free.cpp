@@ -32,7 +32,7 @@ void GamePlay::Holder::Free::Tick()
         {
             current_contol_body = Physics::HitTest(mouse_position_absolute);
 
-            if (current_contol_body != nullptr && current_contol_body->GetType() != Physics::body_type::ph_static)
+            if (current_contol_body != nullptr && current_contol_body->GetType() != Physics::BodyType::Static)
             {
                 if (!sound_started)
                 {
@@ -108,7 +108,7 @@ void HFKeyCallback(int16_t scan_code, Input::key_state state)
         else
         {
             const Physics::PhysicsBody* test_body = Physics::HitTest(mouse_position_absolute);
-            if (test_body != nullptr && test_body != joint_contact_body && test_body->GetType() != Physics::body_type::ph_static)
+            if (test_body != nullptr && test_body != joint_contact_body && test_body->GetType() != Physics::BodyType::Static)
             {
                 constexpr float frequency_hz = 5.0f;
                 constexpr float damping_ratio = 0.7f;

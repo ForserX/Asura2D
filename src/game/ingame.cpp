@@ -26,19 +26,19 @@ public:
 	virtual void Reset() override {};
 	virtual void Tick(float) override
 	{
-		static std::uniform_real_distribution r_dist(0.f, 50.f);
-		static std::uniform_real_distribution width_dist(260., 1300.);
-		static std::uniform_real_distribution height_dist(260., 1300.);
+		static stl::uniform_dist r_dist(0.f, 50.f);
+		static stl::uniform_dist width_dist(260., 1300.);
+		static stl::uniform_dist height_dist(260., 1300.);
 
-		if ((float)r_dist(gen) < 47)
+		if ((int)r_dist(gen) < 47)
 			return;
 
 		Physics::body_parameters RandGenParam
 		(
 			0.f, 0.f, {},
-			{ static_cast<float>(width_dist(gen)), static_cast<float>(height_dist(gen)) },
+			{ width_dist(gen), height_dist(gen) },
 			{ 25, 25 },
-			Physics::body_type::ph_dynamic,
+			Physics::BodyType::Dynamic,
 			Physics::Material::shape::circle,
 			Physics::Material::type::rubber
 		);
@@ -107,7 +107,7 @@ class ContactLister : public Physics::ContatctListerBase
 public:
 	virtual void BeginContact(b2Contact* Contact) override
 	{
-		static std::uniform_real_distribution r_dist(1.f, 7.f);
+		static stl::uniform_dist_t<int16_t> r_dist(1, 7);
 
 		auto BodyA = Physics::PhysicsBody(Contact->GetFixtureA()->GetBody());
 		auto BodyB = Physics::PhysicsBody(Contact->GetFixtureB()->GetBody());
@@ -120,9 +120,9 @@ public:
 		if (BodyA == TryEnttBody)
 		{
 			// Destroy dynamic objects only
-			if (BodyB.GetType() == Physics::body_type::ph_dynamic)
+			if (BodyB.GetType() == Physics::BodyType::Dynamic)
 			{
-				std::string Name = "ball\\ball_blob_rr_0" + std::to_string((int)r_dist(gen));
+				std::string Name = "ball\\ball_blob_rr_0" + std::to_string(r_dist(gen));
 				Name += ".opus";
 
 				Audio::Start(Name);
@@ -132,9 +132,9 @@ public:
 		else if (BodyB == TryEnttBody)
 		{
 			// Destroy dynamic objects only
-			if (BodyA.GetType() == Physics::body_type::ph_dynamic)
+			if (BodyA.GetType() == Physics::BodyType::Dynamic)
 			{
-				std::string Name = "ball\\ball_blob_rr_0" + std::to_string((int)r_dist(gen));
+				std::string Name = "ball\\ball_blob_rr_0" + std::to_string(r_dist(gen));
 				Name += ".opus";
 
 				Audio::Start(Name);
@@ -151,18 +151,10 @@ void ingame::init()
 	using namespace Entities;
 	
 	Physics::GetWorld().SetContactLister(new ContactLister);
-#if 1
-
 	TestObject2 = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 100, 10 }));
-
 	AddField<drawable_flag>(TestObject2);
-
-#else
-	AddPhysBodyPreset(Create(), {100, 30}, "Teeter.ini");
-#endif
-
+	
 	holder_type = GamePlay::holder_mode::PlayerFree;
-
 	GamePlay::Holder::PlayerFree::Bind(TestObject2.Get());
 
 	editor_key_event = Input::Emplace(editor_key_change);

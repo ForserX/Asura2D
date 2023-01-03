@@ -224,6 +224,11 @@ namespace Asura::stl
 
 	using string_map = stl::hash_map<stl::string, stl::string>;
 	using tree_string_map = stl::hash_map<stl::string, string_map>;
+
+	template<typename T = int>
+	using uniform_dist_t = std::uniform_int_distribution<T>;
+
+	using uniform_dist = std::uniform_real_distribution<float>;
 }
 
 #undef interface

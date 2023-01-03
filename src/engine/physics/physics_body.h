@@ -9,27 +9,27 @@ namespace Asura
 namespace Asura::Physics
 {
 	// 4 bits
-	enum class body_type : uint8_t
+	enum class BodyType : uint8_t
 	{
 		invalid = 0,
 
-		ph_static,
-		ph_dynamic,
-		ph_kinematic,
-		ph_preset
+		Static,
+		Dynamic,
+		Kinematic,
+		Preset
 	};
 
 	inline b2BodyType Asura2Box2DBodyType(uint8_t type)
 	{
-		switch (static_cast<body_type>(type)) 
+		switch (static_cast<BodyType>(type))
 		{
-		case body_type::ph_kinematic:
+		case BodyType::Kinematic:
 			return b2_kinematicBody;
 			break;
-		case body_type::ph_static:
+		case BodyType::Static:
 			return b2_staticBody;
 			break;
-		case body_type::ph_dynamic:
+		case BodyType::Dynamic:
 			return b2_dynamicBody;
 			break;
 		default:
@@ -40,22 +40,22 @@ namespace Asura::Physics
 		return b2_dynamicBody;
 	}
 
-	inline body_type Box2D2AsuraBodyType(b2BodyType type)
+	inline BodyType Box2D2AsuraBodyType(b2BodyType type)
 	{
 		switch (type) 
 		{
 		case b2_kinematicBody:
-			return body_type::ph_kinematic;
+			return BodyType::Kinematic;
 		case b2_staticBody:
-			return body_type::ph_static;
+			return BodyType::Static;
 		case b2_dynamicBody:
-			return body_type::ph_dynamic;
+			return BodyType::Dynamic;
 		default:
 			game_assert(false, "Invalid body type", {});
 			break;
 		}
 
-		return body_type::ph_dynamic;
+		return BodyType::Dynamic;
 	}
 
 	struct body_parameters
@@ -87,7 +87,7 @@ namespace Asura::Physics
 			Math::FVec2 in_vel,
 			Math::FVec2 in_pos,
 			Math::FVec2 in_size,
-			body_type in_type = body_type::ph_dynamic,
+			BodyType in_type = BodyType::Dynamic,
 			Material::shape in_shape = Material::shape::box,
 			Material::type in_mat = Material::type::solid,
 			float in_mass = 0.f,
@@ -229,7 +229,7 @@ namespace Asura::Physics
 		PhysicsBody() = delete;
 		PhysicsBody(const PhysicsBody&) = delete;
 
-		PhysicsBody(PhysicsBody&& OldData) noexcept : body(std::move(OldData.body)) {};
+		PhysicsBody(PhysicsBody&& OldData) noexcept : body(OldData.body) {};
 		PhysicsBody(b2Body* copy_body) : body(copy_body) {};
 		PhysicsBody(body_parameters in_parameters);
 
@@ -246,7 +246,7 @@ namespace Asura::Physics
 		void SetAsGarbage();
 
 	public:
-		body_type GetType() const;
+		BodyType GetType() const;
 		
 		float get_mass() const;
 		float get_angle() const;
@@ -263,7 +263,7 @@ namespace Asura::Physics
 			return this->body == LeftBody.body;
 		}
 	public:
-		void set_body_type(body_type new_type);
+		void set_body_type(BodyType new_type);
 		void set_mass(float new_mass);
 		void set_mass_center(const Math::FVec2& new_center);
 		void set_angle(float new_angle);

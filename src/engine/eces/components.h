@@ -38,11 +38,6 @@ namespace Asura::Entities
 		static constexpr net::flag_t flag = 1 << 5;
 	};					
 
-	struct destroing_flag
-	{
-		net::flag_t flag = 1 << 6;
-	};
-
     constexpr uint32_t last_flag_index = 5;
 
 	struct draw_color_component

@@ -12,16 +12,16 @@ namespace Asura::Level::internal
 	{
 		level_data.Load(path);
 
-		float level_x = 0;
-		float level_y = 0;
-		float level_w = 0;
-		float level_h = 0;
+		float LevelX = 0;
+		float LevelY = 0;
+		float LevelH = 0;
+		float LevelW = 0;
 
-		for (const auto &[section, kv] : level_data.Data()) 
+		for (const auto &[Section, kv] : level_data.Data()) 
 		{
-			if (section == "background") 
+			if (Section == "background")
 			{
-				auto Entt = Entities::CreateTexture(level_data.Get<stl::string_view>(section, "path"), level_data.Get<bool>(section, "parallax"));
+				auto Entt = Entities::CreateTexture(level_data.Get<stl::string_view>(Section, "path"), level_data.Get<bool>(Section, "parallax"));
 				Entities::AddField<Entities::background_flag>(Entt);
                 Entities::AddField<Entities::scene_component>(Entt);
 
@@ -29,37 +29,39 @@ namespace Asura::Level::internal
 				continue;
 			}
 			
-			const bool is_drawable = level_data.Get<bool>(section, "drawable");
-			level_x = level_data.Get<float>(section, "x");
-			level_y = level_data.Get<float>(section, "y");
-			level_w = level_data.Get<float>(section, "w");
-			level_h = level_data.Get<float>(section, "h");
+			const bool IsDrawable = level_data.Get<bool>(Section, "drawable");
+			LevelX = level_data.Get<float>(Section, "x");
+			LevelY = level_data.Get<float>(Section, "y");
+			LevelW = level_data.Get<float>(Section, "w");
+			LevelH = level_data.Get<float>(Section, "h");
 					
-			const auto body_type = level_data.Get<Physics::body_type>(section, "type");
-			const auto body_shape = level_data.Get<Physics::Material::shape>(section, "shape");
-			const auto material_type = level_data.Get<Physics::Material::type>(section, "material");
+			const auto PhType = level_data.Get<Physics::BodyType>(Section, "type");
+			const auto PhShape = level_data.Get<Physics::Material::shape>(Section, "shape");
+			const auto PhMaterial = level_data.Get<Physics::Material::type>(Section, "material");
 			
-			level_w /= 2;
-			level_h /= 2;
+			LevelW /= 2;
+			LevelH /= 2;
 
-			level_x = std::max(level_w, level_x) - std::min(level_w, level_x);
-			level_y = std::max(level_h, level_y) - std::min(level_h, level_y);
+			LevelX = std::max(LevelW, LevelX) - std::min(LevelW, LevelX);
+			LevelY = std::max(LevelH, LevelY) - std::min(LevelH, LevelY);
 
 			Physics::body_parameters CurrentBody
 			(
 				0, 0, {}, // Velocity
-				{ level_x, level_y }, { level_w, level_h }, // xy hw
-				body_type, body_shape, material_type // ph info
+				{ LevelX, LevelY }, { LevelW, LevelH }, // xy hw
+				PhType, PhShape, PhMaterial // ph info
 			);
 
-			auto FindResult = section.find("ground_", section.length());
+			auto FindResult = Section.find("ground_", Section.length());
 
-			auto ent = ent_list.emplace_back(Entities::CreatePhysBody(CurrentBody, FindResult != stl::npos));
+			auto TempEntt = Entities::CreatePhysBody(CurrentBody, FindResult != stl::npos);
 
-			if (is_drawable) 
+			if (IsDrawable)
 			{
-				Entities::AddField<Entities::drawable_flag>(ent);
+				Entities::AddField<Entities::drawable_flag>(TempEntt);
 			}
+
+			ent_list.push_back(std::move(TempEntt));
 		}
 	};
 };
