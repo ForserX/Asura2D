@@ -10,9 +10,11 @@ FileSystem::Reader::Reader(stl::string FileName) : Pos(0)
 	FileStream.open(File, std::ios_base::in | std::ios::binary);
 	game_assert(FileStream.is_open(), "Broken file...", return);
 
-	Size = std::filesystem::file_size(File);
+	FileStream.seekp(0, std::ios::end);
+	Size = FileStream.tellg();
 	Data = new char[Size];
 
+	FileStream.seekp(0, std::ios::beg);
 	FileStream.read(Data, Size);
 	FileStream.close();
 }

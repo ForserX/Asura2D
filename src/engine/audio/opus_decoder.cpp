@@ -77,18 +77,16 @@ void Audio::Decoder::Load(ResourcesManager::id_t ResID)
 	}
 
 	Resource Res = ResourcesManager::GetResource(ResID);
-	FileSystem::Path FullPath = FileSystem::ContentDir();
-	FullPath.append(Res.Name);
 
 	OpusFileCallbacks ovc = { Internal::DecRead, Internal::DecSeak, Internal::DecTell , Internal::DecClose };
 	OpusDecoderInfo* DecInfo = new OpusDecoderInfo;
 
-	FileSystem::Reader* pReader = new FileSystem::Reader(FullPath.generic_string().c_str());
+	FileSystem::Reader* pReader = new FileSystem::Reader(Res.Name);
 
 	int ErrorCode = 0;
 
 	DecInfo->vf = op_open_callbacks(pReader, &ovc, nullptr, 0, &ErrorCode);
-	game_assert(DecInfo->vf, FullPath.generic_string(), return);
+	game_assert(DecInfo->vf, Res.Name, return);
 
 	int sec = 0;
 	int ret = 1;
