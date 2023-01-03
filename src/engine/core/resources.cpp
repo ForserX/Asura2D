@@ -134,23 +134,33 @@ ResourcesManager::id_t ResourcesManager::Load(FileSystem::Path file_name)
     {
         return resource_id;
     }
-    
-    auto path = FileSystem::ContentDir() / file_name;
+
+    stl::string TryFileName = file_name.generic_string().data();
+#ifdef OS_UNIX
+    std::transform(TryFileName.begin(), TryFileName.end(), TryFileName.begin(),
+        [](unsigned char Symbol)
+        {
+            return Symbol == '\\' ? '/' : Symbol;
+        });
+#endif
+
+    auto Path = FileSystem::ContentDir();
+    Path.append(TryFileName);
 
     resource_state state = {};
     
     std::error_code error;
-    state.file_path = std::filesystem::relative(path, FileSystem::ContentDir(), error);
+    state.file_path = std::filesystem::relative(Path, FileSystem::ContentDir(), error);
 
     if (error) 
     {
         return -1;
     }
     
-    state.handle = mio::make_mmap_source(path.c_str(), 0, mio::map_entire_file, error);
+    state.handle = mio::make_mmap_source(Path.c_str(), 0, mio::map_entire_file, error);
     if (error) 
     {
-        return -1;
+        state.handle = {};
     }
     
     resources_map.emplace(resource_id, std::move(state));

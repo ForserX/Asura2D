@@ -284,12 +284,14 @@ void Physics::PhysicsBody::Destroy()
 
 	if (body != nullptr)
 	{
+#if 0
 		for (auto joint = body->GetJointList(); joint != nullptr; )
 		{
 			const auto next_joint = joint->next;
 			GetWorld().GetWorld().DestroyJoint(joint->joint);
 			joint = next_joint;
 		}
+#endif
 
 		GetWorld().GetWorld().DestroyBody(body);
 		body = nullptr;

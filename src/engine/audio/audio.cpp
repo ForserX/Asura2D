@@ -34,7 +34,7 @@ void Audio::Init()
 #ifdef OS_WINDOWS
 	pDevice = new DeviceXAudio2;
 #else 
-	pDevice = new DeviceDummy;
+	pDevice = new DeviceOpenAL;
 #endif
 
 	TickInternal = std::make_unique<std::thread>([]()
