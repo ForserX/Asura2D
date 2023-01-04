@@ -112,5 +112,8 @@ void Audio::Start(stl::string_view File)
 	FileSystem::Path FilePath = "sound";
 	FilePath.append(File);
 
-	pDevice->Load(ResourcesManager::Load(FilePath));
+	auto Res = ResourcesManager::Load(FilePath);
+
+	game_assert(Res, "incorrect file/path", return);
+	pDevice->Load(Res.Get());
 }

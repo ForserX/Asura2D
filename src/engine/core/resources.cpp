@@ -127,7 +127,7 @@ const std::chrono::nanoseconds& ResourcesManager::LastUpdateTime()
     return last_update_time;
 }
 
-ResourcesManager::id_t ResourcesManager::Load(FileSystem::Path file_name)
+stl::expected<ResourcesManager::id_t> ResourcesManager::Load(FileSystem::Path file_name)
 {
     id_t resource_id = GetID(file_name.generic_string().c_str());
     if (Exists(resource_id)) 
@@ -154,7 +154,8 @@ ResourcesManager::id_t ResourcesManager::Load(FileSystem::Path file_name)
 
     if (error) 
     {
-        return -1;
+        std::errc ErrCode = std::errc::filename_too_long;
+        return ErrCode;
     }
     
     state.handle = mio::make_mmap_source(Path.c_str(), 0, mio::map_entire_file, error);

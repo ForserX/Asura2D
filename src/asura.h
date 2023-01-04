@@ -19,6 +19,14 @@
 #include <filesystem>
 #include <mutex>
 
+#if 0
+// C++23 trash
+#include <stacktrace>
+#include <expected>
+#else
+#include <exception>
+#endif
+
 #ifdef OS_WINDOWS
 #include <format>
 #else

@@ -32,7 +32,7 @@ namespace Asura::ResourcesManager
     void UpdateDirs();
     const std::chrono::nanoseconds& LastUpdateTime();
 
-    id_t Load(FileSystem::Path file_path);
+    stl::expected<id_t> Load(FileSystem::Path file_path);
 	void Unload(id_t resource_id);
 
 	bool ScheduleLock(id_t resource_id, int64_t begin_offset = -1, int64_t end_offset = -1);

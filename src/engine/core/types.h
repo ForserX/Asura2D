@@ -1,9 +1,8 @@
 #pragma once
-
+#include "except.h"
 
 void* ark_alloc(size_t size_to_alloc);
 void ark_free(void* ptr);
-
 
 namespace Asura::stl
 {
