@@ -29,14 +29,14 @@ namespace Asura::Input
 	// Есть action, scan_code, key_state.
 	// Есть у нас для scan_code и key_state назначен экшн, то мы его выполняем.
 	
-	extern std::map<std::pair<int16_t, key_state>, eActions> ActionMap;
+	extern std::map<std::pair<int16_t, State>, eActions> ActionMap;
 
-	inline void Bind(int16_t scan_code, key_state state, eActions action)
+	inline void Bind(int16_t scan_code, State state, eActions action)
 	{
 		ActionMap[std::make_pair(scan_code, state)] = action;
 	}
 
-	inline eActions Get(int16_t scan_code, key_state state)
+	inline eActions Get(int16_t scan_code, State state)
 	{
 		return ActionMap[std::make_pair(scan_code, state)];
 	}

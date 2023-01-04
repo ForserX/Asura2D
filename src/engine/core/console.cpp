@@ -50,9 +50,9 @@ void Console::Init()
 {
     ConsoleInputID = Input::Emplace
     (
-        [](int16_t scan_code, Input::key_state state)
+        [](int16_t scan_code, Input::State state)
         {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == Input::key_state::press)
+            if (scan_code == SDL_SCANCODE_GRAVE && state == Input::State::Press)
             {
                 show_console = !show_console;
             }

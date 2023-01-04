@@ -9,19 +9,19 @@
 
 namespace Asura::Input
 {
-	enum class mouse_key : int16_t
+	enum class MouseKey: int16_t
 	{
-		left_button,
-		right_button,
-		middle_button
+		Left,
+		Right,
+		Center
 	};
 
-	enum class key_state : int16_t
+	enum class State : int16_t
 	{
-		press,
-		release,
-		hold,
-		nothing
+		Press,
+		Release,
+		Hold,
+		Nothing
 	};
 	
 	void Init();
@@ -39,7 +39,7 @@ namespace Asura::Input
 	Math::IVec2& GetMousePos();
 	Math::FVec2& GetMouseDelta();
 
-	using on_key_change = fu2::function<void(int16_t scan_code, key_state state) const>;
+	using on_key_change = fu2::function<void(int16_t scan_code, State state) const>;
 	using on_input_change = fu2::function<void(int16_t scan_code, float new_state) const>;
 	
 	int64_t Emplace(const on_key_change& input_callback);

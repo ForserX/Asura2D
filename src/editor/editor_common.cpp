@@ -15,18 +15,18 @@ bool is_editor_mode = false;
 
 void Editor::Init()
 {
-	auto editor_key = [](int16_t scan_code, Asura::Input::key_state state)
+	auto editor_key = [](int16_t scan_code, Asura::Input::State state)
 	{
 		if (!is_editor_mode)
 			return;
 
 		if (scan_code == SDL_SCANCODE_MOUSE_LEFT)
 		{
-			if (state == Asura::Input::key_state::press) 
+			if (state == Asura::Input::State::Press)
 			{
 				Object::CreateFake();
 			}
-			else if (state == Asura::Input::key_state::hold) 
+			else if (state == Asura::Input::State::Hold)
 			{
 				Object::UpdateFake();
 			}

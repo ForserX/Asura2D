@@ -12,15 +12,15 @@ stl::hash_map<int16_t, float> changed_keys;
 stl::vector<Input::on_key_change> key_change_callbacks;
 stl::vector<Input::on_input_change> input_change_callbacks;
 
-Input::key_state get_enum_from_state(int16_t scan_code)
+inline Input::State get_enum_from_state(int16_t scan_code)
 {
 	const int new_state = static_cast<int>(changed_keys[scan_code]);
 	if (new_state != static_cast<int>(keys_states[scan_code]))
 	{
-		return new_state ? Input::key_state::press : Input::key_state::release;
+		return new_state ? Input::State::Press : Input::State::Release;
 	}
 
-	return new_state ? Input::key_state::hold : Input::key_state::nothing;
+	return new_state ? Input::State::Hold : Input::State::Nothing;
 }
 
 void Input::Init()
@@ -40,8 +40,8 @@ void Input::Tick(float dt)
 	{
 		for (const auto& callback : key_change_callbacks)
 		{
-			key_state new_state = get_enum_from_state(key);
-			if (new_state != key_state::nothing)
+			State new_state = get_enum_from_state(key);
+			if (new_state != State::Nothing)
 			{
 				callback(key, new_state);
 			}

@@ -11,13 +11,13 @@ void Asura::Physics::PhysicsJoint::Create()
 {
 	switch (data.type)
 	{
-		case Asura::Physics::joint_type::base:
+		case Asura::Physics::JointTypes::Base:
 			break;
-		case Asura::Physics::joint_type::mouse:
+		case Asura::Physics::JointTypes::Mouse:
 			break;
-		case Asura::Physics::joint_type::motor:
+		case Asura::Physics::JointTypes::Motor:
 			break;
-		case Asura::Physics::joint_type::revolute:
+		case Asura::Physics::JointTypes::Revolute:
 		{
 			b2RevoluteJointDef jdata = {};
 			jdata.lowerAngle = data.lower;

@@ -66,9 +66,9 @@ void shit_detector_tick()
 void Entities::Init()
 {
 #ifndef ASURA_SHIPPING
-	EnttInputID = Input::Emplace([](int16_t scan_code, Input::key_state state)
+	EnttInputID = Input::Emplace([](int16_t scan_code, Input::State state)
 	{	
-		if (state == Input::key_state::press) 
+		if (state == Input::State::Press)
 		{
 			switch (scan_code) 
 			{
@@ -240,7 +240,7 @@ void Asura::Entities::AddPhysBodyPreset(const EntityView& ent, Math::FVec2 pos, 
 			{
 				new_bodies[stl::stoull(key_val["first"])] , new_bodies[stl::stoull(key_val["second"])],
 				(float)stl::stof(key_val["lower"]), (float)stl::stof(key_val["upper"]),
-				key_val["type"] == "revolute" ? Physics::joint_type::revolute : Physics::joint_type::base,
+				key_val["type"] == "revolute" ? Physics::JointTypes::Revolute : Physics::JointTypes::Base,
 				key_val["limit"] == "true"
 			};
 

@@ -3,12 +3,12 @@
 
 namespace Asura::Physics
 {
-	enum class joint_type
+	enum class JointTypes
 	{
-		base,
-		motor,
-		revolute,
-		mouse
+		Base,
+		Motor,
+		Revolute,
+		Mouse
 	};
 
 	struct joint_data
@@ -19,7 +19,7 @@ namespace Asura::Physics
 		float lower;
 		float upper;
 
-		joint_type type;
+		JointTypes type;
 
 		bool limit;
 	};

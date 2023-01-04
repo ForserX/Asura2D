@@ -12,7 +12,7 @@ static Math::FVec2 joint_contact_point = {};
 
 // Input
 static int64_t HFKeyID = 0;
-void HFKeyCallback(int16_t scan_code, Input::key_state state);
+void HFKeyCallback(int16_t scan_code, Input::State state);
 
 void GamePlay::Holder::Free::Init()
 {
@@ -91,12 +91,12 @@ void GamePlay::Holder::Free::Destroy()
     Input::Erase(HFKeyID);
 }
 
-void HFKeyCallback(int16_t scan_code, Input::key_state state)
+void HFKeyCallback(int16_t scan_code, Input::State state)
 {
     if (holder_type != GamePlay::holder_mode::Free)
         return;
 
-    if (scan_code == SDL_SCANCODE_MOUSE_X1 && state == Input::key_state::press)
+    if (scan_code == SDL_SCANCODE_MOUSE_X1 && state == Input::State::Press)
     {
         Math::FVec2 mouse_position_absolute = GamePlay::Camera::Screen2World(ImGui::GetMousePos());
 
@@ -128,7 +128,7 @@ void HFKeyCallback(int16_t scan_code, Input::key_state state)
     }
 
     // Test code
-    if (scan_code == SDL_SCANCODE_MOUSE_X2 && state == Input::key_state::press)
+    if (scan_code == SDL_SCANCODE_MOUSE_X2 && state == Input::State::Press)
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = GamePlay::Camera::Screen2World(mouse_position_absolute);

@@ -8,7 +8,7 @@ static int64_t HPInputID = 0;
 
 void GamePlay::Holder::player::Init()
 {
-	auto KeyCallback = [](int16_t scan_code, Asura::Input::key_state state)
+	auto KeyCallback = [](int16_t scan_code, Asura::Input::State state)
 	{
 		if (!Attached || holder_type != holder_mode::Player)
 			return;

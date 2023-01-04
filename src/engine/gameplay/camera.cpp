@@ -23,7 +23,7 @@ static Math::IRect OffsetMove = { 0, 0, 0, 0};
 static int64_t CameraInputKeyID = 0;
 static int64_t CameraInputWheelID = 0;
 
-auto CameraMouseKeyChange = [](int16_t scan_code, Input::key_state state)
+auto CameraMouseKeyChange = [](int16_t scan_code, Input::State state)
 {
 	auto action = Asura::Input::Get(scan_code, state);
 	
@@ -35,7 +35,7 @@ auto CameraMouseKeyChange = [](int16_t scan_code, Input::key_state state)
 	{
 		if (Asura::Input::IsKeyPressed(SDL_SCANCODE_LCTRL))
 		{
-			if (state == Asura::Input::key_state::hold)
+			if (state == Asura::Input::State::hold)
 			{
 				const auto& mouse_delta = Asura::Input::GetMouseDelta();
 				Camera::Move(GamePlay::MoveWays::left, (mouse_delta.x * 0.05f));
@@ -70,7 +70,7 @@ void Camera::Init()
 
 	for (int i = 0; i < 4; i++)
 	{
-		Input::Bind(SDL_SCANCODE_RIGHT + i, Input::key_state::hold, (Input::eActions)((int)Input::eActions::CameraMoveRight + i));
+		Input::Bind(SDL_SCANCODE_RIGHT + i, Input::State::Hold, (Input::eActions)((int)Input::eActions::CameraMoveRight + i));
 	}
 
 	CameraInputKeyID = Input::Emplace(CameraMouseKeyChange);
