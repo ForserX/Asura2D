@@ -26,11 +26,11 @@ public:
 	virtual void Reset() override {};
 	virtual void Tick(float) override
 	{
-		static stl::uniform_dist r_dist(0.f, 50.f);
+		static stl::uniform_dist r_dist(0.f, 1000.f);
 		static stl::uniform_dist width_dist(260., 1300.);
 		static stl::uniform_dist height_dist(260., 1300.);
 
-		if ((int)r_dist(gen) < 47)
+		if ((int)r_dist(gen) < 980)
 			return;
 
 		Physics::body_parameters RandGenParam
