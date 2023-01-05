@@ -15,27 +15,44 @@ namespace Asura::Window::Internal
 {
 	void RegCallbacks()
 	{
-		glfwSetWindowCloseCallback(window_handle, [](GLFWwindow*)
-		{
-			wants_to_exit = true;
-			glfwSetWindowShouldClose(window_handle, GLFW_FALSE);
-		});
+		glfwSetWindowCloseCallback(window_handle,
+			[](GLFWwindow*)
+			{
+				wants_to_exit = true;
+				glfwSetWindowShouldClose(window_handle, GLFW_FALSE);
+			}
+		);
 
-		glfwSetWindowSizeCallback(window_handle, [](GLFWwindow* window, int width, int height)
-		{
-			window_width = width;
-			window_height = height;
-			Camera::ResetHW();
-		});
+		glfwSetWindowSizeCallback(window_handle,
+			[](GLFWwindow* window, int width, int height)
+			{
+				window_width = width;
+				window_height = height;
+				Camera::ResetHW();
+			}
+		);
 
-		glfwSetKeyCallback(window_handle, [](GLFWwindow* window, int key, int scancode, int action, int mode)
-		{
-			if(action == GLFW_PRESS)
-				Input::UpdateKey((int16_t)key, 1.f);
+		glfwSetKeyCallback(window_handle,
+			[](GLFWwindow* window, int key, int scancode, int action, int mode)
+			{
+				if (action == GLFW_PRESS)
+					Input::UpdateKey((int16_t)key, 1.f);
 
-			if(action == GLFW_RELEASE)
-				Input::UpdateKey((int16_t)key, 0.f);
-		});
+				if (action == GLFW_RELEASE)
+					Input::UpdateKey((int16_t)key, 0.f);
+			}
+		);
+
+		glfwSetMouseButtonCallback(window_handle,
+			[](GLFWwindow* window, int button, int action, int mods)
+			{
+				if (action == GLFW_PRESS)
+					Input::UpdateKey((int16_t)button, 1.f);
+
+				if (action == GLFW_RELEASE)
+					Input::UpdateKey((int16_t)button, 0.f);
+			}
+		);
 	}
 }
 

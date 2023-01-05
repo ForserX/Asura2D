@@ -68,8 +68,7 @@
 #include <fu2/function2.hpp>
 
 #include <imgui.h>
-#include <imgui_impl_sdl.h>
-#include <imgui_impl_sdlrenderer.h>
+#include <imgui_impl_glfw.h>
 #include <imgui_internal.h>
 #include <GLFW/glfw3.h>
 

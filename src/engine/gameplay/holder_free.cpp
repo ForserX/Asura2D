@@ -23,7 +23,7 @@ void GamePlay::Holder::Free::Tick()
 {
     static bool sound_started = false;
 
-    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
+    if (Input::IsKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = GamePlay::Camera::Screen2World(mouse_position_absolute);
@@ -77,7 +77,7 @@ void GamePlay::Holder::Free::Tick()
     }
 
 
-    if (current_contol_joint != nullptr && !Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
+    if (current_contol_joint != nullptr && !Input::IsKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
     {
         Physics::GetWorld().GetWorld().DestroyJoint(current_contol_joint);
         current_contol_joint = nullptr;
@@ -96,7 +96,7 @@ void HFKeyCallback(int16_t scan_code, Input::State state)
     if (holder_type != GamePlay::holder_mode::Free)
         return;
 
-    if (scan_code == SDL_SCANCODE_MOUSE_X1 && state == Input::State::Press)
+    if (scan_code == GLFW_MOUSE_BUTTON_4 && state == Input::State::Press)
     {
         Math::FVec2 mouse_position_absolute = GamePlay::Camera::Screen2World(ImGui::GetMousePos());
 
@@ -128,7 +128,7 @@ void HFKeyCallback(int16_t scan_code, Input::State state)
     }
 
     // Test code
-    if (scan_code == SDL_SCANCODE_MOUSE_X2 && state == Input::State::Press)
+    if (scan_code == GLFW_MOUSE_BUTTON_5 && state == Input::State::Press)
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = GamePlay::Camera::Screen2World(mouse_position_absolute);

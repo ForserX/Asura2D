@@ -1,59 +1,11 @@
 #include "pch.h"
 
-SDL_Renderer* renderer = nullptr;
-
 using namespace Asura;
 
 stl::hash_map<ResourcesManager::id_t, Render::texture_id> textures_list;
 
-void Render::InitialSDLDevice()
-{
-	stl::string render_list;
-#if defined(OS_WINDOWS)
-	stl::string mode = "direct3d11";
-#elif defined(OS_LINUX) || defined(OS_BSD)
-	stl::string mode = "opengl";
-#elif defined(OS_ANDROID)
-	stl::string mode = "opengles2";
-#elif defined(OS_APPLE_SERIES)
-    stl::string mode = "metal";
-#else
-	stl::string mode = "opengl";
-#endif
-
-	for (int i = 0; i < SDL_GetNumRenderDrivers(); ++i)
-	{
-		SDL_RendererInfo rendererInfo = {};
-		SDL_GetRenderDriverInfo(i, &rendererInfo);
-#ifdef ASURA_DX12
-		if (!stl::string_view("direct3d12").compare(rendererInfo.name))
-		{
-			mode = rendererInfo.name;
-		}
-#endif
-		render_list += rendererInfo.name;
-		render_list += ", ";
-	}
-
-	Debug::Msg("SDL Render mode support: {}", render_list);
-#if defined(OS_APPLE_SERIES)
-    SDL_setenv("METAL_DEVICE_WRAPPER_TYPE", "1", 0);
-#endif
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, mode.c_str());
-}
-
 void Render::Init()
 {
-	InitialSDLDevice();
-
-	renderer = SDL_CreateRenderer(window_handle, -1, SDL_RENDERER_PRESENTVSYNC);
-
-	game_assert(renderer != nullptr, "Error creating SDL_Renderer!", return);
-	
-	SDL_RendererInfo info;
-	SDL_GetRendererInfo(renderer, &info);
-	Debug::Msg("Current SDL_Renderer: {}", info.name);
-
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	game_assert(ImGui::GetCurrentContext() != nullptr, "ImGui Context is broken", std::terminate());
@@ -61,15 +13,7 @@ void Render::Init()
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	
-#if defined(OS_WINDOWS) & defined(ASURA_DX12)
-	ImGui_ImplSDL2_InitForD3D(window_handle);
-#elif defined(OS_APPLE_SERIES)
-	ImGui_ImplSDL2_InitForMetal(window_handle);
-#else
-	ImGui_ImplSDL2_InitForSDLRenderer(window_handle, renderer);
-#endif
-
-	ImGui_ImplSDLRenderer_Init(renderer);
+	ImGui_ImplGlfw_InitForOpenGL(window_handle, false);
 
 	Graphics::Init();
 	Graphics::theme::change();
@@ -90,17 +34,15 @@ void Render::init_vulkan()
 void Render::Destroy()
 {
 	Graphics::Destroy();
-    
+#if 0
     for (auto [resource, texture] : textures_list)
 	{
         SDL_DestroyTexture(static_cast<SDL_Texture*>(texture));
     }
-	
-	ImGui_ImplSDLRenderer_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
+#endif
 
-	SDL_DestroyRenderer(renderer);
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 }
 
 void Render::Tick(float dt)
@@ -114,8 +56,7 @@ void Render::Tick(float dt)
 
 	{
 		OPTICK_EVENT("Render new frame prepare");
-		ImGui_ImplSDLRenderer_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
@@ -130,7 +71,7 @@ void Render::Tick(float dt)
 		// Rendering
 		ImGui::Render();
 	}
-
+#if 0
 	{
 		OPTICK_EVENT("Graphics present");
 		SDL_SetRenderDrawColor(
@@ -145,6 +86,7 @@ void Render::Tick(float dt)
 		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 		SDL_RenderPresent(renderer);
 	}
+#endif
 }
 
 Render::texture_id Render::GetTexture(ResourcesManager::id_t resource_id)
@@ -165,7 +107,7 @@ Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 	}
 
 	Resource CurrentTexture = ResourcesManager::GetResource(resource_id);
-
+#if 0
 	SDL_RWops* rw = SDL_RWFromConstMem(CurrentTexture.Ptr, CurrentTexture.Size);
 	if (rw == nullptr)
 	{
@@ -182,4 +124,7 @@ Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 
 	textures_list[resource_id] = texture_handle;
 	return texture_handle;
+#else
+	return nullptr;
+#endif
 }

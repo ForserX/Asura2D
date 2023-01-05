@@ -269,7 +269,7 @@ void Physics::PhysicsWorld::PreTick()
 void Physics::PhysicsWorld::InternalTick(float dt)
 {
 	const auto begin_real_time = std::chrono::steady_clock::now().time_since_epoch();
-	if (window::IsDestroyed()) 
+	if (Window::IsDestroyed()) 
 	{
 		return;
 	}

@@ -52,7 +52,7 @@ void Console::Init()
     (
         [](int16_t scan_code, Input::State state)
         {
-            if (scan_code == SDL_SCANCODE_GRAVE && state == Input::State::Press)
+            if (scan_code == GLFW_KEY_GRAVE_ACCENT && state == Input::State::Press)
             {
                 show_console = !show_console;
             }
@@ -302,10 +302,10 @@ void Console::ExecCommand(const char* command_line)
     CHECK_FROM_CMD("use_parallel",          use_parallel);
     CHECK_FROM_CMD("pause",                 paused);
 
-    CHECK_FROM_CMD_EX("window_height",      window_height,      window::change_resolution);
-    CHECK_FROM_CMD_EX("window_width",       window_width,       window::change_resolution);
-    CHECK_FROM_CMD_EX("window_maximized",   window_maximized,   window::change_window_mode);
-    CHECK_FROM_CMD_EX("window_fullscreen",  fullscreen_mode,    window::change_fullscreen);
+    CHECK_FROM_CMD_EX("window_height",      window_height,      Window::change_resolution);
+    CHECK_FROM_CMD_EX("window_width",       window_width,       Window::change_resolution);
+    CHECK_FROM_CMD_EX("window_maximized",   window_maximized,   Window::change_window_mode);
+    CHECK_FROM_CMD_EX("window_fullscreen",  fullscreen_mode,    Window::change_fullscreen);
     
     // Process other command
     if (cmd == "clear")
@@ -345,11 +345,12 @@ void Console::ExecCommand(const char* command_line)
         else {
             window_style = Graphics::theme::style::invalid;
         }
-
+#if 0
         if (renderer != nullptr)
         {
             Graphics::theme::change();
         }
+#endif
     }
     // On command Input, we scroll to bottom even if AutoScroll==false
     ScrollToBottom = true;
