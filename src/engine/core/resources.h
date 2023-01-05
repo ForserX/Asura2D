@@ -23,7 +23,7 @@ namespace Asura
 
 namespace Asura::ResourcesManager
 {
-    using id_t = int64_t;
+    using id_t = size_t;
 
 	void Init();
     void Destroy();
