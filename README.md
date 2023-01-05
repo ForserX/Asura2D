@@ -1,4 +1,4 @@
-# Build
+[# Build
 ### CMake
 Asura Engine using CMake build system.
 ```cmd 
@@ -21,11 +21,16 @@ Asura Engine is a 2D game engine that focuses on physical objects, rendering wit
 
 
 # 3rd Party
-* [SDL2](https://www.libsdl.org) + [SDL Image](https://github.com/libsdl-org/SDL_image)
+### Render/UI
+* OpenGL + GLTF + [SOIL2](https://github.com/SpartanJ/SOIL2.git)
 * [ImGui](https://github.com/ocornut/imgui)
-* [entt](https://github.com/skypjack/entt)
-* [Box2D](https://box2d.org) (extended)
+### Kernel
+* MIO
 * [Function2](https://github.com/Naios/function2) (extended)
 * [MiMalloc](https://github.com/microsoft/mimalloc)
+### Audio
 * [OpenAL Soft](https://github.com/kcat/openal-soft) | XAudio2 (Windows only)
 * [Opus](https://github.com/xiph/opus) + [ogg](https://github.com/xiph/ogg) 
+### Game Systems
+* [entt](https://github.com/skypjack/entt)
+* [Box2D](https://box2d.org) (extended)
