@@ -114,7 +114,7 @@ FILE(WRITE libs/imgui/CMakeLists.txt
 ")\n\n"
 "add_library(\"imgui\" STATIC \${IMGUI_SRC} \${IMGUI_BACKEND_SRC})\n"
 "target_include_directories(\"imgui\" PUBLIC \"\")\n"
-"find_package(OpenGL REQUIRED COMPONENTS OpenGL)\n"
+"find_package(OpenGL REQUIRED)\n"
 "add_dependencies(\"imgui\" OpenGL::GL)\n"
 "include_directories(\${OPENGL_INCLUDE_DIRS})\n"
 "target_link_libraries(\"imgui\" \${OPENGL_LIBRARIES})\n"
