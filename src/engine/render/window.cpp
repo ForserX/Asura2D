@@ -125,6 +125,16 @@ void Window::change_fullscreen()
 	if (!fullscreen_mode)
 	{
 		glfwSetWindowMonitor(window_handle, nullptr, 100, 100, window_width, window_height, Mode->refreshRate);
+
+		int MonitorX, MonitorY;
+		GLFWmonitor* Monitors = glfwGetPrimaryMonitor();
+		glfwGetMonitorPos(Monitors, &MonitorX, &MonitorY);
+		const GLFWvidmode* videoMode = glfwGetVideoMode(Monitors);
+
+		glfwSetWindowPos(window_handle,
+			MonitorX + (videoMode->width - window_width) / 2,
+			MonitorY + (videoMode->height - window_height) / 2);
+
 		return;
 	}
 	
