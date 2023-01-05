@@ -54,6 +54,21 @@ namespace Asura::Window::Internal
 					Input::UpdateKey((int16_t)button, 0.f);
 			}
 		);
+
+		glfwSetCursorPosCallback(window_handle,
+			[](GLFWwindow* window, double xpos, double ypos)
+			{
+				//const auto pos = ImGui::GetMousePos();
+				Input::UpdateMousePos({ static_cast<short>(xpos), static_cast<short>(ypos) });
+			}
+		);
+
+		glfwSetScrollCallback(window_handle, 
+			[](GLFWwindow* window, double xoffset, double yoffset)
+			{
+				Input::UpdateKey(GLFW_MOUSE_BUTTON_MIDDLE, yoffset);
+			}
+		);
 	}
 }
 
@@ -84,6 +99,8 @@ void Window::Init()
 	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", nullptr, nullptr);
 	glfwMakeContextCurrent(window_handle);
 	glViewport(0, 0, window_width, window_height);
+
+	Internal::RegCallbacks();
 }
 
 void Window::Destroy()
