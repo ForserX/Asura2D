@@ -79,7 +79,7 @@ namespace Asura::MessageBox
         return selection;
     }
 }
-#elif defined(OS_MAC)
+#elif defined(OS_MACOS)
 #include <cocoa/cocoa.h>
 
 NSString* const OK_STR = @"OK";
