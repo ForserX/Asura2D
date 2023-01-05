@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
         CC: clang
-        CXX: clang
+        CXX: clang++
 
     steps:
     - uses: actions/checkout@v3
