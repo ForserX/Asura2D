@@ -4,7 +4,7 @@ using Asura::MessageBox::Style;
 using Asura::MessageBox::Buttons;
 using Asura::MessageBox::Selection;
 
-#if defined(OS_MACOS)  defined(OS_LINUX) || defined(OS_FREEBSD)
+#if defined(OS_MACOS) || defined(OS_LINUX) || defined(OS_FREEBSD)
 namespace Asura::MessageBox
 {
     Selection Show(const char* message, const char* title, Style style, Buttons buttons) 
