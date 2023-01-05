@@ -20,7 +20,7 @@ jobs:
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
  
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
 
   build-macos:
     runs-on: macos-latest
@@ -36,19 +36,14 @@ jobs:
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
  
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
 
   build-ubuntu:
-    runs-on: ubuntu-18.04
-    strategy:
-      fail-fast: false
-      matrix:
-        Configuration: [Release]
-        Platform: [x64]
-        CC: [clang-13]
-        include:
-          - CC: clang-13
-            CXX: clang++-13
+    runs-on: ubuntu-latest
+    env:
+        CC: clang
+        CXX: clang
+        CFLAGS: -Werror
 
     steps:
     - uses: actions/checkout@v3
@@ -60,20 +55,10 @@ jobs:
           sudo apt update
           sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libgl1-mesa-dev
 
-    - name: Install Clang x64
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: 13
-        platform: x64
-
     - name: Configure CMake
       run: |
         git submodule update
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.Configuration}}
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
  
     - name: Build
-      # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-      env:
-          CC: ${{ matrix.CC }}
-          CXX: ${{ matrix.CXX }}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
