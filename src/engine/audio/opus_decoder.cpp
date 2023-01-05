@@ -56,6 +56,7 @@ namespace Asura::Audio::Internal
 
 void Audio::Decoder::Init()
 {
+	ODList.reserve(10);
 }
 
 void Audio::Decoder::Destroy()
