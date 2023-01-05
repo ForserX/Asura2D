@@ -112,6 +112,7 @@ endif()
 
 list(APPEND LIBRARIES_TO_LINK "glfw")
 list(APPEND LIBRARIES_TO_LINK "OpenAL")
+list(APPEND LIBRARIES_TO_LINK "glfw")
 list(APPEND LIBRARIES_TO_LINK "ogg")
 list(APPEND LIBRARIES_TO_LINK "opus")
 list(APPEND LIBRARIES_TO_LINK "opusfile")
@@ -174,6 +175,9 @@ endif()
 if (APPLE)
 	set_target_properties("example" PROPERTIES XCODE_GENERATE_SCHEME TRUE)
 	set_target_properties("example" PROPERTIES XCODE_SCHEME_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
+elseif(WIN32)
+	set_target_properties("example" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
+	#set_property(DIRECTORY ${ASURA_FOLDER_GAME} PROPERTY VS_STARTUP_PROJECT "example")
 endif()
 
 target_link_libraries("example" PUBLIC "libasura")
@@ -208,7 +212,3 @@ set_target_properties("uninstall" PROPERTIES ${ASURA_FOLDER_PREGEN})
 
 set_target_properties("libasura" PROPERTIES ${ASURA_FOLDER_ENGINE})
 set_target_properties("example" PROPERTIES ${ASURA_FOLDER_GAME})
-
-set_target_properties("example" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")
-
-#set_property(DIRECTORY ${ASURA_FOLDER_GAME} PROPERTY VS_STARTUP_PROJECT "example")

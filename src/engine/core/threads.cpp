@@ -1,5 +1,9 @@
 ﻿#include "pch.h"
 
+#ifdef OS_WINDOWS
+#pragma comment(lib, "Winmm.lib")
+#endif
+
 using namespace Asura;
 
 void Threads::Init()

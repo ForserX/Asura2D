@@ -78,7 +78,7 @@ void Window::Init()
 	// #TODO: Set as main.cpp
 	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", nullptr, nullptr);
 	glfwMakeContextCurrent(window_handle);
-	glViewport(0, 0, window_width, window_height);
+	//glViewport(0, 0, window_width, window_height);
 }
 
 void Window::Destroy()
