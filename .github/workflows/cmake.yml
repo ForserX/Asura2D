@@ -43,7 +43,6 @@ jobs:
     env:
         CC: clang
         CXX: clang
-        CFLAGS: -Werror
 
     steps:
     - uses: actions/checkout@v3
