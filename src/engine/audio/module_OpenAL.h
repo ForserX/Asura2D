@@ -21,6 +21,6 @@ namespace Asura::Audio
 		virtual void PreTick() override {};
 		virtual void Load(ResourcesManager::id_t File) override;
 
-		virtual void SetVolume(float Volume);
+		virtual void SetVolume(float Volume) override;
 	};
 };

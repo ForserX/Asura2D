@@ -331,9 +331,10 @@ stl::string Asura::UI::GetCmdStr(stl::string_view key)
     {
         switch (window_style)
         {
-        case Graphics::theme::style::red:   return "red";
-        case Graphics::theme::style::dark:  return "dark";
-        case Graphics::theme::style::white: return "white";
+        case Graphics::theme::style::red:     return "red";
+        case Graphics::theme::style::dark:    return "dark";
+        case Graphics::theme::style::white:   return "white";
+        case Graphics::theme::style::invalid: return "invalid";
         }
     }
 
