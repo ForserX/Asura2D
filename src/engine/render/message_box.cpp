@@ -80,7 +80,7 @@ namespace Asura::MessageBox
     }
 }
 #elif defined(OS_MAC)
-#import <Cocoa/Cocoa.h>
+#include <cocoa/cocoa.h>
 
 NSString* const OK_STR = @"OK";
 NSString* const CANCEL_STR = @"Cancel";
@@ -106,6 +106,7 @@ NSAlertStyle getAlertStyle(Style style)
 
 void setButtons(NSAlert* alert, Buttons buttons) 
 {
+#if 0
     switch (buttons) {
     case Buttons::OK:
         [alert addButtonWithTitle : OK_STR] ;
@@ -121,6 +122,7 @@ void setButtons(NSAlert* alert, Buttons buttons)
     default:
         [alert addButtonWithTitle : OK_STR] ;
     }
+#endif
 }
 
 Selection getSelection(int index, Buttons buttons)
@@ -169,6 +171,7 @@ namespace Asura::MessageBox
 {
     Selection Show(const char* message, const char* title, Style style, Buttons buttons) 
     {
+#if 0
         NSAlert* alert = [[NSAlert alloc]init];
 
         [alert setMessageText : [NSString stringWithCString : title
@@ -181,7 +184,7 @@ namespace Asura::MessageBox
 
         Selection selection = getSelection([alert runModal], buttons);
         [alert release] ;
-
+#endif
         return selection;
     }
 }
