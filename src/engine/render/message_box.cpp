@@ -98,7 +98,7 @@ namespace Asura::MessageBox
         Selection selection = getSelection([alert runModal], buttons);
         [alert release] ;
 #endif
-        return selection;
+        return Selection::OK;
     }
 }
 #elif defined(OS_WINDOWS)

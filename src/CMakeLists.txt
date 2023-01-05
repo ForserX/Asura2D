@@ -110,12 +110,6 @@ if (OPTICK_ENABLED)
 	list(APPEND LIBRARIES_TO_LINK "OptickCore")
 endif()
 
-if (WIN32)
-	list(APPEND LIBRARIES_TO_LINK "OpenGL32")
-elseif(UNIX)
-	list(APPEND LIBRARIES_TO_LINK "dl")
-endif()
-
 list(APPEND LIBRARIES_TO_LINK "glfw")
 list(APPEND LIBRARIES_TO_LINK "OpenAL")
 list(APPEND LIBRARIES_TO_LINK "glfw")
