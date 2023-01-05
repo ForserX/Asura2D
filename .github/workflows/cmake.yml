@@ -58,7 +58,7 @@ jobs:
     - name: Install dependencies
       run: |
           sudo apt update
-          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
+          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libgl1-mesa-dev
 
     - name: Install Clang x64
       uses: egor-tensin/setup-clang@v1
