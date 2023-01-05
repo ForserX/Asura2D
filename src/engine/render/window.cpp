@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#pragma comment(lib, "OpenGL32.Lib")
+
 GLFWwindow* window_handle = nullptr;
 bool wants_to_exit = false;
 bool fullscreen_mode = false;
@@ -29,6 +31,7 @@ namespace Asura::Window::Internal
 				window_width = width;
 				window_height = height;
 				Camera::ResetHW();
+				glViewport(0, 0, width, height);
 			}
 		);
 
@@ -62,6 +65,10 @@ void Window::Init()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
+	glfwWindowHint(GLFW_DOUBLEBUFFER, 1);
+	glfwWindowHint(GLFW_DEPTH_BITS, 24);
+	glfwWindowHint(GLFW_STENCIL_BITS, 8);
+
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
@@ -78,7 +85,7 @@ void Window::Init()
 	// #TODO: Set as main.cpp
 	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", nullptr, nullptr);
 	glfwMakeContextCurrent(window_handle);
-	//glViewport(0, 0, window_width, window_height);
+	glViewport(0, 0, window_width, window_height);
 }
 
 void Window::Destroy()
@@ -99,84 +106,10 @@ void Window::Tick()
 	// - When io.WantCaptureMouse is true, do not dispatch mouse Input data to your main application, or clear/overwrite your copy of the mouse data.
 	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard Input data to your main application, or clear/overwrite your copy of the keyboard data.
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-	while (!glfwWindowShouldClose(window_handle))
-	{
-		glfwPollEvents();
-		glfwSwapBuffers(window_handle);
-	}
-#if 0
-	SDL_Event event = {};
-	while (SDL_PollEvent(&event))
-	{
-		int tx = 0;
-		int ty = 0;
-		ImGui_ImplSDL2_ProcessEvent(&event);
-		switch (event.type) 
-		{
-		case SDL_QUIT:
-			wants_to_exit = true;
-			break;
-		case SDL_WINDOWEVENT:
-			if (event.window.windowID == SDL_GetWindowID(window_handle)) 
-			{
-				switch (event.window.event) 
-				{
-				case SDL_WINDOWEVENT_CLOSE:
-					wants_to_exit = true;
-					break;
-				case SDL_WINDOWEVENT_RESIZED:
-					window_width = event.window.data1;
-					window_height = event.window.data2;
-					Camera::ResetHW();
-#ifdef OS_WINDOWS
-					// Stupid bug on Windows
-					SDL_GetWindowPosition(window_handle, &tx, &ty);
-					SDL_SetWindowPosition(window_handle, tx + 1, ty + 1);
-					SDL_SetWindowPosition(window_handle, tx, ty);
-#endif
-					break;
-				case SDL_WINDOWEVENT_SIZE_CHANGED:
-					window_width = event.window.data1;
-					window_height = event.window.data2;
-					Camera::ResetHW();
-					break;
-				case SDL_WINDOWEVENT_RESTORED:
-					window_maximized = false;
-					break;
-				case SDL_WINDOWEVENT_MAXIMIZED:
-					window_maximized = true;
-					break;
-				default:
-					break;
-				}
-			}
-			break;
-		case SDL_MOUSEMOTION: 
-		{
-			const auto pos = ImGui::GetMousePos();
-			Input::UpdateMousePos({static_cast<short>(pos.x), static_cast<short>(pos.y)});
-		}
-		break;
-		case SDL_KEYDOWN:
-			Input::UpdateKey(event.key.keysym.scancode, 1.f);
-			break;
-		case SDL_KEYUP:
-			Input::UpdateKey(event.key.keysym.scancode, 0.f);
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			Input::UpdateKey(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 1.f);
-			break;
-		case SDL_MOUSEBUTTONUP:
-			Input::UpdateKey(SDL_SCANCODE_ENDCALL + static_cast<int16_t>(event.button.button), 0.f);
-			break;
-		case SDL_MOUSEWHEEL:
-			Input::UpdateKey(SDL_SCANCODE_MOUSEWHEEL, event.wheel.y);
-			break;
-		default:
-			break;
-		}
-	}
-#endif
+
+	glfwPollEvents();
+	glfwSwapBuffers(window_handle);
+
 	engine::Tick();
 }
 

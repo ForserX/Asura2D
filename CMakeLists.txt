@@ -109,6 +109,8 @@ FILE(WRITE libs/imgui/CMakeLists.txt
 "file(GLOB IMGUI_BACKEND_SRC\n"
 "	\"backends/imgui_impl_glfw.h\"\n"
 "	\"backends/imgui_impl_glfw.cpp\"\n"
+"	\"backends/imgui_impl_opengl3.h\"\n"
+"	\"backends/imgui_impl_opengl3.cpp\"\n"
 ")\n\n"
 "add_library(\"imgui\" STATIC \${IMGUI_SRC} \${IMGUI_BACKEND_SRC})\n"
 "target_include_directories(\"imgui\" PUBLIC \"\")\n"

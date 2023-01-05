@@ -13,22 +13,11 @@ void Render::Init()
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
 	
-	ImGui_ImplGlfw_InitForOpenGL(window_handle, false);
+	ImGui_ImplGlfw_InitForOpenGL(window_handle, true);
+	ImGui_ImplOpenGL3_Init("#version 430");
 
 	Graphics::Init();
 	Graphics::theme::change();
-}
-
-void Render::init_vulkan()
-{
-#ifdef ASURA_VULKAN
-	SDL_Vulkan_LoadLibrary(nullptr);
-	uint32_t extensionCount;
-	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, nullptr);
-
-	const char** extensionNames = new const char* [extensionCount];
-	SDL_Vulkan_GetInstanceExtensions(window_handle, &extensionCount, extensionNames);
-#endif
 }
 
 void Render::Destroy()
@@ -56,6 +45,7 @@ void Render::Tick(float dt)
 
 	{
 		OPTICK_EVENT("Render new frame prepare");
+		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
@@ -87,6 +77,12 @@ void Render::Tick(float dt)
 		SDL_RenderPresent(renderer);
 	}
 #endif
+	OPTICK_EVENT("Graphics present");
+
+	glClearColor(clear_color[0] * 255, clear_color[1] * 255, clear_color[2] * 255, clear_color[3] * 255);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 Render::texture_id Render::GetTexture(ResourcesManager::id_t resource_id)
