@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Asura::window
+namespace Asura::Window
 {
 	void Init();
 	void Tick();

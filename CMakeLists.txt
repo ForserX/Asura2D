@@ -45,8 +45,6 @@ set(OPTICK_ENABLED ${ASURA_OPTICK} CACHE BOOL "optick enabled" FORCE)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
 	include_directories(/usr/local/include)
-	set(SDL_VIDEO_DRIVER_X11 ON CACHE BOOL "SDL3 FreeBSD X11 hack" FORCE)
-	set(SDL_VIDEO_DRIVER_X11_SUPPORTS_GENERIC_EVENTS ON CACHE BOOL "SDL3 FreeBSD X11 Generic Events hack" FORCE)
 endif()
 
 if (NOT ASURA_ASAN)
@@ -61,7 +59,6 @@ set(ALSOFT_EXAMPLES OFF CACHE BOOL "shared libraries" FORCE)
 set(ALSOFT_UTILS OFF CACHE BOOL "shared libraries" FORCE)
 set(ALSOFT_UPDATE_BUILD_VERSION OFF CACHE BOOL "shared libraries" FORCE)
 set(AL_LIBTYPE_STATIC ON CACHE BOOL "shared libraries" FORCE)
-set(SDL_TEST OFF CACHE BOOL "shared libraries" FORCE)
 set(OPUS_BUILD_SHARED_LIBRARY OFF CACHE BOOL "shared libraries" FORCE)
 set(OPUS_X86_MAY_HAVE_SSE4_1 ON CACHE BOOL "shared libraries" FORCE)
 set(OPUS_X86_PRESUME_AVX ON CACHE BOOL "shared libraries" FORCE)
@@ -110,13 +107,10 @@ FILE(WRITE libs/imgui/CMakeLists.txt
 "	\"imgui_truetype.cpp\"\n"
 ")\n\n"
 "file(GLOB IMGUI_BACKEND_SRC\n"
-"	\"backends/imgui_impl_sdl.h\"\n"
-"	\"backends/imgui_impl_sdlrenderer.h\"\n"
-"	\"backends/imgui_impl_sdl.cpp\"\n"
-"	\"backends/imgui_impl_sdlrenderer.cpp\"\n"
+"	\"backends/imgui_impl_glfw.h\"\n"
+"	\"backends/imgui_impl_glfw.h\"\n"
 ")\n\n"
 "add_library(\"imgui\" STATIC \${IMGUI_SRC} \${IMGUI_BACKEND_SRC})\n"
-"target_link_libraries(\"imgui\" PUBLIC SDL2::SDL2-static)\n\n"
 "target_include_directories(\"imgui\" PUBLIC \"\")\n"
 "target_include_directories(\"imgui\" PUBLIC \"backends\")\n"
 )
@@ -126,8 +120,7 @@ if (OPTICK_ENABLED)
 endif()
 
 add_subdirectory("libs/mimalloc")
-add_subdirectory("libs/SDL")
-add_subdirectory("libs/SDL_image")
+add_subdirectory("libs/glfw")
 add_subdirectory("libs/imgui")
 add_subdirectory("libs/entt")
 add_subdirectory("libs/ogg")

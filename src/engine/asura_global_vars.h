@@ -16,7 +16,7 @@ extern float scheduler_delta;
 extern float scheduler_real_delta;
 
 // Windows code
-extern SDL_Window* window_handle;
+extern GLFWwindow* window_handle;
 
 extern int window_width;
 extern int window_height;
@@ -35,7 +35,7 @@ extern std::unique_ptr<Asura::UI::Console> console;
 extern float CamZoom;
 
 // Render 
-extern SDL_Renderer* renderer;
+//extern SDL_Renderer* renderer;
 extern Asura::Graphics::theme::style window_style;
 extern bool show_fps_counter;
 extern Asura::Math::IRect BackgroundParallax;

@@ -1,7 +1,6 @@
 #include "pch.h"
-#include <SDL_syswm.h>
 
-SDL_Window* window_handle = nullptr;
+GLFWwindow* window_handle = nullptr;
 bool wants_to_exit = false;
 bool fullscreen_mode = false;
 
@@ -12,8 +11,44 @@ bool window_maximized = false;
 using namespace Asura;
 using namespace Asura::GamePlay;
 
-void window::Init()
+namespace Asura::Window::Internal
 {
+	void RegCallbacks()
+	{
+		glfwSetWindowCloseCallback(window_handle, [](GLFWwindow*)
+		{
+			wants_to_exit = true;
+			glfwSetWindowShouldClose(window_handle, GLFW_FALSE);
+		});
+
+		glfwSetWindowSizeCallback(window_handle, [](GLFWwindow* window, int width, int height)
+		{
+			window_width = width;
+			window_height = height;
+			Camera::ResetHW();
+		});
+
+		glfwSetKeyCallback(window_handle, [](GLFWwindow* window, int key, int scancode, int action, int mode)
+		{
+			if(action == GLFW_PRESS)
+				Input::UpdateKey((int16_t)key, 1.f);
+
+			if(action == GLFW_RELEASE)
+				Input::UpdateKey((int16_t)key, 0.f);
+		});
+	}
+}
+
+void Window::Init()
+{
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+#if 0
 	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE);
 
 	if (fullscreen_mode) 
@@ -21,33 +56,38 @@ void window::Init()
 		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);
 	}
 
+#endif
 	// Setup window
 	// #TODO: Set as main.cpp
-	window_handle = SDL_CreateWindow("Asura 2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, window_flags);
-
-#ifdef ASURA_VULKAN
-	Graphics::init_vulkan();
-#endif
+	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", nullptr, nullptr);
+	glfwMakeContextCurrent(window_handle);
+	glViewport(0, 0, window_width, window_height);
 }
 
-void window::Destroy()
+void Window::Destroy()
 {
 	wants_to_exit = true;
-	SDL_DestroyWindow(window_handle);
+	glfwTerminate();
 }
 
-bool window::IsDestroyed()
+bool Window::IsDestroyed()
 {
 	return wants_to_exit;
 }
 
-void window::Tick()
+void Window::Tick()
 {
 	// Poll and handle events (inputs, window resize, etc.)
 	// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
 	// - When io.WantCaptureMouse is true, do not dispatch mouse Input data to your main application, or clear/overwrite your copy of the mouse data.
 	// - When io.WantCaptureKeyboard is true, do not dispatch keyboard Input data to your main application, or clear/overwrite your copy of the keyboard data.
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+	while (!glfwWindowShouldClose(window_handle))
+	{
+		glfwPollEvents();
+		glfwSwapBuffers(window_handle);
+	}
+#if 0
 	SDL_Event event = {};
 	while (SDL_PollEvent(&event))
 	{
@@ -119,17 +159,20 @@ void window::Tick()
 			break;
 		}
 	}
-
+#endif
 	engine::Tick();
 }
 
-void window::change_fullscreen()
+void Window::change_fullscreen()
 {
+#if 0
 	SDL_SetWindowFullscreen(window_handle, fullscreen_mode ? SDL_WINDOW_FULLSCREEN : 0);
+#endif
 }
 
-void window::change_window_mode()
+void Window::change_window_mode()
 {
+#if 0
 	if (window_maximized) 
 	{
 		SDL_MaximizeWindow(window_handle);
@@ -138,16 +181,17 @@ void window::change_window_mode()
 	{
 		SDL_RestoreWindow(window_handle);
 	}
+#endif
 }
 
-void window::change_resolution()
+void Window::change_resolution()
 {
-	SDL_SetWindowSize(window_handle, window_width, window_height);
+	glfwSetWindowSize(window_handle, window_width, window_height);
 	Camera::ResetHW();
 	Camera::ResetView();
 }
 
-void window::loop()
+void Window::loop()
 {
 	while (!wants_to_exit) 
 	{
