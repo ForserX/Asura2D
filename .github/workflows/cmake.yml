@@ -7,7 +7,6 @@ env:
 
 jobs:
   build-win64:
-    if: "contains(github.event.head_commit.message, '[ci]') || github.event_name == 'release'"
     runs-on: windows-2022
 
     steps:
@@ -24,7 +23,6 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
   build-macos:
-    if: "contains(github.event.head_commit.message, '[ci]') || github.event_name == 'release'"
     runs-on: macos-latest
 
     steps:
@@ -41,7 +39,6 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
   build-ubuntu:
-    if: "contains(github.event.head_commit.message, '[ci]') || github.event_name == 'release'"
     runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
