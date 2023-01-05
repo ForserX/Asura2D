@@ -110,6 +110,12 @@ if (OPTICK_ENABLED)
 	list(APPEND LIBRARIES_TO_LINK "OptickCore")
 endif()
 
+if (WIN32)
+	list(APPEND LIBRARIES_TO_LINK "OpenGL32")
+elseif(UNIX)
+	list(APPEND LIBRARIES_TO_LINK "dl")
+endif()
+
 list(APPEND LIBRARIES_TO_LINK "glfw")
 list(APPEND LIBRARIES_TO_LINK "OpenAL")
 list(APPEND LIBRARIES_TO_LINK "glfw")
@@ -212,10 +218,3 @@ set_target_properties("uninstall" PROPERTIES ${ASURA_FOLDER_PREGEN})
 
 set_target_properties("libasura" PROPERTIES ${ASURA_FOLDER_ENGINE})
 set_target_properties("example" PROPERTIES ${ASURA_FOLDER_GAME})
-
-if (WIN32)
-	find_library(OPENGL32_LIBRARY opengl32)
-	target_link_libraries("libasura" opengl32 ${OPENGL32_LIBRARIES})
-elseif(UNIX)
-	target_link_libraries("libasura" dl)
-endif()

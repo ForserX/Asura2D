@@ -58,6 +58,11 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Install dependencies
+      run: |
+          sudo apt update
+          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
+
     - name: Install Clang x64
       uses: egor-tensin/setup-clang@v1
       with:
