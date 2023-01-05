@@ -108,10 +108,11 @@ FILE(WRITE libs/imgui/CMakeLists.txt
 ")\n\n"
 "file(GLOB IMGUI_BACKEND_SRC\n"
 "	\"backends/imgui_impl_glfw.h\"\n"
-"	\"backends/imgui_impl_glfw.h\"\n"
+"	\"backends/imgui_impl_glfw.cpp\"\n"
 ")\n\n"
 "add_library(\"imgui\" STATIC \${IMGUI_SRC} \${IMGUI_BACKEND_SRC})\n"
 "target_include_directories(\"imgui\" PUBLIC \"\")\n"
+"target_include_directories(\"imgui\" PUBLIC \"../glfw/include\")\n"
 "target_include_directories(\"imgui\" PUBLIC \"backends\")\n"
 )
 

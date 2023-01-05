@@ -3,7 +3,7 @@
 namespace Asura::engine
 {
 	void Start();
-	void Init(int argc, char** argv);
+	void Init();
 	void Destroy();
 
 	void Tick();

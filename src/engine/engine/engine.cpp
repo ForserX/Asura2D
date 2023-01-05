@@ -11,7 +11,7 @@ void engine::Start()
 	Physics::Start();
 }
 
-void engine::Init(int argc, char** argv)
+void engine::Init()
 {
 	OPTICK_THREAD("Main thread");
     
