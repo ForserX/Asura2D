@@ -1,7 +1,5 @@
 #include "pch.h"
 
-#pragma comment(lib, "OpenGL32.Lib")
-
 GLFWwindow* window_handle = nullptr;
 bool wants_to_exit = false;
 bool fullscreen_mode = false;
