@@ -37,6 +37,7 @@ void engine::Init()
     Debug::Msg("- Resource Manager: Done");
     
 	Render::Init();
+	Render::Tick(0);
     Debug::Msg("- Render: Done");
     
 	game::Init();

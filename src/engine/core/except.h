@@ -21,10 +21,5 @@ namespace Asura::stl
 		{
 			return Value;
 		}
-
-		T& Get()
-		{
-			return Value;
-		}
 	};
 }

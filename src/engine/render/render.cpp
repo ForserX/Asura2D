@@ -1,8 +1,16 @@
 #include "pch.h"
+#include "SOIL2.h"
 
 using namespace Asura;
 
-stl::hash_map<ResourcesManager::id_t, Render::texture_id> textures_list;
+struct Texture
+{
+	int Width;
+	int Height;
+	uint8_t* Bytes;
+};
+
+stl::hash_map<ResourcesManager::id_t, ImTextureID> textures_list;
 
 void Render::Init()
 {
@@ -23,12 +31,8 @@ void Render::Init()
 void Render::Destroy()
 {
 	Graphics::Destroy();
-#if 0
-    for (auto [resource, texture] : textures_list)
-	{
-        SDL_DestroyTexture(static_cast<SDL_Texture*>(texture));
-    }
-#endif
+
+	textures_list.clear();
 
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -61,22 +65,7 @@ void Render::Tick(float dt)
 		// Rendering
 		ImGui::Render();
 	}
-#if 0
-	{
-		OPTICK_EVENT("Graphics present");
-		SDL_SetRenderDrawColor(
-			renderer,
-			static_cast<Uint8>(clear_color[0] * 255),
-			static_cast<Uint8>(clear_color[1] * 255),
-			static_cast<Uint8>(clear_color[2] * 255),
-			static_cast<Uint8>(clear_color[3] * 255)
-		);
 
-		SDL_RenderClear(renderer);
-		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-		SDL_RenderPresent(renderer);
-	}
-#endif
 	OPTICK_EVENT("Graphics present");
 
 	glClearColor(clear_color[0] * 255, clear_color[1] * 255, clear_color[2] * 255, clear_color[3] * 255);
@@ -87,40 +76,37 @@ void Render::Tick(float dt)
 
 Render::texture_id Render::GetTexture(ResourcesManager::id_t resource_id)
 {
-    if (!textures_list.contains(resource_id)) 
-	{
-        return nullptr;
-    }
-    
-    return textures_list.at(resource_id);
+    return LoadTexture(resource_id);
 }
 
 Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 {
+	static uint32_t DTexture = 0;
+
 	if (textures_list.contains(resource_id))
 	{
 		return textures_list.at(resource_id);
 	}
 
+	Texture ImageBytes = {};
+
 	Resource CurrentTexture = ResourcesManager::GetResource(resource_id);
-#if 0
-	SDL_RWops* rw = SDL_RWFromConstMem(CurrentTexture.Ptr, CurrentTexture.Size);
-	if (rw == nullptr)
-	{
-		return nullptr;
-	}
+	FileSystem::Path Path = FileSystem::ContentDir() / CurrentTexture.Name;
 
-	ResourceScopeLock Lock(CurrentTexture);
-	ImTextureID texture_handle = IMG_LoadTexture_RW(renderer, rw, 0);
+	ImageBytes.Bytes = SOIL_load_image(Path.generic_string().c_str(), &ImageBytes.Width, &ImageBytes.Height, 0, SOIL_LOAD_RGB);
 
-	if (texture_handle == nullptr)
-	{
-		return nullptr;
-	}
+	glGenTextures(1, &DTexture);
+	glBindTexture(GL_TEXTURE_2D, DTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ImageBytes.Width, ImageBytes.Height, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageBytes.Bytes);
+	SOIL_free_image_data(ImageBytes.Bytes);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	ImTextureID texture_handle = (ImTextureID)(intptr_t)DTexture;
 	textures_list[resource_id] = texture_handle;
+
 	return texture_handle;
-#else
-	return nullptr;
-#endif
 }
