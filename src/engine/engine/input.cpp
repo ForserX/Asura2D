@@ -52,7 +52,7 @@ void Input::Tick(float dt)
 			callback(key, state);
 		}
 
-		if (key != SDL_SCANCODE_MOUSEWHEEL)
+		if (key != GLFW_MOUSE_BUTTON_MIDDLE)
 		{
 			keys_states[key] = state;
 		}
@@ -60,7 +60,7 @@ void Input::Tick(float dt)
 
 	delta_mouse_pos = Math::FVec2(current_mouse_pos.x, current_mouse_pos.y) - Math::FVec2(previous_mouse_pos.x, previous_mouse_pos.y);
 	previous_mouse_pos = current_mouse_pos;
-	changed_keys.erase(SDL_SCANCODE_MOUSEWHEEL);
+	changed_keys.erase(GLFW_MOUSE_BUTTON_MIDDLE);
 }
 
 bool Input::IsFocusedUI()

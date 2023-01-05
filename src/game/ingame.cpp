@@ -88,7 +88,7 @@ void ingame::pre_init()
 static bool editor = false;
 auto editor_key_change = [](int16_t scan_code, Input::State state)
 {
-	if (scan_code == SDL_SCANCODE_X)
+	if (scan_code == GLFW_KEY_X)
 	{
 		if (state == Input::State::Press)
 		{

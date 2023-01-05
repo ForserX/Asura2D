@@ -59,7 +59,7 @@ auto CameraMouseWheelChange = [](int16_t scan_code, float state)
 {
 	switch (scan_code)
 	{
-	case SDL_SCANCODE_MOUSEWHEEL: Camera::Zoom((-1.f * state) * 2.f); break;
+	case GLFW_MOUSE_BUTTON_MIDDLE: Camera::Zoom((-1.f * state) * 2.f); break;
 	default:					  break;
 	}
 };
@@ -69,7 +69,7 @@ void Camera::Init()
 
 	for (int i = 0; i < 4; i++)
 	{
-		Input::Bind(SDL_SCANCODE_RIGHT + i, Input::State::Hold, (Input::eActions)((int)Input::eActions::CameraMoveRight + i));
+		Input::Bind(GLFW_KEY_RIGHT + i, Input::State::Hold, (Input::eActions)((int)Input::eActions::CameraMoveRight + i));
 	}
 
 	CameraInputKeyID = Input::Emplace(CameraMouseKeyChange);

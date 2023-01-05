@@ -16,18 +16,18 @@ void GamePlay::Holder::player::Init()
 		auto TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get());
 		auto pBody = TryEntt.body;
 
-		if (scan_code == SDL_SCANCODE_W)
+		if (scan_code == GLFW_KEY_W)
 		{
 			if (!pBody->IsFlying())
 			{
 				pBody->ApplyImpulse({ 0, pBody->get_mass() * 15});
 			}
 		}
-		else if(scan_code == SDL_SCANCODE_A)
+		else if(scan_code == GLFW_KEY_A)
 		{
 			pBody->ApplyImpulse({ -700, 0 });
 		}
-		else if (scan_code == SDL_SCANCODE_D)
+		else if (scan_code == GLFW_KEY_D)
 		{
 			pBody->ApplyImpulse({ 700, 0 });
 		}

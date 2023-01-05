@@ -12,7 +12,7 @@ void GamePlay::Holder::PlayerFree::Init()
 
 void GamePlay::Holder::PlayerFree::Tick()
 {
-    if (Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
+    if (Input::IsKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
     {
         Math::FVec2 mouse_position_absolute = ImGui::GetMousePos();
         mouse_position_absolute = GamePlay::Camera::Screen2World(mouse_position_absolute);
@@ -60,7 +60,7 @@ void GamePlay::Holder::PlayerFree::Tick()
         }
     }
 
-    if (ControlJoint != nullptr && !Input::IsKeyPressed(SDL_SCANCODE_MOUSE_LEFT))
+    if (ControlJoint != nullptr && !Input::IsKeyPressed(GLFW_MOUSE_BUTTON_LEFT))
     {
         Physics::GetWorld().GetWorld().DestroyJoint(ControlJoint);
         ControlJoint = nullptr;

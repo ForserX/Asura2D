@@ -20,7 +20,7 @@ void Editor::Init()
 		if (!is_editor_mode)
 			return;
 
-		if (scan_code == SDL_SCANCODE_MOUSE_LEFT)
+		if (scan_code == GLFW_MOUSE_BUTTON_LEFT)
 		{
 			if (state == Asura::Input::State::Press)
 			{

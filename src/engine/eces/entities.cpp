@@ -72,12 +72,12 @@ void Entities::Init()
 		{
 			switch (scan_code) 
 			{
-				case SDL_SCANCODE_F6: 
+				case GLFW_KEY_F6: 
 				{
 					Entities::serialize_state("game_state");
 					break;
 				}
-				case SDL_SCANCODE_F8: 
+				case GLFW_KEY_F8:
 				{
 					Entities::deserialize_state("game_state");
 					break;
