@@ -83,20 +83,10 @@ void Window::Init()
 	glfwWindowHint(GLFW_STENCIL_BITS, 8);
 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-#if 0
-	auto window_flags = static_cast<SDL_WindowFlags>(SDL_WINDOW_RESIZABLE);
-
-	if (fullscreen_mode) 
-	{
-		window_flags = static_cast<SDL_WindowFlags>(window_flags | SDL_WINDOW_FULLSCREEN);
-	}
-
-#endif
 	// Setup window
-	// #TODO: Set as main.cpp
-	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", nullptr, nullptr);
+	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", fullscreen_mode ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 	glfwMakeContextCurrent(window_handle);
 	glViewport(0, 0, window_width, window_height);
 
@@ -130,23 +120,27 @@ void Window::Tick()
 
 void Window::change_fullscreen()
 {
-#if 0
-	SDL_SetWindowFullscreen(window_handle, fullscreen_mode ? SDL_WINDOW_FULLSCREEN : 0);
-#endif
+	const GLFWvidmode* Mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	if (!fullscreen_mode)
+	{
+		glfwSetWindowMonitor(window_handle, nullptr, 100, 100, window_width, window_height, Mode->refreshRate);
+		return;
+	}
+	
+	glfwSetWindowMonitor(window_handle, glfwGetPrimaryMonitor(), 100, 100, Mode->width, Mode->height, Mode->refreshRate);
 }
 
 void Window::change_window_mode()
 {
-#if 0
 	if (window_maximized) 
 	{
-		SDL_MaximizeWindow(window_handle);
+		glfwMaximizeWindow(window_handle);
 	}
-	else if (SDL_GetWindowFlags(window_handle) & SDL_WINDOW_MAXIMIZED)
+	else if (glfwGetWindowAttrib(window_handle, GLFW_MAXIMIZED))
 	{
-		SDL_RestoreWindow(window_handle);
+		glfwRestoreWindow(window_handle);
 	}
-#endif
 }
 
 void Window::change_resolution()
