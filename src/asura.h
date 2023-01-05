@@ -37,6 +37,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
+#include <Intrin.h>
 #include <timeapi.h>
 
 // AVX/SSE trash
@@ -70,13 +71,11 @@
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_sdlrenderer.h>
 #include <imgui_internal.h>
-#include <SDL.h>
+#include <GLFW/glfw3.h>
 
 #ifdef ARK_VULKAN
 #include <SDL_vulkan.h>
 #endif
-
-#include <SDL_image.h>
 
 #ifdef MIMALLOC_ENABLED
 #include <mimalloc.h>
