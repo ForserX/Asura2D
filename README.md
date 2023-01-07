@@ -1,4 +1,4 @@
-[# Build
+# Build
 ### CMake
 Asura Engine using CMake build system.
 ```cmd 

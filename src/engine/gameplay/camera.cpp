@@ -45,10 +45,10 @@ auto CameraMouseKeyChange = [](int16_t scan_code, Input::State state)
 	}
 	*/
 
-	case Input::eActions::CameraMoveLeft:  Camera::Move(GamePlay::MoveWays::left, 1.f);  break;
-	case Input::eActions::CameraMoveRight: Camera::Move(GamePlay::MoveWays::right, 1.f); break;
-	case Input::eActions::CameraMoveUp:	   Camera::Move(GamePlay::MoveWays::up, 1.f);	  break;
-	case Input::eActions::CameraMoveDown:  Camera::Move(GamePlay::MoveWays::down, 1.f);  break;
+	case Input::eActions::CameraMoveLeft:  Camera::Move(GamePlay::MoveWays::left,	0.21f);  break;
+	case Input::eActions::CameraMoveRight: Camera::Move(GamePlay::MoveWays::right,	0.21f); break;
+	case Input::eActions::CameraMoveUp:	   Camera::Move(GamePlay::MoveWays::up,		0.21f);	  break;
+	case Input::eActions::CameraMoveDown:  Camera::Move(GamePlay::MoveWays::down,	0.21f);  break;
 	default: break;
 	}
 
