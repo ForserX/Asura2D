@@ -45,6 +45,7 @@ void UI::Tick(float dt)
     float navigation_bar_size = 30.f;
     static bool stat_enable = false;
     Math::FVec2 cursor_pos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
+    MessageBox::Show("cock", "sex");
 
     if (show_console) 
     {

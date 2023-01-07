@@ -9,19 +9,14 @@ namespace Asura::MessageBox
 {
     Selection Show(const char* message, const char* title, Style style, Buttons buttons) 
     {
-#if defined(OS_LINUX)
-        std::string xmessage_path = "/usr/bin/xmessage";
-#endif
-
-#if defined(OS_FREEBSD)
-        std::string xmessage_path = "/usr/local/bin/xmessage"; // TODO: Check this
-#endif
-
 #ifndef OS_MACOS
-        std::string command = fmt::format("{} {}", xmessage_path, message);
+        std::string message_app = "xmessage";
+#else
+        std::string message_app = "osascript"; // TODO: Check this
+#endif
+        std::string command = fmt::format("{} {}", message_app, message);
 
         std::system(command.c_str());
-#endif
 
         return Selection::OK;
     }
