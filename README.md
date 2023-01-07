@@ -10,7 +10,7 @@ cmake --build build
 
 |__OS__|Windows|MacOS|Linux|FreeBSD|
 |---|---|---|---|---|
-|__Support__| *__Win10__* | *__10.15 "Catalina"__* | *__Ubuntu 18.04__* | WIP |
+|__Support__| *__Win10__* | *__10.15 "Catalina"__* | *__Ubuntu 18.04__* | Check: https://github.com/ForserX/Asura2D/issues/8 |
 |__Compiler__| *MVSC, Clang* | *Clang* | *GCC*, *Clang*| |
 |__C++__| Latest, 20 | 20 | 20 | 20 |
 
