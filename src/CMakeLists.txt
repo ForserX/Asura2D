@@ -43,6 +43,11 @@ file(GLOB ASURA_ENGINE_RENDER_SRC
 	"engine/render/*.h"
 )
 
+file(GLOB ASURA_ENGINE_RENDER_UI_SRC
+	"engine/render/ui/*.cpp"
+	"engine/render/ui/*.h"
+)
+
 file(GLOB ASURA_ENGINE_SYSTEMS_SRC
 	"engine/systems/*.cpp"
 	"engine/systems/*.h"
@@ -76,6 +81,7 @@ source_group("engine\\eces" FILES ${ASURA_ENGINE_ECES_SRC})
 source_group("engine\\network" FILES ${ASURA_ENGINE_NET_SRC})
 source_group("engine\\physics" FILES ${ASURA_ENGINE_PHYSICS_SRC})
 source_group("engine\\render" FILES ${ASURA_ENGINE_RENDER_SRC})
+source_group("engine\\render\\ui" FILES ${ASURA_ENGINE_RENDER_UI_SRC})
 source_group("engine\\systems" FILES ${ASURA_ENGINE_SYSTEMS_SRC})
 source_group("gameplay" FILES ${ASURA_ENGINE_GAMEPLAY_SRC})
 
@@ -89,6 +95,7 @@ list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_NET_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_EDITOR_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_PHYSICS_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_RENDER_SRC})
+list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_RENDER_UI_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_SYSTEMS_SRC})
 list(APPEND ENGINE_SRC_FILES ${EDITOR_SRC})
 list(APPEND ENGINE_SRC_FILES "pch.h")

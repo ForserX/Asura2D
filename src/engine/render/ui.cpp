@@ -23,6 +23,7 @@ void UI::Tick(float dt)
 {
     OPTICK_EVENT("UI draw");
 
+    CursorManager::Tick();
     if (is_editor_mode)
     {
         Editor::UI::Destroy();

@@ -72,6 +72,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_internal.h>
 #include <GLFW/glfw3.h>
+#include <SOIL2.h>
 
 #ifdef ARK_VULKAN
 #include <SDL_vulkan.h>
@@ -96,11 +97,11 @@
 #include <vulkan.hpp>
 #endif
 
+// Audio trash
 #ifdef OS_WINDOWS
 #include <xaudio2.h>
 #endif
 
-// Audio trash
 #ifdef ASURA_USE_VORBIS
 #	include <vorbis/include/vorbis/vorbisfile.h>
 #else

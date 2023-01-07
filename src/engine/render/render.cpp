@@ -1,14 +1,6 @@
 #include "pch.h"
-#include "SOIL2.h"
 
 using namespace Asura;
-
-struct Texture
-{
-	int Width;
-	int Height;
-	uint8_t* Bytes;
-};
 
 stl::hash_map<ResourcesManager::id_t, ImTextureID> textures_list;
 
@@ -93,14 +85,14 @@ Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 	Resource CurrentTexture = ResourcesManager::GetResource(resource_id);
 	FileSystem::Path Path = FileSystem::ContentDir() / CurrentTexture.Name;
 
-	ImageBytes.Bytes = SOIL_load_image(Path.generic_string().c_str(), &ImageBytes.Width, &ImageBytes.Height, 0, SOIL_LOAD_RGB);
+	ImageBytes.Bytes = SOIL_load_image(Path.generic_string().c_str(), &ImageBytes.Width, &ImageBytes.Height, 0, SOIL_LOAD_RGBA);
 
 	glGenTextures(1, &DTexture);
 	glBindTexture(GL_TEXTURE_2D, DTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ImageBytes.Width, ImageBytes.Height, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageBytes.Bytes);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ImageBytes.Width, ImageBytes.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, ImageBytes.Bytes);
 	SOIL_free_image_data(ImageBytes.Bytes);
 
 	glBindTexture(GL_TEXTURE_2D, 0);

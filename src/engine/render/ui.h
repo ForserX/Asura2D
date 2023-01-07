@@ -11,3 +11,5 @@ namespace Asura::UI
 	stl::string GetCmdStr(stl::string_view key);
 	void PushString(stl::string_view str);
 }
+
+#include "ui/cursor.h"

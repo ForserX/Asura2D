@@ -45,6 +45,7 @@
 #include "engine/systems/physics_mouse_joint_system.h"
 #include "engine/systems/draw_system.h"
 
+#include "engine/render/texture.h"
 #include "engine/render/message_box.h"
 #include "engine/render/window.h"
 #include "engine/render/ui.h"

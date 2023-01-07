@@ -150,6 +150,9 @@ void ingame::init()
 	using namespace Asura;
 	using namespace Entities;
 	
+	size_t CursorID = UI::CursorManager::Register("textures/cursor/base.png");
+	UI::CursorManager::SetActive(CursorID);
+
 	Physics::GetWorld().SetContactLister(new ContactLister);
 	TestObject2 = CreatePhysBody(Physics::body_parameters(0.f, 0.f, {}, { 350, 100 }, { 100, 10 }));
 	AddField<drawable_flag>(TestObject2);
