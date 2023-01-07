@@ -9,20 +9,18 @@ namespace Asura::MessageBox
 {
     Selection Show(const char* message, const char* title, Style style, Buttons buttons) 
     {
-#if 0
-        NSAlert* alert = [[NSAlert alloc]init];
+        #if defined(OS_LINUX)
+        std::string xmessage_path = "/usr/bin/xmessage";
+        #endif
 
-        [alert setMessageText : [NSString stringWithCString : title
-            encoding : [NSString defaultCStringEncoding] ] ] ;
-        [alert setInformativeText : [NSString stringWithCString : message
-            encoding : [NSString defaultCStringEncoding] ] ] ;
+        #if defined(OS_FREEBSD)
+        std::string xmessage_path = "/usr/local/bin/xmessage"; // TODO: Check this
+        #endif
 
-        [alert setAlertStyle : getAlertStyle(style)] ;
-        setButtons(alert, buttons);
+        std::string command = fmt::format("{} {}", xmessage_path, message);
 
-        Selection selection = getSelection([alert runModal], buttons);
-        [alert release] ;
-#endif
+        std::system(command.c_str());
+
         return Selection::OK;
     }
 }
