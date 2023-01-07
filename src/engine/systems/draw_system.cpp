@@ -82,57 +82,42 @@ void draw_system::Tick(float dt)
 					return;
 				}
 
-				// If we don't have any of draw components - try to draw Physics body with Debug view
-				if (Entities::ContainsAny<draw_color_component, draw_gradient_component, draw_texture_component>(entity))
+				if (const auto phys_comp = Entities::TryGet<physics_body_component>(entity)) 
 				{
-					if (const auto scene_comp = Entities::TryGet<scene_component>(entity)) 
-					{
-						if (const auto texture_comp = Entities::TryGet<draw_texture_component>(entity)) 
-						{
-							if (Camera::CanSee(scene_comp->Transform.position()))
-							{
-								const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
-								const auto begin_pos = scene_comp->Transform.position() - half_size;
-								const auto end_pos = scene_comp->Transform.position() + half_size;
-								Graphics::DrawTextureRect(texture_comp->texture_resource, { begin_pos, end_pos });
-							}
-						}
-						else if (const auto color_comp = Entities::TryGet<draw_color_component>(entity)) 
-						{
-							if (Camera::CanSee(scene_comp->Transform.position()))
-							{
-								const auto entt_id = reinterpret_cast<ptrdiff_t>(color_comp);
-								const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
-								const auto begin_pos = scene_comp->Transform.position() - half_size;
-								const auto end_pos = scene_comp->Transform.position() + half_size;
-								Graphics::DrawRect(color_map[entt_id % 4096], { begin_pos, end_pos });
-							}
-						}
-					}
-				}
-				else if (const auto phys_comp = Entities::TryGet<physics_body_component>(entity)) 
-				{
-					const auto physical_body = phys_comp->body;
+					const auto PhysBody = phys_comp->body;
 
-					if (physical_body->IsDestroyed() || !physical_body->is_enabled())
+					if (PhysBody->IsDestroyed() || !PhysBody->is_enabled())
 					{
 						return;
 					}
 
-					if (phys_comp->IgnoreTest && !Camera::CanSee(physical_body->get_position()))
+					if (phys_comp->IgnoreTest && !Camera::CanSee(PhysBody->get_position()))
 					{
 						return;
 					}
 
-					const auto phys_body_id = reinterpret_cast<ptrdiff_t>(physical_body);
-					switch (static_cast<Physics::Material::shape>(physical_body->get_parameters().packed_type.shape))
+					const auto phys_body_id = reinterpret_cast<ptrdiff_t>(PhysBody);
+					switch (static_cast<Physics::Material::shape>(PhysBody->get_parameters().packed_type.shape))
 					{
 						case Physics::Material::shape::circle:
-							Graphics::DrawPhysObjectCircle(physical_body->get_body(), color_map[phys_body_id % 4096]);
+						{
+							auto TextureEntt = Entities::TryGet<draw_texture_component>(entity);
+
+							if (TextureEntt)
+							{
+								Graphics::DrawTextureObject(PhysBody, TextureEntt->texture_resource);
+							}
+							else
+							{
+								Graphics::DrawPhysObjectCircle(PhysBody->get_body(), color_map[phys_body_id % 4096]);
+							}
 							break;
+						}
 						default:
-							Graphics::DrawPhysObject(physical_body->get_body(), color_map[phys_body_id % 4096]);
+						{
+							Graphics::DrawPhysObject(PhysBody->get_body(), color_map[phys_body_id % 4096]);
 							break;
+						}
 					}
 
 					return;
@@ -161,6 +146,33 @@ void draw_system::Tick(float dt)
 					Graphics::DrawRect(color_map[phys_body_id % 4096], { p1, p2 });
 
 					return;
+				}
+				else if (Entities::ContainsAny<draw_color_component, draw_gradient_component, draw_texture_component>(entity))
+				{
+					if (const auto scene_comp = Entities::TryGet<scene_component>(entity))
+					{
+						if (const auto texture_comp = Entities::TryGet<draw_texture_component>(entity))
+						{
+							if (Camera::CanSee(scene_comp->Transform.position()))
+							{
+								const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
+								const auto begin_pos = scene_comp->Transform.position() - half_size;
+								const auto end_pos = scene_comp->Transform.position() + half_size;
+								Graphics::DrawTextureRect(texture_comp->texture_resource, { begin_pos, end_pos });
+							}
+						}
+						else if (const auto color_comp = Entities::TryGet<draw_color_component>(entity))
+						{
+							if (Camera::CanSee(scene_comp->Transform.position()))
+							{
+								const auto entt_id = reinterpret_cast<ptrdiff_t>(color_comp);
+								const auto half_size = Math::FVec2(scene_comp->size.x / 2.f, scene_comp->size.y / 2.f);
+								const auto begin_pos = scene_comp->Transform.position() - half_size;
+								const auto end_pos = scene_comp->Transform.position() + half_size;
+								Graphics::DrawRect(color_map[entt_id % 4096], { begin_pos, end_pos });
+							}
+						}
+					}
 				}
 			});
 		}

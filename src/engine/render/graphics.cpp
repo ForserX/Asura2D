@@ -172,6 +172,29 @@ void Graphics::DrawBackground(ResourcesManager::id_t resource_id, bool UseParall
     }
 }
 
+void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesManager::id_t ResID)
+{
+	auto Fixture = Object->get_body()->GetFixtureList();
+
+	if (!Fixture)
+	{
+		return;
+	}
+
+	b2CircleShape* circle = (b2CircleShape*)Fixture->GetShape();
+	b2Transform xf = Object->get_body()->GetTransform();
+
+	auto Center = Camera::World2Screen(b2Mul(xf, circle->m_p));
+	float Radius = Camera::ScaleFactor(circle->m_radius);
+	Math::FVec2 TryRadius = { Radius, Radius };
+
+	Math::FVec2 StartPos = Center - TryRadius;
+	Math::FVec2 EndPos = Center + TryRadius;
+
+	const ImTextureID texture_id = Render::GetTexture(ResID);
+	ImGui::GetBackgroundDrawList()->AddImage(texture_id, StartPos, EndPos);
+}
+
 void Graphics::DrawTextureRect(ResourcesManager::id_t resource_id, const Math::FRect& Rect)
 {
 	const ImTextureID texture_id = Render::GetTexture(resource_id);

@@ -44,8 +44,9 @@ public:
 		);
 
 
-		const auto& ent = circles.emplace_back(CreatePhysBody(RandGenParam));
-		AddField<drawable_flag>(ent);
+		const auto& Ent = circles.emplace_back(CreatePhysBody(RandGenParam));
+		AddField<drawable_flag>(Ent);
+		AddTexture(Ent, "textures/ball.png", false);
 	};
 };
 
