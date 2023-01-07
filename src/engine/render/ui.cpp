@@ -55,7 +55,7 @@ void UI::Tick(float dt)
     { 
         if (show_fps_counter) 
         {
-            fps_counter_size = stat_enable ? 700 : 240;
+            fps_counter_size = stat_enable ? 820 : 260;
             ImGui::SetNextWindowPos({ static_cast<float>(window_width - 400), navigation_bar_size });
             ImGui::SetNextWindowSize({400, static_cast<float>(fps_counter_size) });
 
