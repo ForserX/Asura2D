@@ -12,9 +12,9 @@ namespace Asura::MessageBox
 #ifndef OS_MACOS
         std::string message_app = "xmessage";
 #else
-        std::string message_app = "osascript"; // TODO: Check this
+        std::string message_app = "osascript -e"; // TODO: Check this
 #endif
-        std::string command = fmt::format("{} {}", message_app, message);
+        std::string command = fmt::format("{} \"{}\"", message_app, message);
 
         std::system(command.c_str());
 
