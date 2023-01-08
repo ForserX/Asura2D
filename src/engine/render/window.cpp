@@ -113,9 +113,10 @@ void Window::Tick()
 	// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 
 	glfwPollEvents();
-	glfwSwapBuffers(window_handle);
 
 	engine::Tick();
+
+	glfwSwapBuffers(window_handle);
 }
 
 void Window::change_fullscreen()
@@ -158,6 +159,7 @@ void Window::change_resolution()
 	glfwSetWindowSize(window_handle, window_width, window_height);
 	Camera::ResetHW();
 	Camera::ResetView();
+	glViewport(0, 0, window_width, window_height);
 }
 
 void Window::loop()
