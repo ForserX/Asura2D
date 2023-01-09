@@ -172,7 +172,9 @@ void Asura::Debug::dbg_print(stl::string_view msg)
         OutputDebugString("\r\n");
     }
 #else
+#if defined(OS_MACOS)
     if (dbg_atttached())
+#endif
     {
         OutputDebugString(msg.data());
     }

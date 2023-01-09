@@ -17,7 +17,7 @@
                 "${workspaceFolder}/src/engine/"
             ],
             "defines": [],
-            "compilerPath": "/usr/lib/ccache/bin/clang",
+            "compilerPath": "/usr/bin/clang",
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "linux-clang-x64",

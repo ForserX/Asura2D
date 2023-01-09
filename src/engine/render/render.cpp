@@ -14,7 +14,7 @@ void Render::Init()
 	(void)io;
 	
 	ImGui_ImplGlfw_InitForOpenGL(window_handle, true);
-	ImGui_ImplOpenGL3_Init("#version 430");
+	ImGui_ImplOpenGL3_Init("#version 130");
 
 	Graphics::Init();
 	Graphics::theme::change();
