@@ -8,7 +8,12 @@ namespace Asura::Audio::Internal
 {
 	using FileSystem::Reader;
 
-	int DecSeak(void* datasource, int64_t offset, int whence)
+#ifdef OS_BSD
+	using offset_type = long long;
+#else
+	using offset_type = int64_t;
+#endif
+	int DecSeak(void* datasource, offset_type offset, int whence)
 	{
 		Reader* Data = ((Reader*)datasource);
 
@@ -47,7 +52,7 @@ namespace Asura::Audio::Internal
 		return 0;
 	}
 
-	int64_t DecTell(void* datasource)
+	offset_type DecTell(void* datasource)
 	{
 		return ((Reader*)datasource)->Tell();
 	}

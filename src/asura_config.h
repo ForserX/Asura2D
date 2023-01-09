@@ -27,12 +27,12 @@
 #define OS_UNIX
 #endif
 
-#if defined(__FREEBSD__)
+#if defined(__FREEBSD__) || defined(__FreeBSD__)
 #define OS_BSD
 #define OS_UNIX
 #endif
 
-#if !defined(OS_LINUX) && !defined(OS_BSD)
+#if !defined(OS_LINUX)
     #define ASURA_ALLOCATOR_USE
 #endif
 

@@ -41,8 +41,9 @@ void OutputDebugString(const char* data)
 
 bool GDBDebuggerPresent()
 {
-    int pid = fork();
     int res = 0;
+#ifndef OS_BSD
+    int pid = fork();
 
     if (pid == -1)
     {
@@ -77,7 +78,8 @@ bool GDBDebuggerPresent()
         waitpid(pid, &status, 0);
         res = WEXITSTATUS(status);
     }
-    
+#endif
+
     return !!res;
 }
 
