@@ -8,10 +8,10 @@ cmake --build build
 ### CI 
 ![example workflow](https://github.com/ForserX/Asura2D/actions/workflows/cmake.yml/badge.svg)
 
-|__OS__|Windows|MacOS|Linux|FreeBSD|
+|__OS__|Windows|MacOS|Linux|BSD|
 |---|---|---|---|---|
-|__Support__| *__Win10__* | *__10.15 "Catalina"__* | *__Ubuntu 18.04__* | Check: https://github.com/ForserX/Asura2D/issues/8 |
-|__Compiler__| *MVSC, Clang* | *Clang* | *GCC*, *Clang*| |
+|__Support__| *__Win10__* | *__10.15 "Catalina"__* | *__Ubuntu 18.04__* | __FreeBSD__ 13.1 (https://github.com/ForserX/Asura2D/issues/8) |
+|__Compiler__| *MVSC, Clang* | *Clang* | *GCC*, *Clang*| *GCC* |
 |__C++__| Latest, 20 | 20 | 20 | 20 |
 
 # Asura Engine 
