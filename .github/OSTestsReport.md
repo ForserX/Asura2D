@@ -6,9 +6,11 @@
 |             | iOS          | _TODO_     |              |
 | **Linux**   | Ubuntu       | **Done**   | GCC, Clang   |
 |             | Debian       | **Done**   | GCC          |
-|             | Arch         | **DONE**   | GCC, Clang   |
-|             | Gentoo       | **DONE**   | GCC, Clang   |
+|             | Arch         | **Done**   | GCC, Clang   |
+|             | Gentoo       | **Done**   | GCC, Clang   |
+|             | Fedora       | **Done**   | GCC, Clang   |
 | **BSD**     | FreeBSD      | 13.1       | GCC          |
 |             | OpenBSD      | _TODO_     |              |
+|             | NetBSD       | _TODO_     |              |
 | **Android** | Android 13   | _TODO_     |              |
 |             | PrimeOS (PC) | Maybe      |              |
