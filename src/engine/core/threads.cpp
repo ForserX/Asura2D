@@ -26,10 +26,14 @@ void Threads::Destroy()
 void Threads::SetAffinity(std::thread& handle, int64_t Core)
 {
 #ifdef OS_WINDOWS
-	auto mask = (static_cast<DWORD_PTR>(1) << Core); 
-	SetThreadAffinityMask(handle.native_handle(), mask);
+	auto Mask = (static_cast<DWORD_PTR>(1) << Core);
+	SetThreadAffinityMask(handle.native_handle(), Mask);
 #elif defined(OS_LINUX) || defined(OS_BSD)
-	pthread_setaffinity_np(handle.native_handle(), sizeof(cpu_set_t), &mask);
+	cpu_set_t Mask;
+	CPU_ZERO(&Mask);
+	CPU_SET(Core, &Mask);
+
+	pthread_setaffinity_np(handle.native_handle(), sizeof(cpu_set_t), &Mask);
 #endif
 	
 }
