@@ -2,6 +2,8 @@
 
 #ifdef OS_WINDOWS
 #pragma comment(lib, "Winmm.lib")
+#elif defined(OS_LINUX) || defined(OS_BSD)
+#include <pthread.h>
 #endif
 
 using namespace Asura;
@@ -27,7 +29,7 @@ void Threads::SetAffinity(std::thread& handle, int64_t Core)
 	auto mask = (static_cast<DWORD_PTR>(1) << Core); 
 	SetThreadAffinityMask(handle.native_handle(), mask);
 #elif defined(OS_LINUX) || defined(OS_BSD)
-	//sched_setaffinity(/* need get pid */, sizeof(cpu_set_t), &mask);
+	pthread_setaffinity_np(handle.native_handle(), sizeof(cpu_set_t), &mask);
 #endif
 	
 }
