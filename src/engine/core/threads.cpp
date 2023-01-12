@@ -2,7 +2,7 @@
 
 #ifdef OS_WINDOWS
 #pragma comment(lib, "Winmm.lib")
-#elif defined(OS_LINUX) || defined(OS_BSD)
+#else
 #include <pthread.h>
 #endif
 
@@ -28,7 +28,7 @@ void Threads::SetAffinity(std::thread& handle, int64_t Core)
 #ifdef OS_WINDOWS
 	auto Mask = (static_cast<DWORD_PTR>(1) << Core);
 	SetThreadAffinityMask(handle.native_handle(), Mask);
-#elif defined(OS_LINUX) || defined(OS_BSD)
+#else
 	cpu_set_t Mask;
 	CPU_ZERO(&Mask);
 	CPU_SET(Core, &Mask);
