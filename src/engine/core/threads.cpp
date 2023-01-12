@@ -27,8 +27,8 @@ void Threads::SetAffinity(std::thread& handle, int64_t Core)
 	auto Mask = (static_cast<DWORD_PTR>(1) << Core);
 	SetThreadAffinityMask(handle.native_handle(), Mask);
 #elif defined(OS_APPLE_SERIES)
-	thread_affinity_policy_data_t Mask = { (int)Core };
-	thread_policy_set(pthread_mach_thread_np(handle.native_handle()), THREAD_AFFINITY_POLICY, (thread_policy_t)&Mask, 1);
+//	thread_affinity_policy_data_t Mask = { (int)Core };
+//	thread_policy_set(pthread_mach_thread_np(handle.native_handle()), THREAD_AFFINITY_POLICY, (thread_policy_t)&Mask, 1);
 #else
 	cpu_set_t Mask;
 	CPU_ZERO(&Mask);
