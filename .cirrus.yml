@@ -1,0 +1,6 @@
+freebsd_instance:
+  image_family: freebsd-13-1
+
+task:
+  install_script: pkg install -y cmake llvm-devel ninja
+  script: mkdir build && cmake -G Ninja . && cmake --build build
