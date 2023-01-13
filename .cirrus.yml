@@ -3,6 +3,6 @@ freebsd_instance:
 
 task:
   install_script: pkg install -y cmake llvm-devel ninja git xorg
-  script: git submodule update --init --recursive && mkdir build && cmake -G Ninja . && cmake --build build
+  script: git submodule update --init --recursive && mkdir build && cmake -B build && cmake --build build
   
   
