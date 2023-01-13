@@ -1,7 +1,9 @@
 ﻿#include "pch.h"
 
 #ifdef OS_WINDOWS
-#pragma comment(lib, "Winmm.lib")
+#	pragma comment(lib, "Winmm.lib")
+#elif (OS_BSD)
+#	include <pthread_np.h>
 #endif
 
 using namespace Asura;
