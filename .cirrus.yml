@@ -2,7 +2,7 @@ freebsd_instance:
   image_family: freebsd-13-1
 
 task:
-  install_script: pkg install -y cmake llvm-devel ninja git xorg
-  script: git submodule update --init --recursive && mkdir build && cmake -G Ninja . && cmake -B build && cmake --build build
+  install_script: pkg install -y cmake llvm-devel gmake git xorg
+  script: git submodule update --init --recursive && mkdir build && cmake -B build && cmake --build build
   
   
