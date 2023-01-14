@@ -2,7 +2,7 @@
 
 #ifdef OS_WINDOWS
 #	pragma comment(lib, "Winmm.lib")
-#elif (OS_BSD)
+#elif defined(OS_BSD)
 #	include <pthread_np.h>
 #endif
 
