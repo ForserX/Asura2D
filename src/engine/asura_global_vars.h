@@ -35,10 +35,8 @@ extern std::unique_ptr<Asura::UI::Console> console;
 extern float CamZoom;
 
 // Render 
-//extern SDL_Renderer* renderer;
 extern Asura::Graphics::theme::style window_style;
 extern bool show_fps_counter;
-extern Asura::Math::IRect BackgroundParallax;
 
 // Holders
 extern Asura::GamePlay::holder_mode holder_type;

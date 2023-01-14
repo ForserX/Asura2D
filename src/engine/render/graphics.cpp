@@ -4,7 +4,6 @@ using namespace Asura;
 using namespace Asura::GamePlay;
 
 Graphics::theme::style window_style = {};
-Math::IRect BackgroundParallax = {};
 
 void Graphics::Init()
 {
@@ -13,8 +12,6 @@ void Graphics::Init()
 	
 	UI::Init();
 	Camera::Init();
-
-	BackgroundParallax = { -50, -50, window_width + 50, window_height + 50 };
 }
 
 void Graphics::Destroy()
@@ -159,58 +156,59 @@ void Graphics::DrawBackground(ResourcesManager::id_t resource_id, bool UseParall
 	OPTICK_EVENT("Graphics draw background");
     const ImTextureID texture_id = Render::GetTexture(resource_id);
 
-    if (texture_id != nullptr) 
+	if (texture_id != nullptr)
 	{
-		if (UseParallax)
-		{
-			Render::RenderData Data;
-			Data.x = BackgroundParallax.min().x;
-			Data.y = BackgroundParallax.min().y;
-			Data.ScaleX = BackgroundParallax.max().x;
-			Data.ScaleY = BackgroundParallax.max().y;
+		Render::RenderData Data;
+		Data.x = (fwindow_width) / 2;
+		Data.y = (fwindow_height) / 2;
+		Data.ScaleX = (fwindow_width) / 2;
+		Data.ScaleY = (fwindow_height) / 2;
 
-			Data.Angle = 0;
-			Data.TextureID = (uint32_t)reinterpret_cast<size_t>(texture_id);
-			Render::Push(std::move(Data));
-		}
-		else
-		{
-			Render::RenderData Data;
-			Data.x = 0;
-			Data.y = 0;
-			Data.ScaleX = fwindow_width + 50.f;
-			Data.ScaleY = fwindow_height + 50.f;
-
-			Data.Angle = 0;
-			Data.TextureID = (uint32_t)reinterpret_cast<size_t>(texture_id);
-			Render::Push(std::move(Data));
-		}
-    }
+		Data.Angle = 0;
+		Data.TextureID = (uint32_t)reinterpret_cast<size_t>(texture_id);
+		Render::Push(std::move(Data));
+	}
 }
 
 void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesManager::id_t ResID)
 {
-	auto Fixture = Object->get_body()->GetFixtureList();
+	auto Fixture = Object->GetBody()->GetFixtureList();
 
 	if (!Fixture)
 	{
 		return;
 	}
 
-	b2CircleShape* circle = (b2CircleShape*)Fixture->GetShape();
-	b2Transform xf = Object->get_body()->GetTransform();
-
-	auto Center = Camera::World2Screen(b2Mul(xf, circle->m_p));
-	float Radius = Camera::ScaleFactor(circle->m_radius);
-	Math::FVec2 TryRadius = { Radius, Radius };
-
 	Render::RenderData Data;
-	Data.x = Center.x;
-	Data.y = Center.y;
-	Data.ScaleX = Radius;
-	Data.ScaleY = Radius;
-	Data.Angle = Object->get_body()->GetAngle();
+	if (static_cast<Physics::Material::shape>(Object->get_parameters().packed_type.shape) == Physics::Material::shape::circle)
+	{
+		b2CircleShape* circle = (b2CircleShape*)Fixture->GetShape();
+		b2Transform xf = Object->GetBody()->GetTransform();
 
+		auto Center = Camera::World2Screen(b2Mul(xf, circle->m_p));
+		float Radius = Camera::ScaleFactor(circle->m_radius);
+		Math::FVec2 TryRadius = { Radius, Radius };
+
+		Data.x = Center.x;
+		Data.y = Center.y;
+		Data.ScaleX = Radius;
+		Data.ScaleY = Radius;
+	}
+	else
+	{
+		const auto poly = dynamic_cast<b2PolygonShape*>(Fixture->GetShape());
+
+		const int32 vertexCount = poly->m_count;
+		Math::FVec2 vertices = Camera::World2Screen(Object->GetBody()->GetPosition());
+
+		Data.x = vertices.x;
+		Data.y = vertices.y;
+		Data.ScaleX = Camera::Distance(poly->m_vertices[2].x, poly->m_vertices[0].x) / 2;
+		Data.ScaleY = Camera::Distance(poly->m_vertices[2].y, poly->m_vertices[0].y) / 2;
+		//Data.ScaleY = poly->m_vertices[2].y - poly->m_vertices[0].y;
+	}
+
+	Data.Angle = Object->GetBody()->GetAngle();
 	Data.TextureID = (uint32_t)reinterpret_cast<size_t>(Render::GetTexture(ResID));
 	Render::Push(std::move(Data));
 }

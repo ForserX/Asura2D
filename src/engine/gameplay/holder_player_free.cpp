@@ -33,14 +33,14 @@ void GamePlay::Holder::PlayerFree::Tick()
                 constexpr float damping_ratio = 1.f;
                 b2MouseJointDef jd;
 
-                jd.bodyA = Physics::GetGround()->get_body();
-                jd.bodyB = ContolBody->get_body();
+                jd.bodyA = Physics::GetGround()->GetBody();
+                jd.bodyB = ContolBody->GetBody();
                 jd.target = mouse_position_absolute;
-                jd.maxForce = 1000.0f * ContolBody->get_body()->GetMass();
+                jd.maxForce = 1000.0f * ContolBody->GetBody()->GetMass();
                 b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
                 ControlJoint = dynamic_cast<b2MouseJoint*>(Physics::GetWorld().GetWorld().CreateJoint(&jd));
-                ContolBody->get_body()->SetAwake(true);
+                ContolBody->GetBody()->SetAwake(true);
             }
             else
             {

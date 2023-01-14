@@ -14,7 +14,7 @@ std::random_device r_device;
 static std::mt19937 gen(r_device());
 
 using namespace Entities;
-
+#if 1
 class random_a final : public Asura::system
 {
 
@@ -49,7 +49,7 @@ public:
 		AddTexture(Ent, "textures/ball.png", false);
 	};
 };
-
+#endif
 void init_systems()
 {
 	game_update_systems.emplace_back(std::make_unique<random_a>());

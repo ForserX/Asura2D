@@ -8,6 +8,6 @@ out vec2 TexCoord;
 
 void main()
 {
-    gl_Position = ScreenMatrix* (WorldMatrix * vec4(position.x, position.y, position.z, 1.0));
-    TexCoord = (vec2(position.x, position.y)+vec2(1,1))*0.5f;
+    gl_Position = ScreenMatrix * (WorldMatrix * (vec4(position.x, position.y, 1, 1)));
+    TexCoord = (position.xy + 1) * 0.5;
 };

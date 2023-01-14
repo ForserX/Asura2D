@@ -151,7 +151,7 @@ EntityBase Entities::GetEntityByBbody(const b2Body* body)
 	for (const auto entity : view) 
 	{
 		const auto phys_comp = TryGet<physics_body_component>(entity);
-		if (phys_comp != nullptr && phys_comp->body != nullptr && phys_comp->body->get_body() == body) 
+		if (phys_comp != nullptr && phys_comp->body != nullptr && phys_comp->body->GetBody() == body)
 		{
 			return entity;
 		}	

@@ -396,23 +396,29 @@ namespace Asura::Math
         }
     };
 
-    inline float to_degrees(float rad)
+    inline float Degrees(float rad)
     {
         return (rad / M_PI) * 360.f;
     }
 
-    inline float to_radians(float degrees)
+    inline float Radians(float degrees)
     {
         return (degrees / 360.f) * M_PI;
     }
 
-    /*
-        void rotate_rect(mtx& Rect, const FVec2& center, float angle)
+    float Distance(float x, float x2);
+
+    inline void Multiply4x4(const float* mat1, const float* mat2, float* res)
+    {
+        int i, j, k;
+        for (i = 0; i < 4; i++)
         {
-            float x1 = Rect.x - center.x;
-            float y1 = Rect.y - center.y;
-            
-            
+            for (j = 0; j < 4; j++)
+            {
+                res[i * 4 + j] = 0;
+                for (k = 0; k < 4; k++)
+                    res[i * 4 + j] += mat1[i * 4 + k] * mat2[k * 4 + j];
+            }
         }
-     */
+    }
 }

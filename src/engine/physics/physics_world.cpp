@@ -249,7 +249,7 @@ void Physics::PhysicsWorld::PreTick()
 	{
 		if (!body->IsGarbage())
 		{
-			auto Entt = Entities::GetEntityByBbody(body->get_body());
+			auto Entt = Entities::GetEntityByBbody(body->GetBody());
 			Entities::internal::GetRegistry().Destroy(Entt);
 		}
 
@@ -396,7 +396,7 @@ Math::FRect Physics::PhysicsWorld::GetBodyRect(const PhysicsBody* body)
 {
 	if (body != nullptr)
 	{
-		return GetRealBodyRect(body->get_body());
+		return GetRealBodyRect(body->GetBody());
 	}
 
 	// return proxy position, until our object doesn't created

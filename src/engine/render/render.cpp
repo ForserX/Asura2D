@@ -12,20 +12,6 @@ GLuint RenderVBODefault, RenderVAODefault;
 // Shaders
 stl::vector<Render::RenderData> RenderList;
 
-void multiply(const float* mat1, const float* mat2, float* res)
-{
-	int i, j, k;
-	for (i = 0; i < 4; i++)
-	{
-		for (j = 0; j < 4; j++)
-		{
-			res[i * 4 + j] = 0;
-			for (k = 0; k < 4; k++)
-				res[i * 4 + j] += mat1[i * 4 + k] * mat2[k * 4 + j];
-		}
-	}
-}
-
 void Render::Init()
 {
 	IMGUI_CHECKVERSION();
@@ -219,24 +205,22 @@ void Render::Tick(float dt)
 		//Angle *= M_PI;
 		const float WorldMatrix2[4][4] =
 		{
-			{cosf(Angle),sinf(Angle),0,0},
-			{-sinf(Angle),cosf(Angle),0,0 },
+			{cosf(Angle),-sinf(Angle),0,0},
+			{sinf(Angle),cosf(Angle),0,0 },
 			{0,0,1,0 },
 			{0,0,0,1 },
 		};
 		float ResultTest[4][4] = {};
 
-		multiply(&WorldMatrix2[0][0], &WorldMatrix1[0][0], &ResultTest[0][0]);
+		Math::Multiply4x4(&WorldMatrix2[0][0], &WorldMatrix1[0][0], &ResultTest[0][0]);
 
 		glUniformMatrix4fv(WorldMatrixID, 1, GL_FALSE, &ResultTest[0][0]);
-
 
 		glBindVertexArray(RenderVAODefault);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture);
 		glUniform1i(glGetUniformLocation(RenderShaderProgramDefault, "InTexture"), 0);
-
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);

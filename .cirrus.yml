@@ -6,7 +6,7 @@ task:
   script: git submodule update --init --recursive && mkdir build && cmake -B build && cmake --build build
   
 task:
-  name: CMake / build-linux-arm64
+  name: CMake / build-ubuntu-arm64
   arm_container:
     image: ubuntu:latest
   install_script: apt update && apt upgrade -y && apt install -y xorg-dev cmake build-essential git

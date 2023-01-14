@@ -38,6 +38,8 @@ namespace Asura::Level::internal
 			const auto PhType = level_data.Get<Physics::BodyType>(Section, "type");
 			const auto PhShape = level_data.Get<Physics::Material::shape>(Section, "shape");
 			const auto PhMaterial = level_data.Get<Physics::Material::type>(Section, "material");
+
+			const auto Texture = level_data.Get<stl::string>(Section, "texture");
 			
 			LevelW /= 2;
 			LevelH /= 2;
@@ -55,6 +57,7 @@ namespace Asura::Level::internal
 			auto FindResult = Section.find("ground_", Section.length());
 
 			auto TempEntt = Entities::CreatePhysBody(CurrentBody, FindResult != stl::npos);
+			Entities::AddTexture(TempEntt, Texture, false);
 
 			if (IsDrawable)
 			{

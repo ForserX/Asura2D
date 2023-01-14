@@ -45,14 +45,14 @@ void GamePlay::Holder::Free::Tick()
                 constexpr float damping_ratio = 1.f;
                 b2MouseJointDef jd;
 
-                jd.bodyA = Physics::GetGround()->get_body();
-                jd.bodyB = current_contol_body->get_body();
+                jd.bodyA = Physics::GetGround()->GetBody();
+                jd.bodyB = current_contol_body->GetBody();
                 jd.target = mouse_position_absolute;
-                jd.maxForce = 1000.0f * current_contol_body->get_body()->GetMass();
+                jd.maxForce = 1000.0f * current_contol_body->GetBody()->GetMass();
                 b2LinearStiffness(jd.stiffness, jd.damping, frequency_hz, damping_ratio, jd.bodyA, jd.bodyB);
 
                 current_contol_joint = dynamic_cast<b2MouseJoint*>(Physics::GetWorld().GetWorld().CreateJoint(&jd));
-                current_contol_body->get_body()->SetAwake(true);
+                current_contol_body->GetBody()->SetAwake(true);
             }
             else
             {
@@ -114,13 +114,13 @@ void HFKeyCallback(int16_t scan_code, Input::State state)
                 constexpr float damping_ratio = 0.7f;
 
                 b2DistanceJointDef jointDef;
-                jointDef.Initialize(joint_contact_body->get_body(), test_body->get_body(), joint_contact_point, mouse_position_absolute);
+                jointDef.Initialize(joint_contact_body->GetBody(), test_body->GetBody(), joint_contact_point, mouse_position_absolute);
 
                 jointDef.collideConnected = true;
                 b2LinearStiffness(jointDef.stiffness, jointDef.damping, frequency_hz, damping_ratio, jointDef.bodyA, jointDef.bodyB);
 
                 Physics::GetWorld().GetWorld().CreateJoint(&jointDef);
-                test_body->get_body()->SetAwake(true);
+                test_body->GetBody()->SetAwake(true);
             }
 
             joint_contact_body = nullptr;
@@ -136,7 +136,7 @@ void HFKeyCallback(int16_t scan_code, Input::State state)
 
         if (Body != nullptr)
         {
-            GamePlay::Holder::player::Attach(Entities::GetEntityByBbody(Body->get_body()));
+            GamePlay::Holder::player::Attach(Entities::GetEntityByBbody(Body->GetBody()));
             holder_type = GamePlay::holder_mode::Player;
         }
     }

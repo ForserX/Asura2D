@@ -240,7 +240,7 @@ namespace Asura::Physics
 		inline bool IsDestroyed() const { return destroyed; }
 		inline bool is_enabled() const { return (body ? body->IsEnabled() : false); }
 		
-		b2Body* get_body() const { return body; }
+		b2Body* GetBody() const { return body; }
 		const body_parameters& get_parameters() const { return parameters; }
 
 		void SetAsGarbage();

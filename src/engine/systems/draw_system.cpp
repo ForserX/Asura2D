@@ -109,13 +109,22 @@ void draw_system::Tick(float dt)
 							}
 							else
 							{
-								Graphics::DrawPhysObjectCircle(PhysBody->get_body(), color_map[phys_body_id % 4096]);
+								Graphics::DrawPhysObjectCircle(PhysBody->GetBody(), color_map[phys_body_id % 4096]);
 							}
 							break;
 						}
 						default:
 						{
-							Graphics::DrawPhysObject(PhysBody->get_body(), color_map[phys_body_id % 4096]);
+							auto TextureEntt = Entities::TryGet<draw_texture_component>(entity);
+
+							if (TextureEntt)
+							{
+								Graphics::DrawTextureObject(PhysBody, TextureEntt->texture_resource);
+							}
+							else
+							{
+								Graphics::DrawPhysObject(PhysBody->GetBody(), color_map[phys_body_id % 4096]);
+							}
 							break;
 						}
 					}

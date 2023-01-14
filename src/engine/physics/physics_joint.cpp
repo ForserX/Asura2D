@@ -24,7 +24,7 @@ void Asura::Physics::PhysicsJoint::Create()
 			jdata.upperAngle = data.upper;
 			jdata.enableLimit = data.limit;
 
-			jdata.Initialize(data.body_first->get_body(), data.body_second->get_body(), data.body_second->get_body()->GetPosition());
+			jdata.Initialize(data.body_first->GetBody(), data.body_second->GetBody(), data.body_second->GetBody()->GetPosition());
 			try_joint = Physics::GetWorld().GetWorld().CreateJoint(&jdata);
 			break;
 		}

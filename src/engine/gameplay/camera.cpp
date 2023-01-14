@@ -11,12 +11,8 @@ static float CamScaledZoom = 0.f;
 static int64_t cam_width = 0;
 static int64_t cam_height = 0;
 
-static EntityView attached_entity = {};
-static bool attached = false;
-constexpr bool test_world_transform = false;
-
-// For parallax background
-static Math::IRect OffsetMove = { 0, 0, 0, 0};
+static EntityView AttachedEntity = {};
+static bool Attached = false;
 
 // For Input system
 static int64_t CameraInputKeyID = 0;
@@ -28,39 +24,20 @@ auto CameraMouseKeyChange = [](int16_t scan_code, Input::State state)
 	
 	switch (action)
 	{
-
-	/*
-	case SDL_SCANCODE_MOUSE_LEFT:
-	{
-		if (Asura::Input::IsKeyPressed(SDL_SCANCODE_LCTRL))
-		{
-			if (state == Asura::Input::State::hold)
-			{
-				const auto& mouse_delta = Asura::Input::GetMouseDelta();
-				Camera::Move(GamePlay::MoveWays::left, (mouse_delta.x * 0.05f));
-				Camera::Move(GamePlay::MoveWays::up, (mouse_delta.y * 0.05f));
-			}
-		}
-		break;
-	}
-	*/
-
 	case Input::eActions::CameraMoveLeft:  Camera::Move(GamePlay::MoveWays::left,	0.21f);  break;
 	case Input::eActions::CameraMoveRight: Camera::Move(GamePlay::MoveWays::right,	0.21f); break;
 	case Input::eActions::CameraMoveUp:	   Camera::Move(GamePlay::MoveWays::up,		0.21f);	  break;
 	case Input::eActions::CameraMoveDown:  Camera::Move(GamePlay::MoveWays::down,	0.21f);  break;
 	default: break;
 	}
-
-
 };
 
 auto CameraMouseWheelChange = [](int16_t scan_code, float state)
 {
 	switch (scan_code)
 	{
-	case GLFW_MOUSE_BUTTON_MIDDLE: Camera::Zoom((-1.f * state) * 2.f); break;
-	default:					  break;
+		case GLFW_MOUSE_BUTTON_MIDDLE: Camera::Zoom((-1.f * state) * 2.f); break;
+		default:					  break;
 	}
 };
 
@@ -90,25 +67,17 @@ void Camera::Tick(float dt)
 	const float delta_size =  static_cast<float>(cam_height) / static_cast<float>(cam_width);
 	CamScaledZoom = CamZoom * delta_size;
 	
-	if (attached) 
+	if (Attached) 
 	{
-		if (!Entities::IsValid(attached_entity)) 
+		if (!Entities::IsValid(AttachedEntity))
 		{
 			Detach();
 		} 
 		else
 		{
-			CamCenter = Entities::GetPosition(attached_entity);
+			CamCenter = Entities::GetPosition(AttachedEntity);
 		}
 	}
-    
-    if constexpr (test_world_transform) 
-	{
-        auto mouse_vec = Math::FVec2(Input::GetMousePos().x, Input::GetMousePos().y);
-        mouse_vec = World2Screen(Screen2World(mouse_vec));
-        Math::FRect Rect = { Math::FVec2(mouse_vec.x - 10.f, mouse_vec.y - 10.f), Math::FVec2(mouse_vec.x + 10.f, mouse_vec.y + 10.f) };
-        Graphics::DrawRect(ImColor(1.f, 1.f, 1.f, 1.f), Rect);
-    }
 }
 
 void Camera::Move(MoveWays move, float point)
@@ -117,28 +86,11 @@ void Camera::Move(MoveWays move, float point)
 
 	switch (move) 
 	{
-	case MoveWays::left:  CamCenter[0] -= CamScaledZoom * point; OffsetMove.values[0] += 5; OffsetMove.values[2] += 5; break;
-	case MoveWays::right: CamCenter[0] += CamScaledZoom * point; OffsetMove.values[0] -= 5; OffsetMove.values[2] -= 5; break;
-	case MoveWays::up:    CamCenter[1] += CamScaledZoom * point; OffsetMove.values[1] += 5; OffsetMove.values[3] += 5; break;
-	case MoveWays::down:  CamCenter[1] -= CamScaledZoom * point; OffsetMove.values[1] -= 5; OffsetMove.values[3] -= 5; break;
+	case MoveWays::left:  CamCenter[0] -= CamScaledZoom * point; break;
+	case MoveWays::right: CamCenter[0] += CamScaledZoom * point; break;
+	case MoveWays::up:    CamCenter[1] += CamScaledZoom * point; break;
+	case MoveWays::down:  CamCenter[1] -= CamScaledZoom * point; break;
 	}
-
-	auto ValidOffset = [](int16_t& Data)
-	{
-		if (Data > 50)
-			Data = 50;
-
-		if (Data < -50)
-			Data = -50;
-	};
-
-	ValidOffset(OffsetMove.values[0]);
-	ValidOffset(OffsetMove.values[1]);
-	ValidOffset(OffsetMove.values[2]);
-	ValidOffset(OffsetMove.values[3]);
-
-	BackgroundParallax = { -50, -50, window_width + 50, window_height + 50 };
-	BackgroundParallax += OffsetMove;
 }
 
 void Camera::Zoom(float value)
@@ -149,32 +101,32 @@ void Camera::Zoom(float value)
 
 bool Camera::IsAttached()
 {
-	return attached;
+	return Attached;
 }
 
 void Camera::Attach(EntityView entity)
 {
-	if (attached)
+	if (Attached)
 	{
 		Detach();
 	}
 
-	attached_entity = entity;
-	attached = true;
+	AttachedEntity = entity;
+	Attached = true;
 }
 
 void Camera::Detach()
 {
-	attached = false;
-	attached_entity = {};
+	Attached = false;
+	AttachedEntity = {};
 }
 
 void Camera::ResetView()
 {
-	CamZoom = 30.f;
+	CamZoom = 26.f;
 	CamScaledZoom = 16;
 
-    CamCenter = {496, 320};
+    CamCenter = {650, 440};
 }
 
 void Camera::ResetHW()
@@ -224,6 +176,7 @@ Math::FVec2 Camera::World2Screen(const Math::FVec2& worldPoint)
     Math::FVec2 ps;
     ps[0] = u * w;
     ps[1] = (1.0f - v) * h;
+
     return ps;
 }
 
@@ -238,12 +191,17 @@ float Camera::ScaleFactor(float in)
 
     float ws = std::abs(u);
     ws *= 1.f / CamScaledZoom;
-    ws *= 1.066f; // magic number
+    ws *= 1.03f; // magic number
 
     return in * ws;
 }
 
-bool Asura::GamePlay::Camera::CanSee(Math::FVec2 Pos)
+float Camera::Distance(float x, float x2)
+{
+	return std::abs(GamePlay::Camera::ScaleFactor(x2) - GamePlay::Camera::ScaleFactor(x));
+}
+
+bool Camera::CanSee(Math::FVec2 Pos)
 {
 	auto ScreenPos = World2Screen(Pos);
 
