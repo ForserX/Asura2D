@@ -67,7 +67,7 @@
 
 #include <entt/entt.hpp>
 #include <fu2/function2.hpp>
-
+#include "engine/render/opengl/glad.h"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>

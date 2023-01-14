@@ -45,3 +45,7 @@ extern Asura::GamePlay::holder_mode holder_type;
 
 // Audio
 extern float Volume;
+
+extern GLuint RenderShaderProgramDefault;
+extern GLuint RenderVBODefault, RenderVAODefault;
+

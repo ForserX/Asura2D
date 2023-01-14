@@ -75,8 +75,9 @@ namespace Asura::Window::Internal
 void Window::Init()
 {
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
 	glfwWindowHint(GLFW_DOUBLEBUFFER, 1);
 	glfwWindowHint(GLFW_DEPTH_BITS, 24);
@@ -88,6 +89,12 @@ void Window::Init()
 	// Setup window
 	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", fullscreen_mode ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 	glfwMakeContextCurrent(window_handle);
+
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		exit(-1);
+	}
+
 	glViewport(0, 0, window_width, window_height);
 
 	Internal::RegCallbacks();
