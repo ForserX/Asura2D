@@ -9,5 +9,5 @@ task:
   name: Linux ARM64 Build
   arm_container:
     image: alpine:latest
-  install_script: apk update && apk add --update cmake build-base make clang git libx11-dev
+  install_script: apk update && apk add --update xorg-server-dev cmake build-base make clang git libx11-dev
   script: git submodule update --init --recursive && mkdir build && cmake -B build && cmake --build build
