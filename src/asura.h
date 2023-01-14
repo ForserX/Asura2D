@@ -18,6 +18,7 @@
 #include <execution>
 #include <filesystem>
 #include <mutex>
+#include <sstream>
 
 #if 0
 // C++23 trash
