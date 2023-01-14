@@ -6,7 +6,8 @@ namespace Asura::Render
 	{
 		int x;
 		int y;
-		float Scale;
+		float ScaleX;
+		float ScaleY;
 		float Angle;
 		uint32_t TextureID;
 	};

@@ -10,40 +10,22 @@ GLuint RenderShaderProgramDefault;
 GLuint RenderVBODefault, RenderVAODefault;
 
 // Shaders
-const GLchar* vertexShaderSource = 
-"#version 330 core\n"
-"uniform mat4 ScreenMatrix;"
-"uniform mat4 WorldMatrix;"
-"layout (location = 0) in vec3 position;\n"
-"out vec2 TexCoord;\n"
-"void main()\n"
-"{\n"
-"gl_Position =ScreenMatrix*(WorldMatrix*vec4(position.x, position.y, position.z, 1.0));\n"
-"TexCoord = (vec2(position.x, position.y)+vec2(1,1))*0.5f;\n"
-"}\0";
-const GLchar* fragmentShaderSource = "#version 330 core\n"
-"out vec4 color;\n"
-"in vec2 TexCoord;\n"
-"uniform sampler2D InTexture;\n"
-"void main()\n"
-"{\n"
-"color = texture(InTexture, TexCoord);\n"
-"}\n\0";
-
 stl::vector<Render::RenderData> RenderList;
 
-void multiply(const float*mat1, const float*mat2,float*res)
+void multiply(const float* mat1, const float* mat2, float* res)
 {
 	int i, j, k;
-	for (i = 0; i < 4; i++) {
-		for (j = 0; j < 4; j++) 
+	for (i = 0; i < 4; i++)
+	{
+		for (j = 0; j < 4; j++)
 		{
-			res[i*4+j] = 0;
+			res[i * 4 + j] = 0;
 			for (k = 0; k < 4; k++)
-				res[i*4+j] += mat1[i*4+k] * mat2[k*4+j];
+				res[i * 4 + j] += mat1[i * 4 + k] * mat2[k * 4 + j];
 		}
 	}
 }
+
 void Render::Init()
 {
 	IMGUI_CHECKVERSION();
@@ -52,16 +34,28 @@ void Render::Init()
 
 	const ImGuiIO& io = ImGui::GetIO();
 	(void)io;
-	
+
 	ImGui_ImplGlfw_InitForOpenGL(window_handle, true);
-	ImGui_ImplOpenGL3_Init("#version 130");
+	ImGui_ImplOpenGL3_Init("#version 330");
 
 	Graphics::Init();
 	Graphics::theme::change();
 
+	auto Path = FileSystem::ContentDir();
+	Path.append("shaders").append("image_rotation_vs.glsl");
+	std::ostringstream sstr;
+
+	std::ifstream SFile;
+	SFile.open(Path);
+	sstr << SFile.rdbuf();
+	SFile.close();
+
+	const GLchar* StrVert = strdup(sstr.str().c_str());
+
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glShaderSource(vertexShader, 1, &StrVert, NULL);
 	glCompileShader(vertexShader);
+
 	// Check for compile time errors
 	GLint success;
 	GLchar infoLog[512];
@@ -71,12 +65,25 @@ void Render::Init()
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		//std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+
 	// Fragment shader
+	Path = FileSystem::ContentDir();
+	Path.append("shaders").append("image_rotation_ps.glsl");
+	sstr.str("");
+	sstr.clear();
+
+	std::ifstream VFile;
+	VFile.open(Path);
+	sstr << VFile.rdbuf();
+	VFile.close();
+	const GLchar* StrPix = strdup(sstr.str().c_str());
+
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glShaderSource(fragmentShader, 1, &StrPix, NULL);
 	glCompileShader(fragmentShader);
 	// Check for compile time errors
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
 	if (!success)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
@@ -89,16 +96,18 @@ void Render::Init()
 	glLinkProgram(RenderShaderProgramDefault);
 	// Check for linking errors
 	glGetProgramiv(RenderShaderProgramDefault, GL_LINK_STATUS, &success);
-	if (!success) {
+
+	if (!success)
+	{
 		glGetProgramInfoLog(RenderShaderProgramDefault, 512, NULL, infoLog);
-	//	std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+		//	std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 	}
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
 
 	// Set up vertex data (and buffer(s)) and attribute pointers
-	GLfloat vertices[] = 
+	GLfloat vertices[] =
 	{
 		 -1.f, -1.f, 0.0f, // Left  
 		 -1.f,  1.f, 0.0f, // Top   
@@ -118,7 +127,7 @@ void Render::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, RenderVBODefault);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,3 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
@@ -134,8 +143,8 @@ void Render::Destroy()
 	textures_list.clear();
 
 	glDeleteProgram(RenderShaderProgramDefault);
-	glDeleteBuffers(1,&RenderVBODefault);
-	glDeleteVertexArrays(1,&RenderVAODefault);
+	glDeleteBuffers(1, &RenderVBODefault);
+	glDeleteVertexArrays(1, &RenderVAODefault);
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
@@ -164,7 +173,7 @@ void Render::Tick(float dt)
 
 	{
 		OPTICK_EVENT("ImGui Render");
-		
+
 		// Rendering
 		ImGui::Render();
 	}
@@ -174,9 +183,8 @@ void Render::Tick(float dt)
 	glClearColor(clear_color[0] * 255, clear_color[1] * 255, clear_color[2] * 255, clear_color[3] * 255);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	auto RenderFrame = [dt](float Scale, float PosX, float PosY, float Angle, GLuint Texture)
+	auto RenderFrame = [dt](float ScaleX, float ScaleY, float PosX, float PosY, float Angle, GLuint Texture)
 	{
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -202,9 +210,9 @@ void Render::Tick(float dt)
 
 		const float WorldMatrix1[4][4] =
 		{
-			{Scale,0,0,0 },
-			{0,Scale,0,0 },
-			{0,0,Scale,0 },
+			{ScaleX,0,0,0 },
+			{0,ScaleY,0,0 },
+			{0,0,1,0 },
 			{PosX,PosY,0,1 },
 		};
 
@@ -235,12 +243,14 @@ void Render::Tick(float dt)
 		glDisable(GL_BLEND);
 	};
 
-	for (auto Data : RenderList)
+	for (auto &Data : RenderList)
 	{
-		RenderFrame(Data.Scale, Data.x, Data.y, Data.Angle, Data.TextureID);
+		RenderFrame(Data.ScaleX, Data.ScaleY, Data.x, Data.y, Data.Angle, Data.TextureID);
 	}
 
 	RenderList.clear();
+
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Asura::Render::Push(RenderData Data)
@@ -250,7 +260,7 @@ void Asura::Render::Push(RenderData Data)
 
 Render::texture_id Render::GetTexture(ResourcesManager::id_t resource_id)
 {
-    return LoadTexture(resource_id);
+	return LoadTexture(resource_id);
 }
 
 Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)

@@ -163,11 +163,27 @@ void Graphics::DrawBackground(ResourcesManager::id_t resource_id, bool UseParall
 	{
 		if (UseParallax)
 		{
-			ImGui::GetBackgroundDrawList()->AddImage(texture_id, BackgroundParallax.min(), BackgroundParallax.max());
+			Render::RenderData Data;
+			Data.x = BackgroundParallax.min().x;
+			Data.y = BackgroundParallax.min().y;
+			Data.ScaleX = BackgroundParallax.max().x;
+			Data.ScaleY = BackgroundParallax.max().y;
+
+			Data.Angle = 0;
+			Data.TextureID = (uint32_t)reinterpret_cast<size_t>(texture_id);
+			Render::Push(std::move(Data));
 		}
 		else
 		{
-			ImGui::GetBackgroundDrawList()->AddImage(texture_id, { 0, 0}, { fwindow_width + 50.f, fwindow_height + 50.f });
+			Render::RenderData Data;
+			Data.x = 0;
+			Data.y = 0;
+			Data.ScaleX = fwindow_width + 50.f;
+			Data.ScaleY = fwindow_height + 50.f;
+
+			Data.Angle = 0;
+			Data.TextureID = (uint32_t)reinterpret_cast<size_t>(texture_id);
+			Render::Push(std::move(Data));
 		}
     }
 }
@@ -191,13 +207,12 @@ void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesM
 	Render::RenderData Data;
 	Data.x = Center.x;
 	Data.y = Center.y;
-	Data.Scale = Radius;
+	Data.ScaleX = Radius;
+	Data.ScaleY = Radius;
 	Data.Angle = Object->get_body()->GetAngle();
 
 	Data.TextureID = (uint32_t)reinterpret_cast<size_t>(Render::GetTexture(ResID));
 	Render::Push(std::move(Data));
-
-	//ImGui::GetBackgroundDrawList()->AddImage(texture_id, StartPos, EndPos);
 }
 
 void Graphics::DrawTextureRect(ResourcesManager::id_t resource_id, const Math::FRect& Rect)
@@ -206,7 +221,15 @@ void Graphics::DrawTextureRect(ResourcesManager::id_t resource_id, const Math::F
 
 	if (texture_id != nullptr) 
 	{
-		ImGui::GetBackgroundDrawList()->AddImage(texture_id, Rect.min(), Rect.max());
+		Render::RenderData Data;
+		Data.x = Rect.min().x;
+		Data.y = Rect.min().y;
+		Data.ScaleX = Rect.max().x;
+		Data.ScaleY = Rect.max().y;
+
+		Data.Angle = 0;
+		Data.TextureID = (uint32_t)reinterpret_cast<size_t>(texture_id);
+		Render::Push(std::move(Data));
 	}
 }
 
