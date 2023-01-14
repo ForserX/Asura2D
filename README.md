@@ -6,7 +6,8 @@ cmake -B build
 cmake --build build
 ```
 ### CI 
-![example workflow](https://github.com/ForserX/Asura2D/actions/workflows/cmake.yml/badge.svg)
+Windows, Linux, MacOS: ![example workflow](https://github.com/ForserX/Asura2D/actions/workflows/cmake.yml/badge.svg)
+FreeBSD: ![example workflow](https://api.cirrus-ci.com/github/ForserX/Asura2D.svg)
 
 |__OS__|Windows|MacOS|Linux|BSD|
 |---|---|---|---|---|
