@@ -6,7 +6,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build-win64:
+  build-Win64(amd64):
     runs-on: windows-2022
 
     steps:
@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
 
-  build-macos:
+  build-MacOS(amd64):
     runs-on: macos-latest
 
     steps:
@@ -38,7 +38,7 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel
 
-  build-ubuntu:
+  build-Ubuntu(amd64):
     runs-on: ubuntu-latest
     env:
         CC: clang
