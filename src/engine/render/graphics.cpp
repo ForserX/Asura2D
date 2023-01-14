@@ -188,11 +188,16 @@ void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesM
 	float Radius = Camera::ScaleFactor(circle->m_radius);
 	Math::FVec2 TryRadius = { Radius, Radius };
 
-	Math::FVec2 StartPos = Center - TryRadius;
-	Math::FVec2 EndPos = Center + TryRadius;
+	Render::RenderData Data;
+	Data.x = Center.x;
+	Data.y = Center.y;
+	Data.Scale = Radius;
+	Data.Angle = Object->get_body()->GetAngle();
 
-	const ImTextureID texture_id = Render::GetTexture(ResID);
-	ImGui::GetBackgroundDrawList()->AddImage(texture_id, StartPos, EndPos);
+	Data.TextureID = (uint32_t)Render::GetTexture(ResID);
+	Render::Push(std::move(Data));
+
+	//ImGui::GetBackgroundDrawList()->AddImage(texture_id, StartPos, EndPos);
 }
 
 void Graphics::DrawTextureRect(ResourcesManager::id_t resource_id, const Math::FRect& Rect)

@@ -29,6 +29,9 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
 "{\n"
 "color = texture(InTexture, TexCoord);\n"
 "}\n\0";
+
+stl::vector<Render::RenderData> RenderList;
+
 void multiply(const float*mat1, const float*mat2,float*res)
 {
 	int i, j, k;
@@ -173,58 +176,76 @@ void Render::Tick(float dt)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	glUseProgram(RenderShaderProgramDefault);
-	unsigned int ScreenMatrix = glGetUniformLocation(RenderShaderProgramDefault, "ScreenMatrix");
-	float L = 0;
-	float R = 0 + window_width;
-	float T = 0;
-	float B = 0 + window_height;
-	const float ortho_projection[4][4] =
+	auto RenderFrame = [dt](float Scale, float PosX, float PosY, float Angle, GLuint Texture)
 	{
-		{ 2.0f / (R - L),   0.0f,         0.0f,   0.0f },
-		{ 0.0f,         2.0f / (T - B),   0.0f,   0.0f },
-		{ 0.0f,         0.0f,        -1.0f,   0.0f },
-		{ (R + L) / (L - R),  (T + B) / (B - T),  0.0f,   1.0f },
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+		glUseProgram(RenderShaderProgramDefault);
+		unsigned int ScreenMatrix = glGetUniformLocation(RenderShaderProgramDefault, "ScreenMatrix");
+		float L = 0;
+		float R = 0 + window_width;
+		float T = 0;
+		float B = 0 + window_height;
+		const float ortho_projection[4][4] =
+		{
+			{ 2.0f / (R - L),   0.0f,         0.0f,   0.0f },
+			{ 0.0f,         2.0f / (T - B),   0.0f,   0.0f },
+			{ 0.0f,         0.0f,        -1.0f,   0.0f },
+			{ (R + L) / (L - R),  (T + B) / (B - T),  0.0f,   1.0f },
+		};
+
+		glUniformMatrix4fv(ScreenMatrix, 1, GL_FALSE, &ortho_projection[0][0]);
+
+		unsigned int WorldMatrixID = glGetUniformLocation(RenderShaderProgramDefault, "WorldMatrix");
+
+		const float WorldMatrix1[4][4] =
+		{
+			{Scale,0,0,0 },
+			{0,Scale,0,0 },
+			{0,0,Scale,0 },
+			{PosX,PosY,0,1 },
+		};
+
+		//Angle *= M_PI;
+		const float WorldMatrix2[4][4] =
+		{
+			{cosf(Angle),sinf(Angle),0,0},
+			{-sinf(Angle),cosf(Angle),0,0 },
+			{0,0,1,0 },
+			{0,0,0,1 },
+		};
+		float ResultTest[4][4] = {};
+
+		multiply(&WorldMatrix2[0][0], &WorldMatrix1[0][0], &ResultTest[0][0]);
+
+		glUniformMatrix4fv(WorldMatrixID, 1, GL_FALSE, &ResultTest[0][0]);
+
+
+		glBindVertexArray(RenderVAODefault);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, Texture);
+		glUniform1i(glGetUniformLocation(RenderShaderProgramDefault, "InTexture"), 0);
+
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		glDisable(GL_BLEND);
 	};
 
-	glUniformMatrix4fv(ScreenMatrix, 1, GL_FALSE, &ortho_projection[0][0]);
-
-	unsigned int WorldMatrixID = glGetUniformLocation(RenderShaderProgramDefault, "WorldMatrix");
-	const float Scale = 50;
-	const float PosX=500,PosY=500;
-	const float WorldMatrix1[4][4] =
+	for (auto Data : RenderList)
 	{
-		{Scale,0,0,0 },
-		{0,Scale,0,0 },
-		{0,0,Scale,0 },
-		{PosX,PosY,0,1 },
-	};
+		RenderFrame(Data.Scale, Data.x, Data.y, Data.Angle, Data.TextureID);
+	}
 
-	static float Angle = 0;
-	Angle += dt * M_PI;
-	const float WorldMatrix2[4][4] =
-	{
-		{cosf(Angle),sinf(Angle),0,0},
-		{-sinf(Angle),cosf(Angle),0,0 },
-		{0,0,1,0 },
-		{0,0,0,1 },
-	};
-	float ResultTest[4][4] = {};
+	RenderList.clear();
+}
 
-	multiply(&WorldMatrix2[0][0], &WorldMatrix1[0][0], &ResultTest[0][0]);
-
-	glUniformMatrix4fv(WorldMatrixID, 1, GL_FALSE, &ResultTest[0][0]);
-
-
-	glBindVertexArray(RenderVAODefault);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 1);
-	glUniform1i(glGetUniformLocation(RenderShaderProgramDefault, "InTexture"), 0);
-
-
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
+void Asura::Render::Push(RenderData Data)
+{
+	RenderList.emplace_back(std::move(Data));
 }
 
 Render::texture_id Render::GetTexture(ResourcesManager::id_t resource_id)
