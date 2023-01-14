@@ -9,5 +9,5 @@ task:
   name: Linux ARM64 Build
   arm_container:
     image: ubuntu:latest
-  install_script: apt install xorg-dev cmake build-essentials git
+  install_script: apt update && apt upgrade && apt install xorg-dev cmake build-essentials git
   script: git submodule update --init --recursive && mkdir build && cmake -B build && cmake --build build
