@@ -6,7 +6,7 @@
           "cwd": "${workspaceFolder}",
           "type": "cppdbg",
           "request": "launch",
-          "program": "${workspaceFolder}/bins/bin/example",
+          "program": "${workspaceFolder}/bins/bin/example_game",
           "stopAtEntry": false,
           "environment": [],
           "externalConsole": false,

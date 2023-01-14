@@ -194,7 +194,7 @@ void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesM
 	Data.Scale = Radius;
 	Data.Angle = Object->get_body()->GetAngle();
 
-	Data.TextureID = (uint32_t)Render::GetTexture(ResID);
+	Data.TextureID = (uint32_t)reinterpret_cast<size_t>(Render::GetTexture(ResID));
 	Render::Push(std::move(Data));
 
 	//ImGui::GetBackgroundDrawList()->AddImage(texture_id, StartPos, EndPos);

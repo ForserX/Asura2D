@@ -92,7 +92,8 @@ void Window::Init()
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		exit(-1);
+		Debug::Msg("GLAD Load error");
+		game_assert(false, "glad init error!", {});
 	}
 
 	glViewport(0, 0, window_width, window_height);
