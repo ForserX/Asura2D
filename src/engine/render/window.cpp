@@ -90,7 +90,7 @@ void Window::Init()
 	window_handle = glfwCreateWindow(window_width, window_height, "Asura 2D", fullscreen_mode ? glfwGetPrimaryMonitor() : nullptr, nullptr);
 	glfwMakeContextCurrent(window_handle);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	if (!gladLoadGL())
 	{
 		Debug::Msg("GLAD Load error");
 		game_assert(false, "glad init error!", {});
