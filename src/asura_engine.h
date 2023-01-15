@@ -51,6 +51,7 @@
 #include "engine/render/ui.h"
 #include "engine/render/graphics.h"
 #include "engine/render/render.h"
+#include "engine/render/shaders/shader_program.h"
 
 #include "engine/engine/engine.h"
 #include "engine/engine/input.h"

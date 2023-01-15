@@ -6,11 +6,11 @@ using namespace Asura;
 stl::hash_map<ResourcesManager::id_t, ImTextureID> textures_list;
 
 
-GLuint RenderShaderProgramDefault;
 GLuint RenderVBODefault, RenderVAODefault;
 
 // Shaders
 stl::vector<Render::RenderData> RenderList;
+Render::Shaders::ShaderProgram* TextureShader;
 
 void Render::Init()
 {
@@ -27,99 +27,42 @@ void Render::Init()
 	Graphics::Init();
 	Graphics::theme::change();
 
-	auto Path = FileSystem::ContentDir();
-	Path.append("shaders").append("image_rotation_vs.glsl");
-	std::ostringstream sstr;
+	TextureShader = new Shaders::ShaderProgram("image_rotation_ps.glsl", "image_rotation_vs.glsl");
 
-	std::ifstream SFile;
-	SFile.open(Path);
-	sstr << SFile.rdbuf();
-	SFile.close();
-
-	const GLchar* StrVert = strdup(sstr.str().c_str());
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &StrVert, NULL);
-	glCompileShader(vertexShader);
-
-	// Check for compile time errors
-	GLint success;
-	GLchar infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
+	if (TextureShader->Build())
 	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		//std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		TextureShader->Link();
+		TextureShader->FreeBuildData();
+
+		// Set up vertex data (and buffer(s)) and attribute pointers
+		GLfloat vertices[] =
+		{
+			 -1.f, -1.f, 0.0f, // Left  
+			 -1.f,  1.f, 0.0f, // Top   
+			 1.f, -1.f, 0.0f, // Right 
+
+
+			 1.f, -1.f, 0.0f, // Right 
+			 -1.f,  1.f, 0.0f, // Top   
+			 1.f, 1.f, 0.0f, // Right 
+		};
+
+		glGenVertexArrays(1, &RenderVAODefault);
+		glGenBuffers(1, &RenderVBODefault);
+
+		// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+		glBindVertexArray(RenderVAODefault);
+
+		glBindBuffer(GL_ARRAY_BUFFER, RenderVBODefault);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
 	}
-
-	// Fragment shader
-	Path = FileSystem::ContentDir();
-	Path.append("shaders").append("image_rotation_ps.glsl");
-	sstr.str("");
-	sstr.clear();
-
-	std::ifstream VFile;
-	VFile.open(Path);
-	sstr << VFile.rdbuf();
-	VFile.close();
-	const GLchar* StrPix = strdup(sstr.str().c_str());
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &StrPix, NULL);
-	glCompileShader(fragmentShader);
-	// Check for compile time errors
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		//std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-	// Link shaders
-	RenderShaderProgramDefault = glCreateProgram();
-	glAttachShader(RenderShaderProgramDefault, vertexShader);
-	glAttachShader(RenderShaderProgramDefault, fragmentShader);
-	glLinkProgram(RenderShaderProgramDefault);
-	// Check for linking errors
-	glGetProgramiv(RenderShaderProgramDefault, GL_LINK_STATUS, &success);
-
-	if (!success)
-	{
-		glGetProgramInfoLog(RenderShaderProgramDefault, 512, NULL, infoLog);
-		//	std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-
-	// Set up vertex data (and buffer(s)) and attribute pointers
-	GLfloat vertices[] =
-	{
-		 -1.f, -1.f, 0.0f, // Left  
-		 -1.f,  1.f, 0.0f, // Top   
-		 1.f, -1.f, 0.0f, // Right 
-
-
-		 1.f, -1.f, 0.0f, // Right 
-		 -1.f,  1.f, 0.0f, // Top   
-		 1.f, 1.f, 0.0f, // Right 
-	};
-
-	glGenVertexArrays(1, &RenderVAODefault);
-	glGenBuffers(1, &RenderVBODefault);
-	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-	glBindVertexArray(RenderVAODefault);
-
-	glBindBuffer(GL_ARRAY_BUFFER, RenderVBODefault);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
-
-	glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
-
 }
 
 void Render::Destroy()
@@ -128,11 +71,12 @@ void Render::Destroy()
 
 	textures_list.clear();
 
-	glDeleteProgram(RenderShaderProgramDefault);
 	glDeleteBuffers(1, &RenderVBODefault);
 	glDeleteVertexArrays(1, &RenderVAODefault);
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+
+	delete(TextureShader);
 }
 
 
@@ -176,8 +120,8 @@ void Render::Tick(float dt)
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-		glUseProgram(RenderShaderProgramDefault);
-		unsigned int ScreenMatrix = glGetUniformLocation(RenderShaderProgramDefault, "ScreenMatrix");
+		auto RenderProgram = TextureShader->Use();
+		unsigned int ScreenMatrix = glGetUniformLocation(RenderProgram, "ScreenMatrix");
 		float L = 0;
 		float R = 0 + window_width;
 		float T = 0;
@@ -192,7 +136,7 @@ void Render::Tick(float dt)
 
 		glUniformMatrix4fv(ScreenMatrix, 1, GL_FALSE, &ortho_projection[0][0]);
 
-		unsigned int WorldMatrixID = glGetUniformLocation(RenderShaderProgramDefault, "WorldMatrix");
+		unsigned int WorldMatrixID = glGetUniformLocation(RenderProgram, "WorldMatrix");
 
 		const float WorldMatrix1[4][4] =
 		{
@@ -220,14 +164,14 @@ void Render::Tick(float dt)
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, Texture);
-		glUniform1i(glGetUniformLocation(RenderShaderProgramDefault, "InTexture"), 0);
+		glUniform1i(glGetUniformLocation(RenderProgram, "InTexture"), 0);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 		glDisable(GL_BLEND);
 	};
 
-	for (auto &Data : RenderList)
+	for (const auto &Data : RenderList)
 	{
 		RenderFrame(Data.ScaleX, Data.ScaleY, Data.x, Data.y, Data.Angle, Data.TextureID);
 	}

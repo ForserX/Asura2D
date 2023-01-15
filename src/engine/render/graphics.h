@@ -6,7 +6,7 @@ namespace Asura::Graphics
 
 	void Destroy();
 	void Tick(float dt);
-	void draw(float dt);
+	void Draw(float dt);
 	
 	void DrawPhysObject(b2Body* object, const ImColor& clr);
 	void DrawPhysObjectCircle(b2Body* object, const ImColor& clr);

@@ -274,13 +274,13 @@ void Graphics::Tick(float dt)
 	ImGui::SetNextWindowPos({ 0, 0 });
 	ImGui::SetNextWindowSize({ fwindow_width, fwindow_height });
 	
-	draw(dt);
+	Draw(dt);
 	
 	UI::Tick(dt);
 	Camera::Tick(dt);
 }
 
-void Graphics::draw(float dt)
+void Graphics::Draw(float dt)
 {
 	OPTICK_EVENT("Scene draw")
 	Systems::draw_tick(dt);

@@ -48,6 +48,11 @@ file(GLOB ASURA_ENGINE_RENDER_UI_SRC
 	"engine/render/ui/*.h"
 )
 
+file(GLOB ASURA_ENGINE_RENDER_SHADERS_SRC
+	"engine/render/shaders/*.cpp"
+	"engine/render/shaders/*.h"
+)
+
 file(GLOB ASURA_ENGINE_SYSTEMS_SRC
 	"engine/systems/*.cpp"
 	"engine/systems/*.h"
@@ -87,6 +92,7 @@ source_group("engine\\physics" FILES ${ASURA_ENGINE_PHYSICS_SRC})
 source_group("engine\\render" FILES ${ASURA_ENGINE_RENDER_SRC})
 source_group("engine\\render\\ui" FILES ${ASURA_ENGINE_RENDER_UI_SRC})
 source_group("engine\\render\\opengl" FILES ${ASURA_ENGINE_RENDER_OPENGL_SRC})
+source_group("engine\\render\\shaders" FILES ${ASURA_ENGINE_RENDER_SHADERS_SRC})
 source_group("engine\\systems" FILES ${ASURA_ENGINE_SYSTEMS_SRC})
 source_group("gameplay" FILES ${ASURA_ENGINE_GAMEPLAY_SRC})
 
@@ -96,6 +102,7 @@ list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_CORE_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_GAMEPLAY_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_ECES_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_AUDIO_SRC})
+list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_RENDER_SHADERS_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_NET_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_EDITOR_SRC})
 list(APPEND ENGINE_SRC_FILES ${ASURA_ENGINE_PHYSICS_SRC})
