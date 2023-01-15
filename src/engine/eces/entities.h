@@ -13,7 +13,7 @@ namespace Asura
 		entt::registry& Get() { return base_registry; }
 		
 		entt::entity Create() { return base_registry.create(); }
-		void Destroy(const entt::entity& entity) { base_registry.destroy(entity); }
+		void Destroy(const entt::entity& entity);
 	};
 	
 	class EntityView

@@ -19,59 +19,66 @@ Shaders::ShaderProgram::~ShaderProgram()
 bool Shaders::ShaderProgram::Build()
 {
 	auto Path = FileSystem::ContentDir();
-	Path.append("shaders").append(VertexShaderName);
-	std::ostringstream sstr;
 
-	std::ifstream SFile;
-	SFile.open(Path);
-	sstr << SFile.rdbuf();
-	SFile.close();
-
-	GLchar* StrVert = strdup(sstr.str().c_str());
-
-	glShaderSource(VertexShader, 1, &StrVert, NULL);
-	glCompileShader(VertexShader);
-
-	free(StrVert);
-
-	// Check for compile time errors
 	GLint SuccessBuild;
 	GLchar InfoLog[512];
-	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &SuccessBuild);
-	if (!SuccessBuild)
+	std::ostringstream StrBuff;
+
+	if (VertexShaderName.length() > 6)
 	{
-		glGetShaderInfoLog(VertexShader, 512, NULL, InfoLog);
-		game_assert(SuccessBuild, InfoLog, return false);
+		Path.append("shaders").append(VertexShaderName);
+
+		std::ifstream SFile;
+		SFile.open(Path);
+		StrBuff << SFile.rdbuf();
+		SFile.close();
+
+		GLchar* StrVert = strdup(StrBuff.str().c_str());
+
+		glShaderSource(VertexShader, 1, &StrVert, NULL);
+		glCompileShader(VertexShader);
+
+		free(StrVert);
+
+		// Check for compile time errors
+		glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &SuccessBuild);
+		if (!SuccessBuild)
+		{
+			glGetShaderInfoLog(VertexShader, 512, NULL, InfoLog);
+			game_assert(SuccessBuild, InfoLog, return false);
+		}
+		glAttachShader(RenderShaderProgramDefault, PixelShader);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	// Fragment shader
-	Path = FileSystem::ContentDir();
-	Path.append("shaders").append("image_rotation_ps.glsl");
-	sstr.str("");
-	sstr.clear();
-
-	std::ifstream VFile;
-	VFile.open(Path);
-	sstr << VFile.rdbuf();
-	VFile.close();
-	GLchar* StrPix = strdup(sstr.str().c_str());
-
-	glShaderSource(PixelShader, 1, &StrPix, NULL);
-	glCompileShader(PixelShader);
-	free(StrPix);
-
-	// Check for compile time errors
-	glGetShaderiv(PixelShader, GL_COMPILE_STATUS, &SuccessBuild);
-
-	if (!SuccessBuild)
+	if (PixelShaderName.length() > 6)
 	{
-		glGetShaderInfoLog(PixelShader, 512, NULL, InfoLog);
-		game_assert(SuccessBuild, InfoLog, return false);
-	}
+		Path = FileSystem::ContentDir();
+		Path.append("shaders").append(PixelShaderName);
+		StrBuff.str("");
+		StrBuff.clear();
 
-	glAttachShader(RenderShaderProgramDefault, VertexShader);
-	glAttachShader(RenderShaderProgramDefault, PixelShader);
+		std::ifstream VFile;
+		VFile.open(Path);
+		StrBuff << VFile.rdbuf();
+		VFile.close();
+		GLchar* StrPix = strdup(StrBuff.str().c_str());
+
+		glShaderSource(PixelShader, 1, &StrPix, NULL);
+		glCompileShader(PixelShader);
+		free(StrPix);
+
+		// Check for compile time errors
+		glGetShaderiv(PixelShader, GL_COMPILE_STATUS, &SuccessBuild);
+
+		if (!SuccessBuild)
+		{
+			glGetShaderInfoLog(PixelShader, 512, NULL, InfoLog);
+			game_assert(SuccessBuild, InfoLog, return false);
+		}
+		glAttachShader(RenderShaderProgramDefault, VertexShader);
+	}
 
 	return true;
 }

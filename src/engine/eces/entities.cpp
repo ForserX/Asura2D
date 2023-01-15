@@ -266,3 +266,11 @@ void Entities::AddSceneComponent(const EntityView& ent)
 
 	AddField<Entities::drawable_flag>(ent);
 }
+
+void Asura::Registry::Destroy(const entt::entity& entity)
+{
+	if (Entities::IsValid(entity))
+	{
+		base_registry.destroy(entity);
+	}
+}
