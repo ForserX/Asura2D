@@ -6,7 +6,7 @@ using namespace Asura::GamePlay;
 
 bool physical_debug_draw = false;
 
-void draw_system::Init()
+void RenderSystem::Init()
 {
 	color_map.resize(4096);
 
@@ -20,11 +20,11 @@ void draw_system::Init()
 	}
 }
 
-void draw_system::Reset()
+void RenderSystem::Reset()
 {
 }
 
-void draw_system::Tick(float dt)
+void RenderSystem::Tick(float dt)
 {
 	if (show_console)
 		return;

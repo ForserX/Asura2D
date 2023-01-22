@@ -2,6 +2,7 @@
 
 // Editor code
 extern bool is_editor_mode;
+extern bool EditorRealtimeMode;
 
 // Physical code
 extern bool physical_debug_draw;

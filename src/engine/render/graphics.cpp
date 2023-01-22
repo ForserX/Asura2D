@@ -283,7 +283,7 @@ void Graphics::Tick(float dt)
 void Graphics::Draw(float dt)
 {
 	OPTICK_EVENT("Scene draw")
-	Systems::draw_tick(dt);
+	Systems::RenderTick(dt);
 }
 
 void Graphics::theme::change()

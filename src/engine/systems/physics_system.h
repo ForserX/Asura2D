@@ -2,7 +2,7 @@
 
 namespace Asura::Systems
 {
-	class physics_system final : public system
+	class PhysicsSystem final : public ISystem
 	{
 	private:
 

@@ -279,7 +279,7 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 		PreTick();
 	}
 
-	if (is_editor_mode)
+	if (is_editor_mode && !EditorRealtimeMode)
 	{
 		return;
 	}
@@ -300,7 +300,7 @@ void Physics::PhysicsWorld::InternalTick(float dt)
 
 	{
 		OPTICK_EVENT("Physics Systems Destroy");
-		Systems::physics_tick(dt);
+		Systems::PhysTick(dt);
 	}
 
 	{

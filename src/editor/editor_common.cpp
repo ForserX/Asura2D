@@ -12,6 +12,7 @@ static Math::FVec2 start_mouse_position_absolute = {};
 static Math::FVec2 last_mouse_position_absolute = {};
 
 bool is_editor_mode = false;
+bool EditorRealtimeMode = false;
 
 void Editor::Init()
 {

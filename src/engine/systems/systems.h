@@ -2,12 +2,13 @@
 
 namespace Asura
 {
-	class system : entt::process<system, float> 
+	class ISystem : entt::process<ISystem, float>
 	{
 	public:
-		virtual ~system() = default;
-		system(system&&) = default;
-		system() = default;
+		ISystem(ISystem&&) = default;
+		ISystem() = default;
+
+		virtual ~ISystem() = default;
 
 	public:
 		virtual void Init() = 0;
@@ -16,44 +17,28 @@ namespace Asura
 
 	};
 
-	class updater : entt::process<system, float>
+	namespace Systems
 	{
-		void update(delta_type delta, void* ptr) 
+		enum class UpdateType
 		{
-			system* sys = static_cast<system*>(ptr);
-			if (sys == nullptr) {
-				fail();
-				return;
-			}
+			befor,
+			update,
+			after,
+			render,
+			physics
+		};
 
-			sys->Tick(delta);
-			succeed();
-		}
-	};
-}
+		void Unsubscribe(ISystem* InObj, UpdateType Type);
+		void Subscribe(ISystem* InObj, UpdateType Type);
 
-namespace Asura::Systems
-{
-	enum class update_type
-	{
-		pre_update_schedule,
-		update_schedule,
-		post_update_schedule,
-		draw_schedule,
-		physics_schedule
-	};
-	
-	void delete_system(system* system_to_delete, update_type type);
-	void add_system(system* system_to_add, update_type type);
-		
-	void pre_init();
-	void Init();
-	void Destroy();
-	
-	void pre_tick(float dt);
-	void Tick(float dt);
-	void post_tick(float dt);
-	void draw_tick(float dt);
-	void physics_tick(float dt);
+		void PreInit();
+		void Init();
+		void Destroy();
+
+		void BeforTick(float dt);
+		void Tick(float dt);
+		void AfterTick(float dt);
+		void RenderTick(float dt);
+		void PhysTick(float dt);
+	}
 }
- 

@@ -4,15 +4,15 @@ using namespace Asura::Systems;
 
 constexpr float y_destroy_coord = -100.f;
 
-void physics_system::Init()
+void PhysicsSystem::Init()
 {
 }
 
-void physics_system::Reset()
+void PhysicsSystem::Reset()
 {
 }
 
-void physics_system::Tick(float dt)
+void PhysicsSystem::Tick(float dt)
 {
 	OPTICK_EVENT("engine Physics system Destroy");
 

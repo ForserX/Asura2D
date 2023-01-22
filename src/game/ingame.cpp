@@ -3,24 +3,22 @@
 using namespace Asura;
 using namespace Asura::Systems;
 
-stl::vector<std::unique_ptr<Asura::system>> pre_game_update_systems;
-stl::vector<std::unique_ptr<Asura::system>> game_update_systems;
-stl::vector<std::unique_ptr<Asura::system>> post_game_update_systems;
-stl::vector<std::unique_ptr<Asura::system>> game_physics_systems;
-stl::vector<std::unique_ptr<Asura::system>> game_draw_systems;
+stl::vector<std::unique_ptr<Asura::ISystem>> pre_game_update_systems;
+stl::vector<std::unique_ptr<Asura::ISystem>> game_update_systems;
+stl::vector<std::unique_ptr<Asura::ISystem>> post_game_update_systems;
+stl::vector<std::unique_ptr<Asura::ISystem>> game_physics_systems;
+stl::vector<std::unique_ptr<Asura::ISystem>> game_draw_systems;
 
-stl::vector<EntityView> circles;
 std::random_device r_device;
 static std::mt19937 gen(r_device());
 
 using namespace Entities;
 #if 1
-class random_a final : public Asura::system
+class RandomSys final : public Asura::ISystem
 {
 
 public:
-	random_a() = default;
-	random_a(random_a&&) = default;
+	RandomSys() = default;
 
 	virtual void Init() override {};
 	virtual void Reset() override {};
@@ -44,17 +42,17 @@ public:
 		);
 
 
-		const auto& Ent = circles.emplace_back(CreatePhysBody(RandGenParam));
+		const auto& Ent = CreatePhysBody(RandGenParam);
 		AddField<drawable_flag>(Ent);
 		AddTexture(Ent, "textures/ball.png", false);
 	};
 };
 #endif
+
 void init_systems()
 {
-	game_update_systems.emplace_back(std::make_unique<random_a>());
+	game_update_systems.emplace_back(std::make_unique<RandomSys>());
 }
-
 
 void ingame::pre_init()
 {
@@ -62,27 +60,27 @@ void ingame::pre_init()
 
 	for (auto& system : pre_game_update_systems) 
 	{
-		add_system(system.get(), update_type::pre_update_schedule);
+		Subscribe(system.get(), UpdateType::befor);
 	}
 	
 	for (auto& system : game_update_systems) 
 	{
-		add_system(system.get(), update_type::update_schedule);
+		Subscribe(system.get(), UpdateType::update);
 	}
 
 	for (auto& system : post_game_update_systems) 
 	{
-		add_system(system.get(), update_type::post_update_schedule);
+		Subscribe(system.get(), UpdateType::after);
 	}
 
 	for (auto& system : game_physics_systems) 
 	{
-		add_system(system.get(), update_type::physics_schedule);
+		Subscribe(system.get(), UpdateType::physics);
 	}
 	
 	for (auto& system : game_draw_systems) 
 	{
-		add_system(system.get(), update_type::draw_schedule);
+		Subscribe(system.get(), UpdateType::render);
 	}
 }
 

@@ -6,7 +6,7 @@ using namespace Asura;
 void game::Init()
 {
 	Physics::Init();
-	Systems::pre_init();
+	Systems::PreInit();
 	Systems::Init();
 	Entities::Init();
 	Level::Init();
@@ -41,7 +41,7 @@ void game::Tick(float dt)
 #endif
 	{
 		OPTICK_EVENT("Systems pre Destroy");
-		Systems::pre_tick(dt);
+		Systems::BeforTick(dt);
 	}
 
 	{
@@ -66,7 +66,7 @@ void game::Tick(float dt)
 
 	{
 		OPTICK_EVENT("Systems post Destroy");
-		Systems::post_tick(dt);
+		Systems::AfterTick(dt);
 	}
 }
 

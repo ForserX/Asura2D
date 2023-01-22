@@ -2,7 +2,7 @@
 
 namespace Asura::Systems
 {
-	class draw_system final : public system
+	class RenderSystem final : public ISystem
 	{
 	private:
 		std::random_device r_device;
@@ -11,7 +11,7 @@ namespace Asura::Systems
 		stl::vector<ImColor> color_map;
 		
 	public:
-		draw_system() : r_engine(r_device()) {}
+		RenderSystem() : r_engine(r_device()) {}
 		
 		void Init() override;
 		void Reset() override;

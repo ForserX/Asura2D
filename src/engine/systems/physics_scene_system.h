@@ -2,7 +2,7 @@
 
 namespace Asura::Systems
 {
-    class physics_scene_system final : public system
+    class SceneSystem final : public ISystem
     {
     public:
         void Init() override;

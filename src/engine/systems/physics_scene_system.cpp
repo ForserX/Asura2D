@@ -2,15 +2,15 @@
 
 using namespace Asura::Systems;
 
-void physics_scene_system::Init()
+void SceneSystem::Init()
 {
 }
 
-void physics_scene_system::Reset()
+void SceneSystem::Reset()
 {
 }
 
-void physics_scene_system::Tick(float dt)
+void SceneSystem::Tick(float dt)
 {
     Entities::AccessView([]()
     {
