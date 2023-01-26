@@ -15,7 +15,7 @@ namespace Asura::Graphics
 	void DrawRect(ImColor color, const Math::FRect& Rect, bool filled = true);
 	void DrawTextureRect(ResourcesManager::id_t resource_id, const Math::FRect& Rect);
 	void DrawBackground(ResourcesManager::id_t resource_id, bool UseParallax);
-	void DrawTextureObject(Physics::PhysicsBody* Object, ResourcesManager::id_t resource_id);
+	void DrawTextureObject(Physics::PhysicsBody* Object, ResourcesManager::id_t resource_id, bool MirrorTexture = false);
 
 	namespace theme
 	{

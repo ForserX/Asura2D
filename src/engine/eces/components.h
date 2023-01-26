@@ -57,6 +57,11 @@ namespace Asura::Entities
 		bool use_parallax = false;
 	};
 
+	struct draw_texture_npc_component
+	{
+		bool MirrorX = false;
+	};
+
 	struct scene_component
 	{
         Math::FVec2 size;
@@ -89,3 +94,4 @@ VISITABLE_STRUCT(Asura::Entities::draw_gradient_component, first_color, second_c
 VISITABLE_STRUCT(Asura::Entities::draw_texture_component, texture_resource);
 VISITABLE_STRUCT(Asura::Entities::scene_component, size, Transform);
 VISITABLE_STRUCT(Asura::Entities::camera_component, cam_zoom, cam_transform);
+VISITABLE_STRUCT(Asura::Entities::draw_texture_npc_component, MirrorX);

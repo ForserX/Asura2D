@@ -1,11 +1,11 @@
 #pragma once
 
-namespace Asura::GamePlay::Holder::player
+namespace Asura::GamePlay::Holder::Player
 {
 	void Init();
 	void Tick();
 	void Destroy();
 
-	void Attach(EntityBase entity);
-	void Detach();
+	void Bind(EntityView entity);
+	void Unbind();
 }

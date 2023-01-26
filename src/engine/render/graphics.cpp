@@ -170,7 +170,7 @@ void Graphics::DrawBackground(ResourcesManager::id_t resource_id, bool UseParall
 	}
 }
 
-void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesManager::id_t ResID)
+void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesManager::id_t ResID, bool MirrorTexture)
 {
 	auto Fixture = Object->GetBody()->GetFixtureList();
 
@@ -209,6 +209,7 @@ void Asura::Graphics::DrawTextureObject(Physics::PhysicsBody* Object, ResourcesM
 	}
 
 	Data.Angle = Object->GetBody()->GetAngle();
+	Data.MirrorX = MirrorTexture;
 	Data.TextureID = (uint32_t)reinterpret_cast<size_t>(Render::GetTexture(ResID));
 	Render::Push(std::move(Data));
 }

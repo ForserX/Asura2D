@@ -136,7 +136,7 @@ void HFKeyCallback(int16_t scan_code, Input::State state)
 
         if (Body != nullptr)
         {
-            GamePlay::Holder::player::Attach(Entities::GetEntityByBbody(Body->GetBody()));
+            GamePlay::Holder::Player::Bind(Entities::GetEntityByBbody(Body->GetBody()));
             holder_type = GamePlay::holder_mode::Player;
         }
     }

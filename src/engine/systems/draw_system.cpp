@@ -105,7 +105,8 @@ void RenderSystem::Tick(float dt)
 
 							if (TextureEntt)
 							{
-								Graphics::DrawTextureObject(PhysBody, TextureEntt->texture_resource);
+								bool Mirror = !!Entities::TryGet<draw_texture_npc_component>(entity) && Entities::TryGet<draw_texture_npc_component>(entity)->MirrorX;
+								Graphics::DrawTextureObject(PhysBody, TextureEntt->texture_resource, Mirror);
 							}
 							else
 							{
@@ -119,7 +120,8 @@ void RenderSystem::Tick(float dt)
 
 							if (TextureEntt)
 							{
-								Graphics::DrawTextureObject(PhysBody, TextureEntt->texture_resource);
+								bool Mirror = !!Entities::TryGet<draw_texture_npc_component>(entity) && Entities::TryGet<draw_texture_npc_component>(entity)->MirrorX;
+								Graphics::DrawTextureObject(PhysBody, TextureEntt->texture_resource, Mirror);
 							}
 							else
 							{

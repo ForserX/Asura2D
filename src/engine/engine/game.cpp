@@ -12,8 +12,8 @@ void game::Init()
 	Level::Init();
 
 	GamePlay::Holder::Free::Init();
-	GamePlay::Holder::Free::Init();
-	GamePlay::Holder::player::Init();
+	GamePlay::Holder::Player::Init();
+	GamePlay::Holder::PlayerFree::Init();
 
 	Editor::Init();
 
@@ -25,7 +25,7 @@ void game::Destroy()
 	Editor::Destroy();
 
 	GamePlay::Holder::Free::Destroy();
-	GamePlay::Holder::player::Destroy();
+	GamePlay::Holder::Player::Destroy();
 
 	Level::Destroy();
 	Entities::Destroy();

@@ -6,7 +6,7 @@ static EntityView* CurrentEntity = nullptr;
 
 static int64_t HPInputID = 0;
 
-void GamePlay::Holder::player::Init()
+void GamePlay::Holder::Player::Init()
 {
 	auto KeyCallback = [](int16_t scan_code, Asura::Input::State state)
 	{
@@ -16,6 +16,7 @@ void GamePlay::Holder::player::Init()
 		auto TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get());
 		auto pBody = TryEntt.body;
 
+		auto TryEnttTexInfo = Entities::TryGet<Entities::draw_texture_npc_component>(CurrentEntity->Get());
 		if (scan_code == GLFW_KEY_W)
 		{
 			if (!pBody->IsFlying())
@@ -25,47 +26,49 @@ void GamePlay::Holder::player::Init()
 		}
 		else if(scan_code == GLFW_KEY_A)
 		{
-			pBody->ApplyImpulse({ -700, 0 });
+			pBody->ApplyImpulse({ pBody->get_mass() * -10.f, 0 });
+			TryEnttTexInfo->MirrorX = true;
 		}
 		else if (scan_code == GLFW_KEY_D)
 		{
-			pBody->ApplyImpulse({ 700, 0 });
+			pBody->ApplyImpulse({ pBody->get_mass() * 10.f, 0 });
+			TryEnttTexInfo->MirrorX = false;
 		}
 	};
 
 	HPInputID = Input::Emplace(KeyCallback);
 }
 
-void GamePlay::Holder::player::Tick()
+void GamePlay::Holder::Player::Tick()
 {
 	if (CurrentEntity && !Entities::IsValid(*CurrentEntity))
 	{
-		Detach();
+		Unbind();
 	}
 }
 
-void GamePlay::Holder::player::Destroy()
+void GamePlay::Holder::Player::Destroy()
 {
 	if (Attached)
 	{
-		Detach();
+		Unbind();
 	}
 
 	Input::Erase(HPInputID);
 }
 
-void GamePlay::Holder::player::Attach(EntityBase entity)
+void GamePlay::Holder::Player::Bind(EntityView entity)
 {
 	CurrentEntity = new EntityView(entity);
 
 	Physics::PhysicsBody* TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get()).body;
-	TryEntt->BlockRotation(true);
+	//TryEntt->BlockRotation(true);
 
 	Attached = true;
 	Camera::Attach(entity);
 }
 
-void GamePlay::Holder::player::Detach()
+void GamePlay::Holder::Player::Unbind()
 {
 	Physics::PhysicsBody* TryEntt = Entities::Get<Entities::physics_body_component>(CurrentEntity->Get()).body;
 	TryEntt->BlockRotation(false);

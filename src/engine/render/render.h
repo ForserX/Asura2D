@@ -10,6 +10,8 @@ namespace Asura::Render
 		float ScaleY;
 		float Angle;
 		uint32_t TextureID;
+
+		bool MirrorX = false;
 	};
 
     using texture_id = ImTextureID;
