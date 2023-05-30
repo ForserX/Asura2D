@@ -47,12 +47,10 @@
 #else
 #if defined(OS_LINUX) || defined(OS_BSD)
 #	include <sys/ptrace.h>
-#	include <sys/wait.h>
 #endif
 #ifdef OS_SOLARIS
-#include <alloca.h>
-#include <sys/unistd.h>
-#include <sys/wait.h>
+#	include <alloca.h>
+#	include <sys/unistd.h>
 #endif
 #ifdef OS_APPLE_SERIES
 #	include <assert.h>
@@ -65,6 +63,7 @@
 #	include <iostream>
 #	include <cxxabi.h>
 #	include <unistd.h>
+#	include <sys/wait.h>
 #endif
 #include <pthread.h>
 #endif

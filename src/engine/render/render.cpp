@@ -4,7 +4,7 @@
 
 using namespace Asura;
 
-stl::hash_map<ResourcesManager::id_t, ImTextureID> textures_list;
+stl::hash_map<ResourcesManager::id_t, ImTextureID> TextureList;
 
 GLuint RenderVBODefault;
 GLuint RenderVAODefault;
@@ -40,7 +40,7 @@ void Render::Destroy()
 {
 	Graphics::Destroy();
 
-	textures_list.clear();
+	TextureList.clear();
 
 	glDeleteBuffers(1, &RenderVBODefault);
 	glDeleteVertexArrays(1, &RenderVAODefault);
@@ -116,9 +116,9 @@ Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 {
 	static uint32_t DTexture = 0;
 
-	if (textures_list.contains(resource_id))
+	if (TextureList.contains(resource_id))
 	{
-		return textures_list.at(resource_id);
+		return TextureList.at(resource_id);
 	}
 
 	Texture ImageBytes = {};
@@ -139,7 +139,7 @@ Render::texture_id Render::LoadTexture(ResourcesManager::id_t resource_id)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	ImTextureID texture_handle = (ImTextureID)(intptr_t)DTexture;
-	textures_list[resource_id] = texture_handle;
+	TextureList[resource_id] = texture_handle;
 
 	return texture_handle;
 }

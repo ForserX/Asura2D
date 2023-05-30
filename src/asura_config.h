@@ -2,43 +2,44 @@
 
 // OS Global Defines
 #ifdef _WIN32
-#define OS_WINDOWS
+#	define OS_WINDOWS
 #endif
 
 #ifdef __linux__
-#define OS_LINUX
-#define OS_UNIX
+#	define OS_LINUX
+#	define OS_UNIX
 #endif
 
 #ifdef __ANDROID__
-#define OS_ANDROID
-#define OS_UNIX
+#	define OS_ANDROID
+#	define OS_UNIX
 #endif
 
 #ifdef __APPLE__
-#define OS_APPLE_SERIES
-#include <TargetConditionals.h>
-#if TARGET_IPHONE_SIMULATOR | TARGET_OS_IPHONE
-#define OS_IOS
-#elif TARGET_OS_MAC
-#define OS_MACOS
-#endif
+#	define OS_APPLE_SERIES
+#	include <TargetConditionals.h>
 
-#define OS_UNIX
+#	if TARGET_IPHONE_SIMULATOR | TARGET_OS_IPHONE
+#		define OS_IOS
+#	elif TARGET_OS_MAC
+#		define OS_MACOS
+#	endif
+
+#	define OS_UNIX
 #endif
 
 #if defined(__FREEBSD__) || defined(__FreeBSD__)
-#define OS_BSD
-#define OS_UNIX
+#	define OS_BSD
+#	define OS_UNIX
 #endif
 
 #if defined(__sun)
-#define OS_SOLARIS
-#define OS_UNIX
+#	define OS_SOLARIS
+#	define OS_UNIX
 #endif
 
 #if !defined(OS_LINUX) && !defined(OS_SOLARIS)
-#define ASURA_ALLOCATOR_USE
+#	define ASURA_ALLOCATOR_USE
 #endif
 
 // #define ASURA_VULKAN
