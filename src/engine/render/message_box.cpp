@@ -1,25 +1,24 @@
 #include "pch.h"
 
-using Asura::MessageBox::Style;
 using Asura::MessageBox::Buttons;
 using Asura::MessageBox::Selection;
+using Asura::MessageBox::Style;
 
-#if defined(OS_MACOS) || defined(OS_LINUX) || defined(OS_BSD)
-namespace Asura::MessageBox
+#if defined(OS_MACOS) || defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
+namespace Asura::MessageBox {
+Selection Show(const char* message, const char* title, Style style, Buttons buttons)
 {
-    Selection Show(const char* message, const char* title, Style style, Buttons buttons) 
-    {
 #ifndef OS_MACOS
-        std::string message_app = "xmessage";
+    std::string message_app = "xmessage";
 #else
-        std::string message_app = "osascript -e"; // TODO: Check this
+    std::string message_app = "osascript -e"; // TODO: Check this
 #endif
-        std::string command = fmt::format("{} \"{}\"", message_app, message);
+    std::string command = fmt::format("{} \"{}\"", message_app, message);
 
-        std::system(command.c_str());
+    std::system(command.c_str());
 
-        return Selection::OK;
-    }
+    return Selection::OK;
+}
 }
 #elif defined(OS_WINDOWS)
 
@@ -39,7 +38,7 @@ UINT getIcon(Style style)
     }
 }
 
-UINT getButtons(Buttons buttons) 
+UINT getButtons(Buttons buttons)
 {
     switch (buttons) {
     case Buttons::OK:
@@ -53,7 +52,7 @@ UINT getButtons(Buttons buttons)
     }
 }
 
-Selection getSelection(int response) 
+Selection getSelection(int response)
 {
     switch (response) {
     case IDOK:
@@ -69,17 +68,15 @@ Selection getSelection(int response)
     }
 }
 
-namespace Asura::MessageBox
+namespace Asura::MessageBox {
+Selection Show(const char* message, const char* title, Style style, Buttons buttons)
 {
-    Selection Show(const char* message, const char* title, Style style, Buttons buttons)
-    {
-        UINT flags = MB_TASKMODAL;
+    UINT flags = MB_TASKMODAL;
 
-        flags |= getIcon(style);
-        flags |= getButtons(buttons);
+    flags |= getIcon(style);
+    flags |= getButtons(buttons);
 
-        return getSelection(MessageBoxA(nullptr, message, title, flags));
-    }
+    return getSelection(MessageBoxA(nullptr, message, title, flags));
+}
 }
 #endif
-

@@ -49,6 +49,11 @@
 #	include <sys/ptrace.h>
 #	include <sys/wait.h>
 #endif
+#ifdef OS_SOLARIS
+#include <alloca.h>
+#include <sys/unistd.h>
+#include <sys/wait.h>
+#endif
 #ifdef OS_APPLE_SERIES
 #	include <assert.h>
 #	include <stdbool.h>

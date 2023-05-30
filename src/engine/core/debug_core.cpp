@@ -33,47 +33,39 @@ void OutputDebugString(const char* data)
     if (!IsDebuggerPresent())
         return;
 
-	std::cout << "Asura Engine: " << data << std::endl;
+    std::cout << "Asura Engine: " << data << std::endl;
 }
 
-
-#elif defined(OS_LINUX) || defined(OS_BSD)
+#elif defined(OS_LINUX) || defined(OS_BSD) || defined(OS_SOLARIS)
 
 bool GDBDebuggerPresent()
 {
     int res = 0;
-#ifndef OS_BSD
+#if !defined(OS_BSD) && !defined(OS_SOLARIS)
     int pid = fork();
 
-    if (pid == -1)
-    {
+    if (pid == -1) {
         perror("fork");
         return -1;
     }
 
-    if (pid == 0)
-    {
+    if (pid == 0) {
         int ppid = getppid();
 
         /* Child */
-        if (ptrace(PTRACE_ATTACH, ppid, NULL, NULL) == 0)
-        {
+        if (ptrace(PTRACE_ATTACH, ppid, NULL, NULL) == 0) {
             /* Wait for the parent to stop and continue it */
             waitpid(ppid, NULL, 0);
             ptrace(PTRACE_CONT, NULL, NULL);
 
             /* Detach */
             ptrace(PTRACE_DETACH, getppid(), NULL, NULL);
-        }
-        else
-        {
+        } else {
             /* Trace failed so GDB is present */
             res = 1;
         }
         exit(res);
-    }
-    else
-    {
+    } else {
         int status;
         waitpid(pid, &status, 0);
         res = WEXITSTATUS(status);
@@ -88,7 +80,7 @@ bool GDBDebuggerPresent()
 inline void DebugBreak()
 {
     using BYTE = unsigned char;
-	BYTE bCrash = *(BYTE*)(nullptr);
+    BYTE bCrash = *(BYTE*)(nullptr);
 }
 
 void OutputDebugString(const char* data)
@@ -120,12 +112,12 @@ static void illegal_instruction_handler(int signal)
 
 void Debug::Init()
 {
-	FileSystem::Path log_path = FileSystem::UserdataDir();
-	log_path.append("user.log");
+    FileSystem::Path log_path = FileSystem::UserdataDir();
+    log_path.append("user.log");
 
-	FileSystem::CreateFile(log_path);
+    FileSystem::CreateFile(log_path);
 
-	log_file.open(log_path);
+    log_file.open(log_path);
 
     std::signal(SIGABRT, abort_handler);
 #ifdef OS_WINDOWS
@@ -139,24 +131,23 @@ void Debug::Init()
 
 void Debug::Destroy()
 {
-	log_file.close();
+    log_file.close();
 }
 
 void Debug::show_error(stl::string_view message)
 {
-	print_message(message);
+    print_message(message);
     MessageBox::Show(message.data(), "Error!");
-    
-	if (dbg_atttached())
-    {
+
+    if (dbg_atttached()) {
         dbg_break();
     }
 }
 
 void Debug::print_message(stl::string_view message)
 {
-	log_file << message << std::endl;
-	UI::PushString(message);
+    log_file << message << std::endl;
+    UI::PushString(message);
     dbg_print(message);
 }
 

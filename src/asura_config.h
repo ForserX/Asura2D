@@ -19,9 +19,9 @@
 #define OS_APPLE_SERIES
 #include <TargetConditionals.h>
 #if TARGET_IPHONE_SIMULATOR | TARGET_OS_IPHONE
-#   define OS_IOS
+#define OS_IOS
 #elif TARGET_OS_MAC
-#   define OS_MACOS
+#define OS_MACOS
 #endif
 
 #define OS_UNIX
@@ -32,10 +32,15 @@
 #define OS_UNIX
 #endif
 
-#if !defined(OS_LINUX)
-    #define ASURA_ALLOCATOR_USE
+#if defined(__sun)
+#define OS_SOLARIS
+#define OS_UNIX
 #endif
 
-//#define ASURA_VULKAN
-//#define ASURA_DX12
-//#define ASURA_USE_STD_CONTAINERS
+#if !defined(OS_LINUX) && !defined(OS_SOLARIS)
+#define ASURA_ALLOCATOR_USE
+#endif
+
+// #define ASURA_VULKAN
+// #define ASURA_DX12
+// #define ASURA_USE_STD_CONTAINERS
