@@ -4,6 +4,8 @@ using namespace Asura;
 
 FileSystem::Reader::Reader(stl::string FileName) : Pos(0)
 {
+	Platform::NormalizePath(FileName);
+
 	File = std::move((FileSystem::ContentDir() / FileName).generic_string());
 
 	std::fstream FileStream;
@@ -48,7 +50,10 @@ void FileSystem::Reader::Get(void* Buffer, size_t Offset)
 
 void FileSystem::Writer::Save(stl::string_view FileName)
 {
-	auto File = std::move((FileSystem::ContentDir() / FileName).generic_string());
+	stl::string Path = FileName.data();
+	Platform::NormalizePath(Path);
+
+	auto File = std::move((FileSystem::ContentDir() / Path).generic_string());
 
 	std::fstream FileStream;
 	FileStream.open(File, std::ios_base::out | std::ios::binary);

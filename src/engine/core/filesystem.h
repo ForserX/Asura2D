@@ -27,3 +27,9 @@ namespace Asura
 		return stl::string(Path.generic_string());
 	};
 }
+
+namespace Asura::FileSystem::Platform
+{
+	void NormalizePath(stl::string& Path);
+	void NormalizePath(FileSystem::Path& Path);
+}

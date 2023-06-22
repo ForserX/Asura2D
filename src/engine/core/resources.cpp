@@ -129,6 +129,7 @@ const std::chrono::nanoseconds& ResourcesManager::LastUpdateTime()
 
 stl::expected<ResourcesManager::id_t> ResourcesManager::Load(FileSystem::Path file_name)
 {
+    FileSystem::Platform::NormalizePath(file_name);
     id_t resource_id = GetID(file_name.generic_string().c_str());
     if (Exists(resource_id)) 
     {
@@ -136,13 +137,6 @@ stl::expected<ResourcesManager::id_t> ResourcesManager::Load(FileSystem::Path fi
     }
 
     stl::string TryFileName = file_name.generic_string().data();
-#ifdef OS_UNIX
-    std::transform(TryFileName.begin(), TryFileName.end(), TryFileName.begin(),
-        [](unsigned char Symbol)
-        {
-            return Symbol == '\\' ? '/' : Symbol;
-        });
-#endif
 
     auto Path = FileSystem::ContentDir();
     Path.append(TryFileName);

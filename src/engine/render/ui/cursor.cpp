@@ -8,6 +8,8 @@ static stl::vector<Render::texture_id> Data;
 
 size_t CursorManager::Register(FileSystem::Path File)
 {
+	FileSystem::Platform::NormalizePath(File);
+
 	auto ResData = ResourcesManager::Load(File);
 	auto TextureID = Render::LoadTexture(ResData.Get());
 	Data.push_back(TextureID);

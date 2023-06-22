@@ -6,6 +6,9 @@ using namespace Asura::Render;
 Shaders::ShaderProgram::ShaderProgram(stl::string_view Pixel, stl::string_view Vertex) noexcept
 	: PixelShaderName(Pixel.data()), VertexShaderName(Vertex.data())
 {
+	FileSystem::Platform::NormalizePath(PixelShaderName);
+	FileSystem::Platform::NormalizePath(VertexShaderName);
+
 	RenderShaderProgramDefault = glCreateProgram();
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	PixelShader = glCreateShader(GL_FRAGMENT_SHADER);

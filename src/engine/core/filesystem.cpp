@@ -75,10 +75,17 @@ const FileSystem::Path& FileSystem::UserdataDir()
 
 void FileSystem::CreateFile(const FileSystem::Path& file_name)
 {
-	const auto file_iter = file_list.find(file_name.generic_string());
-	if (file_iter != file_list.end()) {
+	FileSystem::Path NormalPath = file_name;
+	Platform::NormalizePath(NormalPath);
+
+	const auto file_iter = file_list.find(NormalPath.generic_string());
+
+	if (file_iter != file_list.end())
+	{
 		std::filesystem::remove(file_name);
-	} else {
+	} 
+	else
+	{
 		file_list.emplace(file_name.generic_string());
 	}
 
@@ -88,7 +95,10 @@ void FileSystem::CreateFile(const FileSystem::Path& file_name)
 
 void FileSystem::CreateDir(const FileSystem::Path& dir_name)
 {
-	const auto file_iter = file_list.find(dir_name.generic_string());
+	FileSystem::Path NormalPath = dir_name;
+	Platform::NormalizePath(NormalPath);
+
+	const auto file_iter = file_list.find(NormalPath.generic_string());
 	if (file_iter != file_list.end()) 
 	{
 		return;
@@ -102,8 +112,13 @@ void FileSystem::CreateDir(const FileSystem::Path& dir_name)
 
 void FileSystem::write_file(const FileSystem::Path& file_name, stl::stream_vector& stream_data)
 {
-	const auto file_iter = file_list.find(file_name.generic_string());
-	if (file_iter != file_list.end()) {
+	FileSystem::Path NormalPath = file_name;
+	Platform::NormalizePath(NormalPath);
+
+	const auto file_iter = file_list.find(NormalPath.generic_string());
+
+	if (file_iter != file_list.end()) 
+	{
 		std::filesystem::remove(file_name);
 	} 
 	else 
@@ -118,8 +133,36 @@ void FileSystem::write_file(const FileSystem::Path& file_name, stl::stream_vecto
 
 void FileSystem::read_file(const FileSystem::Path& file_name, stl::stream_vector& stream_data)
 {
-	std::fstream in_stream(file_name, std::fstream::binary | std::fstream::in);
-	stream_data.second.resize(std::filesystem::file_size(file_name));
+	FileSystem::Path NormalPath = file_name.generic_string().c_str();
+
+	Platform::NormalizePath(NormalPath);
+	std::fstream in_stream(NormalPath, std::fstream::binary | std::fstream::in);
+	stream_data.second.resize(std::filesystem::file_size(NormalPath));
 	in_stream.read(stream_data.second.data(), stream_data.second.size());
 	in_stream.close();
+}
+
+void Asura::FileSystem::Platform::NormalizePath(stl::string& Path)
+{
+	stl::string NormalPath = Path.data();
+
+	size_t SlashIdx = NormalPath.find("\\");
+	if (SlashIdx != std::string::npos)
+	{
+		NormalPath.replace(SlashIdx, 1, "/");
+	}
+
+	Path = NormalPath;
+}
+
+void Asura::FileSystem::Platform::NormalizePath(FileSystem::Path& Path)
+{
+	std::string NormalPath = Path.generic_string();
+
+	size_t SlashIdx = NormalPath.find("\\");
+	if (SlashIdx != std::string::npos)
+	{
+		NormalPath.replace(SlashIdx, 1, "/");
+	}
+	Path = NormalPath;
 }

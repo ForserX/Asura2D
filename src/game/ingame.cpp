@@ -148,7 +148,7 @@ void ingame::init()
 	using namespace Asura;
 	using namespace Entities;
 	
-	size_t CursorID = UI::CursorManager::Register("textures/cursor/base.png");
+	size_t CursorID = UI::CursorManager::Register("textures\\cursor/base.png");
 	UI::CursorManager::SetActive(CursorID);
 
 #if 0
