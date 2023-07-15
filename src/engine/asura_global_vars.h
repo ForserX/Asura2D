@@ -30,7 +30,7 @@ extern bool fullscreen_mode;
 
 // Console code
 extern bool show_console;
-extern std::unique_ptr<Asura::UI::Console> console;
+extern std::unique_ptr<Asura::UI::Console> ConsoleInstance;
 
 // Camera code
 extern float CamZoom;

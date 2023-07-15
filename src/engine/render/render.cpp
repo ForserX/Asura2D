@@ -34,6 +34,8 @@ void Render::Init()
 
 	TexRotate = new Render::Shaders::TextureRotation;
 	TexRotate->Build();
+
+	Console::MakeConsoleCommand<Console::CommandBoolean>("draw_fps", &show_fps_counter);
 }
 
 void Render::Destroy()

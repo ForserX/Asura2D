@@ -15,7 +15,7 @@ void engine::Init()
 {
 	OPTICK_THREAD("Main thread");
     
-    console = std::make_unique<UI::Console>();
+	ConsoleInstance = std::make_unique<UI::Console>();
     
     FileSystem::Init();
     Debug::Init();
@@ -24,9 +24,8 @@ void engine::Init()
 	Input::Init();
 	Debug::Msg("- Input: Done");
 
-    console->Init();
     Debug::Msg("- Console: : Done");
-    
+
 	Threads::Init();
     Debug::Msg("- Threads: Done");
     
@@ -45,6 +44,15 @@ void engine::Init()
 
 	Audio::Init();
 	Debug::Msg("Audio Manager: Done");
+
+	Console::MakeConsoleCommand<Console::CommandBoolean>("pause", &paused);
+
+	Console::MakeConsoleCommand<Console::CommandBoolean>("window_fullscreen", &fullscreen_mode, Window::change_fullscreen);
+	Console::MakeConsoleCommand<Console::CommandBoolean>("window_maximized", &window_maximized, Window::change_window_mode);
+	Console::MakeConsoleCommand<Console::CommandNumber<int>>("window_height", &window_height, Window::change_resolution);
+	Console::MakeConsoleCommand<Console::CommandNumber<int>>("window_width", &window_width, Window::change_resolution);
+
+	ConsoleInstance->Init();
 }
 
 void engine::Destroy()
@@ -57,7 +65,7 @@ void engine::Destroy()
 	Threads::Destroy();
 	Audio::Destroy();
 
-    console.reset();
+	ConsoleInstance.reset();
     
     Debug::Destroy();
     FileSystem::Destroy();

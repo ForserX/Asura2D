@@ -2,39 +2,22 @@
 
 using namespace Asura;
 
-std::unique_ptr<UI::Console> console;
+std::unique_ptr<UI::Console> ConsoleInstance;
 static int64_t ConsoleInputID = 0;
 
 using UI::Console;
 
-Console::Console()
+UI::Console::Console()
 {
     ClearLog();
     memset(InputBuf, 0, sizeof(InputBuf));
     HistoryPos = -1;
 
-    cmd_hint["help"] = "";
-    cmd_hint["hide"] = "";
-    cmd_hint["history"] = "";
-    cmd_hint["clear"] = "";
-    cmd_hint["physical_debug_draw"] = "1 , 0";
-    cmd_hint["use_parallel"] = "1 , 0";
-    cmd_hint["pause"] = {};
-    cmd_hint["physics_tps"] = "0 - 120";
-    cmd_hint["physics_hertz"] = "0 - 120";
-    cmd_hint["window_maximized"] = "1, 0";
-    cmd_hint["draw_fps"] = "1, 0";
-    cmd_hint["window_style"] = "red, dark, white";
-    cmd_hint["window_fullscreen"] = "1, 0";
-    cmd_hint["window_width"] = "int";
-    cmd_hint["window_height"] = "int";
-    cmd_hint["volume"] = "float 0 1";
-
     AutoScroll = true;
     ScrollToBottom = false;
 }
 
-Console::~Console()
+UI::Console::~Console()
 {
     ClearLog();
 
@@ -43,10 +26,16 @@ Console::~Console()
         free(History[i]);
     }
 
+    for (auto [str, Ptr] : CmdList)
+    {
+        delete Ptr;
+    }
+    CmdList.clear();
+
     Input::Erase(ConsoleInputID);
 }
 
-void Console::Init()
+void UI::Console::Init()
 {
     ConsoleInputID = Input::Emplace
     (
@@ -80,19 +69,19 @@ void Console::Init()
 int  strnicmp(const char* s1, const char* s2, int n) { int d = 0; while (n > 0 && (d = toupper(*s2) - toupper(*s1)) == 0 && *s1) { s1++; s2++; n--; } return d; }
 void strtrim(char* s) { char* str_end = s + strlen(s); while (str_end > s && str_end[-1] == ' ') str_end--; *str_end = 0; }
 
-void Console::ClearLog()
+void UI::Console::ClearLog()
 {
     for (int i = 0; i < Items.Size; i++)
         free(Items[i]);
     Items.clear();
 }
 
-void Console::PushLogItem(stl::string_view str)
+void UI::Console::PushLogItem(stl::string_view str)
 {
     Items.push_back(strdup(str.data()));
 }
 
-void Console::draw(float dt, const char* title, bool* p_open)
+void UI::Console::draw(float dt, const char* title, bool* p_open)
 {
     auto& io = ImGui::GetIO();
 
@@ -182,7 +171,8 @@ void Console::draw(float dt, const char* title, bool* p_open)
         bool skip = false;
         const char** item_list = new const char* [15];
         size_t Iter = 0;
-        for (const auto&[command, hint] : cmd_hint)
+
+        for (const auto&[command, Ptr] : CmdList)
         {
             if (strlen(InputBuf) == command.length()) 
             {
@@ -192,7 +182,7 @@ void Console::draw(float dt, const char* title, bool* p_open)
 
             if (command.find(InputBuf) != stl::string::npos)
             {
-                stl::string print = command + stl::string(" (") + hint + ")";
+                stl::string print = command + stl::string(" (") + Ptr->Hint + ")";
                 item_list[Iter] = strdup(print.c_str());
                 Iter++;
             }
@@ -254,28 +244,7 @@ void Console::draw(float dt, const char* title, bool* p_open)
     ImGui::End();
 }
 
-#define CHECK_FROM_CMD(command, output) \
-    if (strstr(command_line, command)) { \
-        cmd = cmd.substr(stl::string(command).length()); \
-        if (!cmd.empty()) { \
-            output = (decltype(output))stl::stof(cmd); \
-        } else { \
-            Debug::Msg("Invalid parameter: '{}'\n", command_line); \
-        } \
-    }
-
-#define CHECK_FROM_CMD_EX(command, output, callback) \
-    if (strstr(command_line, command)) { \
-        cmd = cmd.substr(stl::string(command).length()); \
-        if (!cmd.empty()) { \
-            output = (decltype(output))stl::stof(cmd); \
-            callback(); \
-        } else { \
-            Debug::Msg("Invalid parameter: '{}'\n", command_line); \
-        } \
-    }
-
-void Console::ExecCommand(const char* command_line)
+void UI::Console::ExecCommand(const char* command_line)
 {
     Debug::Msg("# {} \n", command_line);
 
@@ -292,21 +261,20 @@ void Console::ExecCommand(const char* command_line)
     History.push_back(strdup(command_line));
 
     stl::string cmd = command_line;
-    std::erase_if(cmd, [](unsigned char x) {return std::isspace(x);});
+    size_t Pos = cmd.find(" ");
 
-    CHECK_FROM_CMD("physics_hertz",         target_physics_hertz);
-    CHECK_FROM_CMD("physics_tps",           target_physics_tps);
-    CHECK_FROM_CMD("volume",                Volume);
-    CHECK_FROM_CMD("draw_fps",              show_fps_counter);
-    CHECK_FROM_CMD("physical_debug_draw",   physical_debug_draw);
-    CHECK_FROM_CMD("use_parallel",          use_parallel);
-    CHECK_FROM_CMD("pause",                 paused);
+    if (Pos != stl::string::npos)
+    {
+        stl::string CommandName = cmd.substr(0, Pos);
+        stl::string CommandValue = cmd.substr(Pos + 1);
 
-    CHECK_FROM_CMD_EX("window_height",      window_height,      Window::change_resolution);
-    CHECK_FROM_CMD_EX("window_width",       window_width,       Window::change_resolution);
-    CHECK_FROM_CMD_EX("window_maximized",   window_maximized,   Window::change_window_mode);
-    CHECK_FROM_CMD_EX("window_fullscreen",  fullscreen_mode,    Window::change_fullscreen);
+        if (CmdList.contains(CommandName))
+        {
+            CmdList[CommandName]->Exec(CommandValue);
+        }
+    }
     
+#if 0
     // Process other command
     if (cmd == "clear")
     {
@@ -345,24 +313,19 @@ void Console::ExecCommand(const char* command_line)
         else {
             window_style = Graphics::theme::style::invalid;
         }
-#if 0
-        if (renderer != nullptr)
-        {
-            Graphics::theme::change();
-        }
-#endif
     }
+#endif
     // On command Input, we scroll to bottom even if AutoScroll==false
     ScrollToBottom = true;
 }
 
-int Console::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
+int UI::Console::TextEditCallbackStub(ImGuiInputTextCallbackData* data)
 {
     auto* Console = static_cast<UI::Console*>(data->UserData);
     return Console->TextEditCallback(data);
 }
 
-int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
+int UI::Console::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
@@ -385,7 +348,7 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
 
         // Build a list of candidates
         ImVector<const char*> candidates;
-        for (const auto& [key, tip] : cmd_hint)
+        for (const auto& [key, skip] : CmdList)
         {
             if (strnicmp(key.c_str(), word_start, (int)(word_end - word_start)) == 0)
                 candidates.push_back(key.c_str());
@@ -474,16 +437,16 @@ int Console::TextEditCallback(ImGuiInputTextCallbackData* data)
     return 0;
 }
 
-void Console::Flush()
+void UI::Console::Flush()
 {
 	FileSystem::Path cfg_path = FileSystem::UserdataDir();
 	cfg_path = cfg_path.append("user.cfg");
     FileSystem::CreateFile(cfg_path);
     std::ofstream cfg(cfg_path);
 
-    for (const auto& [cmd, hint] : cmd_hint)
+    for (const auto& [cmd, Ptr] : CmdList)
     {
-        if (hint.length() > 0)
+        if (Ptr->Hint.length() > 0)
         {
             if (UI::GetCmdInt(cmd) != -1)
             {
@@ -499,4 +462,9 @@ void Console::Flush()
             }
         }
     }
+}
+
+Asura::Console::CommandTemplate::CommandTemplate(stl::string Name)
+{
+    ConsoleInstance->CmdList[Name] = this;
 }

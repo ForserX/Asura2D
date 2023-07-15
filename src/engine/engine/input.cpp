@@ -114,6 +114,9 @@ void Input::Erase(int64_t input_callback)
 	}
 	else
 	{
-		key_change_callbacks.erase(key_change_callbacks.begin() + std::abs(input_callback));
+		if (key_change_callbacks.size() < std::abs(input_callback))
+		{
+			key_change_callbacks.erase(key_change_callbacks.begin() + std::abs(input_callback));
+		}
 	}
 }

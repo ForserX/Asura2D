@@ -1,32 +1,42 @@
 ﻿#pragma once
 
+#include "console_tmagic.h"
+
 namespace Asura::UI
 {
-    struct Console
-    {
-        char InputBuf[256] = {};
-        ImVector<char*> Items;
-        stl::hash_map<stl::string, stl::string> cmd_hint;
+	class Console
+	{
+		friend class Asura::Console::CommandTemplate;
 
-        ImVector<char*> History;
-        int HistoryPos;    // -1: new line, 0..History.Size-1 browsing history.
-        ImGuiTextFilter Filter;
-        bool AutoScroll;
-        bool ScrollToBottom;
+	protected:
+		char InputBuf[256] = {};
+		ImVector<char*> Items;
+		ImVector<char*> History;
 
-        Console();
+		// -1: new line, 0..History.Size-1 browsing history.
+		int HistoryPos;
 
-        ~Console();
+		ImGuiTextFilter Filter;
+		bool AutoScroll;
+		bool ScrollToBottom;
 
-        void ClearLog();
+		stl::hash_map<stl::string, Asura::Console::CommandTemplate*> CmdList;
 
-        void PushLogItem(stl::string_view str);
-        void draw(float dt, const char* title, bool* p_open);
-        void Flush();
-        void Init();
+	public:
+		Console();
+		~Console();
 
-        void ExecCommand(const char* command_line);
-        static int TextEditCallbackStub(ImGuiInputTextCallbackData* data);
-        int TextEditCallback(ImGuiInputTextCallbackData* data);
-    };
+		void ClearLog();
+
+		void PushLogItem(stl::string_view str);
+		void draw(float dt, const char* title, bool* p_open);
+		void Flush();
+		void Init();
+
+		void ExecCommand(const char* command_line);
+
+	private:
+		static int TextEditCallbackStub(ImGuiInputTextCallbackData* data);
+		int TextEditCallback(ImGuiInputTextCallbackData* data);
+	};
 };

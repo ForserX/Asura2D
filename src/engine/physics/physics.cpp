@@ -14,6 +14,11 @@ void Physics::Init()
 {
 	Physics::Material::Init();
 	game_world.Init();
+
+	Console::MakeConsoleCommand<Console::CommandNumber<float>>("physics_hertz", &target_physics_hertz, 0, 120);
+	Console::MakeConsoleCommand<Console::CommandNumber<float>>("physics_tps", &target_physics_tps, 0, 120);
+	Console::MakeConsoleCommand<Console::CommandBoolean>("physical_debug_draw", &physical_debug_draw);
+	Console::MakeConsoleCommand<Console::CommandBoolean>("use_parallel", &use_parallel);
 }
 
 void Physics::Destroy()

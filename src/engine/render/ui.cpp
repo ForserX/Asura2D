@@ -49,7 +49,7 @@ void UI::Tick(float dt)
     if (show_console) 
     {
 		OPTICK_EVENT("UI Console draw")
-        ::console->draw(dt, "Arkane Console", &show_console);
+        ::ConsoleInstance->draw(dt, "Arkane Console", &show_console);
     } 
     else 
     { 
@@ -344,11 +344,11 @@ stl::string Asura::UI::GetCmdStr(stl::string_view key)
 
 void UI::PushString(stl::string_view str)
 {
-    ::console->PushLogItem(str);
+    ::ConsoleInstance->PushLogItem(str);
 }
 
 void UI::Destroy()
 {
-    ::console->Flush();
-    ::console->ClearLog();
+    ::ConsoleInstance->Flush();
+    ::ConsoleInstance->ClearLog();
 }

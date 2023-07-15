@@ -37,6 +37,8 @@ void Audio::Init()
 	pDevice = new DeviceOpenAL;
 #endif
 
+	Console::MakeConsoleCommand<Console::CommandNumber<float>>("volume", &Volume, 0, 100);
+
 	TickInternal = std::make_unique<std::thread>([]()
 	{
 		Threads::SetName("Asura Audio: Tick");
