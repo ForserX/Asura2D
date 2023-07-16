@@ -11,10 +11,11 @@ namespace Asura::Console
 	{
 		friend class Asura::UI::Console;
 
+	public:
+		using CallbackType = void();
+
 	protected:
 		stl::string Hint = "";
-
-		using CallbackType = void();
 		CallbackType* Callback = nullptr;
 
 	public:
@@ -108,6 +109,32 @@ namespace Asura::Console
 		}
 	};
 
+	class CommandCallback : public CommandTemplate
+	{
+	public:
+		CommandCallback(stl::string Name, CallbackType* InCallback) :
+			CommandTemplate(Name)
+		{
+			Callback = InCallback;
+		}
+
+		virtual void SetupHint() override {}
+		virtual void Exec(stl::string_view Command) override
+		{
+			if (Callback != nullptr)
+			{
+				Callback();
+			}
+		}
+	};
+
+	template <class T>
+	void MakeConsoleCommand(const char* Name)
+	{
+		T* Cmd = new T(Name);
+		Cmd->SetupHint();
+	}
+
 	template <class T, typename V>
 	void MakeConsoleCommand(const char* Name, V* Value)
 	{
@@ -126,6 +153,13 @@ namespace Asura::Console
 	void MakeConsoleCommand(const char* Name, V* Value, auto Callback)
 	{
 		T* Cmd = new T(Name, Value, Callback);
+		Cmd->SetupHint();
+	}
+
+	template <class T, typename V>
+	void MakeConsoleCommand(const char* Name, std::nullptr_t, V Callback)
+	{
+		T* Cmd = new T(Name, Callback);
 		Cmd->SetupHint();
 	}
 }

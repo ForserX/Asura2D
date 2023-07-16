@@ -36,6 +36,39 @@ void Render::Init()
 	TexRotate->Build();
 
 	Console::MakeConsoleCommand<Console::CommandBoolean>("draw_fps", &show_fps_counter);
+
+	class CommandUIColor : Console::CommandTemplate
+	{
+	public:
+		CommandUIColor(stl::string Name) :
+			Console::CommandTemplate(Name)
+		{}
+
+		virtual void SetupHint() override { Hint = "red/dark/white"; };
+		virtual void Exec(stl::string_view Command) override
+		{
+			if (Command == "red")
+			{
+				window_style = Graphics::theme::style::red;
+			}
+			else if (Command == "dark")
+			{
+				window_style = Graphics::theme::style::dark;
+			}
+			else if (Command == "white")
+			{
+				window_style = Graphics::theme::style::white;
+			}
+			else 
+			{
+				window_style = Graphics::theme::style::invalid;
+			}
+
+			Graphics::theme::change();
+		}
+	};
+
+	Console::MakeConsoleCommand<CommandUIColor>("ui_color");
 }
 
 void Render::Destroy()
